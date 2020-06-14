@@ -1,0 +1,32 @@
+{
+    "name": "packagefactory/componentengine",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Wilhelm Behncke",
+            "email": "wilhelm.behncke@protonmail.com"
+        }
+    ],
+    "require": {
+        "packagefactory/virtualdom": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "PackageFactory\\ComponentEngine\\": "src/",
+            "PackageFactory\\ComponentEngine\\Test\\": "test/"
+        }
+    },
+    "repositories": {
+        "virtual-dom": {
+            "url": "../PackageFactory.VirtualDOM",
+            "type": "path"
+        }
+    },
+    "minimum-stability": "stable",
+    "require-dev": {
+        "phpunit/phpunit": "^9.2",
+        "spatie/phpunit-snapshot-assertions": "^4.2",
+        "phpstan/phpstan": "^0.12.29"
+    }
+}

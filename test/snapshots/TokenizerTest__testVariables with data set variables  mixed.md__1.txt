@@ -1,0 +1,72 @@
+
+TYPE                           S_IDX S_ROW S_COL E_IDX E_ROW E_COL VALUE
+JSX_DELIMITER                  0     0     0     5     0     5     ```jsx
+END_OF_LINE                    6     0     6     6     0     6      
+TAG_START                      7     1     0     7     1     0     <
+IDENTIFIER                     8     1     1     14    1     7     section
+WHITESPACE                     15    1     8     15    1     8      
+IDENTIFIER                     16    1     9     20    1     13    class
+ASSIGNMENT                     21    1     14    21    1     14    =
+EXPRESSION_START               22    1     15    22    1     15    {
+IDENTIFIER                     23    1     16    27    1     20    props
+PERIOD                         28    1     21    28    1     21    .
+IDENTIFIER                     29    1     22    33    1     26    class
+EXPRESSION_END                 34    1     27    34    1     27    }
+TAG_END                        35    1     28    35    1     28    >
+END_OF_LINE                    36    1     29    36    1     29     
+WHITESPACE                     37    2     0     40    2     3         
+TAG_START                      41    2     4     41    2     4     <
+IDENTIFIER                     42    2     5     47    2     10    header
+WHITESPACE                     48    2     11    48    2     11     
+IDENTIFIER                     49    2     12    53    2     16    style
+ASSIGNMENT                     54    2     17    54    2     17    =
+EXPRESSION_START               55    2     18    55    2     18    {
+IDENTIFIER                     56    2     19    66    2     29    headerStyle
+EXPRESSION_END                 67    2     30    67    2     30    }
+TAG_END                        68    2     31    68    2     31    >
+END_OF_LINE                    69    2     32    69    2     32     
+WHITESPACE                     70    3     0     77    3     7             
+TAG_START                      78    3     8     78    3     8     <
+IDENTIFIER                     79    3     9     80    3     10    h1
+TAG_END                        81    3     11    81    3     11    >
+CONTENT                        82    3     12    86    3     16    Hello
+WHITESPACE                     87    3     17    87    3     17     
+EXPRESSION_START               88    3     18    88    3     18    {
+IDENTIFIER                     89    3     19    92    3     22    name
+EXPRESSION_END                 93    3     23    93    3     23    }
+CONTENT                        94    3     24    94    3     24    !
+TAG_START                      95    3     25    95    3     25    <
+TAG_CLOSE                      96    3     26    96    3     26    /
+IDENTIFIER                     97    3     27    98    3     28    h1
+TAG_END                        99    3     29    99    3     29    >
+END_OF_LINE                    100   3     30    100   3     30     
+WHITESPACE                     101   4     0     104   4     3         
+TAG_START                      105   4     4     105   4     4     <
+TAG_CLOSE                      106   4     5     106   4     5     /
+IDENTIFIER                     107   4     6     112   4     11    header
+TAG_END                        113   4     12    113   4     12    >
+END_OF_LINE                    114   4     13    114   4     13     
+END_OF_LINE                    115   5     0     115   5     0      
+WHITESPACE                     116   6     0     119   6     3         
+TAG_START                      120   6     4     120   6     4     <
+IDENTIFIER                     121   6     5     123   6     7     div
+TAG_END                        124   6     8     124   6     8     >
+END_OF_LINE                    125   6     9     125   6     9      
+WHITESPACE                     126   7     0     133   7     7             
+EXPRESSION_START               134   7     8     134   7     8     {
+IDENTIFIER                     135   7     9     139   7     13    props
+PERIOD                         140   7     14    140   7     14    .
+IDENTIFIER                     141   7     15    147   7     21    content
+EXPRESSION_END                 148   7     22    148   7     22    }
+END_OF_LINE                    149   7     23    149   7     23     
+WHITESPACE                     150   8     0     153   8     3         
+TAG_START                      154   8     4     154   8     4     <
+TAG_CLOSE                      155   8     5     155   8     5     /
+IDENTIFIER                     156   8     6     158   8     8     div
+TAG_END                        159   8     9     159   8     9     >
+END_OF_LINE                    160   8     10    160   8     10     
+TAG_START                      161   9     0     161   9     0     <
+TAG_CLOSE                      162   9     1     162   9     1     /
+IDENTIFIER                     163   9     2     169   9     8     section
+TAG_END                        170   9     9     170   9     9     >
+END_OF_FILE                    170   9     9     170   9     9     >

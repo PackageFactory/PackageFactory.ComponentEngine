@@ -1,0 +1,26 @@
+
+TYPE                           S_IDX S_ROW S_COL E_IDX E_ROW E_COL VALUE
+JSX_DELIMITER                  0     0     0     5     0     5     ```jsx
+END_OF_LINE                    6     0     6     6     0     6      
+TAG_START                      7     1     0     7     1     0     <
+IDENTIFIER                     8     1     1     13    1     6     header
+WHITESPACE                     14    1     7     14    1     7      
+IDENTIFIER                     15    1     8     19    1     12    class
+ASSIGNMENT                     20    1     13    20    1     13    =
+STRING_START                   21    1     14    21    1     14    "
+STRING_VALUE                   22    1     15    27    1     20    header
+STRING_END                     21    1     14    21    1     14    "
+TAG_END                        29    1     22    29    1     22    >
+END_OF_LINE                    30    1     23    30    1     23     
+WHITESPACE                     31    2     0     34    2     3         
+EXPRESSION_START               35    2     4     35    2     4     {
+IDENTIFIER                     36    2     5     40    2     9     props
+PERIOD                         41    2     10    41    2     10    .
+IDENTIFIER                     42    2     11    49    2     18    children
+EXPRESSION_END                 50    2     19    50    2     19    }
+END_OF_LINE                    51    2     20    51    2     20     
+TAG_START                      52    3     0     52    3     0     <
+TAG_CLOSE                      53    3     1     53    3     1     /
+IDENTIFIER                     54    3     2     59    3     7     header
+TAG_END                        60    3     8     60    3     8     >
+END_OF_FILE                    60    3     8     60    3     8     >

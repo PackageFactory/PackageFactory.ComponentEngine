@@ -1,0 +1,97 @@
+{
+    "type": "Module",
+    "properties": {
+        "source": ".\/test\/fixtures\/specials\/fragment.md",
+        "imports": [],
+        "export": {
+            "type": "Tag",
+            "properties": {
+                "start": [
+                    7,
+                    7
+                ],
+                "end": [
+                    61,
+                    61
+                ],
+                "tagName": {
+                    "type": "TagName",
+                    "properties": {
+                        "start": [
+                            8,
+                            8
+                        ],
+                        "end": [
+                            10,
+                            17
+                        ],
+                        "value": "c:fragment"
+                    }
+                },
+                "attributes": [],
+                "children": [
+                    {
+                        "type": "Tag",
+                        "properties": {
+                            "start": [
+                                24,
+                                24
+                            ],
+                            "end": [
+                                48,
+                                48
+                            ],
+                            "tagName": {
+                                "type": "TagName",
+                                "properties": {
+                                    "start": [
+                                        25,
+                                        26
+                                    ],
+                                    "end": [
+                                        25,
+                                        26
+                                    ],
+                                    "value": "td"
+                                }
+                            },
+                            "attributes": [],
+                            "children": [
+                                {
+                                    "type": "Expression",
+                                    "properties": {
+                                        "start": [
+                                            28,
+                                            28
+                                        ],
+                                        "end": [
+                                            42,
+                                            42
+                                        ],
+                                        "root": {
+                                            "type": "Chain",
+                                            "properties": {
+                                                "start": [
+                                                    29,
+                                                    33
+                                                ],
+                                                "end": [
+                                                    42,
+                                                    42
+                                                ],
+                                                "elements": [
+                                                    "props",
+                                                    "content"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

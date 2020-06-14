@@ -1,0 +1,25 @@
+
+TYPE                           S_IDX S_ROW S_COL E_IDX E_ROW E_COL VALUE
+JSX_DELIMITER                  0     0     0     5     0     5     ```jsx
+END_OF_LINE                    6     0     6     6     0     6      
+TAG_START                      7     1     0     7     1     0     <
+TAG_END                        8     1     1     8     1     1     >
+END_OF_LINE                    9     1     2     9     1     2      
+WHITESPACE                     10    2     0     13    2     3         
+TAG_START                      14    2     4     14    2     4     <
+IDENTIFIER                     15    2     5     16    2     6     td
+TAG_END                        17    2     7     17    2     7     >
+EXPRESSION_START               18    2     8     18    2     8     {
+IDENTIFIER                     19    2     9     23    2     13    props
+PERIOD                         24    2     14    24    2     14    .
+IDENTIFIER                     25    2     15    31    2     21    content
+EXPRESSION_END                 32    2     22    32    2     22    }
+TAG_START                      33    2     23    33    2     23    <
+TAG_CLOSE                      34    2     24    34    2     24    /
+IDENTIFIER                     35    2     25    36    2     26    td
+TAG_END                        37    2     27    37    2     27    >
+END_OF_LINE                    38    2     28    38    2     28     
+TAG_START                      39    3     0     39    3     0     <
+TAG_CLOSE                      40    3     1     40    3     1     /
+TAG_END                        41    3     2     41    3     2     >
+END_OF_FILE                    41    3     2     41    3     2     >

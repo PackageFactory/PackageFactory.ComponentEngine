@@ -1,0 +1,192 @@
+{
+    "type": "Module",
+    "properties": {
+        "source": ".\/test\/fixtures\/specials\/map.md",
+        "imports": [],
+        "export": {
+            "type": "Tag",
+            "properties": {
+                "start": [
+                    7,
+                    7
+                ],
+                "end": [
+                    67,
+                    67
+                ],
+                "tagName": {
+                    "type": "TagName",
+                    "properties": {
+                        "start": [
+                            8,
+                            9
+                        ],
+                        "end": [
+                            8,
+                            9
+                        ],
+                        "value": "ul"
+                    }
+                },
+                "attributes": {
+                    "c:map": {
+                        "type": "Attribute",
+                        "properties": {
+                            "start": [
+                                11,
+                                11
+                            ],
+                            "end": [
+                                41,
+                                41
+                            ],
+                            "name": {
+                                "type": "AttributeName",
+                                "properties": {
+                                    "start": [
+                                        11,
+                                        11
+                                    ],
+                                    "end": [
+                                        13,
+                                        15
+                                    ],
+                                    "value": "c:map"
+                                }
+                            },
+                            "value": {
+                                "type": "Expression",
+                                "properties": {
+                                    "start": [
+                                        17,
+                                        17
+                                    ],
+                                    "end": [
+                                        40,
+                                        40
+                                    ],
+                                    "root": {
+                                        "type": "ObjectLiteral",
+                                        "properties": {
+                                            "start": [
+                                                18,
+                                                18
+                                            ],
+                                            "end": [
+                                                39,
+                                                39
+                                            ],
+                                            "properties": [
+                                                {
+                                                    "type": "Property",
+                                                    "properties": {
+                                                        "start": [
+                                                            20,
+                                                            24
+                                                        ],
+                                                        "end": [
+                                                            38,
+                                                            38
+                                                        ],
+                                                        "key": {
+                                                            "type": "Identifier",
+                                                            "properties": {
+                                                                "token": [
+                                                                    20,
+                                                                    24
+                                                                ],
+                                                                "value": "items"
+                                                            }
+                                                        },
+                                                        "value": {
+                                                            "type": "Chain",
+                                                            "properties": {
+                                                                "start": [
+                                                                    27,
+                                                                    31
+                                                                ],
+                                                                "end": [
+                                                                    38,
+                                                                    38
+                                                                ],
+                                                                "elements": [
+                                                                    "props",
+                                                                    "items"
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "children": [
+                    {
+                        "type": "Tag",
+                        "properties": {
+                            "start": [
+                                47,
+                                47
+                            ],
+                            "end": [
+                                62,
+                                62
+                            ],
+                            "tagName": {
+                                "type": "TagName",
+                                "properties": {
+                                    "start": [
+                                        48,
+                                        49
+                                    ],
+                                    "end": [
+                                        48,
+                                        49
+                                    ],
+                                    "value": "li"
+                                }
+                            },
+                            "attributes": [],
+                            "children": [
+                                {
+                                    "type": "Expression",
+                                    "properties": {
+                                        "start": [
+                                            51,
+                                            51
+                                        ],
+                                        "end": [
+                                            56,
+                                            56
+                                        ],
+                                        "root": {
+                                            "type": "Chain",
+                                            "properties": {
+                                                "start": [
+                                                    52,
+                                                    55
+                                                ],
+                                                "end": [
+                                                    56,
+                                                    56
+                                                ],
+                                                "elements": [
+                                                    "item"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

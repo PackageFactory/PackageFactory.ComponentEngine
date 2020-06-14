@@ -1,0 +1,93 @@
+{
+    "type": "Module",
+    "properties": {
+        "source": ".\/test\/fixtures\/variables\/in attribute.md",
+        "imports": [],
+        "export": {
+            "type": "Tag",
+            "properties": {
+                "start": [
+                    7,
+                    7
+                ],
+                "end": [
+                    40,
+                    40
+                ],
+                "tagName": {
+                    "type": "TagName",
+                    "properties": {
+                        "start": [
+                            8,
+                            14
+                        ],
+                        "end": [
+                            8,
+                            14
+                        ],
+                        "value": "section"
+                    }
+                },
+                "attributes": {
+                    "class": {
+                        "type": "Attribute",
+                        "properties": {
+                            "start": [
+                                16,
+                                20
+                            ],
+                            "end": [
+                                29,
+                                29
+                            ],
+                            "name": {
+                                "type": "AttributeName",
+                                "properties": {
+                                    "start": [
+                                        16,
+                                        20
+                                    ],
+                                    "end": [
+                                        16,
+                                        20
+                                    ],
+                                    "value": "class"
+                                }
+                            },
+                            "value": {
+                                "type": "Expression",
+                                "properties": {
+                                    "start": [
+                                        22,
+                                        22
+                                    ],
+                                    "end": [
+                                        28,
+                                        28
+                                    ],
+                                    "root": {
+                                        "type": "Chain",
+                                        "properties": {
+                                            "start": [
+                                                23,
+                                                27
+                                            ],
+                                            "end": [
+                                                28,
+                                                28
+                                            ],
+                                            "elements": [
+                                                "class"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "children": []
+            }
+        }
+    }
+}

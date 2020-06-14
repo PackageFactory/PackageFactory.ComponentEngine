@@ -1,0 +1,66 @@
+{
+    "type": "Module",
+    "properties": {
+        "source": ".\/test\/fixtures\/variables\/in content.md",
+        "imports": [],
+        "export": {
+            "type": "Tag",
+            "properties": {
+                "start": [
+                    7,
+                    7
+                ],
+                "end": [
+                    25,
+                    25
+                ],
+                "tagName": {
+                    "type": "TagName",
+                    "properties": {
+                        "start": [
+                            8,
+                            9
+                        ],
+                        "end": [
+                            8,
+                            9
+                        ],
+                        "value": "h1"
+                    }
+                },
+                "attributes": [],
+                "children": [
+                    {
+                        "type": "Expression",
+                        "properties": {
+                            "start": [
+                                11,
+                                11
+                            ],
+                            "end": [
+                                20,
+                                20
+                            ],
+                            "root": {
+                                "type": "Chain",
+                                "properties": {
+                                    "start": [
+                                        12,
+                                        19
+                                    ],
+                                    "end": [
+                                        20,
+                                        20
+                                    ],
+                                    "elements": [
+                                        "headline"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}
