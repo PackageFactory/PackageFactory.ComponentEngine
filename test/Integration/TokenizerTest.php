@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-namespace PackageFactory\ComponentEngine\Test;
+namespace PackageFactory\ComponentEngine\Test\Integration;
 
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Lexer\Tokenizer;

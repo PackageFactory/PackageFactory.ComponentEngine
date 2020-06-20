@@ -1,0 +1,4 @@
+parameters:
+  typeAliases:
+    Atom: 'NullLiteral|BooleanLiteral|NumberLiteral|StringLiteral|TemplateLiteral|ArrayLiteral|ObjectLiteral|Negation|Spread'
+    Operand: 'Atom|Conjunction|Disjunction|PointOperation|DashOperation|Comparison|Ternary'

@@ -5,11 +5,11 @@ use PackageFactory\ComponentEngine\Parser\Lexer\Tokenizer;
 
 final class Printer
 {
-    public static function print(Tokenizer $tokenizer): string
+    public static function print(iterable $tokenStream): string
     {
         $lines = [''];
         $lines[] = sprintf(
-            "%-30s %-5s %-5s %-5s %-5s %-5s %-5s %s",
+            "%-40s %-5s %-5s %-5s %-5s %-5s %-5s %s",
             'TYPE',
             'S_IDX',
             'S_ROW',
@@ -19,9 +19,9 @@ final class Printer
             'E_COL',
             'VALUE'
         );
-        foreach ($tokenizer as $token) {
+        foreach ($tokenStream as $token) {
             $lines[] = sprintf(
-                "%-30s %-5s %-5s %-5s %-5s %-5s %-5s %s",
+                "%-40s %-5s %-5s %-5s %-5s %-5s %-5s %s",
                 $token->getType(),
                 $token->getStart()->getIndex(),
                 $token->getStart()->getRowIndex(),

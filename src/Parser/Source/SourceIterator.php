@@ -34,33 +34,29 @@ final class SourceIterator implements \Iterator
 
     public function lookAhead(int $length): ?Fragment
     {
-        $count = count($this->lookAheadBuffer);
-
-        if ($count > $length)  {
-            return $this->lookAheadBuffer[$length - 1];
-        }
-
         $iterator = $this->iterator;
-        $fragment = null;
+        $lookAhead = null;
 
-        for ($i = 0; $i < $length - $count; $i++) {
-            if (!$iterator->valid()) {
+        for ($i = 0; $i < $length; $i++) {
+            if (isset($this->lookAheadBuffer[$i])) {
+                $fragment = $this->lookAheadBuffer[$i];
+            } elseif ($iterator->valid()) {
+                $fragment = $iterator->current();
+                $this->lookAheadBuffer[] = $fragment;
+                $iterator->next();
+            } else {
                 return null;
             }
 
-            $this->lookAheadBuffer[] = $iterator->current();
-
-            if ($fragment === null) {
-                $fragment = $iterator->current();
+            if ($lookAhead === null) {
+                $lookAhead = $fragment;
             }
             else {
-                $fragment = $fragment->append($iterator->current());
+                $lookAhead = $lookAhead->append($fragment);
             }
-
-            $iterator->next();
         }
 
-        return $fragment;
+        return $lookAhead;
     }
 
     public function skip(int $length): void
@@ -116,6 +112,6 @@ final class SourceIterator implements \Iterator
      */
     public function valid()
     {
-        return $this->iterator->valid();
+        return !empty($this->lookAheadBuffer) || $this->iterator->valid();
     }
 }

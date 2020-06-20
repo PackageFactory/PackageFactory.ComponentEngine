@@ -15,22 +15,68 @@ final class Tokenizer implements \IteratorAggregate
     private $source;
 
     /**
-     * @param Source $source
+     * @var class-string<
+     *  Scope\Afx::class |
+     *  Scope\Comment::class |
+     *  Scope\Expression::class |
+     *  Scope\Identifier::class |
+     *  Scope\Keyword::class |
+     *  Scope\Module::class |
+     *  Scope\Number::class |
+     *  Scope\StringLiteral::class |
+     *  Scope\TemplateLiteral::class |
+     *  Scope\Whitespace::class
+     * >
      */
-    private function __construct(Source $source)
+    private $rootScope = Scope\Module::class;
+
+    /**
+     * @param Source $source
+     * @param class-string<
+     *  Scope\Afx::class |
+     *  Scope\Comment::class |
+     *  Scope\Expression::class |
+     *  Scope\Identifier::class |
+     *  Scope\Keyword::class |
+     *  Scope\Module::class |
+     *  Scope\Number::class |
+     *  Scope\StringLiteral::class |
+     *  Scope\TemplateLiteral::class |
+     *  Scope\Whitespace::class
+     * > $rootScope
+     */
+    private function __construct(Source $source, string $rootScope)
     {
         $this->source = $source;
+        $this->rootScope = $rootScope;
     }
 
     /**
      * @param Source $source
+     * @param class-string<
+     *  Scope\Afx::class |
+     *  Scope\Comment::class |
+     *  Scope\Expression::class |
+     *  Scope\Identifier::class |
+     *  Scope\Keyword::class |
+     *  Scope\Module::class |
+     *  Scope\Number::class |
+     *  Scope\StringLiteral::class |
+     *  Scope\TemplateLiteral::class |
+     *  Scope\Whitespace::class
+     * > $rootScope
      * @return Tokenizer
      */
-    public static function createFromSource(Source $source): Tokenizer
-    {
-        return new Tokenizer($source);
+    public static function createFromSource(
+        Source $source,
+        string $rootScope = Scope\Module::class
+    ): Tokenizer {
+        return new Tokenizer($source, $rootScope);
     }
 
+    /**
+     * @return Source
+     */
     public function getSource(): Source
     {
         return $this->source;
@@ -42,16 +88,6 @@ final class Tokenizer implements \IteratorAggregate
     public function getIterator(): \Iterator
     {
         $sourceIterator = SourceIterator::createFromSource($this->source);
-        foreach (Tokenize\Root::tokenize($sourceIterator) as $token) {
-            yield $token;
-        }
-
-        yield Token::create(
-            TokenType::END_OF_FILE(),
-            isset($token) ? $token->getValue() : '',
-            isset($token) ? $token->getStart() : $this->source->getEnd(),
-            isset($token) ? $token->getEnd() : $this->source->getEnd(),
-            $this->source
-        );
+        yield from $this->rootScope::tokenize($sourceIterator);
     }
 }

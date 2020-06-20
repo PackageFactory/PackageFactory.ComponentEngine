@@ -17,7 +17,6 @@ final class Util
             (
                 $iterator->current()->getType() === TokenType::WHITESPACE() ||
                 $iterator->current()->getType() === TokenType::END_OF_LINE() ||
-                $iterator->current()->getType() === TokenType::JSX_DELIMITER() ||
                 $iterator->current()->getType() === TokenType::COMMENT_START() ||
                 $iterator->current()->getType() === TokenType::COMMENT_CONTENT() ||
                 $iterator->current()->getType() === TokenType::COMMENT_END()
@@ -32,12 +31,14 @@ final class Util
      *
      * @param \Iterator<Token> $iterator
      * @param TokenType $type
-     * @return void
+     * @return Token
      */
-    public static function expect(\Iterator $iterator, TokenType $type): void
+    public static function expect(\Iterator $iterator, TokenType $type): Token
     {
         if ($iterator->current()->getType() === $type) {
+            $result = $iterator->current();
             $iterator->next();
+            return $result;
         }
         else {
             throw new \Exception(

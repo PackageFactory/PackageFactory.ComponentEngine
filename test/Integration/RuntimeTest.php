@@ -1,11 +1,13 @@
 <?php declare(strict_types=1);
-namespace PackageFactory\ComponentEngine\Test;
+namespace PackageFactory\ComponentEngine\Test\Integration;
 
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Lexer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Parser;
+use PackageFactory\ComponentEngine\Runtime\Runtime;
+use PackageFactory\ComponentEngine\Runtime\Context;
 
-final class ParserTest extends BaseTestCase
+final class RuntimeTest extends BaseTestCase
 {
     /**
      * @return iterable<string, array<int, string>>
@@ -26,9 +28,10 @@ final class ParserTest extends BaseTestCase
         $source = Source::createFromFile($filename);
         $tokenizer = Tokenizer::createFromSource($source);
         $parser = Parser::createFromTokenizer($tokenizer);
+        $runtime = Runtime::createFromModule($parser->parse());
 
-        $this->assertMatchesJsonSnapshot(
-            json_encode($parser->parse(), JSON_PRETTY_PRINT)
+        $this->assertMatchesSnapshot(
+            (string) $runtime->evaluate(Context::createEmpty())
         );
     }
 
@@ -51,9 +54,21 @@ final class ParserTest extends BaseTestCase
         $source = Source::createFromFile($filename);
         $tokenizer = Tokenizer::createFromSource($source);
         $parser = Parser::createFromTokenizer($tokenizer);
+        $runtime = Runtime::createFromModule($parser->parse());
 
-        $this->assertMatchesJsonSnapshot(
-            json_encode($parser->parse(), JSON_PRETTY_PRINT)
+        $this->assertMatchesSnapshot(
+            (string) $runtime->evaluate(Context::createFromArray([
+                'class' => 'exampleClass-1',
+                'headerStyle' => 'background-color: lightgray; padding: 1em;',
+                'name' => 'Example name #1',
+                'headline' => 'Example Headline #1',
+                'props' => [
+                    'class' => 'exampleClass-2 from-props',
+                    'name' => 'Example name #2 from props',
+                    'headline' => 'Example Headline #2 from props',
+                    'content' => 'Lorem ipsum dolor sit amet... (From props)'
+                ]
+            ]))
         );
     }
 
@@ -76,9 +91,23 @@ final class ParserTest extends BaseTestCase
         $source = Source::createFromFile($filename);
         $tokenizer = Tokenizer::createFromSource($source);
         $parser = Parser::createFromTokenizer($tokenizer);
+        $runtime = Runtime::createFromModule($parser->parse());
 
-        $this->assertMatchesJsonSnapshot(
-            json_encode($parser->parse(), JSON_PRETTY_PRINT)
+        $this->assertMatchesSnapshot(
+            (string) $runtime->evaluate(Context::createFromArray([
+                'props' => [
+                    'items' => [
+                        'Item #1 from props',
+                        'Item #2 from props',
+                        'Item #3 from props',
+                        'Item #4 from props',
+                        'Item #5 from props'
+                    ],
+                    'content' => 'Lorem ipsum dolor sit amet... (From props)',
+                    'hasHeadline' => false,
+                    'headline' => 'Example Headline from props'
+                ]
+            ]))
         );
     }
 
@@ -101,9 +130,15 @@ final class ParserTest extends BaseTestCase
         $source = Source::createFromFile($filename);
         $tokenizer = Tokenizer::createFromSource($source);
         $parser = Parser::createFromTokenizer($tokenizer);
+        $runtime = Runtime::createFromModule($parser->parse());
 
-        $this->assertMatchesJsonSnapshot(
-            json_encode($parser->parse(), JSON_PRETTY_PRINT)
+        $this->assertMatchesSnapshot(
+            (string) $runtime->evaluate(Context::createFromArray([
+                'props' => [
+                    'label' => 'Label from test props',
+                    'children' => 'Children from test props'
+                ]
+            ]))
         );
     }
 }

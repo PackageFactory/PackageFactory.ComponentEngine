@@ -49,6 +49,15 @@ final class Context
     }
 
     /**
+     * @param string $propertyName
+     * @return boolean
+     */
+    public function hasProperty(string $propertyName)
+    {
+        return isset($this->properties[$propertyName]);
+    }
+
+    /**
      * @param Ast\Chain $chain
      * @return null|mixed
      */
