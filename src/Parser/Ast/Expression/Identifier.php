@@ -36,6 +36,22 @@ final class Identifier implements \JsonSerializable
     }
 
     /**
+     * @param Token $token
+     * @return self
+     */
+    public static function createFromToken(Token $token): self
+    {
+        switch ($token->getType()) {
+            case TokenType::IDENTIFIER():
+            case TokenType::MODULE_KEYWORD_DEFAULT():
+                return new self($token);
+            
+            default:
+                throw new \Exception('@TODO: Unexpected Token: ' . $token);
+        }
+    }
+
+    /**
      * @return Token
      */
     public function getToken(): Token

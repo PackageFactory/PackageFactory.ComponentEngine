@@ -1,4 +1,4 @@
-import Button from "../Button"
+import Button from "./Button.afx"
 
 export default (
     <div class={{ highlight: props.isHighlighted }}>
@@ -14,7 +14,7 @@ export default (
             </li>
         </ul>
 
-        <Button on>
+        <Button type="link" href="#" on>
             Click here!
         </Button>
     </div>

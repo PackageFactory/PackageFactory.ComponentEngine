@@ -3,8 +3,9 @@ namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Runtime\Context;
+use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class ChainSegment implements \JsonSerializable
+final class ChainSegment implements \JsonSerializable, ContextEvaluatorInterface
 {
     /**
      * @var bool

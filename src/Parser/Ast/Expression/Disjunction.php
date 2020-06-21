@@ -4,8 +4,9 @@ namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Runtime\Context;
+use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class Disjunction implements \JsonSerializable
+final class Disjunction implements \JsonSerializable, ContextEvaluatorInterface
 {
     const OPERATOR_LOGICAL_OR = '||';
 

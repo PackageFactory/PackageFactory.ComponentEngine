@@ -190,6 +190,7 @@ final class Module
                 $iterator->next();
             } elseif ($value === '"' || $value === '\'') {
                 yield from StringLiteral::tokenize($iterator);
+                break;
             } elseif ($value === '{') {
                 yield Token::createFromFragment(
                     TokenType::BRACKETS_CURLY_OPEN(),
@@ -222,11 +223,20 @@ final class Module
      */
     public static function tokenizeAssignmentValue(SourceIterator $iterator): \Iterator
     {
+        $brackets = 0;
         while ($iterator->valid()) {
             yield from Whitespace::tokenize($iterator);
 
             if ($iterator->valid()) {
-                if ($iterator->current()->getValue() === '<') {
+                if ($iterator->current()->getValue() === '(') {
+                    yield Token::createFromFragment(
+                        TokenType::BRACKETS_ROUND_OPEN(),
+                        $iterator->current()
+                    );
+                    $brackets++;
+                    $iterator->next();
+                    continue;
+                } elseif ($iterator->current()->getValue() === '<') {
                     yield from Afx::tokenize($iterator);
                 } else {
                     yield from Expression::tokenize($iterator, [
@@ -239,7 +249,23 @@ final class Module
                     ]);
                 }
 
-                return;
+                break;
+            }
+        }
+
+        while ($brackets > 0 && $iterator->valid()) {
+            yield from Whitespace::tokenize($iterator);
+
+            if ($iterator->valid()) {
+                if ($iterator->current()->getValue() === ')') {
+                    yield Token::createFromFragment(
+                        TokenType::BRACKETS_ROUND_CLOSE(),
+                        $iterator->current()
+                    );
+
+                    $iterator->next();
+                    $brackets--;
+                }
             }
         }
     }

@@ -6,8 +6,9 @@ use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
 use PackageFactory\ComponentEngine\Runtime\Context;
+use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class Chain implements \JsonSerializable
+final class Chain implements \JsonSerializable, ContextEvaluatorInterface
 {
     /**
      * @var Token

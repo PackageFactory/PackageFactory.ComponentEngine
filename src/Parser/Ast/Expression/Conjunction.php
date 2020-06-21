@@ -5,8 +5,9 @@ use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
 use PackageFactory\ComponentEngine\Runtime\Context;
+use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class Conjunction implements \JsonSerializable
+final class Conjunction implements \JsonSerializable, ContextEvaluatorInterface
 {
     const OPERATOR_LOGICAL_AND = '&&';
 

@@ -8,9 +8,9 @@ use PackageFactory\ComponentEngine\Parser\Util;
 final class Expression
 {
     public const PRIORITY_TERNARY = 5;
-    public const PRIORITY_COMPARISON = 4;
-    public const PRIORITY_DISJUNCTION = 3;
+    public const PRIORITY_DISJUNCTION = 4;
     public const PRIORITY_CONJUNCTION = 3;
+    public const PRIORITY_COMPARISON = 2;
     public const PRIORITY_DASH_OPERATION = 1;
     public const PRIORITY_POINT_OPERATION = 0;
 
@@ -40,6 +40,9 @@ final class Expression
                     $left = Chain::createFromTokenStream($left, $stream);
                     break;
                 case TokenType::QUESTIONMARK():
+                    if ($priority < self::PRIORITY_TERNARY) {
+                        return $left;
+                    }
                     $left = Ternary::createFromTokenStream($left, $stream);
                     break;
                 case TokenType::COMPARATOR_EQ():
@@ -83,6 +86,10 @@ final class Expression
                 case TokenType::BRACKETS_CURLY_CLOSE():
                 case TokenType::BRACKETS_ROUND_CLOSE():
                 case TokenType::TEMPLATE_LITERAL_INTERPOLATION_END():
+                case TokenType::AFX_EXPRESSION_END():
+                case TokenType::MODULE_KEYWORD_IMPORT():
+                case TokenType::MODULE_KEYWORD_EXPORT():
+                case TokenType::MODULE_KEYWORD_CONST():
                 case TokenType::COMMA():
                 case TokenType::COLON():
                     if ($delimiter === $stream->current()->getType()) {

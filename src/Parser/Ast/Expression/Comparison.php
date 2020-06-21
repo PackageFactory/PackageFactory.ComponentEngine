@@ -5,8 +5,9 @@ use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
 use PackageFactory\ComponentEngine\Runtime\Context;
+use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class Comparison implements \JsonSerializable
+final class Comparison implements \JsonSerializable, ContextEvaluatorInterface
 {
     const COMPARATOR_EQ = '===';
     const COMPARATOR_GT = '>';

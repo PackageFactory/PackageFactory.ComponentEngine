@@ -83,7 +83,7 @@ final class Afx
                     $iterator->current()
                 );
                 $iterator->next();
-            } elseif (ctype_alpha($value)) {
+            } elseif (Identifier::is($value)) {
                 yield from Identifier::tokenize($iterator);
             } else {
                 break;
@@ -105,7 +105,7 @@ final class Afx
 
             if ($value === '<') {
                 break;
-            } elseif ($value === PHP_EOL) {
+            } elseif (ctype_space($value)) {
                 if ($capture !== null) {
                     yield Token::createFromFragment(
                         TokenType::AFX_TAG_CONTENT(),
@@ -115,11 +115,7 @@ final class Afx
                     $capture = null;
                 }
 
-                yield Token::createFromFragment(
-                    TokenType::END_OF_LINE(),
-                    $iterator->current()
-                );
-                $iterator->next();
+                yield from Whitespace::tokenize($iterator);
             } elseif ($value === '{') {
                 if ($capture !== null) {
                     yield Token::createFromFragment(

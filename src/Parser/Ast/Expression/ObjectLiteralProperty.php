@@ -5,8 +5,9 @@ use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
 use PackageFactory\ComponentEngine\Runtime\Context;
+use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class ObjectLiteralProperty implements \JsonSerializable
+final class ObjectLiteralProperty implements \JsonSerializable, ContextEvaluatorInterface
 {
     /**
      * @var null|Identifier|Operand

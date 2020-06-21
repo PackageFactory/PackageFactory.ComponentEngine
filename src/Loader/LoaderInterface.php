@@ -2,7 +2,7 @@
 namespace PackageFactory\ComponentEngine\Loader;
 
 use PackageFactory\ComponentEngine\Parser\Source\Path;
-use PackageFactory\ComponentEngine\Parser\Ast\Module;
+use PackageFactory\ComponentEngine\Parser\Ast\Module\Module;
 
 interface LoaderInterface
 {

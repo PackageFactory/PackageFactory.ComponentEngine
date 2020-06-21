@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Loader;
 
-use PackageFactory\ComponentEngine\Parser\Ast\Module;
+use PackageFactory\ComponentEngine\Parser\Ast\Module\Module;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
 
 final class RootLoader implements LoaderInterface
@@ -18,8 +18,8 @@ final class RootLoader implements LoaderInterface
     {
         $this->loaders = $loaders;
 
-        if (!isset($this->loaders['/\\.md$/'])) {
-            $this->loaders['/\\.md$/'] = new ComponentLoader();
+        if (!isset($this->loaders['/\\.afx$/'])) {
+            $this->loaders['/\\.afx$/'] = new ComponentLoader();
         }
     }
 

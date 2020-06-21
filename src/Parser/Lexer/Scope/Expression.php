@@ -251,13 +251,17 @@ final class Expression
                 $brackets++;
                 continue;
             } elseif ($value === ')') {
-                yield Token::createFromFragment(
-                    TokenType::BRACKETS_ROUND_CLOSE(),
-                    $iterator->current()
-                );
-                $iterator->next();
-                $brackets--;
-                continue;
+                if ($brackets > 0) {
+                    yield Token::createFromFragment(
+                        TokenType::BRACKETS_ROUND_CLOSE(),
+                        $iterator->current()
+                    );
+                    $iterator->next();
+                    $brackets--;
+                    continue;
+                } else {
+                    return;
+                }
             } elseif ($value === '[') {
                 yield Token::createFromFragment(
                     TokenType::BRACKETS_SQUARE_OPEN(),
