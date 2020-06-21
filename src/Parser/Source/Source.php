@@ -67,23 +67,6 @@ final class Source implements \IteratorAggregate, \JsonSerializable
     }
 
     /**
-     * @return Position
-     */
-    public function getEnd(): Position
-    {
-        $index = strlen($this->contents) - 1;
-        $rowIndex = substr_count($this->contents, PHP_EOL) - 1;
-        $columnIndex = strlen(
-            substr(
-                $this->contents, 
-                (int) strrpos($this->contents, PHP_EOL)
-            )
-        ) - 1;
-
-        return Position::create($index, $rowIndex, $columnIndex);
-    }
-
-    /**
      * @return \Iterator<Fragment>
      */
     public function getIterator(): \Iterator

@@ -1,1 +1,0 @@
-<section>Lorem ipsum dolor sit amet... (From props)</section>

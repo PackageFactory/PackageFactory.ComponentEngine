@@ -1,2 +1,0 @@
-```jsx
-<input type="text"/>

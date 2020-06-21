@@ -97,7 +97,7 @@ final class ObjectLiteralProperty implements \JsonSerializable, ContextEvaluator
     /**
      * @return \Iterator<mixed>
      */
-    public function evaluate(Context $context): \Iterator
+    public function evaluate(Context $context = null): \Iterator
     {
         if ($this->value instanceof Spread) {
             foreach ($this->value->evaluate($context) as $key => $value) {

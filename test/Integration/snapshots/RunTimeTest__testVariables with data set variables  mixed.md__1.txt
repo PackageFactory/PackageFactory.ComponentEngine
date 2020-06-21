@@ -1,1 +1,0 @@
-<section class="exampleClass-2 from-props"><header style="background-color: lightgray; padding: 1em;"><h1>Hello Example name #1!</h1></header><div>Lorem ipsum dolor sit amet... (From props)</div></section>
