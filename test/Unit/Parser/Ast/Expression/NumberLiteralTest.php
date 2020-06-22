@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 final class NumberLiteralTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<string, array{string, string, float, array<mixed>}>
      */
     public function provider(): array 
     {
@@ -93,6 +93,10 @@ final class NumberLiteralTest extends TestCase
     /**
      * @dataProvider provider
      * @test
+     * @param string $input
+     * @param string $asString
+     * @param float $asNumber
+     * @param array<mixed> $asJson
      * @return void
      */
     public function test(string $input, string $asString, float $asNumber, array $asJson): void
@@ -107,8 +111,8 @@ final class NumberLiteralTest extends TestCase
         $this->assertEquals($asString, $result->__toString());
         $this->assertEquals($asNumber, $result->evaluate());
         $this->assertJsonStringEqualsJsonString(
-            json_encode($asJson),
-            json_encode($result)
+            (string) json_encode($asJson),
+            (string) json_encode($result)
         );
     }
 }

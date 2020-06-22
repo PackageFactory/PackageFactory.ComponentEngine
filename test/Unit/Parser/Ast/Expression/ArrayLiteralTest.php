@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 final class ArrayLiteralTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<string, array{string, array<int, mixed>, array<mixed>}>
      */
     public function provider(): array 
     {
@@ -147,6 +147,9 @@ final class ArrayLiteralTest extends TestCase
     /**
      * @dataProvider provider
      * @test
+     * @param string $input
+     * @param array<int, mixed> $asArray
+     * @param array<mixed> $asJson
      * @return void
      */
     public function test(string $input, array $asArray, array $asJson): void
@@ -159,8 +162,8 @@ final class ArrayLiteralTest extends TestCase
 
         $this->assertEquals($asArray, $result->evaluate());
         $this->assertJsonStringEqualsJsonString(
-            json_encode($asJson),
-            json_encode($result)
+            (string) json_encode($asJson),
+            (string) json_encode($result)
         );
     }
 }

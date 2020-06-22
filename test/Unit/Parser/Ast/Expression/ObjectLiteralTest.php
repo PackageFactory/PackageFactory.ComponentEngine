@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 final class ObjectLiteralTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<string, array{string, \stdClass, array<mixed>}>
      */
     public function provider(): array 
     {
@@ -188,6 +188,9 @@ final class ObjectLiteralTest extends TestCase
     /**
      * @dataProvider provider
      * @test
+     * @param string $input
+     * @param \stdClass $asObject
+     * @param array<mixed> $asJson
      * @return void
      */
     public function test(string $input, \stdClass $asObject, array $asJson): void
@@ -200,8 +203,8 @@ final class ObjectLiteralTest extends TestCase
 
         $this->assertEquals($asObject, $result->evaluate());
         $this->assertJsonStringEqualsJsonString(
-            json_encode($asJson),
-            json_encode($result)
+            (string) json_encode($asJson),
+            (string) json_encode($result)
         );
     }
 }

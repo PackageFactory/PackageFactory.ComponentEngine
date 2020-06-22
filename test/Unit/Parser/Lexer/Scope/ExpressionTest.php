@@ -14,7 +14,7 @@ final class ExpressionTest extends TestCase
     use TokenizerTestTrait;
 
     /**
-     * @return array<string, array<int, string|array{TokenType, string}>>
+     * @return array<string, array{string, array<int, array{TokenType, string}>}>
      */
     public function happyPathProvider(): array
     {
@@ -292,7 +292,7 @@ final class ExpressionTest extends TestCase
                     [TokenType::IDENTIFIER(), 'foo'],
                     [TokenType::COLON(), ':'],
                     [TokenType::WHITESPACE(), ' '],
-                    [TokenType::NUMBER(), 12],
+                    [TokenType::NUMBER(), '12'],
                     [TokenType::COMMA(), ','],
                     [TokenType::WHITESPACE(), ' '],
                     [TokenType::IDENTIFIER(), 'bar'],
@@ -339,7 +339,7 @@ final class ExpressionTest extends TestCase
                     [TokenType::IDENTIFIER(), 'foo'],
                     [TokenType::COLON(), ':'],
                     [TokenType::WHITESPACE(), ' '],
-                    [TokenType::NUMBER(), 12],
+                    [TokenType::NUMBER(), '12'],
                     [TokenType::COMMA(), ','],
                     [TokenType::WHITESPACE(), ' '],
                     [TokenType::IDENTIFIER(), 'bar'],
@@ -398,7 +398,7 @@ final class ExpressionTest extends TestCase
                     [TokenType::IDENTIFIER(), 'foo'],
                     [TokenType::COLON(), ':'],
                     [TokenType::WHITESPACE(), ' '],
-                    [TokenType::NUMBER(), 12],
+                    [TokenType::NUMBER(), '12'],
                     [TokenType::COMMA(), ','],
                     [TokenType::WHITESPACE(), ' '],
                     [TokenType::BRACKETS_SQUARE_OPEN(), '['],
@@ -469,7 +469,7 @@ final class ExpressionTest extends TestCase
                     [TokenType::COMMENT_END(), '*/'],
                 ]
             ],
-            'comment' => [
+            'comment - expression is ignored' => [
                 '/* This is a comment {the.expression + is.ignored} */',
                 [
                     [TokenType::COMMENT_START(), '/*'],
@@ -494,7 +494,7 @@ final class ExpressionTest extends TestCase
     }
 
     /**
-     * @return array<string, array<int, string>>
+     * @return array<string, array{string}>
      */
     public function exceptionPathProvider(): array
     {
@@ -528,7 +528,7 @@ final class ExpressionTest extends TestCase
     }
 
     /**
-     * @return array<string, array<int, string|array{TokenType, string}>>
+     * @return array<string, array{string, array<int, array{TokenType, string}>}>
      */
     public function exitPathProvider(): array
     {

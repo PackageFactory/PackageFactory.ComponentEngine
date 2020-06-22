@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 final class IdentifierTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<string, array{string, string, array<mixed>}>
      */
     public function provider(): array 
     {
@@ -34,7 +34,7 @@ final class IdentifierTest extends TestCase
      * @test
      * @param string $input
      * @param string $output
-     * @param array $asJson
+     * @param array<mixed> $asJson
      * @return void
      */
     public function test(string $input, string $output, array $asJson): void
@@ -48,8 +48,8 @@ final class IdentifierTest extends TestCase
         $this->assertEquals($output, $result->getValue());
         $this->assertEquals($output, $result->__toString());
         $this->assertJsonStringEqualsJsonString(
-            json_encode($asJson),
-            json_encode($result)
+            (string) json_encode($asJson),
+            (string) json_encode($result)
         );
     }
 }

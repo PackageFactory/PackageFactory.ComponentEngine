@@ -14,7 +14,7 @@ final class StringLiteralTest extends TestCase
     use TokenizerTestTrait;
 
     /**
-     * @return array<string, array<int, string>>
+     * @return array<string, array{string, array<int, array{TokenType, string}>}>
      */
     public function provider(): array
     {
