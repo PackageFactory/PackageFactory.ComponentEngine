@@ -7,7 +7,7 @@ const props = {
     type: 'none',
     disabled: false,
     class: '',
-    children: ['YOPE!!'],
+    children: ['This is a button!'],
     ...props
 }
 
