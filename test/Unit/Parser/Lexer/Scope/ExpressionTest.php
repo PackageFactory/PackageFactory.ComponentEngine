@@ -14,9 +14,9 @@ final class ExpressionTest extends TestCase
     use TokenizerTestTrait;
 
     /**
-     * @return array<string, array<int, string>>
+     * @return array<string, array<int, string|array{TokenType, string}>>
      */
-    public function provider(): array
+    public function happyPathProvider(): array
     {
         return [
             'boolean true' => [
@@ -481,13 +481,120 @@ final class ExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider provider
+     * @dataProvider happyPathProvider
      * @test
      * @param string $input
      * @param array<int, array{TokenType, string}> $tokens
      * @return void
      */
-    public function test(string $input, array $tokens): void
+    public function testHappyPath(string $input, array $tokens): void
+    {
+        $iterator = SourceIterator::createFromSource(Source::createFromString($input));
+        $this->assertTokenStream($tokens, Expression::tokenize($iterator));
+    }
+
+    /**
+     * @return array<string, array<int, string>>
+     */
+    public function exceptionPathProvider(): array
+    {
+        return [
+            'unterminated logical and operator' => [
+                'true & false'
+            ],
+            'unterminated logical or operator' => [
+                'true | false'
+            ],
+            'unterminated referential equality comparator (1)' => [
+                '42 = 42'
+            ],
+            'unterminated referential equality comparator (2)' => [
+                '42 == 42'
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider exceptionPathProvider
+     * @test
+     * @param string $input
+     * @return void
+     */
+    public function testExceptionPath(string $input): void
+    {
+        $this->expectException(\Exception::class);
+        $iterator = SourceIterator::createFromSource(Source::createFromString($input));
+        iterator_to_array(Expression::tokenize($iterator));
+    }
+
+    /**
+     * @return array<string, array<int, string|array{TokenType, string}>>
+     */
+    public function exitPathProvider(): array
+    {
+        return [
+            'Something~else' => [
+                'Something~',
+                [
+                    [TokenType::IDENTIFIER(), 'Something']
+                ]
+            ],
+            'Something#else' => [
+                'Something#else',
+                [
+                    [TokenType::IDENTIFIER(), 'Something']
+                ]
+            ],
+            'Something§else' => [
+                'Something§else',
+                [
+                    [TokenType::IDENTIFIER(), 'Something']
+                ]
+            ],
+            'curly bracket sequence with an extra closing bracket' => [
+                '{{}}}else',
+                [
+                    [TokenType::BRACKETS_CURLY_OPEN(), '{'],
+                    [TokenType::BRACKETS_CURLY_OPEN(), '{'],
+                    [TokenType::BRACKETS_CURLY_CLOSE(), '}'],
+                    [TokenType::BRACKETS_CURLY_CLOSE(), '}'],
+                ]
+            ],
+            'square bracket sequence with an extra closing bracket' => [
+                '[[[]]]]else',
+                [
+                    [TokenType::BRACKETS_SQUARE_OPEN(), '['],
+                    [TokenType::BRACKETS_SQUARE_OPEN(), '['],
+                    [TokenType::BRACKETS_SQUARE_OPEN(), '['],
+                    [TokenType::BRACKETS_SQUARE_CLOSE(), ']'],
+                    [TokenType::BRACKETS_SQUARE_CLOSE(), ']'],
+                    [TokenType::BRACKETS_SQUARE_CLOSE(), ']'],
+                ]
+            ],
+            'round bracket sequence with an extra closing bracket' => [
+                '(((()))))else',
+                [
+                    [TokenType::BRACKETS_ROUND_OPEN(), '('],
+                    [TokenType::BRACKETS_ROUND_OPEN(), '('],
+                    [TokenType::BRACKETS_ROUND_OPEN(), '('],
+                    [TokenType::BRACKETS_ROUND_OPEN(), '('],
+                    [TokenType::BRACKETS_ROUND_CLOSE(), ')'],
+                    [TokenType::BRACKETS_ROUND_CLOSE(), ')'],
+                    [TokenType::BRACKETS_ROUND_CLOSE(), ')'],
+                    [TokenType::BRACKETS_ROUND_CLOSE(), ')'],
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider exitPathProvider
+     * @test
+     * @param string $input
+     * @param array<int, array{TokenType, string}> $tokens
+     * @return void
+     */
+    public function testExitPath(string $input, array $tokens): void
     {
         $iterator = SourceIterator::createFromSource(Source::createFromString($input));
         $this->assertTokenStream($tokens, Expression::tokenize($iterator));

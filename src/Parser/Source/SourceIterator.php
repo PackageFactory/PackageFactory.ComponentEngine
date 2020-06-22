@@ -59,6 +59,21 @@ final class SourceIterator implements \Iterator
         return $lookAhead;
     }
 
+    /**
+     * @param string $characterSequence
+     * @return null|Fragment
+     */
+    public function willBe(string $characterSequence)
+    {
+        if ($lookAhead = $this->lookAhead(mb_strlen($characterSequence))) {
+            if ($lookAhead->getValue() === $characterSequence) {
+                return $lookAhead;
+            }
+        }
+
+        return null;
+    }
+
     public function skip(int $length): void
     {
         for ($i = 0; $i < $length; $i++) {

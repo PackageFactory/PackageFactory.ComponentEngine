@@ -22,9 +22,7 @@ final class Expression
     ): \Iterator {
         $brackets = 0;
         while ($iterator->valid()) {
-            foreach (Whitespace::tokenize($iterator) as $token) {
-                yield $token;
-            }
+            yield from Whitespace::tokenize($iterator);
 
             if ($brackets === 0) {
                 foreach ($escapeSequences as $escapeSequence) {
@@ -59,312 +57,250 @@ final class Expression
                 continue;
             } 
             
-            $value = $iterator->current()->getValue();
-
-            if ($value === '!') {
-                yield Token::createFromFragment(
-                    TokenType::OPERATOR_LOGICAL_NOT(),
-                    $iterator->current()
-                );
-                $iterator->next();
-                continue;
-            } elseif ($value === '&') {
-                if ($lookAhead = $iterator->lookAhead(2)) {
-                    if ($lookAhead->getValue() === '&&') {
+            switch ($iterator->current()->getValue()) {
+                case '!':
+                    yield Token::createFromFragment(
+                        TokenType::OPERATOR_LOGICAL_NOT(),
+                        $iterator->current()
+                    );
+                    $iterator->next();
+                    break;
+                case '&':
+                    if ($lookAhead = $iterator->willBe('&&')) {
                         yield Token::createFromFragment(
                             TokenType::OPERATOR_LOGICAL_AND(),
                             $lookAhead
                         );
                         $iterator->skip(2);
-                        continue;
+                    } else {
+                        throw new \Exception('@TODO: Unexpected Fragment: ' . $iterator->current());
                     }
-                }
-            } elseif ($value === '|') {
-                if ($lookAhead = $iterator->lookAhead(2)) {
-                    if ($lookAhead->getValue() === '||') {
+                    break;
+                case '|':
+                    if ($lookAhead = $iterator->willBe('||')) {
                         yield Token::createFromFragment(
                             TokenType::OPERATOR_LOGICAL_OR(),
                             $lookAhead
                         );
                         $iterator->skip(2);
-                        continue;
+                    } else {
+                        throw new \Exception('@TODO: Unexpected Fragment: ' . $iterator->current());
                     }
-                }
-            } elseif ($value === '.') {
-                if ($lookAhead = $iterator->lookAhead(2)) {
-                    $lookAheadValue = $lookAhead->getValue();
-
-                    if (Number::is($lookAheadValue[1])) {
-                        foreach (Number::tokenize($iterator) as $token) {
-                            yield $token;
-                        }
-                        continue;
-                    }  elseif ($lookAhead = $iterator->lookAhead(3)) {
-                        if ($lookAhead->getValue() === '...') {
+                    break;
+                case '.':
+                    if ($lookAhead = $iterator->lookAhead(2)) {
+                        if (Number::is($lookAhead->getValue()[1])) {
+                            yield from Number::tokenize($iterator);
+                            break;
+                        }  elseif ($lookAhead = $iterator->willBe('...')) {
                             yield Token::createFromFragment(
                                 TokenType::OPERATOR_SPREAD(),
                                 $lookAhead
                             );
                             $iterator->skip(3);
-                            continue;
-                        } else {
-                            yield Token::createFromFragment(
-                                TokenType::PERIOD(),
-                                $iterator->current()
-                            );
-                            $iterator->next();
-                            continue;
+                            break;
                         }
-                    }  else {
-                        yield Token::createFromFragment(
-                            TokenType::PERIOD(),
-                            $iterator->current()
-                        );
-                        $iterator->next();
-                        continue;
                     }
-                } else {
+
                     yield Token::createFromFragment(
                         TokenType::PERIOD(),
                         $iterator->current()
                     );
                     $iterator->next();
-                    continue;
-                }
-            } elseif ($value === '+') {
-                yield Token::createFromFragment(
-                    TokenType::OPERATOR_ADD(),
-                    $iterator->current()
-                );
-                $iterator->next();
-                continue;
-            } elseif ($value === '-') {
-                yield Token::createFromFragment(
-                    TokenType::OPERATOR_SUBTRACT(),
-                    $iterator->current()
-                );
-                $iterator->next();
-                continue;
-            } elseif ($value === '*') {
-                yield Token::createFromFragment(
-                    TokenType::OPERATOR_MULTIPLY(),
-                    $iterator->current()
-                );
-                $iterator->next();
-                continue;
-            } elseif ($value === '/') {
-                if ($lookAhead = $iterator->lookAhead(2)) {
-                    if ($lookAhead->getValue() === '/*') {
-                        foreach (Comment::tokenize($iterator) as $token) {
-                            yield $token;
-                        }
+                    break;
+                case '+':
+                    yield Token::createFromFragment(
+                        TokenType::OPERATOR_ADD(),
+                        $iterator->current()
+                    );
+                    $iterator->next();
+                    break;
+                case '-':
+                    yield Token::createFromFragment(
+                        TokenType::OPERATOR_SUBTRACT(),
+                        $iterator->current()
+                    );
+                    $iterator->next();
+                    break;
+                case '*':
+                    yield Token::createFromFragment(
+                        TokenType::OPERATOR_MULTIPLY(),
+                        $iterator->current()
+                    );
+                    $iterator->next();
+                    break;
+                case '/':
+                    if ($lookAhead = $iterator->willBe('/*')) {
+                        yield from Comment::tokenize($iterator);
                     } else {
                         yield Token::createFromFragment(
                             TokenType::OPERATOR_DIVIDE(),
                             $iterator->current()
                         );
                         $iterator->next();
-                        continue;
                     }
-                } else {
+                    break;
+                case '%':
                     yield Token::createFromFragment(
-                        TokenType::OPERATOR_DIVIDE(),
+                        TokenType::OPERATOR_MODULO(),
                         $iterator->current()
                     );
                     $iterator->next();
-                    continue;
-                }
-            } elseif ($value === '%') {
-                yield Token::createFromFragment(
-                    TokenType::OPERATOR_MODULO(),
-                    $iterator->current()
-                );
-                $iterator->next();
-                continue;
-            } elseif ($value === '=') {
-                if ($lookAhead = $iterator->lookAhead(3)) {
-                    if ($lookAhead->getValue() === '===') {
+                    break;
+                case '=':
+                    if ($lookAhead = $iterator->willBe('===')) {
                         yield Token::createFromFragment(
                             TokenType::COMPARATOR_EQ(),
                             $lookAhead
                         );
                         $iterator->skip(3);
-                        continue;
+                    } else {
+                        throw new \Exception('@TODO: Unexpected Fragment: ' . $iterator->current());
                     }
-                }
-            } elseif ($value === '>') {
-                if ($lookAhead = $iterator->lookAhead(2)) {
-                    if ($lookAhead->getValue() === '>=') {
+                    break;
+                case '>':
+                    if ($lookAhead = $iterator->willBe('>=')) {
                         yield Token::createFromFragment(
                             TokenType::COMPARATOR_GTE(),
                             $lookAhead
                         );
                         $iterator->skip(2);
-                        continue;
                     } else {
                         yield Token::createFromFragment(
                             TokenType::COMPARATOR_GT(),
                             $iterator->current()
                         );
                         $iterator->next();
-                        continue;
                     }
-                } else {
-                    yield Token::createFromFragment(
-                        TokenType::COMPARATOR_GT(),
-                        $iterator->current()
-                    );
-                    $iterator->next();
-                    continue;
-                }
-            } elseif ($value === '<') {
-                if ($lookAhead = $iterator->lookAhead(2)) {
-                    if ($lookAhead->getValue() === '<=') {
+                    break;
+                case '<':
+                    if ($lookAhead = $iterator->willBe('<=')) {
                         yield Token::createFromFragment(
                             TokenType::COMPARATOR_LTE(),
                             $lookAhead
                         );
                         $iterator->skip(2);
-                        continue;
                     } else {
                         yield Token::createFromFragment(
                             TokenType::COMPARATOR_LT(),
                             $iterator->current()
                         );
                         $iterator->next();
-                        continue;
                     }
-                } else {
+                    break;
+                case '(':
                     yield Token::createFromFragment(
-                        TokenType::COMPARATOR_LT(),
+                        TokenType::BRACKETS_ROUND_OPEN(),
                         $iterator->current()
                     );
                     $iterator->next();
-                    continue;
-                }
-            } elseif ($value === '(') {
-                yield Token::createFromFragment(
-                    TokenType::BRACKETS_ROUND_OPEN(),
-                    $iterator->current()
-                );
-                $iterator->next();
-                $brackets++;
-                continue;
-            } elseif ($value === ')') {
-                if ($brackets > 0) {
+                    $brackets++;
+                    break;
+                case ')':
+                    if ($brackets > 0) {
+                        yield Token::createFromFragment(
+                            TokenType::BRACKETS_ROUND_CLOSE(),
+                            $iterator->current()
+                        );
+                        $iterator->next();
+                        $brackets--;
+                    } else {
+                        return;
+                    }
+                    break;
+                case '[':
                     yield Token::createFromFragment(
-                        TokenType::BRACKETS_ROUND_CLOSE(),
+                        TokenType::BRACKETS_SQUARE_OPEN(),
                         $iterator->current()
                     );
                     $iterator->next();
-                    $brackets--;
-                    continue;
-                } else {
-                    return;
-                }
-            } elseif ($value === '[') {
-                yield Token::createFromFragment(
-                    TokenType::BRACKETS_SQUARE_OPEN(),
-                    $iterator->current()
-                );
-                $iterator->next();
-                $brackets++;
-                continue;
-            } elseif ($value === ']') {
-                yield Token::createFromFragment(
-                    TokenType::BRACKETS_SQUARE_CLOSE(),
-                    $iterator->current()
-                );
-                $iterator->next();
-                $brackets--;
-                continue;
-            } elseif ($value === '{') {
-                yield Token::createFromFragment(
-                    TokenType::BRACKETS_CURLY_OPEN(),
-                    $iterator->current()
-                );
-                $iterator->next();
-                $brackets++;
-                continue;
-            } elseif ($value === '}') {
-                yield Token::createFromFragment(
-                    TokenType::BRACKETS_CURLY_CLOSE(),
-                    $iterator->current()
-                );
-                $iterator->next();
-                $brackets--;
-                continue;
-            } elseif ($value === ':') {
-                yield Token::createFromFragment(
-                    TokenType::COLON(),
-                    $iterator->current()
-                );
-                $iterator->next();
-                continue;
-            } elseif ($value === ',') {
-                yield Token::createFromFragment(
-                    TokenType::COMMA(),
-                    $iterator->current()
-                );
-                $iterator->next();
-                continue;
-            } elseif ($value === '?') {
-                if ($lookAhead = $iterator->lookAhead(2)) {
-                    if ($lookAhead->getValue() === '?.') {
+                    $brackets++;
+                    break;
+                case ']':
+                    if ($brackets > 0) {
+                        yield Token::createFromFragment(
+                            TokenType::BRACKETS_SQUARE_CLOSE(),
+                            $iterator->current()
+                        );
+                        $iterator->next();
+                        $brackets--;
+                    } else {
+                        return;
+                    }
+                    break;
+                case '{':
+                    yield Token::createFromFragment(
+                        TokenType::BRACKETS_CURLY_OPEN(),
+                        $iterator->current()
+                    );
+                    $iterator->next();
+                    $brackets++;
+                    break;
+                case '}':
+                    if ($brackets > 0) {
+                        yield Token::createFromFragment(
+                            TokenType::BRACKETS_CURLY_CLOSE(),
+                            $iterator->current()
+                        );
+                        $iterator->next();
+                        $brackets--;
+                    } else {
+                        return;
+                    }
+                    break;
+                case ':':
+                    yield Token::createFromFragment(
+                        TokenType::COLON(),
+                        $iterator->current()
+                    );
+                    $iterator->next();
+                    break;
+                case ',':
+                    yield Token::createFromFragment(
+                        TokenType::COMMA(),
+                        $iterator->current()
+                    );
+                    $iterator->next();
+                    break;
+                case '?':
+                    if ($lookAhead = $iterator->willBe('?.')) {
                         yield Token::createFromFragment(
                             TokenType::OPERATOR_OPTCHAIN(),
                             $lookAhead
                         );
                         $iterator->skip(2);
-                        continue;
-                    } elseif ($lookAhead->getValue() === '??') {
+                    } elseif ($lookAhead = $iterator->willBe('??')) {
                         yield Token::createFromFragment(
                             TokenType::OPERATOR_NULLISH_COALESCE(),
                             $lookAhead
                         );
                         $iterator->skip(2);
-                        continue;
                     } else {
                         yield Token::createFromFragment(
                             TokenType::QUESTIONMARK(),
                             $iterator->current()
                         );
                         $iterator->next();
-                        continue;
                     }
-                } else {
-                    yield Token::createFromFragment(
-                        TokenType::QUESTIONMARK(),
-                        $iterator->current()
-                    );
-                    $iterator->next();
-                    continue;
-                }
-            } elseif ($value === '"' || $value === '\'') {
-                foreach (StringLiteral::tokenize($iterator) as $token) {
-                    yield $token;
-                }
-                continue;
-            } elseif ($value === '`') {
-                foreach (TemplateLiteral::tokenize($iterator) as $token) {
-                    yield $token;
-                }
-                continue;
-            } elseif (Number::is($value)) {
-                foreach (Number::tokenize($iterator) as $token) {
-                    yield $token;
-                }
-                continue;
-            } elseif (Identifier::is($value)) {
-                foreach (Identifier::tokenize($iterator) as $token) {
-                    yield $token;
-                }
-                continue;
-            } else {
+                    break;
+                case '"':
+                case '\'':
+                    yield from StringLiteral::tokenize($iterator);
+                    break;
+                case '`':
+                    yield from TemplateLiteral::tokenize($iterator);
+                    break;
+                default:
+                    $value = $iterator->current()->getValue();
+                    if (Number::is($value)) {
+                        yield from Number::tokenize($iterator);
+                    } elseif (Identifier::is($value)) {
+                        yield from Identifier::tokenize($iterator);
+                    } else {
+                        return;
+                    }
                 break;
             }
-
-            $iterator->next();
         }
     }
 }
