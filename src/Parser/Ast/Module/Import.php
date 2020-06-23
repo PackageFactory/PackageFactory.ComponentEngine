@@ -6,10 +6,8 @@ use PackageFactory\ComponentEngine\Parser\Ast\Expression\StringLiteral;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
+use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Pragma\AfxPragmaInterface;
-use PackageFactory\ComponentEngine\Runtime\AfxEvaluatorInterface;
-use PackageFactory\ComponentEngine\Runtime\Context;
 
 final class Import implements \JsonSerializable
 {
@@ -26,21 +24,21 @@ final class Import implements \JsonSerializable
     /**
      * @var string
      */
-    private $source;
+    private $target;
 
     /**
      * @param string $domesticName
      * @param string $foreignName
-     * @param string $source
+     * @param string $target
      */
     private function __construct(
         string $domesticName,
         string $foreignName,
-        string $source
+        string $target
     ) {
         $this->domesticName = $domesticName;
         $this->foreignName = $foreignName;
-        $this->source = $source;
+        $this->target = $target;
     }
 
     /**
@@ -85,10 +83,10 @@ final class Import implements \JsonSerializable
             throw new \Exception('@TODO: Unexpected end of file');
         }
 
-        $source = StringLiteral::createFromTokenStream($stream);
+        $target = StringLiteral::createFromTokenStream($stream);
 
         foreach ($importMap as $domesticName => $foreignName) {
-            yield $domesticName => new self($domesticName, $foreignName, $source->getValue());
+            yield $domesticName => new self($domesticName, $foreignName, $target->getValue());
         }
     }
 
@@ -111,19 +109,21 @@ final class Import implements \JsonSerializable
     /**
      * @return string
      */
-    public function getSource(): string
+    public function getTarget(): string
     {
-        return $this->source;
+        return $this->target;
     }
 
     /**
      * @return array<mixed>
      */
-    public function evaluate(LoaderInterface $loader)
+    public function evaluate(LoaderInterface $loader, Source $source)
     {
         return ExportEvaluator::createFromLoaderAndModuleAndExportName(
             $loader,
-            $loader->load(Path::createFromString($this->source)),
+            $loader->load($source->getPath()->getRelativePathTo(
+                Path::createFromString($this->target)
+            )),
             $this->foreignName
         );
     }

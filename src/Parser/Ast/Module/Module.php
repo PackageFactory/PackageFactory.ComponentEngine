@@ -4,12 +4,18 @@ namespace PackageFactory\ComponentEngine\Parser\Ast\Module;
 use PackageFactory\ComponentEngine\Loader\LoaderInterface;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
+use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Util;
 use PackageFactory\ComponentEngine\Pragma\AfxPragmaInterface;
 use PackageFactory\ComponentEngine\Runtime\Context;
 
 final class Module implements \JsonSerializable
 {
+    /**
+     * @var Source
+     */
+    private $source;
+
     /**
      * @var array|Import[]
      */
@@ -31,10 +37,12 @@ final class Module implements \JsonSerializable
      * @param array|Constant[] $constants
      */
     private function __construct(
+        Source $source,
         array $imports,
         array $exports,
         array $constants
     ) {
+        $this->source = $source;
         $this->imports = $imports;
         $this->exports = $exports;
         $this->constants = $constants;
@@ -46,6 +54,11 @@ final class Module implements \JsonSerializable
      */
     public static function createFromTokenStream(TokenStream $stream): self
     {
+        if (!$stream->valid()) {
+            throw new \Exception('@TODO: Unexpected end of file');
+        }
+
+        $source = $stream->current()->getSource();
         Util::skipWhiteSpaceAndComments($stream);
 
         $imports = [];
@@ -75,7 +88,15 @@ final class Module implements \JsonSerializable
             }
         }
 
-        return new self($imports, $exports, $constants);
+        return new self($source, $imports, $exports, $constants);
+    }
+
+    /**
+     * @return Source
+     */
+    public function getSource(): Source
+    {
+        return $this->source;
     }
 
     /**
@@ -143,7 +164,7 @@ final class Module implements \JsonSerializable
         foreach ($this->imports as $import) {
             $context = $context->withMergedProperties([
                 (string) $import->getDomesticName() => 
-                    $import->evaluate($loader)
+                    $import->evaluate($loader, $this->source)
             ]);
         }
 
