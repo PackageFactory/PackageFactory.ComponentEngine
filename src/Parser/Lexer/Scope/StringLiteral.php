@@ -57,7 +57,7 @@ final class StringLiteral
 
                     $iterator->next();
                 }
-            } elseif ($value === '\n') {
+            } elseif ($value === PHP_EOL) {
                 if ($capture !== null) {
                     yield Token::createFromFragment(
                         TokenType::STRING_LITERAL_CONTENT(),
@@ -67,13 +67,8 @@ final class StringLiteral
                     $capture = null;
                 }
 
-                yield Token::createFromFragment(
-                    TokenType::END_OF_LINE(),
-                    $fragment
-                );
-
-                $iterator->next();
-            } elseif ($value === $delimiter->getValue()) {
+                return;
+            } elseif ($delimiter !== null && $value === $delimiter->getValue()) {
                 if ($capture !== null) {
                     yield Token::createFromFragment(
                         TokenType::STRING_LITERAL_CONTENT(),

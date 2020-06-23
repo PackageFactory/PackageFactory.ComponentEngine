@@ -15,7 +15,7 @@ final class ModuleTest extends TestCase
     /**
      * @return array<string, array{string, array<int, array{TokenType, string}>}>
      */
-    public function provider(): array
+    public function happyPathProvider(): array
     {
         return [
             'import default module' => [
@@ -770,12 +770,76 @@ final class ModuleTest extends TestCase
     }
 
     /**
-     * @dataProvider provider
+     * @dataProvider happyPathProvider
      * @param string $input
      * @param array<int, array{TokenType, string}> $tokens
      * @return void
      */
-    public function test(string $input, array $tokens): void
+    public function testHappyPath(string $input, array $tokens): void
+    {
+        $iterator = SourceIterator::createFromSource(Source::createFromString($input));
+        $this->assertTokenStream($tokens, Module::tokenize($iterator));
+    }
+
+    /**
+     * @return array<string, array{string, array<int, array{TokenType, string}>}>
+     */
+    public function exitPathProvider(): array
+    {
+        return [
+            'unknown symbols within import statement' => [
+                'import %%% from "./%%%.afx"',
+                [
+                    [TokenType::MODULE_KEYWORD_IMPORT(), 'import'],
+                    [TokenType::WHITESPACE(), ' '],
+                ]
+            ],
+            'unknown symbols within const assignment' => [
+                'const § = "Foo!"',
+                [
+                    [TokenType::MODULE_KEYWORD_CONST(), 'const'],
+                    [TokenType::WHITESPACE(), ' '],
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider exitPathProvider
+     * 
+     * @param string $input
+     * @param array<int, array{TokenType, string}> $tokens
+     * @return void
+     */
+    public function testExitPath(string $input, array $tokens): void
+    {
+        $iterator = SourceIterator::createFromSource(Source::createFromString($input));
+        $this->assertTokenStream($tokens, Module::tokenize($iterator));
+    }
+
+    /**
+     * @return array<string, array{string, array<int, array{TokenType, string}>}>
+     */
+    public function edgeCaseProvider(): array
+    {
+        return [
+            'whitespace only' => [
+                '               ',
+                [
+                    [TokenType::WHITESPACE(), '               '],
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider edgeCaseProvider
+     * 
+     * @param string $input
+     * @param array<int, array{TokenType, string}> $tokens
+     * @return void
+     */
+    public function testEdgeCases(string $input, array $tokens): void
     {
         $iterator = SourceIterator::createFromSource(Source::createFromString($input));
         $this->assertTokenStream($tokens, Module::tokenize($iterator));

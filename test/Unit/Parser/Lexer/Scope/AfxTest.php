@@ -16,7 +16,7 @@ final class AfxTest extends TestCase
     /**
      * @return array<string, array{string, array<int, array{TokenType, string}>}>
      */
-    public function provider(): array
+    public function happyPathProvider(): array
     {
         return [
             'opening tag' => [
@@ -57,6 +57,26 @@ final class AfxTest extends TestCase
                     [TokenType::AFX_TAG_CONTENT(), 'Hello'],
                     [TokenType::WHITESPACE(), ' '],
                     [TokenType::AFX_TAG_CONTENT(), 'World!'],
+                    [TokenType::AFX_TAG_START(), '<'],
+                    [TokenType::AFX_TAG_CLOSE(), '/'],
+                    [TokenType::IDENTIFIER(), 'a'],
+                    [TokenType::AFX_TAG_END(), '>'],
+                ]
+            ],
+            'opening and closing tag with content and interpolation' => [
+                '<a>Hello {props.name}!</a>',
+                [
+                    [TokenType::AFX_TAG_START(), '<'],
+                    [TokenType::IDENTIFIER(), 'a'],
+                    [TokenType::AFX_TAG_END(), '>'],
+                    [TokenType::AFX_TAG_CONTENT(), 'Hello'],
+                    [TokenType::WHITESPACE(), ' '],
+                    [TokenType::AFX_EXPRESSION_START(), '{'],
+                    [TokenType::IDENTIFIER(), 'props'],
+                    [TokenType::PERIOD(), '.'],
+                    [TokenType::IDENTIFIER(), 'name'],
+                    [TokenType::AFX_EXPRESSION_END(), '}'],
+                    [TokenType::AFX_TAG_CONTENT(), '!'],
                     [TokenType::AFX_TAG_START(), '<'],
                     [TokenType::AFX_TAG_CLOSE(), '/'],
                     [TokenType::IDENTIFIER(), 'a'],
@@ -399,13 +419,43 @@ final class AfxTest extends TestCase
     }
 
     /**
-     * @dataProvider provider
+     * @dataProvider happyPathProvider
      * 
      * @param string $input
      * @param array<int, array{TokenType, string}> $tokens
      * @return void
      */
-    public function test(string $input, array $tokens): void
+    public function testHappyPath(string $input, array $tokens): void
+    {
+        $iterator = SourceIterator::createFromSource(Source::createFromString($input));
+        $this->assertTokenStream($tokens, Afx::tokenize($iterator));
+    }
+
+    /**
+     * @return array<string, array{string, array<int, array{TokenType, string}>}>
+     */
+    public function exitPathProvider(): array
+    {
+        return [
+            'unknown symbols within tag' => [
+                '<a %%%>',
+                [
+                    [TokenType::AFX_TAG_START(), '<'],
+                    [TokenType::IDENTIFIER(), 'a'],
+                    [TokenType::WHITESPACE(), ' '],
+                ]
+            ],
+        ];
+    }
+
+        /**
+     * @dataProvider exitPathProvider
+     * 
+     * @param string $input
+     * @param array<int, array{TokenType, string}> $tokens
+     * @return void
+     */
+    public function testExitPath(string $input, array $tokens): void
     {
         $iterator = SourceIterator::createFromSource(Source::createFromString($input));
         $this->assertTokenStream($tokens, Afx::tokenize($iterator));

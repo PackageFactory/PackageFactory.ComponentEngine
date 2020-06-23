@@ -77,6 +77,26 @@ final class StringLiteralTest extends TestCase
                     [TokenType::STRING_LITERAL_END(), '\''],
                 ]
             ],
+            'double-quote exit after newline' => [
+                '"Hello ' . PHP_EOL . ' World"',
+                [
+                    [TokenType::STRING_LITERAL_START(), '"'],
+                    [TokenType::STRING_LITERAL_CONTENT(), 'Hello '],
+                ]
+            ],
+            'single-quote exit after newline' => [
+                '\'Hello ' . PHP_EOL . ' World\'',
+                [
+                    [TokenType::STRING_LITERAL_START(), '\''],
+                    [TokenType::STRING_LITERAL_CONTENT(), 'Hello '],
+                ]
+            ],
+            'without delimiter' => [
+                'Hello World',
+                [
+                    [TokenType::STRING_LITERAL_CONTENT(), 'Hello World'],
+                ]
+            ],
         ];
     }
 

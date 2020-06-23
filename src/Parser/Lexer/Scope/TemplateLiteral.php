@@ -58,7 +58,7 @@ final class TemplateLiteral
 
                     $iterator->next();
                 }
-            } elseif ($value === '\n') {
+            } elseif ($value === PHP_EOL) {
                 if ($capture !== null) {
                     yield Token::createFromFragment(
                         TokenType::TEMPLATE_LITERAL_CONTENT(),
@@ -75,33 +75,23 @@ final class TemplateLiteral
 
                 $iterator->next();
             } elseif ($value === '$') {
-                if ($lookAhead = $iterator->lookAhead(2)) {
-                    if ($lookAhead->getValue() === '${') {
-                        if ($capture !== null) {
-                            yield Token::createFromFragment(
-                                TokenType::TEMPLATE_LITERAL_CONTENT(),
-                                $capture
-                            );
-        
-                            $capture = null;
-                        }
-                        $interpolation = true;
+                if ($lookAhead = $iterator->willBe('${')) {
+                    if ($capture !== null) {
                         yield Token::createFromFragment(
-                            TokenType::TEMPLATE_LITERAL_INTERPOLATION_START(),
-                            $lookAhead
+                            TokenType::TEMPLATE_LITERAL_CONTENT(),
+                            $capture
                         );
-                        $iterator->skip(2);
-
-                        foreach (Expression::tokenize($iterator, ['}']) as $token) {
-                            yield $token;
-                        }
-                    } elseif ($capture === null) {
-                        $capture = $fragment;
-                        $iterator->next();
-                    } else {
-                        $capture = $capture->append($fragment);
-                        $iterator->next();
+    
+                        $capture = null;
                     }
+                    $interpolation = true;
+                    yield Token::createFromFragment(
+                        TokenType::TEMPLATE_LITERAL_INTERPOLATION_START(),
+                        $lookAhead
+                    );
+                    $iterator->skip(2);
+
+                    yield from Expression::tokenize($iterator, ['}']);
                 } elseif ($capture === null) {
                     $capture = $fragment;
                     $iterator->next();
@@ -117,7 +107,7 @@ final class TemplateLiteral
 
                 $capture = null;
                 $iterator->next();
-            } elseif ($value === $delimiter->getValue()) {
+            } elseif ($delimiter !== null && $value === $delimiter->getValue()) {
                 if ($capture !== null) {
                     yield Token::createFromFragment(
                         TokenType::TEMPLATE_LITERAL_CONTENT(),

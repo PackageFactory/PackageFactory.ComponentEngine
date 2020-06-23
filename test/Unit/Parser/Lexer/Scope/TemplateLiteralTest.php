@@ -123,6 +123,46 @@ final class TemplateLiteralTest extends TestCase
                     [TokenType::TEMPLATE_LITERAL_END(), '`'],
                 ]
             ],
+            'dollar signs only' => [
+                '`$$$`',
+                [
+                    [TokenType::TEMPLATE_LITERAL_START(), '`'],
+                    [TokenType::TEMPLATE_LITERAL_CONTENT(), '$$$'],
+                    [TokenType::TEMPLATE_LITERAL_END(), '`'],
+                ]
+            ],
+            'without delimiter' => [
+                'Hello \${test}!',
+                [
+                    [TokenType::TEMPLATE_LITERAL_CONTENT(), 'Hello '],
+                    [TokenType::TEMPLATE_LITERAL_ESCAPE(), '\\'],
+                    [TokenType::TEMPLATE_LITERAL_ESCAPED_CHARACTER(), '$'],
+                    [TokenType::TEMPLATE_LITERAL_CONTENT(), '{test}!'],
+                ]
+            ],
+            'with line break' => [
+                '`Hello ' . PHP_EOL . ' World`',
+                [
+                    [TokenType::TEMPLATE_LITERAL_START(), '`'],
+                    [TokenType::TEMPLATE_LITERAL_CONTENT(), 'Hello '],
+                    [TokenType::END_OF_LINE(), PHP_EOL],
+                    [TokenType::TEMPLATE_LITERAL_CONTENT(), ' World'],
+                    [TokenType::TEMPLATE_LITERAL_END(), '`'],
+                ]
+            ],
+            'with interpolation and line break' => [
+                '`Hello ' . PHP_EOL . ' ${name}`',
+                [
+                    [TokenType::TEMPLATE_LITERAL_START(), '`'],
+                    [TokenType::TEMPLATE_LITERAL_CONTENT(), 'Hello '],
+                    [TokenType::END_OF_LINE(), PHP_EOL],
+                    [TokenType::TEMPLATE_LITERAL_CONTENT(), ' '],
+                    [TokenType::TEMPLATE_LITERAL_INTERPOLATION_START(), '${'],
+                    [TokenType::IDENTIFIER(), 'name'],
+                    [TokenType::TEMPLATE_LITERAL_INTERPOLATION_END(), '}'],
+                    [TokenType::TEMPLATE_LITERAL_END(), '`'],
+                ]
+            ],
         ];
     }
 

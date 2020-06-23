@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Lexer\Scope;
 
+use PackageFactory\ComponentEngine\Parser\Lexer\Capture;
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Source\SourceIterator;
@@ -50,41 +51,23 @@ final class Number
      */
     public static function tokenizeBinary(SourceIterator $iterator): \Iterator
     {
-        $capture = null;
-        if ($iterator->current()->getValue() === '0') {
-            $capture = $iterator->current();
-            $iterator->next();
-        }
-
-        if ($iterator->current()->getValue() === 'b' || $iterator->current()->getValue() === 'B') {
-            if ($capture === null) {
-                $capture = $iterator->current();
-            } else {
-                $capture = $capture->append($iterator->current());
-            }
-            $iterator->next();
-        }
+        $capture = Capture::createFromFragment($iterator->current());
+        $iterator->next();
+        $capture->append($iterator->current());
+        $iterator->next();
 
         while ($iterator->valid()) {
             $value = $iterator->current()->getValue();
+
             if (in_array($value, self::DIGITS_BIN)) {
-                if ($capture === null) {
-                    $capture = $iterator->current();
-                } else {
-                    $capture = $capture->append($iterator->current());
-                }
+                $capture->append($iterator->current());
             } else {
                 break;
             }
             $iterator->next();
         }
 
-        if ($capture !== null) {
-            yield Token::createFromFragment(
-                TokenType::NUMBER(),
-                $capture
-            );
-        }
+        yield from $capture->flush(TokenType::NUMBER());
     }
 
     /**
@@ -93,41 +76,22 @@ final class Number
      */
     public static function tokenizeOctal(SourceIterator $iterator): \Iterator
     {
-        $capture = null;
-        if ($iterator->current()->getValue() === '0') {
-            $capture = $iterator->current();
-            $iterator->next();
-        }
-
-        if ($iterator->current()->getValue() === 'o') {
-            if ($capture === null) {
-                $capture = $iterator->current();
-            } else {
-                $capture = $capture->append($iterator->current());
-            }
-            $iterator->next();
-        }
+        $capture = Capture::createFromFragment($iterator->current());
+        $iterator->next();
+        $capture->append($iterator->current());
+        $iterator->next();
 
         while ($iterator->valid()) {
             $value = $iterator->current()->getValue();
             if (in_array($value, self::DIGITS_OCT)) {
-                if ($capture === null) {
-                    $capture = $iterator->current();
-                } else {
-                    $capture = $capture->append($iterator->current());
-                }
+                $capture->append($iterator->current());
             } else {
                 break;
             }
             $iterator->next();
         }
 
-        if ($capture !== null) {
-            yield Token::createFromFragment(
-                TokenType::NUMBER(),
-                $capture
-            );
-        }
+        yield from $capture->flush(TokenType::NUMBER());
     }
 
     /**
@@ -136,41 +100,22 @@ final class Number
      */
     public static function tokenizeHexadecimal(SourceIterator $iterator): \Iterator
     {
-        $capture = null;
-        if ($iterator->current()->getValue() === '0') {
-            $capture = $iterator->current();
-            $iterator->next();
-        }
-
-        if ($iterator->current()->getValue() === 'x') {
-            if ($capture === null) {
-                $capture = $iterator->current();
-            } else {
-                $capture = $capture->append($iterator->current());
-            }
-            $iterator->next();
-        }
+        $capture = Capture::createFromFragment($iterator->current());
+        $iterator->next();
+        $capture->append($iterator->current());
+        $iterator->next();
 
         while ($iterator->valid()) {
             $value = $iterator->current()->getValue();
             if (in_array($value, self::DIGITS_HEX)) {
-                if ($capture === null) {
-                    $capture = $iterator->current();
-                } else {
-                    $capture = $capture->append($iterator->current());
-                }
+                $capture->append($iterator->current());
             } else {
                 break;
             }
             $iterator->next();
         }
 
-        if ($capture !== null) {
-            yield Token::createFromFragment(
-                TokenType::NUMBER(),
-                $capture
-            );
-        }
+        yield from $capture->flush(TokenType::NUMBER());
     }
 
     /**
@@ -179,33 +124,19 @@ final class Number
      */
     public static function tokenizeDecimal(SourceIterator $iterator): \Iterator
     {
-        $capture = null;
+        $capture = Capture::createEmpty();
         $floatingPoint = false;
         $exponentiation = false;
 
         while ($iterator->valid()) {
             $value = $iterator->current()->getValue();
             if (in_array($value, self::DIGITS_DEC)) {
-                if ($capture === null) {
-                    $capture = $iterator->current();
-                } else {
-                    $capture = $capture->append($iterator->current());
-                }
+                $capture->append($iterator->current());
             } elseif ($value === '.' && !$floatingPoint && !$exponentiation) {
-                if ($capture === null) {
-                    $capture = $iterator->current();
-                } else {
-                    $capture = $capture->append($iterator->current());
-                }
-
+                $capture->append($iterator->current());
                 $floatingPoint = true;
             } elseif (($value === 'e' || $value === 'E') && !$exponentiation) {
-                if ($capture === null) {
-                    $capture = $iterator->current();
-                } else {
-                    $capture = $capture->append($iterator->current());
-                }
-
+                $capture->append($iterator->current());
                 $floatingPoint = true;
             } else {
                 break;
@@ -213,11 +144,6 @@ final class Number
             $iterator->next();
         }
 
-        if ($capture !== null) {
-            yield Token::createFromFragment(
-                TokenType::NUMBER(),
-                $capture
-            );
-        }
+        yield from $capture->flush(TokenType::NUMBER());
     }
 }

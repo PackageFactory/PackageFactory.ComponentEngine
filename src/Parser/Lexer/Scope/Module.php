@@ -86,18 +86,6 @@ final class Module
                 $iterator->next();
 
                 yield from self::tokenizeAssignmentValue($iterator);
-            } elseif ($value === '(') {
-                yield Token::createFromFragment(
-                    TokenType::BRACKETS_ROUND_OPEN(),
-                    $iterator->current()
-                );
-                $iterator->next();
-            } elseif ($value === ')') {
-                yield Token::createFromFragment(
-                    TokenType::BRACKETS_ROUND_CLOSE(),
-                    $iterator->current()
-                );
-                $iterator->next();
             } elseif ($value === '[') {
                 yield Token::createFromFragment(
                     TokenType::BRACKETS_SQUARE_OPEN(),
