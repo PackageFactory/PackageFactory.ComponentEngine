@@ -13,14 +13,13 @@ use PHPUnit\Framework\TestCase;
 final class TernaryTest extends TestCase
 {
     /**
-     * @return array<string, array{string, string, array<mixed>}>
+     * @return array<string, array{string, array<mixed>}>
      */
     public function provider(): array 
     {
         return [
             'true ? "yes" : "no"' => [
                 'true ? "yes" : "no"',
-                'yes',
                 [
                     'type' => 'Ternary',
                     'condition' => [
@@ -42,7 +41,6 @@ final class TernaryTest extends TestCase
             ],
             'false ? "yes" : "no"' => [
                 'false ? "yes" : "no"',
-                'no',
                 [
                     'type' => 'Ternary',
                     'condition' => [
@@ -64,7 +62,6 @@ final class TernaryTest extends TestCase
             ],
             'true || false ? "yes" : "no"' => [
                 'true || false ? "yes" : "no"',
-                'yes',
                 [
                     'type' => 'Ternary',
                     'condition' => [
@@ -95,7 +92,6 @@ final class TernaryTest extends TestCase
             ],
             'true && false ? "yes" : "no"' => [
                 'true && false ? "yes" : "no"',
-                'no',
                 [
                     'type' => 'Ternary',
                     'condition' => [
@@ -131,11 +127,10 @@ final class TernaryTest extends TestCase
      * @dataProvider provider
      * @test
      * @param string $input
-     * @param string $output
      * @param array<mixed> $asJson
      * @return void
      */
-    public function test(string $input, string $output, array $asJson): void
+    public function test(string $input, array $asJson): void
     {
         $source = Source::createFromString($input);
         $tokenizer = Tokenizer::createFromSource($source, Scope\Expression::class);
@@ -144,9 +139,6 @@ final class TernaryTest extends TestCase
         $result = Expression::createFromTokenStream($stream);
 
         $this->assertNotNull($result);
-        if ($result !== null) {
-            $this->assertEquals($output, $result->evaluate());
-        }
         $this->assertJsonStringEqualsJsonString(
             (string) json_encode($asJson),
             (string) json_encode($result)

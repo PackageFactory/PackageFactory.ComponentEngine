@@ -109,7 +109,7 @@ final class NumberLiteralTest extends TestCase
         
         $this->assertEquals($asString, $result->getValue());
         $this->assertEquals($asString, $result->__toString());
-        $this->assertEquals($asNumber, $result->evaluate());
+        $this->assertEquals($asNumber, $result->getNumber());
         $this->assertJsonStringEqualsJsonString(
             (string) json_encode($asJson),
             (string) json_encode($result)

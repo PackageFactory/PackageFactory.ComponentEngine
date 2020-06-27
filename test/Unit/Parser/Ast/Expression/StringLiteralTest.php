@@ -92,7 +92,6 @@ final class StringLiteralTest extends TestCase
 
         $this->assertEquals($output, $result->getValue());
         $this->assertEquals($output, $result->__toString());
-        $this->assertEquals($output, $result->evaluate());
         $this->assertJsonStringEqualsJsonString(
             (string) json_encode($asJson),
             (string) json_encode($result)

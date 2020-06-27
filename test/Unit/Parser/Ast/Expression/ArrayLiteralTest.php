@@ -11,14 +11,13 @@ use PHPUnit\Framework\TestCase;
 final class ArrayLiteralTest extends TestCase
 {
     /**
-     * @return array<string, array{string, array<int, mixed>, array<mixed>}>
+     * @return array<string, array{string, array<mixed>}>
      */
     public function provider(): array 
     {
         return [
             'empty array' => [
                 '[]',
-                [],
                 [
                     'type' => 'ArrayLiteral',
                     'offset' => [0, 1],
@@ -27,7 +26,6 @@ final class ArrayLiteralTest extends TestCase
             ],
             'one number element' => [
                 '[42]',
-                [42.0],
                 [
                     'type' => 'ArrayLiteral',
                     'offset' => [0, 3],
@@ -42,7 +40,6 @@ final class ArrayLiteralTest extends TestCase
             ],
             'boolean elements' => [
                 '[true, false]',
-                [true, false],
                 [
                     'type' => 'ArrayLiteral',
                     'offset' => [0, 12],
@@ -62,7 +59,6 @@ final class ArrayLiteralTest extends TestCase
             ],
             'null elements' => [
                 '[null, null, null]',
-                [null, null, null],
                 [
                     'type' => 'ArrayLiteral',
                     'offset' => [0, 17],
@@ -84,7 +80,6 @@ final class ArrayLiteralTest extends TestCase
             ],
             'string elements' => [
                 '["foo", "bar", "baz"]',
-                ['foo', 'bar', 'baz'],
                 [
                     'type' => 'ArrayLiteral',
                     'offset' => [0, 20],
@@ -109,7 +104,6 @@ final class ArrayLiteralTest extends TestCase
             ],
             'mixed' => [
                 '[.5, "Hello World", false, 12.3, null]',
-                [0.5, 'Hello World', false, 12.3, null],
                 [
                     'type' => 'ArrayLiteral',
                     'offset' => [0, 37],
@@ -148,11 +142,10 @@ final class ArrayLiteralTest extends TestCase
      * @dataProvider provider
      * @test
      * @param string $input
-     * @param array<int, mixed> $asArray
      * @param array<mixed> $asJson
      * @return void
      */
-    public function test(string $input, array $asArray, array $asJson): void
+    public function test(string $input, array $asJson): void
     {
         $source = Source::createFromString($input);
         $tokenizer = Tokenizer::createFromSource($source, Scope\Expression::class);
@@ -160,7 +153,6 @@ final class ArrayLiteralTest extends TestCase
 
         $result = ArrayLiteral::createFromTokenStream($stream);
 
-        $this->assertEquals($asArray, $result->evaluate());
         $this->assertJsonStringEqualsJsonString(
             (string) json_encode($asJson),
             (string) json_encode($result)

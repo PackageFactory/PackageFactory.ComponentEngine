@@ -8,7 +8,7 @@ final class Printer
     public static function print(iterable $tokenStream): void
     {
         $lines = [''];
-        $lines[] = sprintf(
+        echo sprintf(
             "%-40s %-5s %-5s %-5s %-5s %-5s %-5s %s",
             'TYPE',
             'S_IDX',
@@ -18,7 +18,7 @@ final class Printer
             'E_ROW',
             'E_COL',
             'VALUE'
-        );
+        ) . PHP_EOL;
         foreach ($tokenStream as $token) {
             echo sprintf(
                 "%-40s %-5s %-5s %-5s %-5s %-5s %-5s %s",

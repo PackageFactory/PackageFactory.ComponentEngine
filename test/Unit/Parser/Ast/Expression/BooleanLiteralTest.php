@@ -58,7 +58,7 @@ final class BooleanLiteralTest extends TestCase
         
         $this->assertEquals($asString, $result->getValue());
         $this->assertEquals($asString, $result->__toString());
-        $this->assertEquals($asBoolean, $result->evaluate());
+        $this->assertEquals($asBoolean, $result->getBoolean());
         $this->assertJsonStringEqualsJsonString(
             (string) json_encode($asJson),
             (string) json_encode($result)

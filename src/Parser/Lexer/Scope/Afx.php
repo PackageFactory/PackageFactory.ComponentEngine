@@ -4,7 +4,6 @@ namespace PackageFactory\ComponentEngine\Parser\Lexer\Scope;
 use PackageFactory\ComponentEngine\Parser\Lexer\Capture;
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
-use PackageFactory\ComponentEngine\Parser\Source\Fragment;
 use PackageFactory\ComponentEngine\Parser\Source\SourceIterator;
 
 final class Afx
@@ -15,7 +14,6 @@ final class Afx
      */
     public static function tokenize(SourceIterator $iterator): \Iterator
     {
-        $open = false;
         $tags = 0;
         while ($iterator->valid()) {
             yield from Whitespace::tokenize($iterator);
@@ -28,16 +26,16 @@ final class Afx
                     $iterator->current()
                 );
                 $iterator->next();
-                $open = true;
+                if (!$iterator->willBe('/')) {
+                    $tags++;
+                }
             } elseif ($value === '/') {
                 yield Token::createFromFragment(
                     TokenType::AFX_TAG_CLOSE(),
                     $iterator->current()
                 );
                 $iterator->next();
-                if ($open) {
-                    $open = false;
-                }
+                $tags--;
             } elseif ($value === '>') {
                 yield Token::createFromFragment(
                     TokenType::AFX_TAG_END(),
@@ -45,16 +43,8 @@ final class Afx
                 );
                 $iterator->next();
 
-                if ($open) {
-                    $tags++;
-                } elseif ($tags === 0) {
-                    continue;
-                } else {
-                    $tags--;
-                }
-
                 if ($tags === 0) {
-                    continue;
+                    return;
                 }
 
                 yield from Whitespace::tokenize($iterator);

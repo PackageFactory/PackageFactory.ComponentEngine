@@ -11,14 +11,13 @@ use PHPUnit\Framework\TestCase;
 final class ObjectLiteralTest extends TestCase
 {
     /**
-     * @return array<string, array{string, \stdClass, array<mixed>}>
+     * @return array<string, array{string, array<mixed>}>
      */
     public function provider(): array 
     {
         return [
             'empty object' => [
                 '{}',
-                (object) [],
                 [
                     'type' => 'ObjectLiteral',
                     'offset' => [0, 1],
@@ -28,7 +27,6 @@ final class ObjectLiteralTest extends TestCase
             ],
             'number property' => [
                 '{ number: 42 }',
-                (object) [ 'number' => 42.0 ],
                 [
                     'type' => 'ObjectLiteral',
                     'offset' => [0, 13],
@@ -50,7 +48,6 @@ final class ObjectLiteralTest extends TestCase
             ],
             'string property' => [
                 '{ string: "Hello World!" }',
-                (object) [ 'string' => 'Hello World!' ],
                 [
                     'type' => 'ObjectLiteral',
                     'offset' => [0, 25],
@@ -72,7 +69,6 @@ final class ObjectLiteralTest extends TestCase
             ],
             'boolean properties' => [
                 '{ isTrue: true, isFalse: false }',
-                (object) [ 'isTrue' => true, 'isFalse' => false ],
                 [
                     'type' => 'ObjectLiteral',
                     'offset' => [0, 31],
@@ -106,7 +102,6 @@ final class ObjectLiteralTest extends TestCase
             ],
             'null property' => [
                 '{ isNull: null }',
-                (object) [],
                 [
                     'type' => 'ObjectLiteral',
                     'offset' => [0, 15],
@@ -127,7 +122,6 @@ final class ObjectLiteralTest extends TestCase
             ],
             'mixed' => [
                 '{ isHighlighted: true, title: "Latest News", fontSize: 12.3, content: null }',
-                (object) [ 'isHighlighted' => true, 'title' => 'Latest News', 'fontSize' => 12.3 ],
                 [
                     'type' => 'ObjectLiteral',
                     'offset' => [0, 75],
@@ -189,11 +183,10 @@ final class ObjectLiteralTest extends TestCase
      * @dataProvider provider
      * @test
      * @param string $input
-     * @param \stdClass $asObject
      * @param array<mixed> $asJson
      * @return void
      */
-    public function test(string $input, \stdClass $asObject, array $asJson): void
+    public function test(string $input, array $asJson): void
     {
         $source = Source::createFromString($input);
         $tokenizer = Tokenizer::createFromSource($source, Scope\Expression::class);
@@ -201,7 +194,6 @@ final class ObjectLiteralTest extends TestCase
 
         $result = ObjectLiteral::createFromTokenStream($stream);
 
-        $this->assertEquals($asObject, $result->evaluate());
         $this->assertJsonStringEqualsJsonString(
             (string) json_encode($asJson),
             (string) json_encode($result)
