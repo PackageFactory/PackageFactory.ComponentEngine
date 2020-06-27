@@ -4,10 +4,8 @@ namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Runtime\Context;
-use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class Conjunction implements \JsonSerializable, ContextEvaluatorInterface
+final class Conjunction implements \JsonSerializable
 {
     const OPERATOR_LOGICAL_AND = '&&';
 
@@ -132,35 +130,6 @@ final class Conjunction implements \JsonSerializable, ContextEvaluatorInterface
     public function getRight()
     {
         return $this->right;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function evaluate(Context $context = null)
-    {
-        $left = $this->left->evaluate($context);
-        if (is_string($left)) {
-            $left = $left !== '';
-        } elseif (is_numeric($left)) {
-            $left = $left !== 0;
-        } elseif (is_null($left)) {
-            $left = false;
-        } elseif (is_bool($left)) {
-            $left = $left;
-        } else {
-            $left = (bool) $left;
-        }
-
-        if ($this->operator === self::OPERATOR_LOGICAL_AND) {
-            if ($left === true) {
-                return $this->right->evaluate($context);
-            } else {
-                return false;
-            }
-        } else {
-            throw new \RuntimeException('@TODO: Unknown operator');
-        }
     }
 
     /**

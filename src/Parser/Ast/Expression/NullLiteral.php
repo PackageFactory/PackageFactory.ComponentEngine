@@ -40,14 +40,6 @@ final class NullLiteral implements \JsonSerializable
     }
 
     /**
-     * @return null
-     */
-    public function evaluate()
-    {
-        return null;
-    }
-
-    /**
      * @return string
      */
     public function __toString(): string

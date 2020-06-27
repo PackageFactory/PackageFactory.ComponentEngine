@@ -5,10 +5,8 @@ use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Runtime\Context;
-use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class ArrayLiteral implements \JsonSerializable, ContextEvaluatorInterface
+final class ArrayLiteral implements \JsonSerializable
 {
     /**
      * @var Token
@@ -95,38 +93,6 @@ final class ArrayLiteral implements \JsonSerializable, ContextEvaluatorInterface
     public function getItems(): array
     {
         return $this->items;
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function evaluate(Context $context = null): array
-    {
-        $result = [];
-
-        foreach ($this->items as $item) {
-            if ($item instanceof Spread) {
-                $spread = $item->evaluate($context);
-
-                if (is_array($spread)) {
-                    $index = 0;
-                    foreach ($item->evaluate($context) as $key => $value) {
-                        if ($key === $index) {
-                            $result[] = $value;
-                            $index++;
-                        } else {
-                            throw new \RuntimeException('@TODO: Cannot spread non-numerical array');
-                        }
-                    }
-                } else {
-                    throw new \RuntimeException('@TODO: Cannot spread value of type: ' . gettype($spread));
-                }
-            } else {    
-                $result[] = $item->evaluate($context);
-            }
-        }
-
-        return $result;
     }
 
     /**

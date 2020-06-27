@@ -4,10 +4,8 @@ namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Runtime\Context;
-use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class Comparison implements \JsonSerializable, ContextEvaluatorInterface
+final class Comparison implements \JsonSerializable
 {
     const COMPARATOR_EQ = '===';
     const COMPARATOR_GT = '>';
@@ -141,30 +139,6 @@ final class Comparison implements \JsonSerializable, ContextEvaluatorInterface
     public function getRight()
     {
         return $this->right;
-    }
-
-    /**
-     * @param Context $context
-     * @return boolean
-     */
-    public function evaluate(Context $context = null): bool
-    {
-        $left = $this->left->evaluate($context);
-        $right = $this->right->evaluate($context);
-
-        if ($this->operator === self::COMPARATOR_EQ) {
-            return $left === $right;
-        } elseif ($this->operator === self::COMPARATOR_GT) {
-            return $left > $right;
-        } elseif ($this->operator === self::COMPARATOR_GTE) {
-            return $left >= $right;
-        } elseif ($this->operator === self::COMPARATOR_LT) {
-            return $left < $right;
-        } elseif ($this->operator === self::COMPARATOR_LTE) {
-            return $left <= $right;
-        } else {
-            throw new \RuntimeException('@TODO: Unknown operator');
-        }
     }
 
     /**

@@ -5,10 +5,8 @@ use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Runtime\Context;
-use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class TemplateLiteral implements \JsonSerializable, ContextEvaluatorInterface
+final class TemplateLiteral implements \JsonSerializable
 {
     /**
      * @var Token
@@ -112,25 +110,6 @@ final class TemplateLiteral implements \JsonSerializable, ContextEvaluatorInterf
     public function getSegments(): array
     {
         return $this->segments;
-    }
-
-    /**
-     * @param Context $context
-     * @return void
-     */
-    public function evaluate(Context $context = null)
-    {
-        $result = '';
-
-        foreach ($this->segments as $segment) {
-            if (is_string($segment)) {
-                $result .= $segment;
-            } else {
-                $result .= $segment->evaluate($context);
-            }
-        }
-
-        return $result;
     }
 
     /**

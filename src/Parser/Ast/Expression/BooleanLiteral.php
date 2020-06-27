@@ -57,14 +57,6 @@ final class BooleanLiteral implements \JsonSerializable
     }
 
     /**
-     * @return bool
-     */
-    public function evaluate(): bool
-    {
-        return $this->boolean;
-    }
-
-    /**
      * @return string
      */
     public function __toString(): string

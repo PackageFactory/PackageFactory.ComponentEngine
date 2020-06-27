@@ -1,20 +1,15 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Module;
 
-use PackageFactory\ComponentEngine\Loader\LoaderInterface;
 use PackageFactory\ComponentEngine\Parser\Ast\Afx\Tag;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Expression;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Identifier;
-use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Pragma\AfxPragmaInterface;
-use PackageFactory\ComponentEngine\Runtime\AfxEvaluatorInterface;
 use PackageFactory\ComponentEngine\Runtime\Context;
-use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class Constant implements \JsonSerializable, AfxEvaluatorInterface
+final class Constant implements \JsonSerializable
 {
     /**
      * @var Identifier
@@ -107,20 +102,6 @@ final class Constant implements \JsonSerializable, AfxEvaluatorInterface
     public function getValue()
     {
         return $this->value;
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function evaluate(AfxPragmaInterface $pragma, Context $context)
-    {
-        if ($this->value instanceof AfxEvaluatorInterface) {
-            return $this->value->evaluate($pragma, $context);
-        } elseif ($this->value instanceof ContextEvaluatorInterface) {
-            return $this->value->evaluate($context);
-        } else {
-            throw new \Exception('@TODO: Constant::evaluate');
-        }
     }
 
     /**

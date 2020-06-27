@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Runtime;
 
-use PackageFactory\ComponentEngine\Loader\LoaderInterface;
-use PackageFactory\ComponentEngine\Loader\RootLoader;
+use PackageFactory\ComponentEngine\Runtime\Loader\LoaderInterface;
+use PackageFactory\ComponentEngine\Runtime\Loader\RootLoader;
 
 final class Runtime
 {

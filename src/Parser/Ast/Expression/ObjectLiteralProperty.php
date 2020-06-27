@@ -4,10 +4,8 @@ namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Runtime\Context;
-use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class ObjectLiteralProperty implements \JsonSerializable, ContextEvaluatorInterface
+final class ObjectLiteralProperty implements \JsonSerializable
 {
     /**
      * @var null|Identifier|Operand
@@ -80,44 +78,6 @@ final class ObjectLiteralProperty implements \JsonSerializable, ContextEvaluator
     public function getValue()
     {
         return $this->value;
-    }
-
-    /**
-     * @return string
-     */
-    public function evaluateKey(Context $context): string
-    {
-        if ($this->key instanceof Identifier) {
-            return $this->key->getValue();
-        } else {
-            return $this->key->evaluate($context);
-        }
-    }
-
-    /**
-     * @return \Iterator<mixed>
-     */
-    public function evaluate(Context $context = null): \Iterator
-    {
-        if ($this->value instanceof Spread) {
-            foreach ($this->value->evaluate($context) as $key => $value) {
-                if ($value !== null) {
-                    yield $key => $value;
-                }
-            }
-        } else {
-            $value = $this->value->evaluate($context);
-            if ($value !== null) {
-                if ($this->key === null) {
-                    var_dump($value); die;
-                }
-                elseif ($this->key instanceof Identifier) {
-                    yield $this->key->getValue() => $value;
-                } else {
-                    yield $this->key->evaluate($context) => $value;
-                }
-            }
-        }
     }
 
     /**

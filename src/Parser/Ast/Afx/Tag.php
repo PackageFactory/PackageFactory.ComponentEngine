@@ -6,11 +6,8 @@ use PackageFactory\ComponentEngine\Parser\Ast\Expression\Spread;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Pragma\AfxPragmaInterface;
-use PackageFactory\ComponentEngine\Runtime\AfxEvaluatorInterface;
-use PackageFactory\ComponentEngine\Runtime\Context;
 
-final class Tag implements \JsonSerializable, AfxEvaluatorInterface
+final class Tag implements \JsonSerializable
 {
     /**
      * @var null|TagName
@@ -182,126 +179,6 @@ final class Tag implements \JsonSerializable, AfxEvaluatorInterface
     public function getChildren(): array
     {
         return $this->children;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function evaluate(AfxPragmaInterface $pragma, Context $context = null)
-    {
-        $mapTag = $this->tagName === '$map';
-        $mapAttribute = $mapTag ? [] : null;
-        $ifAttribute = null;
-        $attributes = [];
-        foreach ($this->attributes as $attribute) {
-            if ($attribute instanceof Spread) {
-                foreach ($attribute->evaluate($context) as $key => $value) {
-                    if ($key !== '$map' && $key !== '$if') {
-                        if ($mapTag) {
-                            $mapAttribute[$key] = $value;
-                        } else {
-                            $attributes[$key] = $value;
-                        }
-                    }
-                }
-            } elseif ($attribute instanceof Attribute) {
-                foreach ($attribute->evaluate($context) as $key => $value) {
-                    if ($key === '$map') {
-                        $mapAttribute = (array) $value;
-                    } elseif ($key === '$if') {
-                        $ifAttribute = $value;
-                    } else {
-                        $attributes[$key] = $value;
-                    }
-                }
-            } else {
-                throw new \Exception('@TODO: Invalid Attribute');
-            }
-        }
-
-        if ($ifAttribute !== null && !$ifAttribute) {
-            return null;
-        }
-
-        $children = [];
-        if ($mapAttribute !== null) {
-            $items = $mapAttribute['items'] ?? [];
-            $itemName = $mapAttribute['as'] ?? 'item';
-            $keyName = $mapAttribute['key'] ?? 'key';
-            $iteratorName = $mapAttribute['it'] ?? 'it';
-            $index = 0;
-            $isFirst = true;
-            $count = is_countable($items) ? count($items) : null;
-
-            foreach ($items as $key => $item) {
-                $iterationContext = [];
-                $iterationContext[$keyName] = $key;
-                $iterationContext[$itemName] = $item;
-                $iterationContext[$iteratorName]['index'] = $index;
-                $iterationContext[$iteratorName]['isFirst'] = $isFirst;
-                $iterationContext[$iteratorName]['isEven'] = (($index + 1) % 2) === 0;
-                $iterationContext[$iteratorName]['isOdd'] = (($index + 1) % 2) === 1;
-
-                if ($count !== null) {
-                    $iterationContext[$iteratorName]['count'] = $count;
-                    $iterationContext[$iteratorName]['isLast'] = $index === $count - 1;
-                }
-
-                $subContext = $context->withMergedProperties($iterationContext);
-
-                foreach ($this->children as $child) {
-                    if ($child instanceof Content) {
-                        $children[] = $child->getValue();
-                    } elseif ($child instanceof Tag) {
-                        $children[] = $child->evaluate($pragma, $subContext);
-                    } else {
-                        // @TODO: This is not safe yet!
-                        $children[] = $child->evaluate($subContext);
-                    }
-                }
-            }
-        } else {
-            foreach ($this->children as $child) {
-                if ($child instanceof Content) {
-                    $children[] = $child->getValue();
-                } elseif ($child instanceof Tag) {
-                    $children[] = $child->evaluate($pragma, $context);
-                } else {
-                    // @TODO: This is not safe yet!
-                    $children[] = $child->evaluate($context);
-                }
-            }
-        }
-
-
-        if ($this->getIsFragment() || $mapTag) {
-            return $pragma->createFragment($children);
-        } elseif (ctype_lower($this->tagName->getValue()[0])) {
-            return $pragma->createElement(
-                $this->tagName->getValue(),
-                $attributes,
-                $children
-            );
-        } elseif ($this->tagName->getValue() === '$tag') {
-            return $pragma->createElement(
-                $attributes['tagName'] ?? 'div',
-                (array) $attributes['attributes'] ?? [],
-                $children
-            );
-        } elseif ($context->hasProperty($this->tagName->getValue())) {
-            $constructor = $context->getProperty($this->tagName->getValue());
-
-            if ($constructor instanceof AfxEvaluatorInterface) {
-                return $constructor->evaluate(
-                    $pragma, 
-                    Context::createFromArray(['props' => $attributes])
-                );
-            } else {
-                throw new \RuntimeException('@TODO: Invalid constructor');
-            }
-        } else {
-            throw new \RuntimeException('@TODO: Invalid tagName');
-        }
     }
 
     /**

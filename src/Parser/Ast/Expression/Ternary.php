@@ -4,10 +4,8 @@ namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Runtime\Context;
-use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class Ternary implements \JsonSerializable, ContextEvaluatorInterface
+final class Ternary implements \JsonSerializable
 {
     /**
      * @var Operand
@@ -84,21 +82,6 @@ final class Ternary implements \JsonSerializable, ContextEvaluatorInterface
     public function getFalseBranch()
     {
         return $this->falseBranch;
-    }
-
-    /**
-     * @param Context $context
-     * @return mixed
-     */
-    public function evaluate(Context $context = null)
-    {
-        $condition = $this->condition->evaluate($context);
-        
-        if ($condition) {
-            return $this->trueBranch->evaluate($context);
-        } else {
-            return $this->falseBranch->evaluate($context);
-        }
     }
 
     /**

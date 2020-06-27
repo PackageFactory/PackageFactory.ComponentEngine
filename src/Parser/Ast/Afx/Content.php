@@ -1,12 +1,8 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Afx;
 
-use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
-use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Pragma\AfxPragmaInterface;
-use PackageFactory\ComponentEngine\Runtime\Context;
 
 final class Content implements \JsonSerializable
 {
@@ -56,14 +52,6 @@ final class Content implements \JsonSerializable
         }
 
         return new self($value);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function evaluate()
-    {
-        throw new \Exception('@TODO: CONTENT->evaluate()');
     }
 
     /**

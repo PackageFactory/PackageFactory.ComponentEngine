@@ -73,14 +73,6 @@ final class NumberLiteral implements \JsonSerializable
     }
 
     /**
-     * @return float
-     */
-    public function evaluate(): float
-    {
-        return $this->number;
-    }
-
-    /**
      * @return string
      */
     public function __toString(): string

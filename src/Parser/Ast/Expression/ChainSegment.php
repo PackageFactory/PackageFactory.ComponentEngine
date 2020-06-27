@@ -1,11 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
-use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
-use PackageFactory\ComponentEngine\Runtime\Context;
-use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
-
-final class ChainSegment implements \JsonSerializable, ContextEvaluatorInterface
+final class ChainSegment implements \JsonSerializable
 {
     /**
      * @var bool
@@ -67,23 +63,6 @@ final class ChainSegment implements \JsonSerializable, ContextEvaluatorInterface
     public function getSubject()
     {
         return $this->subject;
-    }
-
-    /**
-     * @param Context $context
-     * @return void
-     */
-    public function evaluate(Context $context = null)
-    {
-        if ($context === null) {
-            throw new \Exception('@TODO: Cannot evaluate chain segment without context');
-        }
-
-        if ($this->subject instanceof Identifier) {
-            return (string) $this->subject;
-        } else {
-            return $this->subject->evaluate($context);
-        }
     }
 
     /**

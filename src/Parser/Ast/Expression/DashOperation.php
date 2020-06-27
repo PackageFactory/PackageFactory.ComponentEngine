@@ -3,10 +3,8 @@ namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
-use PackageFactory\ComponentEngine\Runtime\Context;
-use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class DashOperation implements \JsonSerializable, ContextEvaluatorInterface
+final class DashOperation implements \JsonSerializable
 {
     const OPERATOR_ADD = '+';
     const OPERATOR_SUBTRACT = '-';
@@ -84,27 +82,6 @@ final class DashOperation implements \JsonSerializable, ContextEvaluatorInterfac
     public function getRight()
     {
         return $this->right;
-    }
-
-    /**
-     * @return float|string
-     */
-    public function evaluate(Context $context = null)
-    {
-        $left = $this->left->evaluate($context);
-        $right = $this->right->evaluate($context);
-
-        if ($this->operator === self::OPERATOR_ADD) {
-            if (is_string($left) || is_string($right)) {
-                return $left . $right;
-            } else {
-                return $left + $right;
-            }
-        } elseif ($this->operator === self::OPERATOR_SUBTRACT) {
-            return $left - $right;
-        } else {
-            throw new \RuntimeException('@TODO: Unknown operator');
-        }
     }
 
     /**

@@ -5,10 +5,8 @@ use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Runtime\Context;
-use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class Chain implements \JsonSerializable, ContextEvaluatorInterface
+final class Chain implements \JsonSerializable
 {
     /**
      * @var Token
@@ -162,90 +160,6 @@ final class Chain implements \JsonSerializable, ContextEvaluatorInterface
     public function getSegments(): array
     {
         return $this->segments;
-    }
-
-    /**
-     * @param Context $context
-     * @return mixed
-     */
-    public function evaluate(Context $context = null)
-    {
-        if ($context === null) {
-            throw new \Exception('@TODO: Cannot evaluate chain without context');
-        }
-
-        $segments = $this->segments;
-        $root = array_shift($segments);
-
-        if ($root->getSubject() instanceof Identifier) {
-            array_unshift($segments, $root);
-            $value = $context;
-        } else {
-            var_dump($root->getSubject());
-            $value = $root->evaluate($context);
-        }
-
-
-        foreach ($segments as $segment) {
-            $key = $segment->evaluate($context);
-            if (!is_scalar($key)) {
-                throw new \RuntimeException('@TODO: Invalid key');
-            }
-
-            if ($value instanceof Context) {
-                if (!is_string($key)) {
-                    throw new \RuntimeException('@TODO: Invalid key');
-                } elseif ($value->hasProperty($key)) {
-                    $value = $value->getProperty($key);
-                } elseif ($segment->getIsOptional()) {
-                    return null;
-                } else {
-                    throw new \RuntimeException('@TODO: Invalid property access: ' . $key);
-                }
-            } elseif (is_string($value)) {
-                if (!is_numeric($key)) {
-                    throw new \RuntimeException('@TODO: Invalid key');
-                } elseif ($key < mb_strlen($value)) {
-                    $value = $value[$key];
-                } elseif ($segment->getIsOptional()) {
-                    return null;
-                } else {
-                    throw new \RuntimeException('@TODO: Invalid property access: ' . $key);
-                }
-            } elseif (is_array($value)) {
-                if (isset($value[$key])) {
-                    $value = $value[$key];
-                } elseif ($segment->getIsOptional()) {
-                    return null;
-                } else {
-                    throw new \RuntimeException('@TODO: Invalid property access: ' . $key);
-                }
-            } elseif (is_object($value)) {
-                if (!is_string($key)) {
-                    throw new \RuntimeException('@TODO: Invalid key');
-                } elseif (isset($value->{ $key })) {
-                    return $value->{ $key };
-                } else {
-                    $getter = 'get' . ucfirst($key);
-
-                    if (is_callable([$value, $getter])) {
-                        try {
-                            return $value->{ $getter }();
-                        } catch (\Throwable $err) {
-                            throw new \RuntimeException('@TODO: An error occured during PHP execution: ' . $err->getMessage());
-                        }
-                    } elseif ($segment->getIsOptional()) {
-                        return null;
-                    } else {
-                        throw new \RuntimeException('@TODO: Invalid property access: ' . $key);
-                    }
-                }
-            } else {
-                throw new \RuntimeException('@TODO: Invalid value type: ' . gettype($value));
-            }
-        }
-
-        return $value;
     }
 
     /**

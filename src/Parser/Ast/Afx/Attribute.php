@@ -5,11 +5,8 @@ use PackageFactory\ComponentEngine\Parser\Ast\Expression\Expression;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\StringLiteral;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
-use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Runtime\Context;
-use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class Attribute implements \JsonSerializable, ContextEvaluatorInterface
+final class Attribute implements \JsonSerializable
 {
     /**
      * @var AttributeName
@@ -87,15 +84,6 @@ final class Attribute implements \JsonSerializable, ContextEvaluatorInterface
     public function getValue()
     {
         return $this->value;
-    }
-
-    /**
-     * @return \Iterator<string, mixed>
-     */
-    public function evaluate(Context $context = null): \Iterator
-    {
-        yield $this->attributeName->getValue() => 
-            is_bool($this->value) ? $this->value : $this->value->evaluate($context);
     }
 
     /**

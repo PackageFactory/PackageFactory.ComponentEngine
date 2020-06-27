@@ -4,10 +4,8 @@ namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Runtime\Context;
-use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class PointOperation implements \JsonSerializable, ContextEvaluatorInterface
+final class PointOperation implements \JsonSerializable
 {
     const OPERATOR_MULTIPLY = '*';
     const OPERATOR_DIVIDE = '/';
@@ -125,29 +123,6 @@ final class PointOperation implements \JsonSerializable, ContextEvaluatorInterfa
     public function getRight()
     {
         return $this->right;
-    }
-
-    /**
-     * @return float
-     */
-    public function evaluate(Context $context): float
-    {
-        $left = $this->left->evaluate($context);
-        if ($left === 0) {
-            return 0;
-        }
-
-        $right = $this->right->evaluate($context);
-
-        if ($this->operator === self::OPERATOR_MULTIPLY) {
-            return $left * $right;
-        } elseif ($this->operator === self::OPERATOR_DIVIDE) {
-            return $left / $right;
-        } elseif ($this->operator === self::OPERATOR_MODULO) {
-            return $left % $right;
-        } else {
-            throw new \RuntimeException('@TODO: Unknown operator');
-        }
     }
 
     /**

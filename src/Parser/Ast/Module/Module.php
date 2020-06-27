@@ -1,13 +1,10 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Module;
 
-use PackageFactory\ComponentEngine\Loader\LoaderInterface;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Pragma\AfxPragmaInterface;
-use PackageFactory\ComponentEngine\Runtime\Context;
 
 final class Module implements \JsonSerializable
 {
@@ -134,48 +131,6 @@ final class Module implements \JsonSerializable
     public function getConstants(): array
     {
         return $this->constants;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function evaluate(LoaderInterface $loader, AfxPragmaInterface $pragma, Context $context)
-    {
-        return $this->evaluateExport($loader, $pragma, $context, 'default');
-    }
-
-    /**
-     * @param LoaderInterface $loader
-     * @param AfxPragmaInterface $pragma
-     * @param Context $context
-     * @param string $exportName
-     * @return mixed
-     */
-    public function evaluateExport(
-        LoaderInterface $loader, 
-        AfxPragmaInterface $pragma, 
-        Context $context,
-        string $exportName
-    ) {
-        if (!isset($this->exports[$exportName])) {
-            throw new \Exception('@TODO: Missing export: ' . $exportName);
-        }
-
-        foreach ($this->imports as $import) {
-            $context = $context->withMergedProperties([
-                (string) $import->getDomesticName() => 
-                    $import->evaluate($loader, $this->source)
-            ]);
-        }
-
-        foreach ($this->constants as $constant) {
-            $context = $context->withMergedProperties([
-                (string) $constant->getName() =>
-                    $constant->evaluate($pragma, $context)
-            ]);
-        }
-
-        return $this->exports[$exportName]->evaluate($pragma, $context);
     }
 
     /**

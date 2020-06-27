@@ -5,10 +5,8 @@ use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Runtime\Context;
-use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class Spread implements \JsonSerializable, ContextEvaluatorInterface
+final class Spread implements \JsonSerializable
 {
     /**
      * @var Token
@@ -70,14 +68,6 @@ final class Spread implements \JsonSerializable, ContextEvaluatorInterface
     public function getSubject()
     {
         return $this->subject;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function evaluate(Context $context = null)
-    {
-        return $this->subject->evaluate($context);
     }
 
     /**

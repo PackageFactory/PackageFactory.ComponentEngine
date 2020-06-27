@@ -5,10 +5,8 @@ use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Runtime\Context;
-use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class Negation implements \JsonSerializable, ContextEvaluatorInterface
+final class Negation implements \JsonSerializable
 {
     /**
      * @var Token
@@ -66,14 +64,6 @@ final class Negation implements \JsonSerializable, ContextEvaluatorInterface
     public function getSubject()
     {
         return $this->subject;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function evaluate(Context $context = null): bool
-    {
-        return !$this->subject->evaluate($context);
     }
 
     /**

@@ -1,12 +1,9 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Module;
 
-use PackageFactory\ComponentEngine\Loader\LoaderInterface;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\StringLiteral;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
-use PackageFactory\ComponentEngine\Parser\Source\Path;
-use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Util;
 
 final class Import implements \JsonSerializable
@@ -112,20 +109,6 @@ final class Import implements \JsonSerializable
     public function getTarget(): string
     {
         return $this->target;
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function evaluate(LoaderInterface $loader, Source $source)
-    {
-        return ExportEvaluator::createFromLoaderAndModuleAndExportName(
-            $loader,
-            $loader->load($source->getPath()->getRelativePathTo(
-                Path::createFromString($this->target)
-            )),
-            $this->foreignName
-        );
     }
 
     /**

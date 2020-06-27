@@ -1,15 +1,12 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
-use PackageFactory\ComponentEngine\Parser\Lexer\Scope\Number;
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Runtime\Context;
-use PackageFactory\ComponentEngine\Runtime\ContextEvaluatorInterface;
 
-final class ObjectLiteral implements \JsonSerializable, ContextEvaluatorInterface
+final class ObjectLiteral implements \JsonSerializable
 {
     /**
      * @var Token
@@ -91,21 +88,6 @@ final class ObjectLiteral implements \JsonSerializable, ContextEvaluatorInterfac
     public function getProperties(): array
     {
         return $this->properties;
-    }
-
-    /**
-     * @return \stdClass
-     */
-    public function evaluate(Context $context = null): \stdClass
-    {
-        $properties = [];
-        foreach ($this->properties as $property) {
-            foreach ($property->evaluate($context) as $key => $value) {
-                $properties[$key] = $value;
-            }
-        }
-
-        return (object) $properties;
     }
 
     /**

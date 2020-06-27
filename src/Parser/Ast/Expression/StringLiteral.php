@@ -103,14 +103,6 @@ final class StringLiteral implements \JsonSerializable
     /**
      * @return string
      */
-    public function evaluate(): string
-    {
-        return $this->value;
-    }
-
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->value;
