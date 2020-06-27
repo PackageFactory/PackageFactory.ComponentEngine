@@ -3,7 +3,9 @@ namespace PackageFactory\ComponentEngine\Runtime;
 
 use PackageFactory\ComponentEngine\Evaluation\ExpressionEvaluatorInterface;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\ArrayLiteral;
+use PackageFactory\ComponentEngine\Parser\Ast\Expression\ArrowFunction;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\BooleanLiteral;
+use PackageFactory\ComponentEngine\Parser\Ast\Expression\Call;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Chain;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Comparison;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Conjunction;
@@ -104,6 +106,8 @@ final class ExpressionEvaluator implements ExpressionEvaluatorInterface
             return $this->onComparison($operand, $context);
         } elseif ($operand instanceof Ternary) {
             return $this->onTernary($operand, $context);
+        } elseif ($operand instanceof ArrowFunction) {
+            return $this->onArrowFunction($operand, $context);
         } elseif ($operand instanceof Chain) {
             return $this->onChain($operand, $context);
         } else {
@@ -140,6 +144,16 @@ final class ExpressionEvaluator implements ExpressionEvaluatorInterface
     }
 
     /**
+     * @param ArrowFunction $arrowFunction
+     * @param Context $context
+     * @return array<mixed>
+     */
+    public function onArrowFunction(ArrowFunction $arrowFunction, Context $context): array
+    {
+        throw new \Exception('@TODO: ExpressionEvaluator->onArrowFunction() is not implemented yet!');
+    }
+
+    /**
      * @param BooleanLiteral $booleanLiteral
      * @return bool
      */
@@ -172,7 +186,7 @@ final class ExpressionEvaluator implements ExpressionEvaluatorInterface
         }
 
         foreach ($segments as $segment) {
-            $key = $segment->evaluate($context);
+            $key = $this->withContext($context)->evaluate($segment);
             if (!is_scalar($key)) {
                 throw new \RuntimeException('@TODO: Invalid key');
             }
@@ -200,6 +214,15 @@ final class ExpressionEvaluator implements ExpressionEvaluatorInterface
             } elseif (is_array($value)) {
                 if (isset($value[$key])) {
                     $value = $value[$key];
+                } elseif ($key === 'map') {
+                    $items = $value;
+                    $value = function(callable $callback) use ($items) {
+                        $result = [];
+                        foreach ($items as $item) {
+                            $result[] = $callback($item);
+                        }
+                        return $result;
+                    };
                 } elseif ($segment->getIsOptional()) {
                     return null;
                 } else {

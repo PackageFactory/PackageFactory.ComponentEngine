@@ -42,7 +42,7 @@ final class Context
     public function getProperty(string $propertyName)
     {
         if (!isset($this->properties[$propertyName])) {
-            throw new \Exception('@TODO: unknown context property');
+            throw new \Exception('@TODO: unknown context property ' . $propertyName);
         }
 
         return $this->properties[$propertyName];

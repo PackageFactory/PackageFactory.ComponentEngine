@@ -81,6 +81,7 @@ final class TokenType
     public static function COMPARATOR_GTE(): TokenType { return self::create('COMPARATOR_GTE'); }
     public static function COMPARATOR_LT(): TokenType { return self::create('COMPARATOR_LT'); }
     public static function COMPARATOR_LTE(): TokenType { return self::create('COMPARATOR_LTE'); }
+    public static function ARROW(): TokenType { return self::create('ARROW'); }
 
     // STRING LITERALS
     public static function STRING_LITERAL_START(): TokenType { return self::create('STRING_LITERAL_START'); }

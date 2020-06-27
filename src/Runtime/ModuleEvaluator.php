@@ -12,7 +12,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\Module\Constant;
 use PackageFactory\ComponentEngine\Parser\Ast\Module\Export;
 use PackageFactory\ComponentEngine\Parser\Ast\Module\Import;
 use PackageFactory\ComponentEngine\Parser\Ast\Module\Module;
-
+use PackageFactory\ComponentEngine\Parser\Source\Path;
 
 /**
  * @implements ModuleEvaluatorInterface<VirtualDOMNode|string|array<mixed>|object|bool|float|null>
@@ -93,6 +93,13 @@ final class ModuleEvaluator implements ModuleEvaluatorInterface
         $export = $module->getExport($export);
         $context = $this->context;
 
+        foreach ($module->getImports() as $import) {
+            $context = $context->withMergedProperties([
+                (string) $import->getDomesticName() => 
+                    $this->onImport($module, $import)
+            ]);
+        }
+
         foreach ($module->getConstants() as $constant) {
             $context = $context->withMergedProperties([
                 (string) $constant->getName() =>
@@ -105,11 +112,19 @@ final class ModuleEvaluator implements ModuleEvaluatorInterface
 
     /**
      * @param Import $import
-     * @return VirtualDOMNode|string|array<mixed>|object|bool|float|null
+     * @return Module
      */
-    public function onImport(Import $import)
+    public function onImport(Module $root, Import $import)
     {
-        throw new \Exception('@TODO: ModuleEvaluator->onImport() is not implemented yet');
+        $module = $this->loader->load($root->getSource()->getPath()->getRelativePathTo(
+            Path::createFromString($import->getTarget())
+        ));
+
+        return function(Context $context) use ($module, $import) {
+            return $this
+                ->withContext($context)
+                ->evaluateExport($module, $import->getForeignName());
+        };
     }
 
     /**

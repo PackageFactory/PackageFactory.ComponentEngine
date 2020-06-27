@@ -8,10 +8,12 @@ export default (
             Fragment
         </>
 
-        <ul $map={{ items: props.links, as: 'link' }}>
-            <li $if={link.isVisible}>
-                <a href={link.href}>{link.label}</a>
-            </li>
+        <ul>
+            {props.links.map(link => link.isVisible ? (
+                <li>
+                    <a href={link.href}>{link.label}</a>
+                </li>
+            ): null)}
         </ul>
 
         <Button type="link" href="#" on>

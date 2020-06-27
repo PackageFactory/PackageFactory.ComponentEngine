@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Afx\Tag;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
@@ -32,8 +33,26 @@ final class Expression
             }
 
             switch ($stream->current()->getType()) {
+                case TokenType::COMMA():
+                    if ($left instanceof Identifier) {
+                        $left = ArrowFunction::createFromTokenStream($left, $stream);
+                        break;
+                    } else{
+                        if ($delimiter === $stream->current()->getType()) {
+                        $stream->next();
+                        }
+                        return $left;
+                    }
+                case TokenType::ARROW():
+                    if ($left instanceof Identifier) {
+                        $left = ArrowFunction::createFromTokenStream($left, $stream);
+                        break;
+                    } else {
+                        throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                    }
                 case TokenType::PERIOD():
                 case TokenType::BRACKETS_SQUARE_OPEN():
+                case TokenType::BRACKETS_ROUND_OPEN():
                     $left = Chain::createFromTokenStream($left, $stream);
                     break;
                 case TokenType::OPERATOR_OPTCHAIN():
@@ -90,7 +109,6 @@ final class Expression
                 case TokenType::MODULE_KEYWORD_IMPORT():
                 case TokenType::MODULE_KEYWORD_EXPORT():
                 case TokenType::MODULE_KEYWORD_CONST():
-                case TokenType::COMMA():
                 case TokenType::COLON():
                     if ($delimiter === $stream->current()->getType()) {
                         $stream->next();
@@ -149,12 +167,21 @@ final class Expression
                 break;
             case TokenType::BRACKETS_ROUND_OPEN():
                 $stream->next();
-                $value = self::createFromTokenStream($stream);
                 Util::skipWhiteSpaceAndComments($stream);
-                Util::expect($stream, TokenType::BRACKETS_ROUND_CLOSE());
+
+                if ($stream->valid() && $stream->current()->getType() === TokenType::BRACKETS_ROUND_CLOSE()) {
+                    $stream->next();
+                    $value = ArrowFunction::createFromTokenStream(null, $stream);
+                } else {
+                    $value = self::createFromTokenStream($stream);
+                    Util::expect($stream, TokenType::BRACKETS_ROUND_CLOSE());
+                }
+                break;
+            case TokenType::AFX_TAG_START():
+                $value = Tag::createFromTokenStream($stream);
                 break;
             default:
-                throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                throw new \Exception('@TODO: Unexpected Token: ' . $stream->current()->getType());
         }
 
         return $value;

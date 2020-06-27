@@ -54,7 +54,7 @@ final class Chain implements \JsonSerializable, ContextEvaluatorInterface
         $end = $start;
         
         $segments = [];
-        $operand = $root;
+        $operandOrCall = $root;
         $append = false;
         while ($stream->valid()) {
             Util::skipWhiteSpaceAndComments($stream);
@@ -64,11 +64,11 @@ final class Chain implements \JsonSerializable, ContextEvaluatorInterface
 
             switch ($stream->current()->getType()) {
                 case TokenType::OPERATOR_OPTCHAIN():
-                    if ($operand !== null) {
+                    if ($operandOrCall !== null) {
                         $end = $stream->current();
-                        $segments[] = ChainSegment::createFromOperand(true, $operand);
+                        $segments[] = ChainSegment::createFromOperandOrCall(true, $operandOrCall);
                         $stream->next();
-                        $operand = null;
+                        $operandOrCall = null;
                         $append = true;
                     } else {
                         throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
@@ -76,11 +76,11 @@ final class Chain implements \JsonSerializable, ContextEvaluatorInterface
                     break;
                 
                 case TokenType::PERIOD():
-                    if ($operand !== null) {
+                    if ($operandOrCall !== null) {
                         $end = $stream->current();
-                        $segments[] = ChainSegment::createFromOperand(false, $operand);
+                        $segments[] = ChainSegment::createFromOperandOrCall(false, $operandOrCall);
                         $stream->next();
-                        $operand = null;
+                        $operandOrCall = null;
                         $append = false;
                     } else {
                         throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
@@ -88,23 +88,34 @@ final class Chain implements \JsonSerializable, ContextEvaluatorInterface
                     break;
                 
                 case TokenType::BRACKETS_SQUARE_OPEN():
-                    if ($operand !== null) {
-                        $segments[] = ChainSegment::createFromOperand(false, $operand);
+                    if ($operandOrCall !== null) {
+                        $segments[] = ChainSegment::createFromOperandOrCall(false, $operandOrCall);
                     } else if (!$append) {
                         throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
                     }
                     $end = $stream->current();
                     $stream->next();
-                    $operand = Expression::createFromTokenStream($stream);
+                    $operandOrCall = Expression::createFromTokenStream($stream);
                     Util::skipWhiteSpaceAndComments($stream);
                     Util::expect($stream, TokenType::BRACKETS_SQUARE_CLOSE());
                     $append = true;
                     break;
+                
+                case TokenType::BRACKETS_ROUND_OPEN():
+                    if ($operandOrCall !== null) {
+                        $segments[] = ChainSegment::createFromOperandOrCall(false, $operandOrCall);
+                    } else if (!$append) {
+                        throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                    }
+                    $end = $stream->current();
+                    $operandOrCall = Call::createFromTokenStream($stream);
+                    $append = true;
+                    break;
 
                 case TokenType::IDENTIFIER():
-                    if ($operand === null) {
+                    if ($operandOrCall === null) {
                         $end = $stream->current();
-                        $operand = Identifier::createFromTokenStream($stream);
+                        $operandOrCall = Identifier::createFromTokenStream($stream);
                         $append = true;
                     } else {
                         throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
@@ -112,8 +123,8 @@ final class Chain implements \JsonSerializable, ContextEvaluatorInterface
                     break;
                 
                 default:
-                    if ($operand !== null) {
-                        $segments[] = ChainSegment::createFromOperand(false, $operand);
+                    if ($operandOrCall !== null) {
+                        $segments[] = ChainSegment::createFromOperandOrCall(false, $operandOrCall);
                         return new self($start, $end, $segments);
                     } else {
                         throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
@@ -122,8 +133,8 @@ final class Chain implements \JsonSerializable, ContextEvaluatorInterface
             }
         }
 
-        if ($operand !== null) {
-            $segments[] = ChainSegment::createFromOperand(false, $operand);
+        if ($operandOrCall !== null) {
+            $segments[] = ChainSegment::createFromOperandOrCall(false, $operandOrCall);
         }
 
         return new self($start, $end, $segments);

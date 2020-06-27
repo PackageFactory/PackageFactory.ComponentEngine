@@ -94,7 +94,6 @@ final class Attribute implements \JsonSerializable, ContextEvaluatorInterface
      */
     public function evaluate(Context $context = null): \Iterator
     {
-        
         yield $this->attributeName->getValue() => 
             is_bool($this->value) ? $this->value : $this->value->evaluate($context);
     }

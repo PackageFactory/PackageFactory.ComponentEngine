@@ -16,17 +16,17 @@ final class Spread implements \JsonSerializable, ContextEvaluatorInterface
     private $token;
 
     /**
-     * @var Chain
+     * @var Operand
      */
     private $subject;
 
     /**
      * @param Token $token
-     * @param Chain $subject
+     * @param Operand $subject
      */
     private function __construct(
         Token $token,
-        Chain $subject
+        $subject
     ) {
         $this->token = $token;
         $this->subject = $subject;
@@ -45,15 +45,12 @@ final class Spread implements \JsonSerializable, ContextEvaluatorInterface
             $stream->next();
             if (!$stream->valid()) {
                 throw new \Exception('@TODO: Unexpected end of file: ' . $value);
-            } elseif ($stream->current()->getType() === TokenType::IDENTIFIER()) {
-                $root = Identifier::createFromTokenStream($stream);
-                return new self(
-                    $value,
-                    Chain::createFromTokenStream($root, $stream)
-                );
-            } else {
-                throw new \Exception('@TODO: Unexpected Token: ' . $value);
             }
+
+            return new self(
+                $value,
+                Expression::createFromTokenStream($stream)
+            );
         } else {
             throw new \Exception('@TODO: Unexpected Token: ' . $value);
         }
@@ -89,7 +86,7 @@ final class Spread implements \JsonSerializable, ContextEvaluatorInterface
     public function jsonSerialize()
     {
         return [
-            'type' => 'Negation',
+            'type' => 'Spread',
             'offset' => [
                 $this->token->getStart()->getIndex(),
                 $this->token->getEnd()->getIndex()

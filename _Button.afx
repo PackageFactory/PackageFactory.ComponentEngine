@@ -12,7 +12,7 @@ const props = {
 }
 
 export default (
-    <$tag 
+    <$tag
         tagName={
             props.type === 'button' ||
             props.type === 'submit' ? 'button' : (

@@ -477,6 +477,97 @@ final class ExpressionTest extends TestCase
                     [TokenType::COMMENT_END(), '*/'],
                 ]
             ],
+            'function call' => [
+                'myFunction(a, b, 12, true)',
+                [
+                    [TokenType::IDENTIFIER(), 'myFunction'],
+                    [TokenType::BRACKETS_ROUND_OPEN(), '('],
+                    [TokenType::IDENTIFIER(), 'a'],
+                    [TokenType::COMMA(), ','],
+                    [TokenType::WHITESPACE(), ' '],
+                    [TokenType::IDENTIFIER(), 'b'],
+                    [TokenType::COMMA(), ','],
+                    [TokenType::WHITESPACE(), ' '],
+                    [TokenType::NUMBER(), '12'],
+                    [TokenType::COMMA(), ','],
+                    [TokenType::WHITESPACE(), ' '],
+                    [TokenType::KEYWORD_TRUE(), 'true'],
+                    [TokenType::BRACKETS_ROUND_CLOSE(), ')']
+                ]
+            ],
+            'method call' => [
+                'some.object.someMethod(null, "Hello Method!")',
+                [
+                    [TokenType::IDENTIFIER(), 'some'],
+                    [TokenType::PERIOD(), '.'],
+                    [TokenType::IDENTIFIER(), 'object'],
+                    [TokenType::PERIOD(), '.'],
+                    [TokenType::IDENTIFIER(), 'someMethod'],
+                    [TokenType::BRACKETS_ROUND_OPEN(), '('],
+                    [TokenType::KEYWORD_NULL(), 'null'],
+                    [TokenType::COMMA(), ','],
+                    [TokenType::WHITESPACE(), ' '],
+                    [TokenType::STRING_LITERAL_START(), '"'],
+                    [TokenType::STRING_LITERAL_CONTENT(), 'Hello Method!'],
+                    [TokenType::STRING_LITERAL_END(), '"'],
+                    [TokenType::BRACKETS_ROUND_CLOSE(), ')'],
+                ]
+            ],
+            'arrow function (one parameter)' => [
+                'item => item.name',
+                [
+                    [TokenType::IDENTIFIER(), 'item'],
+                    [TokenType::WHITESPACE(), ' '],
+                    [TokenType::ARROW(), '=>'],
+                    [TokenType::WHITESPACE(), ' '],
+                    [TokenType::IDENTIFIER(), 'item'],
+                    [TokenType::PERIOD(), '.'],
+                    [TokenType::IDENTIFIER(), 'name'],
+                ]
+            ],
+            'arrow function (multiple parameters)' => [
+                '(lat, lng) => ([lat, lng])',
+                [
+                    [TokenType::BRACKETS_ROUND_OPEN(), '('],
+                    [TokenType::IDENTIFIER(), 'lat'],
+                    [TokenType::COMMA(), ','],
+                    [TokenType::WHITESPACE(), ' '],
+                    [TokenType::IDENTIFIER(), 'lng'],
+                    [TokenType::BRACKETS_ROUND_CLOSE(), ')'],
+                    [TokenType::WHITESPACE(), ' '],
+                    [TokenType::ARROW(), '=>'],
+                    [TokenType::WHITESPACE(), ' '],
+                    [TokenType::BRACKETS_ROUND_OPEN(), '('],
+                    [TokenType::BRACKETS_SQUARE_OPEN(), '['],
+                    [TokenType::IDENTIFIER(), 'lat'],
+                    [TokenType::COMMA(), ','],
+                    [TokenType::WHITESPACE(), ' '],
+                    [TokenType::IDENTIFIER(), 'lng'],
+                    [TokenType::BRACKETS_SQUARE_CLOSE(), ']'],
+                    [TokenType::BRACKETS_ROUND_CLOSE(), ')'],
+                ]
+            ],
+            'embedded afx' => [
+                '(<a href="#">Link</a>)',
+                [
+                    [TokenType::BRACKETS_ROUND_OPEN(), '('],
+                    [TokenType::AFX_TAG_START(), '<'],
+                    [TokenType::IDENTIFIER(), 'a'],
+                    [TokenType::WHITESPACE(), ' '],
+                    [TokenType::IDENTIFIER(), 'href'],
+                    [TokenType::AFX_ATTRIBUTE_ASSIGNMENT(), '='],
+                    [TokenType::STRING_LITERAL_START(), '"'],
+                    [TokenType::STRING_LITERAL_CONTENT(), '#'],
+                    [TokenType::STRING_LITERAL_END(), '"'],
+                    [TokenType::AFX_TAG_END(), '>'],
+                    [TokenType::AFX_TAG_CONTENT(), 'Link'],
+                    [TokenType::AFX_TAG_START(), '<'],
+                    [TokenType::AFX_TAG_CLOSE(), '/'],
+                    [TokenType::IDENTIFIER(), 'a'],
+                    [TokenType::AFX_TAG_END(), '>'],
+                    [TokenType::BRACKETS_ROUND_CLOSE(), ')'],
+                ]
+            ]
         ];
     }
 

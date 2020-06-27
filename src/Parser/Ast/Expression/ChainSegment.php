@@ -13,7 +13,7 @@ final class ChainSegment implements \JsonSerializable, ContextEvaluatorInterface
     private $isOptional;
 
     /**
-     * @var Operand
+     * @var Operand|Call
      */
     private $subject;
 
@@ -43,14 +43,14 @@ final class ChainSegment implements \JsonSerializable, ContextEvaluatorInterface
 
     /**
      * @param boolean $isOptional
-     * @param Operand $operand
+     * @param Operand|Call $operandOrCall
      * @return self
      */
-    public static function createFromOperand(
+    public static function createFromOperandOrCall(
         bool $isOptional,
-        $operand
+        $operandOrCall
     ): self {
-        return new self($isOptional, $operand);
+        return new self($isOptional, $operandOrCall);
     }
 
     /**
@@ -62,7 +62,7 @@ final class ChainSegment implements \JsonSerializable, ContextEvaluatorInterface
     }
 
     /**
-     * @return Operand
+     * @return Operand|Call
      */
     public function getSubject()
     {

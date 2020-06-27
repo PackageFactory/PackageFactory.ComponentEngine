@@ -63,6 +63,14 @@ final class NumberLiteral implements \JsonSerializable
     {
         return $this->token->getValue();
     }
+    
+    /**
+     * @return float
+     */
+    public function getNumber(): float
+    {
+        return $this->number;
+    }
 
     /**
      * @return float
