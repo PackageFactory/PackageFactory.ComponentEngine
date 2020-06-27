@@ -14,9 +14,11 @@ final class OnTag
      */
     public static function evaluate(Runtime $runtime, Tag $tag): VirtualDOM\Node 
     {
+        $tagName = $tag->getTagName();
+
         if ($tag->getIsFragment()) {
             return OnFragment::evaluate($runtime, $tag);
-        } elseif (ctype_lower($tag->getTagName()->getValue()[0])) {
+        } elseif ($tagName !== null && ctype_lower($tagName->getValue()[0])) {
             return OnHtmlElementConstructor::evaluate($runtime, $tag);
         } else {
             return OnComponentConstructor::evaluate($runtime, $tag);

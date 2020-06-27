@@ -31,49 +31,57 @@ final class Module
             if ($value === self::KEYWORD_IMPORT[0]) {
                 $lookAhead = $iterator->lookAhead(7);
 
-                if ($lookAhead->getValue() === self::KEYWORD_IMPORT) {
-                    yield Token::createFromFragment(
-                        TokenType::MODULE_KEYWORD_IMPORT(),
-                        $iterator->lookAhead(6)
-                    );
-                    $iterator->skip(6);
-
-                    yield from self::tokenizeImport($iterator);
+                if ($lookAhead && $lookAhead->getValue() === self::KEYWORD_IMPORT) {
+                    if ($fragment = $iterator->lookAhead(6)) {
+                        yield Token::createFromFragment(
+                            TokenType::MODULE_KEYWORD_IMPORT(),
+                            $fragment
+                        );
+                        $iterator->skip(6);
+    
+                        yield from self::tokenizeImport($iterator);
+                    }
                     continue;
                 }
             } elseif ($value === self::KEYWORD_CONST[0]) {
                 $lookAhead = $iterator->lookAhead(6);
 
-                if ($lookAhead->getValue() === self::KEYWORD_CONST) {
-                    yield Token::createFromFragment(
-                        TokenType::MODULE_KEYWORD_CONST(),
-                        $iterator->lookAhead(5)
-                    );
-                    $iterator->skip(5);
+                if ($lookAhead && $lookAhead->getValue() === self::KEYWORD_CONST) {
+                    if ($fragment = $iterator->lookAhead(5)) {
+                        yield Token::createFromFragment(
+                            TokenType::MODULE_KEYWORD_CONST(),
+                            $fragment
+                        );
+                        $iterator->skip(5);
+                    }
                     continue;
                 }
             } elseif ($value === self::KEYWORD_EXPORT[0]) {
                 $lookAhead = $iterator->lookAhead(7);
 
-                if ($lookAhead->getValue() === self::KEYWORD_EXPORT) {
-                    yield Token::createFromFragment(
-                        TokenType::MODULE_KEYWORD_EXPORT(),
-                        $iterator->lookAhead(6)
-                    );
-                    $iterator->skip(6);
+                if ($lookAhead && $lookAhead->getValue() === self::KEYWORD_EXPORT) {
+                    if ($fragment = $iterator->lookAhead(6)) {
+                        yield Token::createFromFragment(
+                            TokenType::MODULE_KEYWORD_EXPORT(),
+                            $fragment
+                        );
+                        $iterator->skip(6);
+                    }
                     continue;
                 }
             } elseif ($value === self::KEYWORD_DEFAULT[0]) {
                 $lookAhead = $iterator->lookAhead(8);
 
-                if ($lookAhead->getValue() === self::KEYWORD_DEFAULT) {
-                    yield Token::createFromFragment(
-                        TokenType::MODULE_KEYWORD_DEFAULT(),
-                        $iterator->lookAhead(7)
-                    );
-                    $iterator->skip(7);
-
-                    yield from self::tokenizeAssignmentValue($iterator);
+                if ($lookAhead && $lookAhead->getValue() === self::KEYWORD_DEFAULT) {
+                    if ($fragment = $iterator->lookAhead(7)) {
+                        yield Token::createFromFragment(
+                            TokenType::MODULE_KEYWORD_DEFAULT(),
+                            $fragment
+                        );
+                        $iterator->skip(7);
+    
+                        yield from self::tokenizeAssignmentValue($iterator);
+                    }
                     continue;
                 }
             } 
@@ -118,7 +126,7 @@ final class Module
                 $iterator->next();
             } elseif ($value === '.') {
                 $lookAhead = $iterator->lookAhead(3);
-                if ($lookAhead->getValue() === '...') {
+                if ($lookAhead && $lookAhead->getValue() === '...') {
                     yield Token::createFromFragment(
                         TokenType::OPERATOR_SPREAD(),
                         $lookAhead
@@ -149,23 +157,27 @@ final class Module
             if ($value === self::KEYWORD_AS[0]) {
                 $lookAhead = $iterator->lookAhead(3);
 
-                if ($lookAhead->getValue() === self::KEYWORD_AS) {
-                    yield Token::createFromFragment(
-                        TokenType::MODULE_KEYWORD_AS(),
-                        $iterator->lookAhead(2)
-                    );
-                    $iterator->skip(2);
+                if ($lookAhead && $lookAhead->getValue() === self::KEYWORD_AS) {
+                    if ($fragment = $iterator->lookAhead(2)) {
+                        yield Token::createFromFragment(
+                            TokenType::MODULE_KEYWORD_AS(),
+                            $fragment
+                        );
+                        $iterator->skip(2);
+                    }
                     continue;
                 }
             } elseif ($value === self::KEYWORD_FROM[0]) {
                 $lookAhead = $iterator->lookAhead(5);
 
-                if ($lookAhead->getValue() === self::KEYWORD_FROM) {
-                    yield Token::createFromFragment(
-                        TokenType::MODULE_KEYWORD_FROM(),
-                        $iterator->lookAhead(4)
-                    );
-                    $iterator->skip(4);
+                if ($lookAhead && $lookAhead->getValue() === self::KEYWORD_FROM) {
+                    if ($fragment = $iterator->lookAhead(4)) {
+                        yield Token::createFromFragment(
+                            TokenType::MODULE_KEYWORD_FROM(),
+                            $fragment
+                        );
+                        $iterator->skip(4);
+                    }
                     continue;
                 }
             }

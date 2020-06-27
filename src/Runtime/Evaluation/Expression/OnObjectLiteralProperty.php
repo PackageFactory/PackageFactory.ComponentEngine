@@ -11,7 +11,7 @@ final class OnObjectLiteralProperty
     /**
      * @param Runtime $runtime
      * @param ObjectLiteralProperty $objectLiteralProperty
-     * @return \Iterator<string, void>
+     * @return \Iterator<int|string, mixed>
      */
     public static function evaluate(Runtime $runtime, ObjectLiteralProperty $objectLiteralProperty): \Iterator
     {
@@ -26,7 +26,7 @@ final class OnObjectLiteralProperty
                 $key = $objectLiteralProperty->getKey();
 
                 if ($key === null) {
-                    throw new \RuntimeException('@TODO: Object key cannot be null.');
+                    throw new \Exception('@TODO: Unexpected empty key');
                 } elseif ($key instanceof Identifier) {
                     yield $key->getValue() => $value;
                 } else {

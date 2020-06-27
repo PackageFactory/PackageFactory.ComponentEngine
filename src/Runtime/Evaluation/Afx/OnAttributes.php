@@ -11,7 +11,7 @@ final class OnAttributes
      * Undocumented function
      *
      * @param Runtime $runtime
-     * @param array $attributes
+     * @param array<int, Attribute|Spread> $attributes
      * @return \Iterator<int, mixed>
      */
     public static function evaluate(Runtime $runtime, array $attributes): \Iterator

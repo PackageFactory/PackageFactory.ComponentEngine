@@ -15,35 +15,13 @@ final class Tokenizer implements \IteratorAggregate
     private $source;
 
     /**
-     * @var class-string<
-     *  Scope\Afx::class |
-     *  Scope\Comment::class |
-     *  Scope\Expression::class |
-     *  Scope\Identifier::class |
-     *  Scope\Keyword::class |
-     *  Scope\Module::class |
-     *  Scope\Number::class |
-     *  Scope\StringLiteral::class |
-     *  Scope\TemplateLiteral::class |
-     *  Scope\Whitespace::class
-     * >
+     * @var class-string<Scope\Afx::class|Scope\Comment::class|Scope\Expression::class|Scope\Identifier::class|Scope\Keyword::class|Scope\Module::class|Scope\Number::class|Scope\StringLiteral::class|Scope\TemplateLiteral::class|Scope\Whitespace::class>
      */
     private $rootScope = Scope\Module::class;
 
     /**
      * @param Source $source
-     * @param class-string<
-     *  Scope\Afx::class |
-     *  Scope\Comment::class |
-     *  Scope\Expression::class |
-     *  Scope\Identifier::class |
-     *  Scope\Keyword::class |
-     *  Scope\Module::class |
-     *  Scope\Number::class |
-     *  Scope\StringLiteral::class |
-     *  Scope\TemplateLiteral::class |
-     *  Scope\Whitespace::class
-     * > $rootScope
+     * @param class-string<Scope\Afx::class|Scope\Comment::class|Scope\Expression::class|Scope\Identifier::class|Scope\Keyword::class|Scope\Module::class|Scope\Number::class|Scope\StringLiteral::class|Scope\TemplateLiteral::class|Scope\Whitespace::class> $rootScope
      */
     private function __construct(Source $source, string $rootScope)
     {
@@ -53,18 +31,7 @@ final class Tokenizer implements \IteratorAggregate
 
     /**
      * @param Source $source
-     * @param class-string<
-     *  Scope\Afx::class |
-     *  Scope\Comment::class |
-     *  Scope\Expression::class |
-     *  Scope\Identifier::class |
-     *  Scope\Keyword::class |
-     *  Scope\Module::class |
-     *  Scope\Number::class |
-     *  Scope\StringLiteral::class |
-     *  Scope\TemplateLiteral::class |
-     *  Scope\Whitespace::class
-     * > $rootScope
+     * @param class-string<Scope\Afx::class|Scope\Comment::class|Scope\Expression::class|Scope\Identifier::class|Scope\Keyword::class|Scope\Module::class|Scope\Number::class|Scope\StringLiteral::class|Scope\TemplateLiteral::class|Scope\Whitespace::class> $rootScope
      * @return Tokenizer
      */
     public static function createFromSource(

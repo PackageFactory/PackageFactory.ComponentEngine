@@ -1,11 +1,15 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Lexer\Debug;
 
-use PackageFactory\ComponentEngine\Parser\Lexer\Tokenizer;
+use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 
 final class Printer
 {
-    public static function print(iterable $tokenStream): void
+    /**
+     * @param \Iterator<Token> $tokenStream
+     * @return void
+     */
+    public static function print(\Iterator $tokenStream): void
     {
         $lines = [''];
         echo sprintf(

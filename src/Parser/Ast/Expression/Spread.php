@@ -45,10 +45,12 @@ final class Spread implements \JsonSerializable
                 throw new \Exception('@TODO: Unexpected end of file: ' . $value);
             }
 
-            return new self(
-                $value,
-                Expression::createFromTokenStream($stream)
-            );
+            $subject = Expression::createFromTokenStream($stream);
+            if ($subject === null) {
+                throw new \Exception('@TODO: Unexpected empty subject');
+            }
+
+            return new self($value, $subject);
         } else {
             throw new \Exception('@TODO: Unexpected Token: ' . $value);
         }

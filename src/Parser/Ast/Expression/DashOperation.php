@@ -10,7 +10,7 @@ final class DashOperation implements \JsonSerializable
     const OPERATOR_SUBTRACT = '-';
 
     /**
-     * @var ExpressionTerm
+     * @var Operand
      */
     private $left;
 
@@ -20,10 +20,15 @@ final class DashOperation implements \JsonSerializable
     private $operator;
 
     /**
-     * @var ExpressionTerm
+     * @var Operand
      */
     private $right;
 
+    /**
+     * @param Operand $left
+     * @param string $operator
+     * @param Operand $right
+     */
     private function __construct($left, string $operator, $right)
     {
         if ($operator !== self::OPERATOR_ADD && $operator !== self::OPERATOR_SUBTRACT) {
@@ -35,6 +40,11 @@ final class DashOperation implements \JsonSerializable
         $this->right = $right;
     }
 
+    /**
+     * @param Operand $left
+     * @param TokenStream $stream
+     * @return self
+     */
     public static function createFromTokenStream($left, TokenStream $stream): self 
     {
         if (!$stream->valid()) {
@@ -57,11 +67,15 @@ final class DashOperation implements \JsonSerializable
             Expression::PRIORITY_DASH_OPERATION
         );
 
+        if ($right === null) {
+            throw new \Exception('@TODO: Unexpected empty operand');
+        }
+
         return new self($left, $operator, $right);
     }
 
     /**
-     * @return ExpressionTerm
+     * @return Operand
      */
     public function getLeft()
     {
@@ -77,7 +91,7 @@ final class DashOperation implements \JsonSerializable
     }
 
     /**
-     * @return ExpressionTerm
+     * @return Operand
      */
     public function getRight()
     {

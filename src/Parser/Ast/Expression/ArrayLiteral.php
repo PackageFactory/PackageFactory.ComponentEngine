@@ -43,6 +43,7 @@ final class ArrayLiteral implements \JsonSerializable
         Util::skipWhiteSpaceAndComments($stream);
 
         $start = $stream->current();
+        $end = $stream->current();
         Util::expect($stream, TokenType::BRACKETS_SQUARE_OPEN());
 
         $items = [];
@@ -53,10 +54,16 @@ final class ArrayLiteral implements \JsonSerializable
                 case TokenType::BRACKETS_SQUARE_CLOSE():
                     $end = $stream->current();
                     $stream->next();
-                    return new self($start, $end, $items);
+                    break 2;
 
                 default:
-                    $items[] = Expression::createFromTokenStream($stream);
+                    $item = Expression::createFromTokenStream($stream);
+                    if ($item === null) {
+                        throw new \Exception('@TODO: Unexpected empty array item');
+                    }
+
+                    $items[] = $item;
+                    break;
             }
 
             Util::skipWhiteSpaceAndComments($stream);
@@ -66,9 +73,11 @@ final class ArrayLiteral implements \JsonSerializable
             } else {
                 Util::skipWhiteSpaceAndComments($stream);
                 $end = Util::expect($stream, TokenType::BRACKETS_SQUARE_CLOSE());
-                return new self($start, $end, $items);
+                break;
             }
         }
+
+        return new self($start, $end, $items);
     }
 
     /**

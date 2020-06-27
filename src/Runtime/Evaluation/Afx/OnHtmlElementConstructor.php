@@ -16,9 +16,10 @@ final class OnHtmlElementConstructor
         Runtime $runtime, 
         Tag $htmlElementConstructor
     ): VirtualDOM\Element {
+        $tagName = $htmlElementConstructor->getTagName();
         return VirtualDOM\Element::create(
             VirtualDOM\ElementType::createFromTagName(
-                $htmlElementConstructor->getTagName()->getValue()
+                $tagName !== null ? $tagName->getValue() : 'div'
             ),
             VirtualDOM\Attributes::createFromArray(
                 iterator_to_array(

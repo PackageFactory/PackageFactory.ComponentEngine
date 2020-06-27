@@ -69,7 +69,7 @@ final class Content implements \JsonSerializable
     }
 
     /**
-     * @return array<mixed>
+     * @return string
      */
     public function jsonSerialize()
     {

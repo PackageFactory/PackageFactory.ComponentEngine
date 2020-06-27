@@ -85,6 +85,10 @@ final class Constant implements \JsonSerializable
             $brackets--;
         }
 
+        if ($value === null) {
+            throw new \Exception('@TODO: Unexpected empty assignment');
+        }
+
         return new self($name, $value);
     }
 

@@ -64,11 +64,15 @@ final class TemplateLiteral implements \JsonSerializable
                         $string = '';
                     }
                     $stream->next();
-                    $segments[] = Expression::createFromTokenStream(
+                    $segment = Expression::createFromTokenStream(
                         $stream,
                         Expression::PRIORITY_TERNARY,
                         TokenType::TEMPLATE_LITERAL_INTERPOLATION_END()
                     );
+                    if ($segment === null) {
+                        throw new \Exception('@TODO: Unexpected empty segment');
+                    }
+                    $segments[] = $segment;
                     break;
 
                 case TokenType::TEMPLATE_LITERAL_END():

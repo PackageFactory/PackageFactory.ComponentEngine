@@ -9,7 +9,7 @@ final class OnAttributeSpread
     /**
      * @param Runtime $runtime
      * @param Spread $attributeSpread
-     * @return \Iterator<string, mixed>
+     * @return \Iterator<int, mixed>
      */
     public static function evaluate(Runtime $runtime, Spread $attributeSpread): \Iterator 
     {

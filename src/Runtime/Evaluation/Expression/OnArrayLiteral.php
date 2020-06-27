@@ -10,7 +10,7 @@ final class OnArrayLiteral
     /**
      * @param Runtime $runtime
      * @param ArrayLiteral $arrayLiteral
-     * @return array
+     * @return array<int, mixed>
      */
     public static function evaluate(Runtime $runtime, ArrayLiteral $arrayLiteral): array 
     {

@@ -10,7 +10,7 @@ final class Conjunction implements \JsonSerializable
     const OPERATOR_LOGICAL_AND = '&&';
 
     /**
-     * @var ExpressionTerm
+     * @var Operand
      */
     private $left;
 
@@ -20,14 +20,14 @@ final class Conjunction implements \JsonSerializable
     private $operator;
 
     /**
-     * @var ExpressionTerm
+     * @var Operand
      */
     private $right;
 
     /**
-     * @param ExpressionTerm $left
+     * @param Operand $left
      * @param string $operator
-     * @param ExpressionTerm $right
+     * @param Operand $right
      */
     private function __construct($left, string $operator, $right)
     {
@@ -41,7 +41,7 @@ final class Conjunction implements \JsonSerializable
     }
 
     /**
-     * @param ExpressionTerm $left
+     * @param Operand $left
      * @param TokenStream $stream
      * @return self
      */
@@ -105,11 +105,15 @@ final class Conjunction implements \JsonSerializable
                 throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
         }
 
+        if ($right === null) {
+            throw new \Exception('@TODO: Unexpected empty operand');
+        }
+
         return new self($left, $operator, $right);
     }
 
     /**
-     * @return ExpressionTerm
+     * @return Operand
      */
     public function getLeft()
     {
@@ -125,7 +129,7 @@ final class Conjunction implements \JsonSerializable
     }
 
     /**
-     * @return ExpressionTerm
+     * @return Operand
      */
     public function getRight()
     {

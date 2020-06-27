@@ -137,7 +137,7 @@ final class Number
                 $floatingPoint = true;
             } elseif (($value === 'e' || $value === 'E') && !$exponentiation) {
                 $capture->append($iterator->current());
-                $floatingPoint = true;
+                $exponentiation = true;
             } else {
                 break;
             }

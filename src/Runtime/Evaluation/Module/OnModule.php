@@ -4,8 +4,14 @@ namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Module;
 use PackageFactory\ComponentEngine\Parser\Ast\Module\Module;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
-final class onModule
+final class OnModule
 {
+    /**
+     * @param Runtime $runtime
+     * @param Module $module
+     * @param string $exportName
+     * @return mixed
+     */
     public static function evaluate(Runtime $runtime, Module $module, string $exportName = 'default') {
         $export = $module->getExport($exportName);
         $context = $runtime->getContext();

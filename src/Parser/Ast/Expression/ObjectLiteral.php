@@ -43,6 +43,7 @@ final class ObjectLiteral implements \JsonSerializable
         Util::skipWhiteSpaceAndComments($stream);
 
         $start = $stream->current();
+        $end = $stream->current();
         Util::expect($stream, TokenType::BRACKETS_CURLY_OPEN());
 
         $properties = [];
@@ -57,13 +58,15 @@ final class ObjectLiteral implements \JsonSerializable
                 case TokenType::BRACKETS_CURLY_CLOSE():
                     $end = $stream->current();
                     $stream->next();
-                    return new self($start, $end, $properties);
+                    break 2;
                 
                 default:
                     $properties[] = ObjectLiteralProperty::createFromTokenStream($stream);
                     break;
             }
         }
+
+        return new self($start, $end, $properties);
     }
 
     /**

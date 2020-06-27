@@ -10,7 +10,7 @@ final class OnPropSpread
     /**
      * @param Runtime $runtime
      * @param Spread $propSpread
-     * @return \Iterator<string, void>
+     * @return \Iterator<int|string, mixed>
      */
     public static function evaluate(Runtime $runtime, Spread $propSpread): \Iterator 
     {

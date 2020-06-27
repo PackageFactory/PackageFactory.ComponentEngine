@@ -15,7 +15,7 @@ final class ChainSegment implements \JsonSerializable
 
     /**
      * @param boolean $isOptional
-     * @param Operand $subject
+     * @param Operand|Call $subject
      */
     private function __construct(
         bool $isOptional,

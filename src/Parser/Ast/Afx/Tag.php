@@ -110,11 +110,15 @@ final class Tag implements \JsonSerializable
                     break;
                 case TokenType::AFX_EXPRESSION_START():
                     $stream->next();
-                    $children[] = Expression::createFromTokenStream(
+                    $child = Expression::createFromTokenStream(
                         $stream, 
                         Expression::PRIORITY_TERNARY,
                         TokenType::AFX_EXPRESSION_END()
                     );
+
+                    if ($child !== null) {
+                        $children[] = $child;
+                    }
                     break;
                 case TokenType::AFX_TAG_START():
                     if ($lookAhead = $stream->lookAhead(2)) {
@@ -122,7 +126,7 @@ final class Tag implements \JsonSerializable
                             $stream->skip(2);
 
                             if ($stream->current()->getType() === TokenType::IDENTIFIER()) {
-                                if ($stream->current()->getValue() === $tagName->getValue()) {
+                                if ($tagName && $stream->current()->getValue() === $tagName->getValue()) {
                                     $stream->next();
                                     Util::expect($stream, TokenType::AFX_TAG_END());
                                     break 2;

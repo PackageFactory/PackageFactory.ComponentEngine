@@ -7,7 +7,7 @@ use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Runtime\Context;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
-final class onImport
+final class OnImport
 {
     /**
      * @param Runtime $runtime

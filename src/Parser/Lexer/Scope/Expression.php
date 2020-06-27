@@ -13,7 +13,7 @@ final class Expression
 
     /**
      * @param SourceIterator $iterator
-     * @param array $escapeSequences
+     * @param array<int, string> $escapeSequences
      * @return \Iterator<Token>
      */
     public static function tokenize(

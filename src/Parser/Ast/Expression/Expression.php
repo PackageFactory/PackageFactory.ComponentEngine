@@ -17,7 +17,7 @@ final class Expression
 
     /**
      * @param TokenStream $stream
-     * @return null|Operand
+     * @return null|Operand|Tag
      */
     public static function createFromTokenStream(
         TokenStream $stream,
@@ -25,6 +25,9 @@ final class Expression
         TokenType $delimiter = null
     ) {
         $left = self::createAtomFromTokenStream($stream);
+        if ($left === null) {
+            return null;
+        }
 
         while ($stream->valid()) {
             Util::skipWhiteSpaceAndComments($stream);
@@ -124,9 +127,10 @@ final class Expression
 
     /**
      * @param TokenStream $stream
-     * @return Atom
+     * @return null|Operand|Tag
      */
-    public static function createAtomFromTokenStream(TokenStream $stream) {
+    public static function createAtomFromTokenStream(TokenStream $stream) 
+    {
         Util::skipWhiteSpaceAndComments($stream);
         if (!$stream->valid()) {
             return null;

@@ -13,7 +13,7 @@ final class Call implements \JsonSerializable
     private $arguments;
 
     /**
-     * @param array $arguments
+     * @param array|Operand[] $arguments
      */
     private function __construct(array $arguments)
     {
@@ -39,7 +39,11 @@ final class Call implements \JsonSerializable
                     return new self($arguments);
 
                 default:
-                    $arguments[] = Expression::createFromTokenStream($stream);
+                    $argument = Expression::createFromTokenStream($stream);
+                    if ($argument === null) {
+                        throw new \Exception('@TODO: Unexpected empty argument');
+                    }
+                    $arguments[] = $argument;
                     break;
             }
 
@@ -50,9 +54,11 @@ final class Call implements \JsonSerializable
             } else {
                 Util::skipWhiteSpaceAndComments($stream);
                 Util::expect($stream, TokenType::BRACKETS_ROUND_CLOSE());
-                return new self($arguments);
+                break;
             }
         }
+
+        return new self($arguments);
     }
 
     /**
@@ -64,7 +70,7 @@ final class Call implements \JsonSerializable
     }
 
     /**
-     * @return void
+     * @return array<mixed>
      */
     public function jsonSerialize()
     {

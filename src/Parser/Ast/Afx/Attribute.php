@@ -14,13 +14,13 @@ final class Attribute implements \JsonSerializable
     private $attributeName;
 
     /**
-     * @var Operand
+     * @var Operand|bool
      */
     private $value;
 
     /**
      * @param AttributeName $attributeName
-     * @param Operand $value
+     * @param Operand|bool $value
      */
     private function __construct(
         AttributeName $attributeName,
@@ -67,6 +67,10 @@ final class Attribute implements \JsonSerializable
             throw new \Exception('@TODO: Unexpected end of file');
         }
 
+        if ($value === null) {
+            throw new \Exception('@TODO: Unexpected empty attribute value');
+        }
+
         return new self($attributeName, $value);
     }
 
@@ -79,7 +83,7 @@ final class Attribute implements \JsonSerializable
     }
 
     /**
-     * @return Operand
+     * @return Operand|bool
      */
     public function getValue()
     {

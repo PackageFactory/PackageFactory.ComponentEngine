@@ -13,7 +13,7 @@ final class OnConstant
     /**
      * @param Runtime $runtime
      * @param Constant $constant
-     * @return void
+     * @return mixed
      */
     public static function evaluate(Runtime $runtime, Constant $constant) 
     {

@@ -127,7 +127,6 @@ final class Chain implements \JsonSerializable
                     } else {
                         throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
                     }
-                    break;
             }
         }
 

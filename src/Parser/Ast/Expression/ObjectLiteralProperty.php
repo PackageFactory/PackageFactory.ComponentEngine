@@ -17,6 +17,10 @@ final class ObjectLiteralProperty implements \JsonSerializable
      */
     private $value;
 
+    /**
+     * @param null|Identifier|Operand $key
+     * @param Operand $value
+     */
     private function __construct($key, $value)
     {
         $this->key = $key;
@@ -60,12 +64,15 @@ final class ObjectLiteralProperty implements \JsonSerializable
         }
 
         $value = Expression::createFromTokenStream($stream);
+        if ($value === null) {
+            throw new \Exception('@TODO: Unexpected empty value');
+        }
 
         return new self($key, $value);
     }
 
     /**
-     * @return Identifier|Operand
+     * @return null|Identifier|Operand
      */
     public function getKey()
     {

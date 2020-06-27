@@ -27,8 +27,8 @@ final class OnExpression
 {
     /**
      * @param Runtime $runtime
-     * @param Operand $operand
-     * @return void
+     * @param Operand|Tag $operand
+     * @return mixed
      */
     public static function evaluate(Runtime $runtime, $operand) 
     {

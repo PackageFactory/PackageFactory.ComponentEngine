@@ -18,7 +18,7 @@ final class ArrowFunction implements \JsonSerializable
     private $body;
 
     /**
-     * @param array $parameters
+     * @param array|Identifier[] $parameters
      * @param Operand $body
      */
     private function __construct(
@@ -30,7 +30,7 @@ final class ArrowFunction implements \JsonSerializable
     }
 
     /**
-     * @param null|Identifier
+     * @param null|Identifier $firstParameter
      * @param TokenStream $stream
      * @return self
      */
@@ -77,6 +77,9 @@ final class ArrowFunction implements \JsonSerializable
         }
 
         $body = Expression::createFromTokenStream($stream);
+        if ($body === null) {
+            throw new \Exception('@TODO: Unexpected empty function body');
+        }
 
         return new self($parameters, $body);
     }

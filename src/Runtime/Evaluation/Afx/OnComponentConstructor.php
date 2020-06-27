@@ -3,6 +3,7 @@ namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Afx;
 
 use PackageFactory\VirtualDOM;
 use PackageFactory\ComponentEngine\Parser\Ast\Afx\Tag;
+use PackageFactory\ComponentEngine\Parser\Ast\Afx\TagName;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnComponentConstructor
@@ -14,8 +15,10 @@ final class OnComponentConstructor
      */
     public static function evaluate(Runtime $runtime, Tag $componentConstructor): VirtualDOM\Node 
     {
+        /** @var TagName $tagName */
+        $tagName = $componentConstructor->getTagName();
         $constructor = $runtime->getContext()->getProperty(
-            $componentConstructor->getTagName()->getValue()
+            $tagName->getValue()
         );
         $props = iterator_to_array(
             OnProps::evaluate(

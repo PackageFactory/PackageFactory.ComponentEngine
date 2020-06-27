@@ -14,7 +14,7 @@ final class Comparison implements \JsonSerializable
     const COMPARATOR_LTE = '<=';
 
     /**
-     * @var ExpressionTerm
+     * @var Operand
      */
     private $left;
 
@@ -24,14 +24,14 @@ final class Comparison implements \JsonSerializable
     private $operator;
 
     /**
-     * @var ExpressionTerm
+     * @var Operand
      */
     private $right;
 
     /**
-     * @param ExpressionTerm $left
+     * @param Operand $left
      * @param string $operator
-     * @param ExpressionTerm $right
+     * @param Operand $right
      */
     private function __construct($left, string $operator, $right)
     {
@@ -50,6 +50,11 @@ final class Comparison implements \JsonSerializable
         $this->right = $right;
     }
 
+    /**
+     * @param Operand $left
+     * @param TokenStream $stream
+     * @return self
+     */
     public static function createFromTokenStream($left, TokenStream $stream): self 
     {
         if (!$stream->valid()) {
@@ -114,11 +119,15 @@ final class Comparison implements \JsonSerializable
                 throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
         }
 
+        if ($right === null) {
+            throw new \Exception('@TODO: Unexpected empty operand');
+        }
+
         return new self($left, $operator, $right);
     }
 
     /**
-     * @return ExpressionTerm
+     * @return Operand
      */
     public function getLeft()
     {
@@ -134,7 +143,7 @@ final class Comparison implements \JsonSerializable
     }
 
     /**
-     * @return ExpressionTerm
+     * @return Operand
      */
     public function getRight()
     {

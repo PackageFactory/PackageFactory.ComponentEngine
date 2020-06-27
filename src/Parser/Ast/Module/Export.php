@@ -94,6 +94,10 @@ final class Export implements \JsonSerializable
             $brackets--;
         }
 
+        if ($value === null) {
+            throw new \Exception('@TODO: Unexpected empty export');
+        }
+
         return new self($name, $value);
     }
 

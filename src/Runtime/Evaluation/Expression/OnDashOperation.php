@@ -8,7 +8,7 @@ final class OnDashOperation
 {
     /**
      * @param Runtime $runtime
-     * @param DashOperation $DashOperation
+     * @param DashOperation $dashOperation
      * @return float|string
      */
     public static function evaluate(Runtime $runtime, DashOperation $dashOperation)

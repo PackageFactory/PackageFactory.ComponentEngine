@@ -9,8 +9,8 @@ final class OnProps
 {
     /**
      * @param Runtime $runtime
-     * @param array $props
-     * @return \Iterator<string, mixed>
+     * @param array<int, Attribute|Spread> $props
+     * @return \Iterator<int|string, mixed>
      */
     public static function evaluate(Runtime $runtime, array $props): \Iterator 
     {

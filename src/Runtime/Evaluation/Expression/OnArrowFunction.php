@@ -10,7 +10,7 @@ final class OnArrowFunction
 {
     /**
      * @param Runtime $runtime
-     * @param ArrowFunction $arrayLiteral
+     * @param ArrowFunction $arrowFunction
      * @return \Closure
      */
     public static function evaluate(Runtime $runtime, ArrowFunction $arrowFunction): \Closure

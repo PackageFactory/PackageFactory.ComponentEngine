@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Afx\Tag;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
@@ -54,8 +55,15 @@ final class Ternary implements \JsonSerializable
             Expression::PRIORITY_TERNARY,
             TokenType::COLON()
         );
+        if ($trueBranch === null) {
+            throw new \Exception('@TODO: Unexpected empty trueBranch');
+        }
 
         $falseBranch = Expression::createFromTokenStream($stream);
+        if ($falseBranch === null) {
+            throw new \Exception('@TODO: Unexpected empty falseBranch');
+        }
+
 
         return new self($condition, $trueBranch, $falseBranch);
     }

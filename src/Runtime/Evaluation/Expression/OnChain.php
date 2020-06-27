@@ -19,11 +19,19 @@ final class OnChain
         $segments = $chain->getSegments();
         $root = array_shift($segments);
 
+        if ($root === null) {
+            throw new \Exception('@TODO: Broken chain');
+        }
+
         if ($root->getSubject() instanceof Identifier) {
             array_unshift($segments, $root);
             $value = $runtime->getContext();
         } else {
-            $value = OnExpression::evaluate($runtime, $root->getSubject());
+            $subject = $root->getSubject();
+            if ($subject instanceof Call) {
+                throw new \Exception('@TODO: Unexpected call');
+            }
+            $value = OnExpression::evaluate($runtime, $subject);
         }
 
         foreach ($segments as $segment) {

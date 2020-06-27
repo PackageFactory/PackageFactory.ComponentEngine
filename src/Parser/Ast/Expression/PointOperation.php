@@ -12,7 +12,7 @@ final class PointOperation implements \JsonSerializable
     const OPERATOR_MODULO = '%';
 
     /**
-     * @var ExpressionTerm
+     * @var Operand
      */
     private $left;
 
@@ -22,14 +22,14 @@ final class PointOperation implements \JsonSerializable
     private $operator;
 
     /**
-     * @var ExpressionTerm
+     * @var Operand
      */
     private $right;
 
     /**
-     * @param ExpressionTerm $left
+     * @param Operand $left
      * @param string $operator
-     * @param ExpressionTerm $right
+     * @param Operand $right
      */
     private function __construct($left, string $operator, $right)
     {
@@ -47,7 +47,7 @@ final class PointOperation implements \JsonSerializable
     }
 
     /**
-     * @param ExpressionTerm $left
+     * @param Operand $left
      * @param TokenStream $stream
      * @return self
      */
@@ -98,11 +98,15 @@ final class PointOperation implements \JsonSerializable
                 throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
         }
 
+        if ($right === null) {
+            throw new \Exception('@TODO: Unexpected empty operand');
+        }
+
         return new self($left, $operator, $right);
     }
 
     /**
-     * @return ExpressionTerm
+     * @return Operand
      */
     public function getLeft()
     {
@@ -118,7 +122,7 @@ final class PointOperation implements \JsonSerializable
     }
 
     /**
-     * @return ExpressionTerm
+     * @return Operand
      */
     public function getRight()
     {

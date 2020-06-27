@@ -41,10 +41,11 @@ final class Negation implements \JsonSerializable
         $value = $stream->current();
         if ($value->getType() === TokenType::OPERATOR_LOGICAL_NOT()) {
             $stream->next();
-            return new self(
-                $value,
-                Expression::createAtomFromTokenStream($stream)
-            );
+            $subject = Expression::createFromTokenStream($stream);
+            if ($subject === null) {
+                throw new \Exception('@TODO: Unexpected empty subject');
+            }
+            return new self($value, $subject);
         } else {
             throw new \Exception('@TODO: Unexpected Token: ' . $value);
         }

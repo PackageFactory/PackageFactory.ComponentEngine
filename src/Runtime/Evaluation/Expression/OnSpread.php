@@ -8,8 +8,8 @@ final class OnSpread
 {
     /**
      * @param Runtime $runtime
-     * @param Spread $Spread
-     * @return \Iterator<string, void>
+     * @param Spread $spread
+     * @return \Iterator<int|string, mixed>
      */
     public static function evaluate(Runtime $runtime, Spread $spread): \Iterator 
     {

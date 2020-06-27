@@ -9,7 +9,7 @@ final class OnTernary
     /**
      * @param Runtime $runtime
      * @param Ternary $ternary
-     * @return void
+     * @return mixed
      */
     public static function evaluate(Runtime $runtime, Ternary $ternary) 
     {

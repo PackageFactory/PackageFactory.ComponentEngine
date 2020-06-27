@@ -12,7 +12,7 @@ final class OnExport
     /**
      * @param Runtime $runtime
      * @param Export $export
-     * @return void
+     * @return mixed
      */
     public static function evaluate(Runtime $runtime, Export $export) 
     {
