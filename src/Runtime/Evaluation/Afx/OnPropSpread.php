@@ -3,17 +3,18 @@ namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Afx;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Spread;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
+use PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 final class OnPropSpread
 {
     /**
      * @param Runtime $runtime
      * @param Spread $propSpread
-     * @return array
+     * @return \Iterator<string, void>
      */
-    public static function evaluate(Runtime $runtime, Spread $propSpread): array 
+    public static function evaluate(Runtime $runtime, Spread $propSpread): \Iterator 
     {
-        throw new \Exception('@TODO: onPropSpread');
+        yield from Expression\OnSpread::evaluate($runtime, $propSpread);
     }
 }
 

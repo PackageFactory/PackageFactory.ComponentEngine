@@ -86,7 +86,10 @@ final class Tag implements \JsonSerializable
                         throw new \Exception('@TODO: Unexpected end of file');
                     }
                     break;
-
+                case TokenType::AFX_TAG_CLOSE():
+                    $stream->next();
+                    Util::expect($stream, TokenType::AFX_TAG_END());
+                    return new self($tagName, $attributes, []);
                 default:
                     throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
             }

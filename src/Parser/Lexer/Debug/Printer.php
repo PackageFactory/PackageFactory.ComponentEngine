@@ -5,7 +5,7 @@ use PackageFactory\ComponentEngine\Parser\Lexer\Tokenizer;
 
 final class Printer
 {
-    public static function print(iterable $tokenStream): string
+    public static function print(iterable $tokenStream): void
     {
         $lines = [''];
         $lines[] = sprintf(
@@ -20,7 +20,7 @@ final class Printer
             'VALUE'
         );
         foreach ($tokenStream as $token) {
-            $lines[] = sprintf(
+            echo sprintf(
                 "%-40s %-5s %-5s %-5s %-5s %-5s %-5s %s",
                 $token->getType(),
                 $token->getStart()->getIndex(),
@@ -30,10 +30,10 @@ final class Printer
                 $token->getEnd()->getRowIndex(),
                 $token->getEnd()->getColumnIndex(),
                 str_replace("\n", " ", $token->getValue())
-            );
+            ) . PHP_EOL;
         }
 
-        $lines[] = '';
-        return implode("\n", $lines);
+        // $lines[] = '';
+        // return implode("\n", $lines);
     }
 }

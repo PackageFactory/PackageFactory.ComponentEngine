@@ -47,12 +47,14 @@ final class Afx
 
                 if ($open) {
                     $tags++;
+                } elseif ($tags === 0) {
+                    continue;
                 } else {
                     $tags--;
                 }
 
                 if ($tags === 0) {
-                    return;
+                    continue;
                 }
 
                 yield from Whitespace::tokenize($iterator);

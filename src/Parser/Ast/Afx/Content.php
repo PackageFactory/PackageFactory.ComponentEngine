@@ -30,6 +30,9 @@ final class Content implements \JsonSerializable
         while ($stream->valid()) {
             switch ($stream->current()->getType()) {
                 case TokenType::AFX_TAG_CONTENT():
+                    if ($whitespace) {
+                        $value .= ' ';
+                    }
                     $whitespace = false;
                     $value .= $stream->current()->getValue();
                     $stream->next();
@@ -38,12 +41,15 @@ final class Content implements \JsonSerializable
                 case TokenType::END_OF_LINE():
                     if (!$whitespace) {
                         $whitespace = true;
-                        $value .= ' ';
                     }
                     $stream->next();
                     break;
-                case TokenType::AFX_TAG_START():
                 case TokenType::AFX_EXPRESSION_START():
+                    if ($whitespace && !empty($value)) {
+                        $value .= ' ';
+                    }
+                    break 2;
+                case TokenType::AFX_TAG_START():
                     break 2;
 
                 default:

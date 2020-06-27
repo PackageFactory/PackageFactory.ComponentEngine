@@ -1,0 +1,22 @@
+const NavList = (
+    <ul>
+        {props.items.map(item => <NavItem {...item}/>)}
+    </ul>
+)
+
+const NavItem = (
+    <li>
+        <a href={props.href}>
+            {props.label}
+        </a>
+        {props.items && (
+            <NavList items={props.items}/>
+        )}
+    </li>
+)
+
+export default (
+    <nav>
+        <NavList {...props}/>
+    </nav>
+)
