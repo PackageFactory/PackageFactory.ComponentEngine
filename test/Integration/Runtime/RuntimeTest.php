@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Integration\Runtime;
 
+use PackageFactory\VirtualDOM\Rendering\HTML5StringRenderer;
 use PackageFactory\ComponentEngine\Parser\Ast\Module\Module;
 use PackageFactory\ComponentEngine\Parser\Lexer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
@@ -43,7 +44,9 @@ final class RuntimeTest extends BaseTestCase
 
         $result = OnModule::evaluate($runtime, $module);
 
-        $this->assertMatchesSnapshot((string) $result);
+        $this->assertMatchesSnapshot(
+            HTML5StringRenderer::render($result)
+        );
     }
 
     /**
@@ -84,6 +87,8 @@ final class RuntimeTest extends BaseTestCase
 
         $result = OnModule::evaluate($runtime, $module);
 
-        $this->assertMatchesSnapshot((string) $result);
+        $this->assertMatchesSnapshot(
+            HTML5StringRenderer::render($result)
+        );
     }
 }
