@@ -63,20 +63,6 @@ final class Fragment
     }
 
     /**
-     * @param Source $source
-     * @return Fragment
-     */
-    public static function createEmpty(Source $source): Fragment 
-    {
-        return new Fragment(
-            '',
-            Position::create(0, 0, 0),
-            Position::create(0, 0, 0),
-            $source
-        );
-    }
-
-    /**
      * @return string
      */
     public function getValue(): string
@@ -114,10 +100,6 @@ final class Fragment
      */
     public function append(Fragment $other): Fragment 
     {
-        if ($this->getSource() !== $other->getSource()) {
-            throw new \Exception('@TODO: Exception');
-        }
-
         return new Fragment(
             $this->getValue() . $other->getValue(),
             $this->getStart(),

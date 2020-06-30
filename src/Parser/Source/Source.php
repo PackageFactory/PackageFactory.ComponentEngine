@@ -4,7 +4,7 @@ namespace PackageFactory\ComponentEngine\Parser\Source;
 /**
  * @implements \IteratorAggregate<mixed, Fragment>
  */
-final class Source implements \IteratorAggregate, \JsonSerializable
+final class Source implements \IteratorAggregate
 {
     /**
      * @var Path
@@ -92,13 +92,5 @@ final class Source implements \IteratorAggregate, \JsonSerializable
                 $columnIndex++;
             }
         }
-    }
-
-    /**
-     * @return Path
-     */
-    public function jsonSerialize()
-    {
-        return $this->path;
     }
 }

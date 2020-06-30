@@ -690,4 +690,48 @@ final class ExpressionTest extends TestCase
         $iterator = SourceIterator::createFromSource(Source::createFromString($input));
         $this->assertTokenStream($tokens, Expression::tokenize($iterator));
     }
+
+    /**
+     * @return array<string, array{string, array<int, array{TokenType, string}>}>
+     */
+    public function edgeCaseProvider(): array
+    {
+        return [
+            '>' => [
+                '>',
+                [
+                    [TokenType::COMPARATOR_GT(), '>'],
+                ]
+            ],
+            '>=<=>==>===>=>' => [
+                '>=<=>==>===>=>',
+                [
+                    [TokenType::COMPARATOR_GTE(), '>='],
+                    [TokenType::COMPARATOR_LTE(), '<='],
+                    [TokenType::COMPARATOR_GTE(), '>='],
+                    [TokenType::ARROW(), '=>'],
+                    [TokenType::COMPARATOR_EQ(), '==='],
+                    [TokenType::COMPARATOR_GTE(), '>='],
+                    [TokenType::COMPARATOR_GT(), '>'],
+                ]
+            ],
+            '..' => [
+                '',
+                []
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider edgeCaseProvider
+     * @test
+     * @param string $input
+     * @param array<int, array{TokenType, string}> $tokens
+     * @return void
+     */
+    public function testEdgeCases(string $input, array $tokens): void
+    {
+        $iterator = SourceIterator::createFromSource(Source::createFromString($input));
+        $this->assertTokenStream($tokens, Expression::tokenize($iterator));
+    }
 }

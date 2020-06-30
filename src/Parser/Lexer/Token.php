@@ -5,7 +5,7 @@ use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Source\Fragment;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 
-final class Token implements \JsonSerializable
+final class Token
 {
     /**
      * @var TokenType
@@ -55,30 +55,6 @@ final class Token implements \JsonSerializable
 
     /**
      * @param TokenType $type
-     * @param string $value
-     * @param Position $start
-     * @param Position $end
-     * @param Source $source
-     * @return Token
-     */
-    public static function create(
-        TokenType $type,
-        string $value,
-        Position $start,
-        Position $end,
-        Source $source
-    ): Token {
-        return new Token(
-            $type,
-            $value,
-            $start,
-            $end,
-            $source
-        );
-    }
-
-    /**
-     * @param TokenType $type
      * @param Fragment $fragment
      * @return Token
      */
@@ -101,21 +77,6 @@ final class Token implements \JsonSerializable
     public function getType(): TokenType
     {
         return $this->type;
-    }
-
-    /**
-     * @param TokenType $type
-     * @return Token
-     */
-    public function setType(TokenType $type): Token
-    {
-        return new Token(
-            $type,
-            $this->getValue(),
-            $this->getStart(),
-            $this->getEnd(),
-            $this->getSource()
-        );
     }
 
     /**
@@ -153,13 +114,5 @@ final class Token implements \JsonSerializable
     public function __toString()
     {
         return $this->value;
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function jsonSerialize()
-    {
-        return [$this->start, $this->end];
     }
 }

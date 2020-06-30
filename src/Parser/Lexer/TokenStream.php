@@ -34,11 +34,6 @@ final class TokenStream implements \Iterator
         return new self($tokenizer);
     }
 
-    public function getSource(): Source
-    {
-        return $this->tokenizer->getSource();
-    }
-
     public function lookAhead(int $length): ?Token
     {
         $count = count($this->lookAheadBuffer);

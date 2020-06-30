@@ -42,14 +42,6 @@ final class Tokenizer implements \IteratorAggregate
     }
 
     /**
-     * @return Source
-     */
-    public function getSource(): Source
-    {
-        return $this->source;
-    }
-
-    /**
      * @return \Iterator<mixed, Token>
      */
     public function getIterator(): \Iterator

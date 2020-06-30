@@ -1,6 +1,9 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Lexer;
 
+/**
+ * @codeCoverageIgnore
+ */
 final class TokenType
 {
     /**
