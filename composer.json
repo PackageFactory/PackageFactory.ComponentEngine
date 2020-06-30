@@ -19,8 +19,8 @@
     },
     "repositories": {
         "virtual-dom": {
-            "url": "../PackageFactory.VirtualDOM",
-            "type": "path"
+            "url": "git@github.com:PackageFactory/PackageFactory.VirtualDOM.git",
+            "type": "vcs"
         }
     },
     "minimum-stability": "stable",
