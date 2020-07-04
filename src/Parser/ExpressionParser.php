@@ -56,12 +56,13 @@ final class ExpressionParser
     /**
      * @param TokenStream $stream
      * @param int $priority
+     * @param bool $bracket
      * @return Term
      */
     public static function parseTerm(
         TokenStream $stream, 
         int $priority = self::PRIORITY_TERNARY,
-        $bracket = false
+        bool $bracket = false
     ): Term {
         switch ($stream->current()->getType()) {
             case TokenType::KEYWORD_NULL():

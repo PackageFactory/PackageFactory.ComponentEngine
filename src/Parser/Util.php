@@ -3,15 +3,16 @@ namespace PackageFactory\ComponentEngine\Parser;
 
 use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
+use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 
 final class Util
 {   
     /**
-     * @param \Iterator<Token> $iterator
+     * @param TokenStream $iterator
      * @return void
      */
-    public static function skipWhiteSpaceAndComments(\Iterator $iterator): void
+    public static function skipWhiteSpaceAndComments(TokenStream $iterator): void
     {
         while (
             $iterator->valid() && 
@@ -28,10 +29,10 @@ final class Util
     }
 
     /**
-     * @param \Iterator<Token> $iterator
+     * @param TokenStream $iterator
      * @return void
      */
-    public static function ensureValid(\Iterator $iterator): void
+    public static function ensureValid(TokenStream $iterator): void
     {
         if (!$iterator->valid()) {
             throw ParserFailed::becauseOfUnexpectedEndOfFile($iterator);
@@ -39,11 +40,11 @@ final class Util
     }
 
     /**
-     * @param \Iterator<Token> $iterator
+     * @param TokenStream $iterator
      * @param TokenType $type
      * @return Token
      */
-    public static function expect(\Iterator $iterator, TokenType $type): Token
+    public static function expect(TokenStream $iterator, TokenType $type): Token
     {
         self::ensureValid($iterator);
 

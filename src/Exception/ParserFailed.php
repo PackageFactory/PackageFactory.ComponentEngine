@@ -4,19 +4,20 @@ namespace PackageFactory\ComponentEngine\Exception;
 use PackageFactory\ComponentEngine\Parser\Ast\Term;
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
+use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 
 final class ParserFailed extends \Exception
 {
     /**
-     * @var Token
+     * @var null|Token
      */
     private $token;
 
     /**
-     * @param Token $token
+     * @param null|Token $token
      * @param string $message
      */
-    private function __construct(Token $token, string $message)
+    private function __construct(?Token $token, string $message)
     {
         parent::__construct('Parser failed: ' . $message);
 
@@ -24,9 +25,9 @@ final class ParserFailed extends \Exception
     }
 
     /**
-     * @return Token
+     * @return null|Token
      */
-    public function getToken(): Token
+    public function getToken(): ?Token
     {
         return $this->token;
     }
@@ -69,7 +70,7 @@ final class ParserFailed extends \Exception
     /**
      * @param Token $token
      * @param Term $term
-     * @param array $expectedTypes
+     * @param array<int, class-string> $expectedTypes
      * @return self
      */
     public static function becauseOfUnexpectedTerm(
@@ -88,9 +89,13 @@ final class ParserFailed extends \Exception
 
                 $message .= sprintf(
                     ' Expected one of %s or %s.',
-                    join(', ', array_map(function (string $type) {
-                        return (new \ReflectionClass($type))->getShortName();
-                    }, $expectedTypes)),
+                    join(', ', array_map(
+                        function (string $type) {
+                            /** @var class-string $type */
+                            return (new \ReflectionClass($type))->getShortName();
+                        }, 
+                        $expectedTypes
+                    )),
                     $last
                 );
             } else {
