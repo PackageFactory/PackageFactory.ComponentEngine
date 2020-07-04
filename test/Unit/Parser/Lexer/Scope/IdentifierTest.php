@@ -54,7 +54,7 @@ final class IdentifierTest extends TestCase
      */
     public function test(string $identifier): void
     {
-        $iterator = SourceIterator::createFromSource(Source::createFromString($identifier));
+        $iterator = SourceIterator::fromSource(Source::fromString($identifier));
 
         $this->assertTokenStream([
             [TokenType::IDENTIFIER(), $identifier]
@@ -69,7 +69,7 @@ final class IdentifierTest extends TestCase
     public function testExitAfterDelimiter(): void
     {
         $identifier = 'foo ';
-        $iterator = SourceIterator::createFromSource(Source::createFromString($identifier));
+        $iterator = SourceIterator::fromSource(Source::fromString($identifier));
 
         $this->assertTokenStream([
             [TokenType::IDENTIFIER(), 'foo']

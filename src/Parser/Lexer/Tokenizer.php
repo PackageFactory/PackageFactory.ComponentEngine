@@ -34,7 +34,7 @@ final class Tokenizer implements \IteratorAggregate
      * @param class-string<Scope\Afx::class|Scope\Comment::class|Scope\Expression::class|Scope\Identifier::class|Scope\Keyword::class|Scope\Module::class|Scope\Number::class|Scope\StringLiteral::class|Scope\TemplateLiteral::class|Scope\Whitespace::class> $rootScope
      * @return Tokenizer
      */
-    public static function createFromSource(
+    public static function fromSource(
         Source $source,
         string $rootScope = Scope\Module::class
     ): Tokenizer {
@@ -46,7 +46,7 @@ final class Tokenizer implements \IteratorAggregate
      */
     public function getIterator(): \Iterator
     {
-        $sourceIterator = SourceIterator::createFromSource($this->source);
+        $sourceIterator = SourceIterator::fromSource($this->source);
         yield from $this->rootScope::tokenize($sourceIterator);
     }
 }

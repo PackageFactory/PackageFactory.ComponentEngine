@@ -39,7 +39,7 @@ final class Export implements \JsonSerializable
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(TokenStream $stream): self
+    public static function fromTokenStream(TokenStream $stream): self
     {
         $token = $stream->current();
         Util::expect($stream, TokenType::MODULE_KEYWORD_EXPORT());
@@ -49,11 +49,11 @@ final class Export implements \JsonSerializable
 
         switch ($stream->current()->getType()) {
             case TokenType::MODULE_KEYWORD_CONST():
-                return self::createFromConstant(
-                    Constant::createFromTokenStream($stream)
+                return self::fromConstant(
+                    Constant::fromTokenStream($stream)
                 );
             case TokenType::MODULE_KEYWORD_DEFAULT():
-                $name = Identifier::createFromToken($stream->current());
+                $name = Identifier::fromToken($stream->current());
                 $stream->next();
                 break;
             default:
@@ -78,7 +78,7 @@ final class Export implements \JsonSerializable
                     $stream->next();
                     break;
                 case TokenType::AFX_TAG_START():
-                    $value = Tag::createFromTokenStream($stream);
+                    $value = Tag::fromTokenStream($stream);
                     break;
                 default:
                     $value = ExpressionParser::parseTerm($stream);
@@ -103,9 +103,9 @@ final class Export implements \JsonSerializable
      * @param Constant $constant
      * @return self
      */
-    public static function createFromConstant(Constant $constant): self
+    public static function fromConstant(Constant $constant): self
     {
-        throw new \Exception('@TODO: Export::createFromTokenStream');
+        throw new \Exception('@TODO: Export::fromTokenStream');
     }
 
     /**

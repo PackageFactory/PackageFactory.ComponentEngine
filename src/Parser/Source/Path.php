@@ -29,7 +29,7 @@ final class Path implements \JsonSerializable
      * @param string $data
      * @return self
      */
-    public static function createFromString(string $data): self
+    public static function fromString(string $data): self
     {
         return new self($data);
     }

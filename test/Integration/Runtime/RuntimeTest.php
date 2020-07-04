@@ -30,13 +30,13 @@ final class RuntimeTest extends BaseTestCase
      */
     public function helloWorldTest(string $filename): void
     {
-        $source = Source::createFromFile($filename);
-        $tokenizer = Tokenizer::createFromSource($source);
-        $stream = TokenStream::createFromTokenizer($tokenizer);
+        $source = Source::fromFile($filename);
+        $tokenizer = Tokenizer::fromSource($source);
+        $stream = TokenStream::fromTokenizer($tokenizer);
 
-        $module = Module::createFromTokenStream($stream);
+        $module = Module::fromTokenStream($stream);
         $runtime = Runtime::default()->withContext(
-            Context::createFromArray([
+            Context::fromArray([
                 'props' => [
                     'title' => 'Hello World Example'
                 ]
@@ -67,13 +67,13 @@ final class RuntimeTest extends BaseTestCase
      */
     public function navTest(string $filename): void
     {
-        $source = Source::createFromFile($filename);
-        $tokenizer = Tokenizer::createFromSource($source);
-        $stream = TokenStream::createFromTokenizer($tokenizer);
+        $source = Source::fromFile($filename);
+        $tokenizer = Tokenizer::fromSource($source);
+        $stream = TokenStream::fromTokenizer($tokenizer);
 
-        $module = Module::createFromTokenStream($stream);
+        $module = Module::fromTokenStream($stream);
         $runtime = Runtime::default()->withContext(
-            Context::createFromArray([
+            Context::fromArray([
                 'props' => [
                     'items' => [
                         ['href' => '#item-1', 'label' => 'Item #1', 'items' => []],

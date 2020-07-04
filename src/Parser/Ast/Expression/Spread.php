@@ -40,7 +40,7 @@ final class Spread implements Statement, ParameterAssignment, \JsonSerializable
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(TokenStream $stream): self
+    public static function fromTokenStream(TokenStream $stream): self
     {
         Util::ensureValid($stream);
         

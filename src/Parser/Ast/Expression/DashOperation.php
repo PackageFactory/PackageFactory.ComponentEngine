@@ -52,7 +52,7 @@ final class DashOperation implements Term, Statement, Key, Child, \JsonSerializa
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(Term $left, TokenStream $stream): self 
+    public static function fromTokenStream(Term $left, TokenStream $stream): self 
     {
         Util::ensureValid($stream);
 

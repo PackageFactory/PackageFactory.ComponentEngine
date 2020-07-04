@@ -24,7 +24,7 @@ final class AttributeName implements \JsonSerializable
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(TokenStream $stream): self
+    public static function fromTokenStream(TokenStream $stream): self
     {
         $value = $stream->current();
         if ($value->getType() === TokenType::IDENTIFIER()) {

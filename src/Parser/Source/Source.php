@@ -32,7 +32,7 @@ final class Source implements \IteratorAggregate
      * @param string $contents
      * @return Source
      */
-    public static function createFromString(string $contents): Source
+    public static function fromString(string $contents): Source
     {
         return new Source(Path::createMemory(), $contents);
     }
@@ -41,10 +41,10 @@ final class Source implements \IteratorAggregate
      * @param string $filename
      * @return Source
      */
-    public static function createFromFile(string $filename): Source
+    public static function fromFile(string $filename): Source
     {
         if ($contents = file_get_contents($filename)) {
-            return new Source(Path::createFromString($filename), $contents);
+            return new Source(Path::fromString($filename), $contents);
         }
 
         throw new \Exception('@TODO: Could not load file');

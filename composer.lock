@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PackageFactory/PackageFactory.VirtualDOM.git",
-                "reference": "65324041b7c29eff1597317695300c37eb26f0a7"
+                "reference": "c8484813e74db2a9735de3ff4c95c479fbbfc312"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PackageFactory/PackageFactory.VirtualDOM/zipball/65324041b7c29eff1597317695300c37eb26f0a7",
-                "reference": "65324041b7c29eff1597317695300c37eb26f0a7",
+                "url": "https://api.github.com/repos/PackageFactory/PackageFactory.VirtualDOM/zipball/c8484813e74db2a9735de3ff4c95c479fbbfc312",
+                "reference": "c8484813e74db2a9735de3ff4c95c479fbbfc312",
                 "shasum": ""
             },
             "type": "library",
@@ -34,7 +34,7 @@
                 "source": "https://github.com/PackageFactory/PackageFactory.VirtualDOM/tree/master",
                 "issues": "https://github.com/PackageFactory/PackageFactory.VirtualDOM/issues"
             },
-            "time": "2020-06-30T19:53:33+00:00"
+            "time": "2020-07-04T15:48:02+00:00"
         }
     ],
     "packages-dev": [
@@ -476,16 +476,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.31",
+            "version": "0.12.32",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "776c8056b401e1b67f277b9e9fb334d1a274671d"
+                "reference": "d03863f504c8432b3de4d1881f73f6acb8c0e67c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/776c8056b401e1b67f277b9e9fb334d1a274671d",
-                "reference": "776c8056b401e1b67f277b9e9fb334d1a274671d",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/d03863f504c8432b3de4d1881f73f6acb8c0e67c",
+                "reference": "d03863f504c8432b3de4d1881f73f6acb8c0e67c",
                 "shasum": ""
             },
             "require": {
@@ -528,7 +528,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-06-24T20:55:29+00:00"
+            "time": "2020-07-01T11:57:52+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",

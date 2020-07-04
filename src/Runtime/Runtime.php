@@ -30,7 +30,7 @@ final class Runtime
      */
     public static function default(): self
     {
-        return new self(Context::createEmpty(), RootLoader::createFromConfiguration([]));
+        return new self(Context::createEmpty(), RootLoader::fromConfiguration([]));
     }
 
     /**

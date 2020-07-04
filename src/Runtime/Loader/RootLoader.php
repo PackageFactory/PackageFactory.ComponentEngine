@@ -27,7 +27,7 @@ final class RootLoader implements LoaderInterface
      * @param array<string, LoaderInterface> $configuration
      * @return self
      */
-    public static function createFromConfiguration(array $configuration): self
+    public static function fromConfiguration(array $configuration): self
     {
         return new self($configuration);
     }

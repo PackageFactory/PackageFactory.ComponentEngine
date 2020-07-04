@@ -148,11 +148,11 @@ final class ArrayLiteralTest extends TestCase
      */
     public function test(string $input, array $asJson): void
     {
-        $source = Source::createFromString($input);
-        $tokenizer = Tokenizer::createFromSource($source, Scope\Expression::class);
-        $stream = TokenStream::createFromTokenizer($tokenizer);
+        $source = Source::fromString($input);
+        $tokenizer = Tokenizer::fromSource($source, Scope\Expression::class);
+        $stream = TokenStream::fromTokenizer($tokenizer);
 
-        $result = ArrayLiteral::createFromTokenStream($stream);
+        $result = ArrayLiteral::fromTokenStream($stream);
 
         $this->assertJsonStringEqualsJsonString(
             (string) json_encode($asJson),

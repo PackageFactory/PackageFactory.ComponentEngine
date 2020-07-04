@@ -38,7 +38,7 @@ final class Negation implements Term, Statement, \JsonSerializable
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(TokenStream $stream): self
+    public static function fromTokenStream(TokenStream $stream): self
     {
         Util::skipWhiteSpaceAndComments($stream);
         

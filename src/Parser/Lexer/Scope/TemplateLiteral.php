@@ -20,7 +20,7 @@ final class TemplateLiteral
         $delimiter = $iterator->current();
 
         if ($delimiter->getValue() === '`') {
-            yield Token::createFromFragment(
+            yield Token::fromFragment(
                 TokenType::TEMPLATE_LITERAL_START(),
                 $delimiter
             );
@@ -35,7 +35,7 @@ final class TemplateLiteral
 
             if ($value === '\\') {
                 if ($capture !== null) {
-                    yield Token::createFromFragment(
+                    yield Token::fromFragment(
                         TokenType::TEMPLATE_LITERAL_CONTENT(),
                         $capture
                     );
@@ -43,7 +43,7 @@ final class TemplateLiteral
                     $capture = null;
                 }
 
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::TEMPLATE_LITERAL_ESCAPE(),
                     $fragment
                 );
@@ -51,7 +51,7 @@ final class TemplateLiteral
                 $iterator->next();
 
                 if ($iterator->valid()) {
-                    yield Token::createFromFragment(
+                    yield Token::fromFragment(
                         TokenType::TEMPLATE_LITERAL_ESCAPED_CHARACTER(),
                         $iterator->current()
                     );
@@ -60,7 +60,7 @@ final class TemplateLiteral
                 }
             } elseif ($value === PHP_EOL) {
                 if ($capture !== null) {
-                    yield Token::createFromFragment(
+                    yield Token::fromFragment(
                         TokenType::TEMPLATE_LITERAL_CONTENT(),
                         $capture
                     );
@@ -68,7 +68,7 @@ final class TemplateLiteral
                     $capture = null;
                 }
 
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::END_OF_LINE(),
                     $fragment
                 );
@@ -77,7 +77,7 @@ final class TemplateLiteral
             } elseif ($value === '$') {
                 if ($lookAhead = $iterator->willBe('${')) {
                     if ($capture !== null) {
-                        yield Token::createFromFragment(
+                        yield Token::fromFragment(
                             TokenType::TEMPLATE_LITERAL_CONTENT(),
                             $capture
                         );
@@ -85,7 +85,7 @@ final class TemplateLiteral
                         $capture = null;
                     }
                     $interpolation = true;
-                    yield Token::createFromFragment(
+                    yield Token::fromFragment(
                         TokenType::TEMPLATE_LITERAL_INTERPOLATION_START(),
                         $lookAhead
                     );
@@ -100,7 +100,7 @@ final class TemplateLiteral
                     $iterator->next();
                 }
             } elseif ($value === '}' && $interpolation) {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::TEMPLATE_LITERAL_INTERPOLATION_END(),
                     $iterator->current()
                 );
@@ -109,7 +109,7 @@ final class TemplateLiteral
                 $iterator->next();
             } elseif ($delimiter !== null && $value === $delimiter->getValue()) {
                 if ($capture !== null) {
-                    yield Token::createFromFragment(
+                    yield Token::fromFragment(
                         TokenType::TEMPLATE_LITERAL_CONTENT(),
                         $capture
                     );
@@ -117,7 +117,7 @@ final class TemplateLiteral
                     $capture = null;
                 }
 
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::TEMPLATE_LITERAL_END(),
                     $fragment
                 );
@@ -134,7 +134,7 @@ final class TemplateLiteral
         }
         
         if ($capture !== null) {
-            yield Token::createFromFragment(
+            yield Token::fromFragment(
                 TokenType::TEMPLATE_LITERAL_CONTENT(),
                 $capture
             );

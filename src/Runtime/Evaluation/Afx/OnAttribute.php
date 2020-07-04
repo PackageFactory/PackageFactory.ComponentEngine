@@ -21,7 +21,7 @@ final class OnAttribute
         if (is_null($value)) {
             yield VirtualDOM\Attribute::createBooleanFromName($name);
         } else {
-            yield VirtualDOM\Attribute::createFromNameAndValue(
+            yield VirtualDOM\Attribute::fromNameAndValue(
                 $name,
                 Expression\OnTerm::evaluate($runtime, $value)
             );

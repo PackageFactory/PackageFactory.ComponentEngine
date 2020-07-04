@@ -29,7 +29,7 @@ final class Whitespace
         while ($iterator->valid()) {
             if ($iterator->current()->getValue() === PHP_EOL) {
                 if ($capture !== null) {
-                    yield Token::createFromFragment(
+                    yield Token::fromFragment(
                         TokenType::WHITESPACE(),
                         $capture
                     );
@@ -37,7 +37,7 @@ final class Whitespace
                     $capture = null;
                 }
 
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::END_OF_LINE(),
                     $iterator->current()
                 );
@@ -55,7 +55,7 @@ final class Whitespace
             }
             else {
                 if ($capture !== null) {
-                    yield Token::createFromFragment(
+                    yield Token::fromFragment(
                         TokenType::WHITESPACE(),
                         $capture
                     );
@@ -67,7 +67,7 @@ final class Whitespace
         }
 
         if ($capture !== null) {
-            yield Token::createFromFragment(
+            yield Token::fromFragment(
                 TokenType::WHITESPACE(),
                 $capture
             );

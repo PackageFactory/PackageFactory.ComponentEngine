@@ -20,14 +20,14 @@ final class Comment
         $delimiter = null;
         if ($lookAhead = $iterator->lookAhead(2)) {
             if ($lookAhead->getValue() === '//') {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::COMMENT_START(),
                     $lookAhead
                 );
                 $delimiter = PHP_EOL;
                 $iterator->skip(2);
             } elseif ($lookAhead->getValue() === '/*') {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::COMMENT_START(),
                     $lookAhead
                 );
@@ -46,7 +46,7 @@ final class Comment
                 if ($lookAhead = $iterator->lookAhead(2)) {
                     if ($lookAhead->getValue() === $delimiter) {
                         if ($capture !== null) {
-                            yield Token::createFromFragment(
+                            yield Token::fromFragment(
                                 TokenType::COMMENT_CONTENT(),
                                 $capture
                             );
@@ -54,7 +54,7 @@ final class Comment
                             $capture = null;
                         }
 
-                        yield Token::createFromFragment(
+                        yield Token::fromFragment(
                             TokenType::COMMENT_END(),
                             $lookAhead
                         );
@@ -72,7 +72,7 @@ final class Comment
         }
 
         if ($capture !== null) {
-            yield Token::createFromFragment(
+            yield Token::fromFragment(
                 TokenType::COMMENT_CONTENT(),
                 $capture
             );

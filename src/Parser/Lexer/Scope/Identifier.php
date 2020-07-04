@@ -40,7 +40,7 @@ final class Identifier
         }
 
         if ($capture !== null) {
-            yield Token::createFromFragment(
+            yield Token::fromFragment(
                 TokenType::IDENTIFIER(),
                 $capture
             );

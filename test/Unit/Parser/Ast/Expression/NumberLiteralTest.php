@@ -102,11 +102,11 @@ final class NumberLiteralTest extends TestCase
      */
     public function test(string $input, string $asString, float $asNumber, array $asJson): void
     {
-        $source = Source::createFromString($input);
-        $tokenizer = Tokenizer::createFromSource($source, Scope\Number::class);
-        $stream = TokenStream::createFromTokenizer($tokenizer);
+        $source = Source::fromString($input);
+        $tokenizer = Tokenizer::fromSource($source, Scope\Number::class);
+        $stream = TokenStream::fromTokenizer($tokenizer);
 
-        $result = NumberLiteral::createFromTokenStream($stream);
+        $result = NumberLiteral::fromTokenStream($stream);
         
         $this->assertEquals($asString, $result->getValue());
         $this->assertEquals($asString, $result->__toString());

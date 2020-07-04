@@ -57,7 +57,7 @@ final class NumberLiteral implements Value, Literal, Term, Statement, Key, Child
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(TokenStream $stream): self
+    public static function fromTokenStream(TokenStream $stream): self
     {
         Util::ensureValid($stream);
 

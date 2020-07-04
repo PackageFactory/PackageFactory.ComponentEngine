@@ -109,7 +109,7 @@ final class StringLiteralTest extends TestCase
      */
     public function test(string $input, array $tokens): void
     {
-        $iterator = SourceIterator::createFromSource(Source::createFromString($input));
+        $iterator = SourceIterator::fromSource(Source::fromString($input));
         $this->assertTokenStream($tokens, StringLiteral::tokenize($iterator));
     }
 }

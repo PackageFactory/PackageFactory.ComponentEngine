@@ -45,7 +45,7 @@ final class StringLiteral implements Value, Literal, Term, Statement, Key, Child
         $this->value = $value;
     }
 
-    public static function createFromTokenStream(TokenStream $stream): self
+    public static function fromTokenStream(TokenStream $stream): self
     {
         $start = $stream->current();
         Util::expect($stream, TokenType::STRING_LITERAL_START());

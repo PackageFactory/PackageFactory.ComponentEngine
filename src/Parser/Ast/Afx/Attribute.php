@@ -38,9 +38,9 @@ final class Attribute implements ParameterAssignment, \JsonSerializable
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(TokenStream $stream): self
+    public static function fromTokenStream(TokenStream $stream): self
     {
-        $attributeName = AttributeName::createFromTokenStream($stream);
+        $attributeName = AttributeName::fromTokenStream($stream);
         Util::ensureValid($stream);
 
         if ($stream->current()->getType() === TokenType::AFX_ATTRIBUTE_ASSIGNMENT()) {
@@ -52,7 +52,7 @@ final class Attribute implements ParameterAssignment, \JsonSerializable
 
         switch ($stream->current()->getType()) {
             case TokenType::STRING_LITERAL_START():
-                $value = StringLiteral::createFromTokenStream($stream);
+                $value = StringLiteral::fromTokenStream($stream);
                 break;
             case TokenType::AFX_EXPRESSION_START():
                 $stream->next();

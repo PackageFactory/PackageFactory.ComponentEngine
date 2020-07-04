@@ -19,7 +19,7 @@ final class StringLiteral
         $delimiter = $iterator->current();
 
         if ($delimiter->getValue() === '"' || $delimiter->getValue() === '\'') {
-            yield Token::createFromFragment(
+            yield Token::fromFragment(
                 TokenType::STRING_LITERAL_START(),
                 $delimiter
             );
@@ -34,7 +34,7 @@ final class StringLiteral
 
             if ($value === '\\') {
                 if ($capture !== null) {
-                    yield Token::createFromFragment(
+                    yield Token::fromFragment(
                         TokenType::STRING_LITERAL_CONTENT(),
                         $capture
                     );
@@ -42,7 +42,7 @@ final class StringLiteral
                     $capture = null;
                 }
 
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::STRING_LITERAL_ESCAPE(),
                     $fragment
                 );
@@ -50,7 +50,7 @@ final class StringLiteral
                 $iterator->next();
 
                 if ($iterator->valid()) {
-                    yield Token::createFromFragment(
+                    yield Token::fromFragment(
                         TokenType::STRING_LITERAL_ESCAPED_CHARACTER(),
                         $iterator->current()
                     );
@@ -59,7 +59,7 @@ final class StringLiteral
                 }
             } elseif ($value === PHP_EOL) {
                 if ($capture !== null) {
-                    yield Token::createFromFragment(
+                    yield Token::fromFragment(
                         TokenType::STRING_LITERAL_CONTENT(),
                         $capture
                     );
@@ -70,7 +70,7 @@ final class StringLiteral
                 return;
             } elseif ($delimiter !== null && $value === $delimiter->getValue()) {
                 if ($capture !== null) {
-                    yield Token::createFromFragment(
+                    yield Token::fromFragment(
                         TokenType::STRING_LITERAL_CONTENT(),
                         $capture
                     );
@@ -78,7 +78,7 @@ final class StringLiteral
                     $capture = null;
                 }
 
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::STRING_LITERAL_END(),
                     $fragment
                 );
@@ -95,7 +95,7 @@ final class StringLiteral
         }
         
         if ($capture !== null) {
-            yield Token::createFromFragment(
+            yield Token::fromFragment(
                 TokenType::STRING_LITERAL_CONTENT(),
                 $capture
             );

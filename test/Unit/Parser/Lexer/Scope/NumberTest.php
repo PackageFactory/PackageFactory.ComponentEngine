@@ -45,7 +45,7 @@ final class NumberTest extends TestCase
      */
     public function testHappyPath(string $number): void
     {
-        $iterator = SourceIterator::createFromSource(Source::createFromString($number));
+        $iterator = SourceIterator::fromSource(Source::fromString($number));
 
         $this->assertTokenStream([
             [TokenType::NUMBER(), $number]
@@ -86,7 +86,7 @@ final class NumberTest extends TestCase
      */
     public function testExitPath(string $number, string $expected): void
     {
-        $iterator = SourceIterator::createFromSource(Source::createFromString($number));
+        $iterator = SourceIterator::fromSource(Source::fromString($number));
 
         $this->assertTokenStream([
             [TokenType::NUMBER(), $expected]

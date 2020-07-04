@@ -50,7 +50,7 @@ final class Module implements \JsonSerializable
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(TokenStream $stream): self
+    public static function fromTokenStream(TokenStream $stream): self
     {
         $source = $stream->current()->getSource();
 
@@ -63,16 +63,16 @@ final class Module implements \JsonSerializable
 
             switch ($stream->current()->getType()) {
                 case TokenType::MODULE_KEYWORD_IMPORT():
-                    foreach (Import::createFromTokenStream($stream) as $import) {
+                    foreach (Import::fromTokenStream($stream) as $import) {
                         $imports[(string) $import->getDomesticName()] = $import;
                     }
                     break;
                 case TokenType::MODULE_KEYWORD_EXPORT():
-                    $export = Export::createFromTokenStream($stream);
+                    $export = Export::fromTokenStream($stream);
                     $exports[(string) $export->getName()] = $export;
                     break;
                 case TokenType::MODULE_KEYWORD_CONST():
-                    $constants[] = Constant::createFromTokenStream($stream);
+                    $constants[] = Constant::fromTokenStream($stream);
                     break;
                 default:
                     throw ParserFailed::becauseOfUnexpectedToken(

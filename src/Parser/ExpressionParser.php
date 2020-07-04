@@ -45,7 +45,7 @@ final class ExpressionParser
     ): Statement {
         switch ($stream->current()->getType()) {
             case TokenType::OPERATOR_SPREAD():
-                return Expression\Spread::createFromTokenStream($stream);
+                return Expression\Spread::fromTokenStream($stream);
             default:
                 /** @var Statement $statement */
                 $statement = self::parseTerm($stream, $priority);
@@ -76,10 +76,10 @@ final class ExpressionParser
                 $term = self::parseLiteral($stream);
                 break;
             case TokenType::OPERATOR_LOGICAL_NOT():
-                $term = Expression\Negation::createFromTokenStream($stream);
+                $term = Expression\Negation::fromTokenStream($stream);
                 break;
             case TokenType::IDENTIFIER():
-                $term = Expression\Identifier::createFromTokenStream($stream);
+                $term = Expression\Identifier::fromTokenStream($stream);
                 break;
             case TokenType::BRACKETS_ROUND_OPEN():
                 $stream->next();
@@ -88,7 +88,7 @@ final class ExpressionParser
                 $term = self::parseTerm($stream, $priority, true);
                 break;
             case TokenType::AFX_TAG_START():
-                $term = Afx\Tag::createFromTokenStream($stream);
+                $term = Afx\Tag::fromTokenStream($stream);
                 break;
             default:
                 throw ParserFailed::becauseOfUnexpectedToken(
@@ -120,7 +120,7 @@ final class ExpressionParser
                 case TokenType::COMMA():
                 case TokenType::ARROW():
                     if ($term instanceof Expression\Identifier) {
-                        $term = Expression\ArrowFunction::createFromTokenStream($term, $stream);
+                        $term = Expression\ArrowFunction::fromTokenStream($term, $stream);
                         break;
                     } elseif ($priority >= self::PRIORITY_LIST) {
                         return $term;
@@ -131,13 +131,13 @@ final class ExpressionParser
                 case TokenType::BRACKETS_SQUARE_OPEN():
                 case TokenType::BRACKETS_ROUND_OPEN():
                 case TokenType::OPERATOR_OPTCHAIN():
-                    $term = Expression\Chain::createFromTokenStream($term, $stream);
+                    $term = Expression\Chain::fromTokenStream($term, $stream);
                     break;
                 case TokenType::QUESTIONMARK():
                     if ($priority < self::PRIORITY_TERNARY) {
                         return $term;
                     }
-                    $term = Expression\Ternary::createFromTokenStream($term, $stream);
+                    $term = Expression\Ternary::fromTokenStream($term, $stream);
                     break;
                 case TokenType::COMPARATOR_EQ():
                 case TokenType::COMPARATOR_GT():
@@ -147,19 +147,19 @@ final class ExpressionParser
                     if ($priority < self::PRIORITY_COMPARISON) {
                         return $term;
                     }
-                    $term = Expression\Comparison::createFromTokenStream($term, $stream);
+                    $term = Expression\Comparison::fromTokenStream($term, $stream);
                     break;
                 case TokenType::OPERATOR_LOGICAL_OR():
                     if ($priority < self::PRIORITY_DISJUNCTION) {
                         return $term;
                     }
-                    $term = Expression\Disjunction::createFromTokenStream($term, $stream);
+                    $term = Expression\Disjunction::fromTokenStream($term, $stream);
                     break;
                 case TokenType::OPERATOR_LOGICAL_AND():
                     if ($priority < self::PRIORITY_CONJUNCTION) {
                         return $term;
                     }
-                    $term = Expression\Conjunction::createFromTokenStream($term, $stream);
+                    $term = Expression\Conjunction::fromTokenStream($term, $stream);
                     break;
                 
                 case TokenType::OPERATOR_ADD():
@@ -167,14 +167,14 @@ final class ExpressionParser
                     if ($priority < self::PRIORITY_DASH_OPERATION) {
                         return $term;
                     }
-                    $term = Expression\DashOperation::createFromTokenStream($term, $stream);
+                    $term = Expression\DashOperation::fromTokenStream($term, $stream);
                     break;
                 case TokenType::OPERATOR_MULTIPLY():
                 case TokenType::OPERATOR_DIVIDE():
                     if ($priority < self::PRIORITY_POINT_OPERATION) {
                         return $term;
                     }
-                    $term = Expression\PointOperation::createFromTokenStream($term, $stream);
+                    $term = Expression\PointOperation::fromTokenStream($term, $stream);
                     break;
                 case TokenType::BRACKETS_ROUND_CLOSE():
                     if ($bracket) {
@@ -197,20 +197,20 @@ final class ExpressionParser
     {
         switch ($stream->current()->getType()) {
             case TokenType::KEYWORD_NULL():
-                return Expression\NullLiteral::createFromTokenStream($stream);
+                return Expression\NullLiteral::fromTokenStream($stream);
             case TokenType::KEYWORD_TRUE():
             case TokenType::KEYWORD_FALSE():
-                return Expression\BooleanLiteral::createFromTokenStream($stream);
+                return Expression\BooleanLiteral::fromTokenStream($stream);
             case TokenType::NUMBER():
-                return Expression\NumberLiteral::createFromTokenStream($stream);
+                return Expression\NumberLiteral::fromTokenStream($stream);
             case TokenType::STRING_LITERAL_START():
-                return Expression\StringLiteral::createFromTokenStream($stream);
+                return Expression\StringLiteral::fromTokenStream($stream);
             case TokenType::TEMPLATE_LITERAL_START():
-                return Expression\TemplateLiteral::createFromTokenStream($stream);
+                return Expression\TemplateLiteral::fromTokenStream($stream);
             case TokenType::BRACKETS_SQUARE_OPEN():
-                return Expression\ArrayLiteral::createFromTokenStream($stream);
+                return Expression\ArrayLiteral::fromTokenStream($stream);
             case TokenType::BRACKETS_CURLY_OPEN():
-                return Expression\ObjectLiteral::createFromTokenStream($stream);
+                return Expression\ObjectLiteral::fromTokenStream($stream);
             default:
                 throw ParserFailed::becauseOfUnexpectedToken(
                     $stream->current(),

@@ -43,7 +43,7 @@ final class Import implements \JsonSerializable
      * @param TokenStream $stream
      * @return \Iterator<mixed, self>
      */
-    public static function createFromTokenStream(TokenStream $stream): \Iterator
+    public static function fromTokenStream(TokenStream $stream): \Iterator
     {
         Util::skipWhiteSpaceAndComments($stream);
         Util::expect($stream, TokenType::MODULE_KEYWORD_IMPORT());
@@ -78,7 +78,7 @@ final class Import implements \JsonSerializable
         Util::skipWhiteSpaceAndComments($stream);
         Util::ensureValid($stream);
 
-        $target = StringLiteral::createFromTokenStream($stream);
+        $target = StringLiteral::fromTokenStream($stream);
 
         foreach ($importMap as $domesticName => $foreignName) {
             yield $domesticName => new self($domesticName, $foreignName, $target->getValue());

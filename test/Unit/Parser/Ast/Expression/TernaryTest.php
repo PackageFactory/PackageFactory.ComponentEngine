@@ -134,9 +134,9 @@ final class TernaryTest extends TestCase
      */
     public function test(string $input, array $asJson): void
     {
-        $source = Source::createFromString($input);
-        $tokenizer = Tokenizer::createFromSource($source, Scope\Expression::class);
-        $stream = TokenStream::createFromTokenizer($tokenizer);
+        $source = Source::fromString($input);
+        $tokenizer = Tokenizer::fromSource($source, Scope\Expression::class);
+        $stream = TokenStream::fromTokenizer($tokenizer);
 
         $result = ExpressionParser::parse($stream);
 

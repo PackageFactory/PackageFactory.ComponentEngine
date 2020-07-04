@@ -59,7 +59,7 @@ final class Chain implements Spreadable, Term, Statement, Key, Child, \JsonSeria
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(
+    public static function fromTokenStream(
         Term $root,
         TokenStream $stream
     ): self {
@@ -106,7 +106,7 @@ final class Chain implements Spreadable, Term, Statement, Key, Child, \JsonSeria
                     $token = $stream->current();
                     $key = ExpressionParser::parseTerm($stream);
                     if ($key instanceof Key) {
-                        $segments[] = ChainSegment::createFromKey($optional, $key);
+                        $segments[] = ChainSegment::fromKey($optional, $key);
                         Util::skipWhiteSpaceAndComments($stream);
                         Util::expect($stream, TokenType::BRACKETS_SQUARE_CLOSE());
                     } else {
@@ -129,15 +129,15 @@ final class Chain implements Spreadable, Term, Statement, Key, Child, \JsonSeria
                     $end = $stream->current();
                     $segment = array_pop($segments);
                     $segments[] = $segment->withCall(
-                        Call::createFromTokenStream($stream)
+                        Call::fromTokenStream($stream)
                     );
                     break;
 
                 case TokenType::IDENTIFIER():
                     $end = $stream->current();
-                    $segments[] = ChainSegment::createFromKey(
+                    $segments[] = ChainSegment::fromKey(
                         $optional, 
-                        Identifier::createFromTokenStream($stream)
+                        Identifier::fromTokenStream($stream)
                     );
                     break;
                 

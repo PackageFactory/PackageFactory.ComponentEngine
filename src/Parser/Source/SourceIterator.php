@@ -27,7 +27,7 @@ final class SourceIterator implements \Iterator
         $this->rewind();
     }
 
-    public static function createFromSource(Source $source): self
+    public static function fromSource(Source $source): self
     {
         return new self($source);
     }

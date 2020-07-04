@@ -85,11 +85,11 @@ final class StringLiteralTest extends TestCase
      */
     public function test(string $input, string $output, array $asJson): void
     {
-        $source = Source::createFromString($input);
-        $tokenizer = Tokenizer::createFromSource($source, Scope\StringLiteral::class);
-        $stream = TokenStream::createFromTokenizer($tokenizer);
+        $source = Source::fromString($input);
+        $tokenizer = Tokenizer::fromSource($source, Scope\StringLiteral::class);
+        $stream = TokenStream::fromTokenizer($tokenizer);
 
-        $result = StringLiteral::createFromTokenStream($stream);
+        $result = StringLiteral::fromTokenStream($stream);
 
         $this->assertEquals($output, $result->getValue());
         $this->assertEquals($output, $result->__toString());

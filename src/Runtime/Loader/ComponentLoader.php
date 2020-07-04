@@ -11,10 +11,10 @@ final class ComponentLoader implements LoaderInterface
 {
     public function load(Path $path): Module
     {
-        $source = Source::createFromFile((string) $path);
-        $tokenizer = Tokenizer::createFromSource($source);
-        $stream = TokenStream::createFromTokenizer($tokenizer);
+        $source = Source::fromFile((string) $path);
+        $tokenizer = Tokenizer::fromSource($source);
+        $stream = TokenStream::fromTokenizer($tokenizer);
 
-        return Module::createFromTokenStream($stream);
+        return Module::fromTokenStream($stream);
     }
 }

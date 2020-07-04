@@ -54,7 +54,7 @@ final class ArrayLiteral implements
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(TokenStream $stream): self
+    public static function fromTokenStream(TokenStream $stream): self
     {
         $start = $stream->current();
         $end = $stream->current();

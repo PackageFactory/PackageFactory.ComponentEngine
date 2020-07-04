@@ -33,7 +33,7 @@ final class Module
 
                 if ($lookAhead && $lookAhead->getValue() === self::KEYWORD_IMPORT) {
                     if ($fragment = $iterator->lookAhead(6)) {
-                        yield Token::createFromFragment(
+                        yield Token::fromFragment(
                             TokenType::MODULE_KEYWORD_IMPORT(),
                             $fragment
                         );
@@ -48,7 +48,7 @@ final class Module
 
                 if ($lookAhead && $lookAhead->getValue() === self::KEYWORD_CONST) {
                     if ($fragment = $iterator->lookAhead(5)) {
-                        yield Token::createFromFragment(
+                        yield Token::fromFragment(
                             TokenType::MODULE_KEYWORD_CONST(),
                             $fragment
                         );
@@ -61,7 +61,7 @@ final class Module
 
                 if ($lookAhead && $lookAhead->getValue() === self::KEYWORD_EXPORT) {
                     if ($fragment = $iterator->lookAhead(6)) {
-                        yield Token::createFromFragment(
+                        yield Token::fromFragment(
                             TokenType::MODULE_KEYWORD_EXPORT(),
                             $fragment
                         );
@@ -74,7 +74,7 @@ final class Module
 
                 if ($lookAhead && $lookAhead->getValue() === self::KEYWORD_DEFAULT) {
                     if ($fragment = $iterator->lookAhead(7)) {
-                        yield Token::createFromFragment(
+                        yield Token::fromFragment(
                             TokenType::MODULE_KEYWORD_DEFAULT(),
                             $fragment
                         );
@@ -87,7 +87,7 @@ final class Module
             } 
             
             if ($value === '=') {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::MODULE_ASSIGNMENT(),
                     $iterator->current()
                 );
@@ -95,31 +95,31 @@ final class Module
 
                 yield from self::tokenizeAssignmentValue($iterator);
             } elseif ($value === '[') {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::BRACKETS_SQUARE_OPEN(),
                     $iterator->current()
                 );
                 $iterator->next();
             } elseif ($value === ']') {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::BRACKETS_SQUARE_CLOSE(),
                     $iterator->current()
                 );
                 $iterator->next();
             } elseif ($value === '{') {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::BRACKETS_CURLY_OPEN(),
                     $iterator->current()
                 );
                 $iterator->next();
             } elseif ($value === '}') {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::BRACKETS_CURLY_CLOSE(),
                     $iterator->current()
                 );
                 $iterator->next();
             } elseif ($value === ',') {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::COMMA(),
                     $iterator->current()
                 );
@@ -127,7 +127,7 @@ final class Module
             } elseif ($value === '.') {
                 $lookAhead = $iterator->lookAhead(3);
                 if ($lookAhead && $lookAhead->getValue() === '...') {
-                    yield Token::createFromFragment(
+                    yield Token::fromFragment(
                         TokenType::OPERATOR_SPREAD(),
                         $lookAhead
                     );
@@ -159,7 +159,7 @@ final class Module
 
                 if ($lookAhead && $lookAhead->getValue() === self::KEYWORD_AS) {
                     if ($fragment = $iterator->lookAhead(2)) {
-                        yield Token::createFromFragment(
+                        yield Token::fromFragment(
                             TokenType::MODULE_KEYWORD_AS(),
                             $fragment
                         );
@@ -172,7 +172,7 @@ final class Module
 
                 if ($lookAhead && $lookAhead->getValue() === self::KEYWORD_FROM) {
                     if ($fragment = $iterator->lookAhead(4)) {
-                        yield Token::createFromFragment(
+                        yield Token::fromFragment(
                             TokenType::MODULE_KEYWORD_FROM(),
                             $fragment
                         );
@@ -183,7 +183,7 @@ final class Module
             }
 
             if ($value === '*') {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::MODULE_WILDCARD(),
                     $iterator->current()
                 );
@@ -192,19 +192,19 @@ final class Module
                 yield from StringLiteral::tokenize($iterator);
                 break;
             } elseif ($value === '{') {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::BRACKETS_CURLY_OPEN(),
                     $iterator->current()
                 );
                 $iterator->next();
             } elseif ($value === '}') {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::BRACKETS_CURLY_CLOSE(),
                     $iterator->current()
                 );
                 $iterator->next();
             } elseif ($value === ',') {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::COMMA(),
                     $iterator->current()
                 );
@@ -229,7 +229,7 @@ final class Module
 
             if ($iterator->valid()) {
                 if ($iterator->current()->getValue() === '(') {
-                    yield Token::createFromFragment(
+                    yield Token::fromFragment(
                         TokenType::BRACKETS_ROUND_OPEN(),
                         $iterator->current()
                     );
@@ -258,7 +258,7 @@ final class Module
 
             if ($iterator->valid()) {
                 if ($iterator->current()->getValue() === ')') {
-                    yield Token::createFromFragment(
+                    yield Token::fromFragment(
                         TokenType::BRACKETS_ROUND_CLOSE(),
                         $iterator->current()
                     );

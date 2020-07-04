@@ -27,7 +27,7 @@ final class Call implements \JsonSerializable
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(TokenStream $stream): self
+    public static function fromTokenStream(TokenStream $stream): self
     {
         Util::expect($stream, TokenType::BRACKETS_ROUND_OPEN());
 

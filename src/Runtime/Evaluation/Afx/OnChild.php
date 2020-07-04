@@ -19,7 +19,7 @@ final class OnChild
     public static function evaluate(Runtime $runtime, Child $child): \Iterator 
     {
         if ($child instanceof Content) {
-            yield VirtualDOM\Text::createFromString($child->getValue());
+            yield VirtualDOM\Text::fromString($child->getValue());
         } elseif ($child instanceof Tag) {
             yield OnTag::evaluate($runtime, $child);
         } else {
@@ -37,9 +37,9 @@ final class OnChild
     private static function getContentFromValue($value): \Iterator
     {
         if (is_string($value)) {
-            yield VirtualDOM\Text::createFromString($value);
+            yield VirtualDOM\Text::fromString($value);
         } elseif (is_float($value)) {
-            yield VirtualDOM\Text::createFromString((string) $value);
+            yield VirtualDOM\Text::fromString((string) $value);
         } elseif (is_array($value)) {
             foreach ($value as $item) {
                 yield from self::getContentFromValue($item);
@@ -51,7 +51,7 @@ final class OnChild
         } elseif ($value instanceof VirtualDOM\Node) {
             yield $value;
         } elseif (is_object($value) && method_exists($value, '__toString')) {
-            yield VirtualDOM\Text::createFromString((string) $value);
+            yield VirtualDOM\Text::fromString((string) $value);
         } else {
             throw new \Exception('@TODO: Illegal content value of type ' . gettype($value));
         }

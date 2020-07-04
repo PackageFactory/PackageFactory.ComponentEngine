@@ -428,7 +428,7 @@ final class AfxTest extends TestCase
      */
     public function testHappyPath(string $input, array $tokens): void
     {
-        $iterator = SourceIterator::createFromSource(Source::createFromString($input));
+        $iterator = SourceIterator::fromSource(Source::fromString($input));
         $this->assertTokenStream($tokens, Afx::tokenize($iterator));
     }
 
@@ -459,7 +459,7 @@ final class AfxTest extends TestCase
      */
     public function testExitPath(string $input, array $tokens): void
     {
-        $iterator = SourceIterator::createFromSource(Source::createFromString($input));
+        $iterator = SourceIterator::fromSource(Source::fromString($input));
         $this->assertTokenStream($tokens, Afx::tokenize($iterator));
     }
 }

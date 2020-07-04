@@ -18,7 +18,7 @@ final class OnImport
     public static function evaluate(Runtime $runtime, Module $root, Import $import) 
     {
         $module = $runtime->getLoader()->load($root->getSource()->getPath()->getRelativePathTo(
-            Path::createFromString($import->getTarget())
+            Path::fromString($import->getTarget())
         ));
     
         return function(Context $context) use ($runtime, $module, $import) {

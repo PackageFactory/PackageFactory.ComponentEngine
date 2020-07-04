@@ -47,7 +47,7 @@ final class Ternary implements Spreadable, Term, Statement, Child, \JsonSerializ
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(Term $condition, TokenStream $stream): self
+    public static function fromTokenStream(Term $condition, TokenStream $stream): self
     {
         Util::expect($stream, TokenType::QUESTIONMARK());
         Util::skipWhiteSpaceAndComments($stream);

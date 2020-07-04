@@ -49,13 +49,13 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(TokenStream $stream): self
+    public static function fromTokenStream(TokenStream $stream): self
     {
         Util::expect($stream, TokenType::AFX_TAG_START());
         Util::ensureValid($stream);
 
         if ($stream->current()->getType() === TokenType::IDENTIFIER()) {
-            $tagName = TagName::createFromTokenStream($stream);
+            $tagName = TagName::fromTokenStream($stream);
         } elseif ($stream->current()->getType() === TokenType::AFX_TAG_END()) {
             $tagName = null;
         } else {
@@ -75,13 +75,13 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
                     $stream->next();
                     break 2;
                 case TokenType::IDENTIFIER():
-                    $attributes[] = Attribute::createFromTokenStream($stream);
+                    $attributes[] = Attribute::fromTokenStream($stream);
                     break;
                 case TokenType::AFX_EXPRESSION_START():
                     if ($lookAhead = $stream->lookAhead(2)) {
                         if ($lookAhead->getType() === TokenType::OPERATOR_SPREAD()) {
                             $stream->next();
-                            $attributes[] = Spread::createFromTokenStream($stream);
+                            $attributes[] = Spread::fromTokenStream($stream);
                             Util::expect($stream, TokenType::AFX_EXPRESSION_END());
                         } else {
                             throw ParserFailed::becauseOfUnexpectedToken(
@@ -119,7 +119,7 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
                 case TokenType::WHITESPACE():
                 case TokenType::END_OF_LINE():
                 case TokenType::AFX_TAG_CONTENT():
-                    $children[] = Content::createFromTokenStream($stream);
+                    $children[] = Content::fromTokenStream($stream);
                     break;
                 case TokenType::AFX_EXPRESSION_START():
                     $stream->next();
@@ -183,7 +183,7 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
                             }
                         }
                     }
-                    $children[] = self::createFromTokenStream($stream);
+                    $children[] = self::fromTokenStream($stream);
                     break;
 
                 default:

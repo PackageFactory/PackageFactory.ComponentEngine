@@ -51,11 +51,11 @@ final class BooleanLiteralTest extends TestCase
      */
     public function test(string $input, string $asString, bool $asBoolean, array $asJson): void
     {
-        $source = Source::createFromString($input);
-        $tokenizer = Tokenizer::createFromSource($source, Scope\Expression::class);
-        $stream = TokenStream::createFromTokenizer($tokenizer);
+        $source = Source::fromString($input);
+        $tokenizer = Tokenizer::fromSource($source, Scope\Expression::class);
+        $stream = TokenStream::fromTokenizer($tokenizer);
 
-        $result = BooleanLiteral::createFromTokenStream($stream);
+        $result = BooleanLiteral::fromTokenStream($stream);
         
         $this->assertEquals($asString, $result->getValue());
         $this->assertEquals($asString, $result->__toString());

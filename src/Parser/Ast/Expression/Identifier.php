@@ -31,7 +31,7 @@ final class Identifier implements Spreadable, Term, Statement, Key, Child, \Json
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(TokenStream $stream): self
+    public static function fromTokenStream(TokenStream $stream): self
     {
         Util::ensureValid($stream);
 
@@ -51,7 +51,7 @@ final class Identifier implements Spreadable, Term, Statement, Key, Child, \Json
      * @param Token $token
      * @return self
      */
-    public static function createFromToken(Token $token): self
+    public static function fromToken(Token $token): self
     {
         switch ($token->getType()) {
             case TokenType::IDENTIFIER():

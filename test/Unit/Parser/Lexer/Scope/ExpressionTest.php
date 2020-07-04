@@ -581,7 +581,7 @@ final class ExpressionTest extends TestCase
      */
     public function testHappyPath(string $input, array $tokens): void
     {
-        $iterator = SourceIterator::createFromSource(Source::createFromString($input));
+        $iterator = SourceIterator::fromSource(Source::fromString($input));
         $this->assertTokenStream($tokens, Expression::tokenize($iterator));
     }
 
@@ -616,7 +616,7 @@ final class ExpressionTest extends TestCase
     public function testExceptionPath(string $input): void
     {
         $this->expectException(\Exception::class);
-        $iterator = SourceIterator::createFromSource(Source::createFromString($input));
+        $iterator = SourceIterator::fromSource(Source::fromString($input));
         iterator_to_array(Expression::tokenize($iterator));
     }
 
@@ -690,7 +690,7 @@ final class ExpressionTest extends TestCase
      */
     public function testExitPath(string $input, array $tokens): void
     {
-        $iterator = SourceIterator::createFromSource(Source::createFromString($input));
+        $iterator = SourceIterator::fromSource(Source::fromString($input));
         $this->assertTokenStream($tokens, Expression::tokenize($iterator));
     }
 
@@ -735,7 +735,7 @@ final class ExpressionTest extends TestCase
      */
     public function testEdgeCases(string $input, array $tokens): void
     {
-        $iterator = SourceIterator::createFromSource(Source::createFromString($input));
+        $iterator = SourceIterator::fromSource(Source::fromString($input));
         $this->assertTokenStream($tokens, Expression::tokenize($iterator));
     }
 }

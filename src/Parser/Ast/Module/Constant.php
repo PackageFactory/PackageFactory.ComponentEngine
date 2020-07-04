@@ -33,7 +33,7 @@ final class Constant implements \JsonSerializable
         $this->value = $value;
     }
 
-    public static function createFromTokenStream(TokenStream $stream): self
+    public static function fromTokenStream(TokenStream $stream): self
     {
         $token = $stream->current();
         Util::expect($stream, TokenType::MODULE_KEYWORD_CONST());
@@ -41,7 +41,7 @@ final class Constant implements \JsonSerializable
         Util::skipWhiteSpaceAndComments($stream);
         Util::ensureValid($stream);
 
-        $name = Identifier::createFromTokenStream($stream);
+        $name = Identifier::fromTokenStream($stream);
 
         Util::skipWhiteSpaceAndComments($stream);
         Util::expect($stream, TokenType::MODULE_ASSIGNMENT());

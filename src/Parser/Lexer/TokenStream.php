@@ -34,7 +34,7 @@ final class TokenStream implements \Iterator
         $this->rewind();
     }
 
-    public static function createFromTokenizer(Tokenizer $tokenizer): self
+    public static function fromTokenizer(Tokenizer $tokenizer): self
     {
         return new self($tokenizer);
     }

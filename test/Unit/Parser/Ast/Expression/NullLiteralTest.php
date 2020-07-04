@@ -38,11 +38,11 @@ final class NullLiteralTest extends TestCase
      */
     public function test(string $input, string $asString, array $asJson): void
     {
-        $source = Source::createFromString($input);
-        $tokenizer = Tokenizer::createFromSource($source, Scope\Expression::class);
-        $stream = TokenStream::createFromTokenizer($tokenizer);
+        $source = Source::fromString($input);
+        $tokenizer = Tokenizer::fromSource($source, Scope\Expression::class);
+        $stream = TokenStream::fromTokenizer($tokenizer);
 
-        $result = NullLiteral::createFromTokenStream($stream);
+        $result = NullLiteral::fromTokenStream($stream);
         
         $this->assertEquals($asString, $result->getValue());
         $this->assertEquals($asString, $result->__toString());

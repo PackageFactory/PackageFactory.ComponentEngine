@@ -40,11 +40,11 @@ final class IdentifierTest extends TestCase
      */
     public function test(string $input, string $output, array $asJson): void
     {
-        $source = Source::createFromString($input);
-        $tokenizer = Tokenizer::createFromSource($source, Scope\Identifier::class);
-        $stream = TokenStream::createFromTokenizer($tokenizer);
+        $source = Source::fromString($input);
+        $tokenizer = Tokenizer::fromSource($source, Scope\Identifier::class);
+        $stream = TokenStream::fromTokenizer($tokenizer);
 
-        $result = Identifier::createFromTokenStream($stream);
+        $result = Identifier::fromTokenStream($stream);
         
         $this->assertEquals($output, $result->getValue());
         $this->assertEquals($output, $result->__toString());

@@ -30,7 +30,7 @@ final class BooleanLiteral implements Value, Literal, Term, Statement, \JsonSeri
         $this->boolean = $token->getValue() === 'true' ? true : false;
     }
 
-    public static function createFromTokenStream(TokenStream $stream): self
+    public static function fromTokenStream(TokenStream $stream): self
     {
         $value = $stream->current();
         if ((

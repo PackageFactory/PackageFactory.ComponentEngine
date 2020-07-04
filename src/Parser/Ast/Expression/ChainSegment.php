@@ -41,7 +41,7 @@ final class ChainSegment implements \JsonSerializable
      * @param Key $key
      * @return self
      */
-    public static function createFromKey(
+    public static function fromKey(
         bool $isOptional,
         Key $key
     ): self {

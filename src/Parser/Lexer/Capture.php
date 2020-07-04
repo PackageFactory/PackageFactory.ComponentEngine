@@ -30,7 +30,7 @@ final class Capture
      * @param Fragment $fragment
      * @return self
      */
-    public static function createFromFragment(Fragment $fragment): self 
+    public static function fromFragment(Fragment $fragment): self 
     {
         return new self($fragment);
     }
@@ -55,7 +55,7 @@ final class Capture
     public function flush(TokenType $tokenType): \Iterator
     {
         if ($this->fragment !== null) {
-            yield Token::createFromFragment($tokenType, $this->fragment);
+            yield Token::fromFragment($tokenType, $this->fragment);
             $this->fragment = null;
         }
     }

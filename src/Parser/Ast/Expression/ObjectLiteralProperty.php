@@ -36,14 +36,14 @@ final class ObjectLiteralProperty implements \JsonSerializable
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(TokenStream $stream): self
+    public static function fromTokenStream(TokenStream $stream): self
     {
         Util::ensureValid($stream);
 
         $key = null;
         switch ($stream->current()->getType()) {                
             case TokenType::IDENTIFIER():
-                $key = Identifier::createFromTokenStream($stream);
+                $key = Identifier::fromTokenStream($stream);
                 break;
             case TokenType::BRACKETS_SQUARE_OPEN():
                 $stream->next();

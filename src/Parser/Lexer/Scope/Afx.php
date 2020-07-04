@@ -21,7 +21,7 @@ final class Afx
             $value = $iterator->current()->getValue();
 
             if ($value === '<') {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::AFX_TAG_START(),
                     $iterator->current()
                 );
@@ -30,14 +30,14 @@ final class Afx
                     $tags++;
                 }
             } elseif ($value === '/') {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::AFX_TAG_CLOSE(),
                     $iterator->current()
                 );
                 $iterator->next();
                 $tags--;
             } elseif ($value === '>') {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::AFX_TAG_END(),
                     $iterator->current()
                 );
@@ -53,7 +53,7 @@ final class Afx
                     yield from self::tokenizeContent($iterator);
                 }
             } elseif ($value === '=') {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::AFX_ATTRIBUTE_ASSIGNMENT(),
                     $iterator->current()
                 );
@@ -61,7 +61,7 @@ final class Afx
             } elseif ($value === '"') {
                 yield from StringLiteral::tokenize($iterator);
             } elseif ($value === '{') {
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::AFX_EXPRESSION_START(),
                     $iterator->current()
                 );
@@ -69,7 +69,7 @@ final class Afx
 
                 yield from Expression::tokenize($iterator, ['}']);
             } elseif ($value === '}') { 
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::AFX_EXPRESSION_END(),
                     $iterator->current()
                 );
@@ -100,7 +100,7 @@ final class Afx
                 yield from Whitespace::tokenize($iterator);
             } elseif ($value === '{') {
                 yield from $capture->flush(TokenType::AFX_TAG_CONTENT());
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::AFX_EXPRESSION_START(),
                     $iterator->current()
                 );
@@ -109,7 +109,7 @@ final class Afx
                 yield from Expression::tokenize($iterator, ['}']);
             } elseif ($value === '}') {
                 yield from $capture->flush(TokenType::AFX_TAG_CONTENT());
-                yield Token::createFromFragment(
+                yield Token::fromFragment(
                     TokenType::AFX_EXPRESSION_END(),
                     $iterator->current()
                 );

@@ -176,7 +176,7 @@ final class TemplateLiteralTest extends TestCase
      */
     public function test(string $input, array $tokens): void
     {
-        $iterator = SourceIterator::createFromSource(Source::createFromString($input));
+        $iterator = SourceIterator::fromSource(Source::fromString($input));
         $this->assertTokenStream($tokens, TemplateLiteral::tokenize($iterator));
     }
 }

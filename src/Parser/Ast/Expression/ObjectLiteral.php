@@ -46,7 +46,7 @@ final class ObjectLiteral implements Literal, Spreadable, Term, Statement, \Json
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(TokenStream $stream): self
+    public static function fromTokenStream(TokenStream $stream): self
     {
         Util::ensureValid($stream);
 
@@ -70,7 +70,7 @@ final class ObjectLiteral implements Literal, Spreadable, Term, Statement, \Json
                     break 2;
                 
                 default:
-                    $properties[] = ObjectLiteralProperty::createFromTokenStream($stream);
+                    $properties[] = ObjectLiteralProperty::fromTokenStream($stream);
                     break;
             }
         }

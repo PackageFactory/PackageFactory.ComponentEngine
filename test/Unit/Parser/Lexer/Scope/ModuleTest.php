@@ -777,7 +777,7 @@ final class ModuleTest extends TestCase
      */
     public function testHappyPath(string $input, array $tokens): void
     {
-        $iterator = SourceIterator::createFromSource(Source::createFromString($input));
+        $iterator = SourceIterator::fromSource(Source::fromString($input));
         $this->assertTokenStream($tokens, Module::tokenize($iterator));
     }
 
@@ -814,7 +814,7 @@ final class ModuleTest extends TestCase
      */
     public function testExitPath(string $input, array $tokens): void
     {
-        $iterator = SourceIterator::createFromSource(Source::createFromString($input));
+        $iterator = SourceIterator::fromSource(Source::fromString($input));
         $this->assertTokenStream($tokens, Module::tokenize($iterator));
     }
 
@@ -843,7 +843,7 @@ final class ModuleTest extends TestCase
      */
     public function testEdgeCases(string $input, array $tokens): void
     {
-        $iterator = SourceIterator::createFromSource(Source::createFromString($input));
+        $iterator = SourceIterator::fromSource(Source::fromString($input));
         $this->assertTokenStream($tokens, Module::tokenize($iterator));
     }
 }

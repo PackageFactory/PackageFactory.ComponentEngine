@@ -19,13 +19,13 @@ final class WhitespaceTest extends TestCase
      */
     public function spaces(): void
     {
-        $single = SourceIterator::createFromSource(Source::createFromString(' '));
+        $single = SourceIterator::fromSource(Source::fromString(' '));
         
         $this->assertTokenStream([
             [TokenType::WHITESPACE(), ' ']
         ], Whitespace::tokenize($single));
         
-        $multiple = SourceIterator::createFromSource(Source::createFromString('    '));
+        $multiple = SourceIterator::fromSource(Source::fromString('    '));
 
         $this->assertTokenStream([
             [TokenType::WHITESPACE(), '    ']
@@ -39,13 +39,13 @@ final class WhitespaceTest extends TestCase
      */
     public function tabs(): void
     {
-        $single = SourceIterator::createFromSource(Source::createFromString('	'));
+        $single = SourceIterator::fromSource(Source::fromString('	'));
         
         $this->assertTokenStream([
             [TokenType::WHITESPACE(), '	']
         ], Whitespace::tokenize($single));
 
-        $multiple = SourceIterator::createFromSource(Source::createFromString('		'));
+        $multiple = SourceIterator::fromSource(Source::fromString('		'));
         
         $this->assertTokenStream([
             [TokenType::WHITESPACE(), '		']
@@ -59,13 +59,13 @@ final class WhitespaceTest extends TestCase
      */
     public function newline(): void
     {
-        $single = SourceIterator::createFromSource(Source::createFromString(PHP_EOL));
+        $single = SourceIterator::fromSource(Source::fromString(PHP_EOL));
         
         $this->assertTokenStream([
             [TokenType::END_OF_LINE(), PHP_EOL]
         ], Whitespace::tokenize($single));
 
-        $multiple = SourceIterator::createFromSource(Source::createFromString(PHP_EOL . PHP_EOL));
+        $multiple = SourceIterator::fromSource(Source::fromString(PHP_EOL . PHP_EOL));
         
         $this->assertTokenStream([
             [TokenType::END_OF_LINE(), PHP_EOL],
@@ -80,13 +80,13 @@ final class WhitespaceTest extends TestCase
      */
     public function mixed(): void
     {
-        $tabsAndSpaces = SourceIterator::createFromSource(Source::createFromString('	   	   '));
+        $tabsAndSpaces = SourceIterator::fromSource(Source::fromString('	   	   '));
         
         $this->assertTokenStream([
             [TokenType::WHITESPACE(), '	   	   ']
         ], Whitespace::tokenize($tabsAndSpaces));
 
-        $newLineAndSpaces = SourceIterator::createFromSource(Source::createFromString(PHP_EOL . '    ' . PHP_EOL));
+        $newLineAndSpaces = SourceIterator::fromSource(Source::fromString(PHP_EOL . '    ' . PHP_EOL));
         
         $this->assertTokenStream([
             [TokenType::END_OF_LINE(), PHP_EOL],
@@ -94,7 +94,7 @@ final class WhitespaceTest extends TestCase
             [TokenType::END_OF_LINE(), PHP_EOL],
         ], Whitespace::tokenize($newLineAndSpaces));
 
-        $newLineAndTabs = SourceIterator::createFromSource(Source::createFromString(PHP_EOL . '	' . PHP_EOL));
+        $newLineAndTabs = SourceIterator::fromSource(Source::fromString(PHP_EOL . '	' . PHP_EOL));
         
         $this->assertTokenStream([
             [TokenType::END_OF_LINE(), PHP_EOL],
@@ -102,7 +102,7 @@ final class WhitespaceTest extends TestCase
             [TokenType::END_OF_LINE(), PHP_EOL],
         ], Whitespace::tokenize($newLineAndTabs));
 
-        $all = SourceIterator::createFromSource(Source::createFromString('	' . PHP_EOL . '   ' . PHP_EOL . '	   '));
+        $all = SourceIterator::fromSource(Source::fromString('	' . PHP_EOL . '   ' . PHP_EOL . '	   '));
 
         $this->assertTokenStream([
             [TokenType::WHITESPACE(), '	'],

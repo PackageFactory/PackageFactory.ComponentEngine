@@ -31,7 +31,7 @@ final class NullLiteral implements Value, Literal, Term, Statement, Child, \Json
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(TokenStream $stream): self
+    public static function fromTokenStream(TokenStream $stream): self
     {
         Util::ensureValid($stream);
 

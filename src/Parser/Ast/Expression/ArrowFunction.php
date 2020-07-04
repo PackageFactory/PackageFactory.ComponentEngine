@@ -38,7 +38,7 @@ final class ArrowFunction implements Term, Statement, \JsonSerializable
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(
+    public static function fromTokenStream(
         ?Identifier $firstParameter, 
         TokenStream $stream
     ): self {
@@ -67,7 +67,7 @@ final class ArrowFunction implements Term, Statement, \JsonSerializable
 
             switch ($stream->current()->getType()) {
                 case TokenType::IDENTIFIER():
-                    $parameters[] = Identifier::createFromTokenStream($stream);
+                    $parameters[] = Identifier::fromTokenStream($stream);
                     break;
 
                 default:

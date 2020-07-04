@@ -58,7 +58,7 @@ final class Token
      * @param Fragment $fragment
      * @return Token
      */
-    public static function createFromFragment(
+    public static function fromFragment(
         TokenType $type,
         Fragment $fragment
     ): Token {

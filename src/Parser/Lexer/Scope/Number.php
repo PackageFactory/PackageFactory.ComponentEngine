@@ -51,7 +51,7 @@ final class Number
      */
     public static function tokenizeBinary(SourceIterator $iterator): \Iterator
     {
-        $capture = Capture::createFromFragment($iterator->current());
+        $capture = Capture::fromFragment($iterator->current());
         $iterator->next();
         $capture->append($iterator->current());
         $iterator->next();
@@ -76,7 +76,7 @@ final class Number
      */
     public static function tokenizeOctal(SourceIterator $iterator): \Iterator
     {
-        $capture = Capture::createFromFragment($iterator->current());
+        $capture = Capture::fromFragment($iterator->current());
         $iterator->next();
         $capture->append($iterator->current());
         $iterator->next();
@@ -100,7 +100,7 @@ final class Number
      */
     public static function tokenizeHexadecimal(SourceIterator $iterator): \Iterator
     {
-        $capture = Capture::createFromFragment($iterator->current());
+        $capture = Capture::fromFragment($iterator->current());
         $iterator->next();
         $capture->append($iterator->current());
         $iterator->next();
