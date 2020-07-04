@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Ast\Statement;
 use PackageFactory\ComponentEngine\Parser\Ast\Term;
 use PackageFactory\ComponentEngine\Parser\ExpressionParser;
@@ -49,9 +50,9 @@ final class ArrowFunction implements Term, Statement, \JsonSerializable
 
         while ($stream->valid()) {
             Util::skipWhiteSpaceAndComments($stream);
-            if (!$stream->valid()) {
-                throw new \Exception('@TODO: Unexpected end of file');
-            } elseif ($stream->current()->getType() === TokenType::COMMA()) {
+            Util::ensureValid($stream);
+
+            if ($stream->current()->getType() === TokenType::COMMA()) {
                 $stream->next();
                 Util::skipWhiteSpaceAndComments($stream);
             } elseif ($stream->current()->getType() === TokenType::BRACKETS_ROUND_CLOSE()) {
@@ -62,9 +63,7 @@ final class ArrowFunction implements Term, Statement, \JsonSerializable
                 break;
             }
 
-            if (!$stream->valid()) {
-                throw new \Exception('@TODO: Unexpected end of file');
-            }
+            Util::ensureValid($stream);
 
             switch ($stream->current()->getType()) {
                 case TokenType::IDENTIFIER():
@@ -72,14 +71,15 @@ final class ArrowFunction implements Term, Statement, \JsonSerializable
                     break;
 
                 default:
-                    throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                    throw ParserFailed::becauseOfUnexpectedToken(
+                        $stream->current(),
+                        [TokenType::IDENTIFIER()]
+                    );
             }
         }
 
         Util::skipWhiteSpaceAndComments($stream);
-        if (!$stream->valid()) {
-            throw new \Exception('@TODO: Unexpected end of file');
-        }
+        Util::ensureValid($stream);
 
         return new self(
             $parameters, 

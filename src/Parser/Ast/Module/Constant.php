@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Module;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Identifier;
 use PackageFactory\ComponentEngine\Parser\Ast\Term;
 use PackageFactory\ComponentEngine\Parser\ExpressionParser;
@@ -34,6 +35,7 @@ final class Constant implements \JsonSerializable
 
     public static function createFromTokenStream(TokenStream $stream): self
     {
+        $token = $stream->current();
         Util::expect($stream, TokenType::MODULE_KEYWORD_CONST());
 
         Util::skipWhiteSpaceAndComments($stream);
@@ -68,7 +70,7 @@ final class Constant implements \JsonSerializable
         }
 
         if ($value === null) {
-            throw new \Exception('@TODO: Unexpected empty constant');
+            throw ParserFailed::becauseOfUnexpectedEmptyConstant($token);
         }
 
         return new self($name, $value);

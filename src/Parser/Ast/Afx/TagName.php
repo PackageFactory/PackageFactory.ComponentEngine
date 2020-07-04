@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Afx;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 
@@ -30,7 +31,10 @@ final class TagName implements \JsonSerializable
             $stream->next();
             return new self($value->getValue());
         } else {
-            throw new \Exception('@TODO: Unexpected Token: ' . $value);
+            throw ParserFailed::becauseOfUnexpectedToken(
+                $stream->current(),
+                [TokenType::IDENTIFIER()]
+            );
         }
     }
 

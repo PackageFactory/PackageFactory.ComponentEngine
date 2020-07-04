@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Ast\ParameterAssignment;
 use PackageFactory\ComponentEngine\Parser\Ast\Spreadable;
 use PackageFactory\ComponentEngine\Parser\Ast\Statement;
@@ -48,14 +49,30 @@ final class Spread implements Statement, ParameterAssignment, \JsonSerializable
             $stream->next();
             Util::ensureValid($stream);
 
+            $token = $stream->current();
             $subject = ExpressionParser::parseTerm($stream);
             if ($subject instanceof Spreadable) {
                 return new self($value, $subject);
             } else {
-                throw new \Exception('@TODO: Unexpected Term: ' . get_class($subject));
+                throw ParserFailed::becauseOfUnexpectedTerm(
+                    $token,
+                    $subject,
+                    [
+                        ArrayLiteral::class,
+                        ObjectLiteral::class,
+                        Chain::class,
+                        Conjunction::class,
+                        Disjunction::class,
+                        Identifier::class,
+                        Ternary::class
+                    ]
+                );
             }
         } else {
-            throw new \Exception('@TODO: Unexpected Token: ' . $value);
+            throw ParserFailed::becauseOfUnexpectedToken(
+                $stream->current(),
+                [TokenType::OPERATOR_SPREAD()]
+            );
         }
     }
 

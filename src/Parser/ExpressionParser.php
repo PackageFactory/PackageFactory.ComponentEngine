@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Ast\Afx;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression;
 use PackageFactory\ComponentEngine\Parser\Ast\Literal;
@@ -89,7 +90,23 @@ final class ExpressionParser
                 $term = Afx\Tag::createFromTokenStream($stream);
                 break;
             default:
-                throw new \Exception('@TODO: Unexpected Token: ' . $stream->current()->getType());
+                throw ParserFailed::becauseOfUnexpectedToken(
+                    $stream->current(),
+                    [
+                        TokenType::KEYWORD_NULL(),
+                        TokenType::KEYWORD_TRUE(),
+                        TokenType::KEYWORD_FALSE(),
+                        TokenType::NUMBER(),
+                        TokenType::STRING_LITERAL_START(),
+                        TokenType::TEMPLATE_LITERAL_START(),
+                        TokenType::BRACKETS_SQUARE_OPEN(),
+                        TokenType::BRACKETS_CURLY_OPEN(),
+                        TokenType::OPERATOR_LOGICAL_NOT(),
+                        TokenType::IDENTIFIER(),
+                        TokenType::BRACKETS_ROUND_OPEN(),
+                        TokenType::AFX_TAG_START()
+                    ]
+                );
         }
 
 
@@ -107,7 +124,7 @@ final class ExpressionParser
                     } elseif ($priority >= self::PRIORITY_LIST) {
                         return $term;
                     } else {
-                        throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                        throw ParserFailed::becauseOfUnexpectedToken($stream->current());
                     }
                 case TokenType::PERIOD():
                 case TokenType::BRACKETS_SQUARE_OPEN():
@@ -194,7 +211,19 @@ final class ExpressionParser
             case TokenType::BRACKETS_CURLY_OPEN():
                 return Expression\ObjectLiteral::createFromTokenStream($stream);
             default:
-                throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                throw ParserFailed::becauseOfUnexpectedToken(
+                    $stream->current(),
+                    [
+                        TokenType::KEYWORD_NULL(),
+                        TokenType::KEYWORD_TRUE(),
+                        TokenType::KEYWORD_FALSE(),
+                        TokenType::NUMBER(),
+                        TokenType::STRING_LITERAL_START(),
+                        TokenType::TEMPLATE_LITERAL_START(),
+                        TokenType::BRACKETS_SQUARE_OPEN(),
+                        TokenType::BRACKETS_CURLY_OPEN()
+                    ]
+                );
         }
     }
 }

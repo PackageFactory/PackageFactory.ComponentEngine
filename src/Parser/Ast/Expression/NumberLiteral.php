@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Ast\Child;
 use PackageFactory\ComponentEngine\Parser\Ast\Key;
 use PackageFactory\ComponentEngine\Parser\Ast\Literal;
@@ -65,7 +66,10 @@ final class NumberLiteral implements Value, Literal, Term, Statement, Key, Child
             $stream->next();
             return new self($value);
         } else {
-            throw new \Exception('@TODO: Unexpected Token: ' . $value);
+            throw ParserFailed::becauseOfUnexpectedToken(
+                $stream->current(),
+                [TokenType::NUMBER()]
+            );
         }
     }
 

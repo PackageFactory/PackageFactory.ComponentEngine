@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Module;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
@@ -74,7 +75,14 @@ final class Module implements \JsonSerializable
                     $constants[] = Constant::createFromTokenStream($stream);
                     break;
                 default:
-                    throw new \Exception('@TODO: Unexpected Token: ' . $stream->current()->getType());
+                    throw ParserFailed::becauseOfUnexpectedToken(
+                        $stream->current(),
+                        [
+                            TokenType::MODULE_KEYWORD_IMPORT(),
+                            TokenType::MODULE_KEYWORD_EXPORT(),
+                            TokenType::MODULE_KEYWORD_CONST()
+                        ]
+                    );
             }
         }
 

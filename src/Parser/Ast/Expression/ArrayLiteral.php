@@ -63,9 +63,7 @@ final class ArrayLiteral implements
         $items = [];
         while ($stream->valid()) {
             Util::skipWhiteSpaceAndComments($stream);
-            if (!$stream->valid()) {
-                throw new \Exception('@TODO: Unexpected end of file');
-            }
+            Util::ensureValid($stream);
 
             switch ($stream->current()->getType()) {
                 case TokenType::BRACKETS_SQUARE_CLOSE():

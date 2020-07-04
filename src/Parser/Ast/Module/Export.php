@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Module;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Ast\Term;
 use PackageFactory\ComponentEngine\Parser\Ast\Afx\Tag;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Expression;
@@ -40,7 +41,7 @@ final class Export implements \JsonSerializable
      */
     public static function createFromTokenStream(TokenStream $stream): self
     {
-        Util::skipWhiteSpaceAndComments($stream);
+        $token = $stream->current();
         Util::expect($stream, TokenType::MODULE_KEYWORD_EXPORT());
 
         Util::skipWhiteSpaceAndComments($stream);
@@ -56,7 +57,13 @@ final class Export implements \JsonSerializable
                 $stream->next();
                 break;
             default:
-                throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                throw ParserFailed::becauseOfUnexpectedToken(
+                    $stream->current(),
+                    [
+                        TokenType::MODULE_KEYWORD_CONST(),
+                        TokenType::MODULE_KEYWORD_DEFAULT()
+                    ]
+                );
         }
 
         $value = null;
@@ -86,7 +93,7 @@ final class Export implements \JsonSerializable
         }
 
         if ($value === null) {
-            throw new \Exception('@TODO: Unexpected empty export');
+            throw ParserFailed::becauseOfUnexpectedEmptyExport($token);
         }
 
         return new self($name, $value);

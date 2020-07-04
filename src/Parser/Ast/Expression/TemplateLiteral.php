@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Ast\Child;
 use PackageFactory\ComponentEngine\Parser\Ast\Key;
 use PackageFactory\ComponentEngine\Parser\Ast\Literal;
@@ -87,11 +88,20 @@ final class TemplateLiteral implements Literal, Term, Statement, Key, Child, \Js
                     return new self($start, $end, $segments);
 
                 default:
-                    throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                    throw ParserFailed::becauseOfUnexpectedToken(
+                        $stream->current(),
+                        [
+                            TokenType::TEMPLATE_LITERAL_CONTENT(),
+                            TokenType::TEMPLATE_LITERAL_ESCAPE(),
+                            TokenType::TEMPLATE_LITERAL_ESCAPED_CHARACTER(),
+                            TokenType::TEMPLATE_LITERAL_INTERPOLATION_START(),
+                            TokenType::TEMPLATE_LITERAL_END()
+                        ]
+                    );
             }
         }
 
-        throw new \Exception('@TODO: Unexpected end of file');
+        throw ParserFailed::becauseOfUnexpectedEndOfFile($stream);
     }
 
     /**

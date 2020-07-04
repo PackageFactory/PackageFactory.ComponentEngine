@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 
@@ -33,7 +34,7 @@ final class Util
     public static function ensureValid(\Iterator $iterator): void
     {
         if (!$iterator->valid()) {
-            throw new \Exception('@TODO: Unexpected end of file');
+            throw ParserFailed::becauseOfUnexpectedEndOfFile($iterator);
         }
     }
 
@@ -52,14 +53,9 @@ final class Util
             return $result;
         }
         else {
-            throw new \Exception(
-                sprintf(
-                    '@TODO: Unexpected %s "%s", expected "%s" (Line %s)',
-                    $iterator->current()->getType(),
-                    $iterator->current(),
-                    $type,
-                    $iterator->current()->getStart()->getRowIndex() + 1
-                )
+            throw ParserFailed::becauseOfUnexpectedToken(
+                $iterator->current(),
+                [$type]
             );
         }
     }

@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Afx;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\StringLiteral;
 use PackageFactory\ComponentEngine\Parser\Ast\ParameterAssignment;
 use PackageFactory\ComponentEngine\Parser\Ast\Term;
@@ -59,7 +60,13 @@ final class Attribute implements ParameterAssignment, \JsonSerializable
                 Util::expect($stream, TokenType::AFX_EXPRESSION_END());
                 break;
             default:
-                throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                throw ParserFailed::becauseOfUnexpectedToken(
+                    $stream->current(),
+                    [
+                        TokenType::STRING_LITERAL_START(),
+                        TokenType::AFX_EXPRESSION_START()
+                    ]
+                );
         }
 
         return new self($attributeName, $value);

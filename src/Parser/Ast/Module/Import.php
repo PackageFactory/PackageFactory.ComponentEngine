@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Module;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\StringLiteral;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
@@ -45,22 +46,15 @@ final class Import implements \JsonSerializable
     public static function createFromTokenStream(TokenStream $stream): \Iterator
     {
         Util::skipWhiteSpaceAndComments($stream);
-        if (!$stream->valid()) {
-            throw new \Exception('@TODO: Unexpected end of file');
-        }
         Util::expect($stream, TokenType::MODULE_KEYWORD_IMPORT());
 
         Util::skipWhiteSpaceAndComments($stream);
-        if (!$stream->valid()) {
-            throw new \Exception('@TODO: Unexpected end of file');
-        }
+        Util::ensureValid($stream);
 
         $importMap = [];
         while ($stream->valid()) {
             Util::skipWhiteSpaceAndComments($stream);
-            if (!$stream->valid()) {
-                throw new \Exception('@TODO: Unexpected end of file');
-            }
+            Util::ensureValid($stream);
 
             switch ($stream->current()->getType()) {
                 case TokenType::IDENTIFIER():
@@ -71,14 +65,18 @@ final class Import implements \JsonSerializable
                     $stream->next();
                     break 2;
                 default:
-                    throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                    throw ParserFailed::becauseOfUnexpectedToken(
+                        $stream->current(),
+                        [
+                            TokenType::IDENTIFIER(),
+                            TokenType::MODULE_KEYWORD_FROM()
+                        ]
+                    );
             }
         }
 
         Util::skipWhiteSpaceAndComments($stream);
-        if (!$stream->valid()) {
-            throw new \Exception('@TODO: Unexpected end of file');
-        }
+        Util::ensureValid($stream);
 
         $target = StringLiteral::createFromTokenStream($stream);
 

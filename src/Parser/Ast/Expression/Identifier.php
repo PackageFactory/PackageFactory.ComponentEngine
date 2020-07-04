@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Ast\Child;
 use PackageFactory\ComponentEngine\Parser\Ast\Key;
 use PackageFactory\ComponentEngine\Parser\Ast\Spreadable;
@@ -39,7 +40,10 @@ final class Identifier implements Spreadable, Term, Statement, Key, Child, \Json
             $stream->next();
             return new self($value);
         } else {
-            throw new \Exception('@TODO: Unexpected Token: ' . $value);
+            throw ParserFailed::becauseOfUnexpectedToken(
+                $stream->current(),
+                [TokenType::IDENTIFIER()]
+            );
         }
     }
 
@@ -55,7 +59,13 @@ final class Identifier implements Spreadable, Term, Statement, Key, Child, \Json
                 return new self($token);
             
             default:
-                throw new \Exception('@TODO: Unexpected Token: ' . $token);
+                throw ParserFailed::becauseOfUnexpectedToken(
+                    $token,
+                    [
+                        TokenType::IDENTIFIER(),
+                        TokenType::MODULE_KEYWORD_DEFAULT()
+                    ]
+                );
         }
     }
 

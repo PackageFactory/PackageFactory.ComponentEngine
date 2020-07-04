@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Ast\Child;
 use PackageFactory\ComponentEngine\Parser\Ast\Key;
 use PackageFactory\ComponentEngine\Parser\Ast\Literal;
@@ -56,22 +57,30 @@ final class StringLiteral implements Value, Literal, Term, Statement, Key, Child
                 case TokenType::STRING_LITERAL_CONTENT():
                     $value .= $stream->current()->getValue();
                     $stream->next();
-                break;
+                    break;
 
                 case TokenType::STRING_LITERAL_ESCAPE():
                     $stream->next();
-                break;
+                    break;
 
                 case TokenType::STRING_LITERAL_ESCAPED_CHARACTER():
                     $value .= $stream->current()->getValue();
                     $stream->next();
-                break;
+                    break;
 
                 case TokenType::STRING_LITERAL_END():
                     break 2;
 
                 default:
-                    throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                    throw ParserFailed::becauseOfUnexpectedToken(
+                        $stream->current(),
+                        [
+                            TokenType::STRING_LITERAL_CONTENT(),
+                            TokenType::STRING_LITERAL_ESCAPE(),
+                            TokenType::STRING_LITERAL_ESCAPED_CHARACTER(),
+                            TokenType::STRING_LITERAL_END()
+                        ]
+                    );
             }
         }
 

@@ -1,8 +1,9 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Afx;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Ast\Child;
-use PackageFactory\ComponentEngine\Parser\Ast\Expression\Expression;
+use PackageFactory\ComponentEngine\Parser\Ast\Expression;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Spread;
 use PackageFactory\ComponentEngine\Parser\Ast\ParameterAssignment;
 use PackageFactory\ComponentEngine\Parser\Ast\Statement;
@@ -58,7 +59,10 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
         } elseif ($stream->current()->getType() === TokenType::AFX_TAG_END()) {
             $tagName = null;
         } else {
-            throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+            throw ParserFailed::becauseOfUnexpectedToken(
+                $stream->current(),
+                [TokenType::IDENTIFIER()]
+            );
         }
 
         $attributes = [];
@@ -80,10 +84,13 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
                             $attributes[] = Spread::createFromTokenStream($stream);
                             Util::expect($stream, TokenType::AFX_EXPRESSION_END());
                         } else {
-                            throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                            throw ParserFailed::becauseOfUnexpectedToken(
+                                $stream->current(),
+                                [TokenType::OPERATOR_SPREAD()]
+                            );
                         }
                     } else {
-                        throw new \Exception('@TODO: Unexpected end of file');
+                        throw ParserFailed::becauseOfUnexpectedEndOfFile($stream);
                     }
                     break;
                 case TokenType::AFX_TAG_CLOSE():
@@ -91,7 +98,15 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
                     Util::expect($stream, TokenType::AFX_TAG_END());
                     return new self($tagName, $attributes, []);
                 default:
-                    throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                    throw ParserFailed::becauseOfUnexpectedToken(
+                        $stream->current(),
+                        [
+                            TokenType::AFX_TAG_END(),
+                            TokenType::IDENTIFIER(),
+                            TokenType::AFX_EXPRESSION_START(),
+                            TokenType::AFX_TAG_CLOSE()
+                        ]
+                    );
             }
         }
 
@@ -108,12 +123,33 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
                     break;
                 case TokenType::AFX_EXPRESSION_START():
                     $stream->next();
+                    Util::ensureValid($stream);
+                    
+                    $token = $stream->current();
                     $child = ExpressionParser::parseTerm($stream);
                     if ($child instanceof Child) {
                         $children[] = $child;
                         Util::expect($stream, TokenType::AFX_EXPRESSION_END());
                     } else {
-                        throw new \Exception('@TODO: Unexpected Term: ' . get_class($child));
+                        throw ParserFailed::becauseOfUnexpectedTerm(
+                            $token,
+                            $child,
+                            [
+                                Content::class,
+                                Tag::class,
+                                Expression\ArrayLiteral::class,
+                                Expression\TemplateLiteral::class,
+                                Expression\NullLiteral::class,
+                                Expression\NumberLiteral::class,
+                                Expression\StringLiteral::class,
+                                Expression\Chain::class,
+                                Expression\Conjunction::class,
+                                Expression\DashOperation::class,
+                                Expression\Disjunction::class,
+                                Expression\Identifier::class,
+                                Expression\Ternary::class,
+                            ]
+                        );
                     }
                     break;
                 case TokenType::AFX_TAG_START():
@@ -127,17 +163,23 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
                                     Util::expect($stream, TokenType::AFX_TAG_END());
                                     break 2;
                                 } else {
-                                    throw new \Exception('@TODO: Unexpected Closing Tag: ' . $stream->current());
+                                    throw ParserFailed::becauseOfUnexpectedClosingTag($stream->current());
                                 }
                             } elseif ($stream->current()->getType() === TokenType::AFX_TAG_END()) {
                                 if ($tagName === null) {
                                     $stream->next();
                                     break 2;
                                 } else {
-                                    throw new \Exception('@TODO: Unexpected Closing Tag: ' . $stream->current());
+                                    throw ParserFailed::becauseOfUnexpectedClosingTag($stream->current());
                                 }
                             } else {
-                                throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                                throw ParserFailed::becauseOfUnexpectedToken(
+                                    $stream->current(),
+                                    [
+                                        TokenType::IDENTIFIER(),
+                                        TokenType::AFX_TAG_END()
+                                    ]
+                                );
                             }
                         }
                     }
@@ -145,7 +187,16 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
                     break;
 
                 default:
-                    throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                    throw ParserFailed::becauseOfUnexpectedToken(
+                        $stream->current(),
+                        [
+                            TokenType::WHITESPACE(),
+                            TokenType::END_OF_LINE(),
+                            TokenType::AFX_TAG_CONTENT(),
+                            TokenType::AFX_EXPRESSION_START(),
+                            TokenType::AFX_TAG_START()
+                        ]
+                    );
             }
         }
 

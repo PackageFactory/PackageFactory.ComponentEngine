@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Ast\Child;
 use PackageFactory\ComponentEngine\Parser\Ast\Literal;
 use PackageFactory\ComponentEngine\Parser\Ast\Statement;
@@ -39,7 +40,13 @@ final class BooleanLiteral implements Value, Literal, Term, Statement, \JsonSeri
             $stream->next();
             return new self($value);
         } else {
-            throw new \Exception('@TODO: Unexpected Token: ' . $value);
+            throw ParserFailed::becauseOfUnexpectedToken(
+                $stream->current(),
+                [
+                    TokenType::KEYWORD_TRUE(),
+                    TokenType::KEYWORD_FALSE()
+                ]
+            );
         }
     }
 

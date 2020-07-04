@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Ast\Child;
 use PackageFactory\ComponentEngine\Parser\Ast\Key;
 use PackageFactory\ComponentEngine\Parser\Ast\Spreadable;
@@ -12,6 +13,7 @@ use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
+use SebastianBergmann\Diff\Parser;
 
 final class Chain implements Spreadable, Term, Statement, Key, Child, \JsonSerializable
 {
@@ -98,13 +100,28 @@ final class Chain implements Spreadable, Term, Statement, Key, Child, \JsonSeria
                 case TokenType::BRACKETS_SQUARE_OPEN():
                     $end = $stream->current();
                     $stream->next();
+
+                    Util::ensureValid($stream);
+                    
+                    $token = $stream->current();
                     $key = ExpressionParser::parseTerm($stream);
                     if ($key instanceof Key) {
                         $segments[] = ChainSegment::createFromKey($optional, $key);
                         Util::skipWhiteSpaceAndComments($stream);
                         Util::expect($stream, TokenType::BRACKETS_SQUARE_CLOSE());
                     } else {
-                        throw new \Exception('@TODO: Unexpected Term: ' . get_class($key));
+                        throw ParserFailed::becauseOfUnexpectedTerm(
+                            $token,
+                            $key,
+                            [
+                                Identifier::class,
+                                StringLiteral::class,
+                                NumberLiteral::class,
+                                TemplateLiteral::class,
+                                Chain::class,
+                                DashOperation::class
+                            ]
+                        );
                     }
                     break;
                 
@@ -125,7 +142,14 @@ final class Chain implements Spreadable, Term, Statement, Key, Child, \JsonSeria
                     break;
                 
                 default:
-                    throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                    throw ParserFailed::becauseOfUnexpectedToken(
+                        $stream->current(),
+                        [
+                            TokenType::BRACKETS_SQUARE_OPEN(),
+                            TokenType::BRACKETS_ROUND_OPEN(),
+                            TokenType::IDENTIFIER()
+                        ]
+                    );
             }
         }
 

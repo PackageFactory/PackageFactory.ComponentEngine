@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Ast\Key;
 use PackageFactory\ComponentEngine\Parser\Ast\Statement;
 use PackageFactory\ComponentEngine\Parser\Ast\Term;
@@ -40,19 +41,33 @@ final class ObjectLiteralProperty implements \JsonSerializable
         Util::ensureValid($stream);
 
         $key = null;
-        $value = null;
         switch ($stream->current()->getType()) {                
             case TokenType::IDENTIFIER():
                 $key = Identifier::createFromTokenStream($stream);
                 break;
             case TokenType::BRACKETS_SQUARE_OPEN():
                 $stream->next();
+
+                Util::ensureValid($stream);
+
+                $token = $stream->current();
                 $key = ExpressionParser::parseTerm($stream);
                 if ($key instanceof Key) {
                     Util::skipWhiteSpaceAndComments($stream);
                     Util::expect($stream, TokenType::BRACKETS_SQUARE_CLOSE());
                 } else {
-                    throw new \Exception('@TODO: Unexpected Term: ' . get_class($key));
+                    throw ParserFailed::becauseOfUnexpectedTerm(
+                        $token,
+                        $key,
+                        [
+                            Identifier::class,
+                            StringLiteral::class,
+                            NumberLiteral::class,
+                            TemplateLiteral::class,
+                            Chain::class,
+                            DashOperation::class
+                        ]
+                    );
                 }
                 break;
             case TokenType::OPERATOR_SPREAD():
@@ -62,7 +77,14 @@ final class ObjectLiteralProperty implements \JsonSerializable
                 );
 
             default:
-                throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                throw ParserFailed::becauseOfUnexpectedToken(
+                    $stream->current(),
+                    [
+                        TokenType::IDENTIFIER(),
+                        TokenType::BRACKETS_SQUARE_OPEN(),
+                        TokenType::OPERATOR_SPREAD()
+                    ]
+                );
         }
 
         Util::skipWhiteSpaceAndComments($stream);

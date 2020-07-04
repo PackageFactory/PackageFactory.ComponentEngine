@@ -23,6 +23,11 @@ final class TokenStream implements \Iterator
      */
     private $lookAheadBuffer = [];
 
+    /**
+     * @var Token
+     */
+    private $last;
+
     private function __construct(Tokenizer $tokenizer) 
     {
         $this->tokenizer = $tokenizer;
@@ -32,6 +37,11 @@ final class TokenStream implements \Iterator
     public static function createFromTokenizer(Tokenizer $tokenizer): self
     {
         return new self($tokenizer);
+    }
+
+    public function getLast(): Token
+    {
+        return $this->last;
     }
 
     public function lookAhead(int $length): ?Token
@@ -96,6 +106,8 @@ final class TokenStream implements \Iterator
         else {
             $this->iterator->next();
         }
+
+        $this->last = $this->iterator->current();
     }
 
     /**
@@ -104,6 +116,7 @@ final class TokenStream implements \Iterator
     public function rewind()
     {
         $this->iterator = $this->tokenizer->getIterator();
+        $this->last = $this->iterator->current();
     }
 
     /**

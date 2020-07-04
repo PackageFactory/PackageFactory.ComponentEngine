@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Ast\Statement;
 use PackageFactory\ComponentEngine\Parser\Ast\Term;
 use PackageFactory\ComponentEngine\Parser\ExpressionParser;
@@ -67,7 +68,14 @@ final class PointOperation implements Term, Statement, \JsonSerializable
                 $stream->next();
                 break;
             default:
-                throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
+                throw ParserFailed::becauseOfUnexpectedToken(
+                    $stream->current(),
+                    [
+                        TokenType::OPERATOR_MULTIPLY(),
+                        TokenType::OPERATOR_DIVIDE(),
+                        TokenType::OPERATOR_MODULO()
+                    ]
+                );
         }
 
         Util::skipWhiteSpaceAndComments($stream);
