@@ -182,6 +182,7 @@ final class ObjectLiteralTest extends TestCase
     /**
      * @dataProvider provider
      * @test
+     * @small
      * @param string $input
      * @param array<mixed> $asJson
      * @return void

@@ -1,6 +1,9 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Key;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
+
 final class ChainSegment implements \JsonSerializable
 {
     /**
@@ -9,44 +12,40 @@ final class ChainSegment implements \JsonSerializable
     private $isOptional;
 
     /**
-     * @var Operand|Call
+     * @var Key
      */
-    private $subject;
+    private $key;
+
+    /**
+     * @var null|Call
+     */
+    private $call;
 
     /**
      * @param boolean $isOptional
-     * @param Operand|Call $subject
+     * @param Key $key
+     * @param null|Call $call
      */
     private function __construct(
         bool $isOptional,
-        $subject
+        Key $key,
+        ?Call $call
     ) {
         $this->isOptional = $isOptional;
-        $this->subject = $subject;
+        $this->key = $key;
+        $this->call = $call;
     }
 
     /**
      * @param boolean $isOptional
-     * @param Identifier $identifier
+     * @param Key $key
      * @return self
      */
-    public static function createFromIdentifier(
+    public static function createFromKey(
         bool $isOptional,
-        Identifier $identifier
+        Key $key
     ): self {
-        return new self($isOptional, $identifier);
-    }
-
-    /**
-     * @param boolean $isOptional
-     * @param Operand|Call $operandOrCall
-     * @return self
-     */
-    public static function createFromOperandOrCall(
-        bool $isOptional,
-        $operandOrCall
-    ): self {
-        return new self($isOptional, $operandOrCall);
+        return new self($isOptional, $key, null);
     }
 
     /**
@@ -58,11 +57,38 @@ final class ChainSegment implements \JsonSerializable
     }
 
     /**
-     * @return Operand|Call
+     * @return bool
      */
-    public function getSubject()
+    public function getIsCallable(): bool
     {
-        return $this->subject;
+        return $this->call !== null;
+    }
+
+    /**
+     * @return Term
+     */
+    public function getKey(): Term
+    {
+        /** @var Term $key */
+        $key = $this->key;
+        return $key;
+    }
+
+    /**
+     * @return null|Call
+     */
+    public function getCall(): ?Call
+    {
+        return $this->call;
+    }
+
+    /**
+     * @param Call $call
+     * @return self
+     */
+    public function withCall(Call $call): self
+    {
+        return new self($this->isOptional, $this->key, $call);
     }
 
     /**
@@ -73,7 +99,8 @@ final class ChainSegment implements \JsonSerializable
         return [
             'type' => 'ChainSegment',
             'isOptional' => $this->isOptional,
-            'subject' => $this->subject
+            'key' => $this->key,
+            'call' => $this->call
         ];
     }
 } 

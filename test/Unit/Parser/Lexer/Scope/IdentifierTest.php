@@ -48,6 +48,7 @@ final class IdentifierTest extends TestCase
     /**
      * @dataProvider provider
      * @test
+     * @small
      * @param string $identifier
      * @return void
      */
@@ -62,6 +63,7 @@ final class IdentifierTest extends TestCase
 
     /**
      * @test
+     * @small
      * @return void
      */
     public function testExitAfterDelimiter(): void

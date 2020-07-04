@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Parser\Lexer\Scope;
 
-use PackageFactory\ComponentEngine\Parser\Lexer\Debug\Printer;
 use PackageFactory\ComponentEngine\Parser\Lexer\Scope\StringLiteral;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
@@ -103,6 +102,7 @@ final class StringLiteralTest extends TestCase
     /**
      * @dataProvider provider
      * @test
+     * @small
      * @param string $input
      * @param array<int, array{TokenType, string}> $tokens
      * @return void

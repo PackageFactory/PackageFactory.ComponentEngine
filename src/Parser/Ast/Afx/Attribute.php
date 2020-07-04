@@ -1,12 +1,15 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Afx;
 
-use PackageFactory\ComponentEngine\Parser\Ast\Expression\Expression;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\StringLiteral;
+use PackageFactory\ComponentEngine\Parser\Ast\ParameterAssignment;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
+use PackageFactory\ComponentEngine\Parser\Util;
 
-final class Attribute implements \JsonSerializable
+final class Attribute implements ParameterAssignment, \JsonSerializable
 {
     /**
      * @var AttributeName
@@ -14,17 +17,17 @@ final class Attribute implements \JsonSerializable
     private $attributeName;
 
     /**
-     * @var Operand|bool
+     * @var null|Term
      */
     private $value;
 
     /**
      * @param AttributeName $attributeName
-     * @param Operand|bool $value
+     * @param null|Term $value
      */
     private function __construct(
         AttributeName $attributeName,
-        $value
+        ?Term $value
     ) {
         $this->attributeName = $attributeName;
         $this->value = $value;
@@ -37,38 +40,26 @@ final class Attribute implements \JsonSerializable
     public static function createFromTokenStream(TokenStream $stream): self
     {
         $attributeName = AttributeName::createFromTokenStream($stream);
-        if ($stream->valid()) {
-            if ($stream->current()->getType() === TokenType::AFX_ATTRIBUTE_ASSIGNMENT()) {
-                $stream->next();
-            } else {
-                return new self($attributeName, true);
-            }
+        Util::ensureValid($stream);
+
+        if ($stream->current()->getType() === TokenType::AFX_ATTRIBUTE_ASSIGNMENT()) {
+            $stream->next();
+            Util::ensureValid($stream);
         } else {
-            throw new \Exception('@TODO: Unexpected end of file');
-        }
-        if ($stream->valid()) {
-            switch ($stream->current()->getType()) {
-                case TokenType::STRING_LITERAL_START():
-                    $value = StringLiteral::createFromTokenStream($stream);
-                    break;
-                case TokenType::AFX_EXPRESSION_START():
-                    $stream->next();
-                    $value = Expression::createFromTokenStream(
-                        $stream, 
-                        Expression::PRIORITY_TERNARY,
-                        TokenType::AFX_EXPRESSION_END()
-                    );
-                    break;
-                
-                default:
-                    throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
-            }
-        } else {
-            throw new \Exception('@TODO: Unexpected end of file');
+            return new self($attributeName, null);
         }
 
-        if ($value === null) {
-            throw new \Exception('@TODO: Unexpected empty attribute value');
+        switch ($stream->current()->getType()) {
+            case TokenType::STRING_LITERAL_START():
+                $value = StringLiteral::createFromTokenStream($stream);
+                break;
+            case TokenType::AFX_EXPRESSION_START():
+                $stream->next();
+                $value = ExpressionParser::parseTerm($stream);
+                Util::expect($stream, TokenType::AFX_EXPRESSION_END());
+                break;
+            default:
+                throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
         }
 
         return new self($attributeName, $value);
@@ -83,9 +74,9 @@ final class Attribute implements \JsonSerializable
     }
 
     /**
-     * @return Operand|bool
+     * @return null|Term
      */
-    public function getValue()
+    public function getValue(): ?Term
     {
         return $this->value;
     }

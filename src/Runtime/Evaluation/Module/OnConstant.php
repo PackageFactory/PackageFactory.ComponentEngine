@@ -24,7 +24,7 @@ final class OnConstant
                 return Afx\OnTag::evaluate($runtime->withContext($context), $value);
             };
         } else {
-            return Expression\OnExpression::evaluate($runtime, $value);
+            return Expression\OnTerm::evaluate($runtime, $value);
         }
     }
 }

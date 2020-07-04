@@ -1,37 +1,41 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
-use PackageFactory\ComponentEngine\Parser\Ast\Afx\Tag;
+use PackageFactory\ComponentEngine\Parser\Ast\Child;
+use PackageFactory\ComponentEngine\Parser\Ast\Spreadable;
+use PackageFactory\ComponentEngine\Parser\Ast\Statement;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
 
-final class Ternary implements \JsonSerializable
+final class Ternary implements Spreadable, Term, Statement, Child, \JsonSerializable
 {
     /**
-     * @var Operand
+     * @var Term
      */
     private $condition;
 
     /**
-     * @var Operand
+     * @var Term
      */
     private $trueBranch;
 
     /**
-     * @var Operand
+     * @var Term
      */
     private $falseBranch;
 
     /**
-     * @param Operand $condition
-     * @param Operand $trueBranch
-     * @param Operand $falseBranch
+     * @param Term $condition
+     * @param Term $trueBranch
+     * @param Term $falseBranch
      */
     private function __construct(
-        $condition,
-        $trueBranch,
-        $falseBranch
+        Term $condition,
+        Term $trueBranch,
+        Term $falseBranch
     ) {
         $this->condition = $condition;
         $this->trueBranch = $trueBranch;
@@ -39,55 +43,49 @@ final class Ternary implements \JsonSerializable
     }
 
     /**
-     * @param Operand $condition
+     * @param Term $condition
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream($condition, TokenStream $stream): self
+    public static function createFromTokenStream(Term $condition, TokenStream $stream): self
     {
         Util::expect($stream, TokenType::QUESTIONMARK());
-        if (!$stream->valid()) {
-            throw new \Exception('@TODO: Unexpected end of file');
-        }
+        Util::skipWhiteSpaceAndComments($stream);
+        Util::ensureValid($stream);
 
-        $trueBranch = Expression::createFromTokenStream(
-            $stream, 
-            Expression::PRIORITY_TERNARY,
-            TokenType::COLON()
-        );
-        if ($trueBranch === null) {
-            throw new \Exception('@TODO: Unexpected empty trueBranch');
-        }
+        $trueBranch = ExpressionParser::parseTerm($stream);
 
-        $falseBranch = Expression::createFromTokenStream($stream);
-        if ($falseBranch === null) {
-            throw new \Exception('@TODO: Unexpected empty falseBranch');
-        }
+        Util::skipWhiteSpaceAndComments($stream);
+        Util::ensureValid($stream);
+        Util::expect($stream, TokenType::COLON());
+        Util::skipWhiteSpaceAndComments($stream);
+        Util::ensureValid($stream);
 
+        $falseBranch = ExpressionParser::parseTerm($stream);
 
         return new self($condition, $trueBranch, $falseBranch);
     }
 
     /**
-     * @return Operand
+     * @return Term
      */
-    public function getCondition()
+    public function getCondition(): Term
     {
         return $this->condition;
     }
 
     /**
-     * @return Operand
+     * @return Term
      */
-    public function getTrueBranch()
+    public function getTrueBranch(): Term
     {
         return $this->trueBranch;
     }
 
     /**
-     * @return Operand
+     * @return Term
      */
-    public function getFalseBranch()
+    public function getFalseBranch(): Term
     {
         return $this->falseBranch;
     }

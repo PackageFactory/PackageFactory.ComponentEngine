@@ -39,6 +39,7 @@ final class NumberTest extends TestCase
     /**
      * @dataProvider happyPathProvider
      * @test
+     * @small
      * @param string $number
      * @return void
      */
@@ -78,6 +79,7 @@ final class NumberTest extends TestCase
     /**
      * @dataProvider exitPathProvider
      * @test
+     * @small
      * @param string $number
      * @param string $expected
      * @return void

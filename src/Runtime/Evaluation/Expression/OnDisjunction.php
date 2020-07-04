@@ -13,7 +13,7 @@ final class OnDisjunction
      */
     public static function evaluate(Runtime $runtime, Disjunction $disjunction)
     {
-        $left = OnExpression::evaluate($runtime, $disjunction->getLeft());
+        $left = OnTerm::evaluate($runtime, $disjunction->getLeft());
         if (is_string($left)) {
             $left = $left !== '';
         } elseif (is_numeric($left)) {
@@ -29,7 +29,7 @@ final class OnDisjunction
         if ($left) {
             return true;
         } else {
-            return OnExpression::evaluate($runtime, $disjunction->getRight());
+            return OnTerm::evaluate($runtime, $disjunction->getRight());
         }
     }
 }

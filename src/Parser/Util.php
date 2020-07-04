@@ -27,14 +27,25 @@ final class Util
     }
 
     /**
-     * Undocumented function
-     *
+     * @param \Iterator<Token> $iterator
+     * @return void
+     */
+    public static function ensureValid(\Iterator $iterator): void
+    {
+        if (!$iterator->valid()) {
+            throw new \Exception('@TODO: Unexpected end of file');
+        }
+    }
+
+    /**
      * @param \Iterator<Token> $iterator
      * @param TokenType $type
      * @return Token
      */
     public static function expect(\Iterator $iterator, TokenType $type): Token
     {
+        self::ensureValid($iterator);
+
         if ($iterator->current()->getType() === $type) {
             $result = $iterator->current();
             $iterator->next();

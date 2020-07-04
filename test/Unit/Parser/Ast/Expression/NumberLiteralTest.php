@@ -93,6 +93,7 @@ final class NumberLiteralTest extends TestCase
     /**
      * @dataProvider provider
      * @test
+     * @small
      * @param string $input
      * @param string $asString
      * @param float $asNumber

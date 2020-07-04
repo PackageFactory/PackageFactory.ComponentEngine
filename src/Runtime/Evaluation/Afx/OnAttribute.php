@@ -18,12 +18,12 @@ final class OnAttribute
         $name = $attribute->getAttributeName()->getValue();
         $value = $attribute->getValue();
 
-        if (is_bool($value)) {
+        if (is_null($value)) {
             yield VirtualDOM\Attribute::createBooleanFromName($name);
         } else {
             yield VirtualDOM\Attribute::createFromNameAndValue(
                 $name,
-                Expression\OnExpression::evaluate($runtime, $value)
+                Expression\OnTerm::evaluate($runtime, $value)
             );
         }
     }

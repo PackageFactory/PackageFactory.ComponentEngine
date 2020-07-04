@@ -23,6 +23,7 @@ final class RuntimeTest extends BaseTestCase
 
     /**
      * @test
+     * @small
      * @dataProvider helloWorldProvider
      * @param string $filename
      * @return void
@@ -59,6 +60,7 @@ final class RuntimeTest extends BaseTestCase
 
     /**
      * @test
+     * @small
      * @dataProvider navProvider
      * @param string $filename
      * @return void

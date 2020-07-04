@@ -1,15 +1,21 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Child;
+use PackageFactory\ComponentEngine\Parser\Ast\Spreadable;
+use PackageFactory\ComponentEngine\Parser\Ast\Statement;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
+use PackageFactory\ComponentEngine\Parser\Util;
 
-final class Disjunction implements \JsonSerializable
+final class Disjunction implements Spreadable, Term, Statement, Child, \JsonSerializable
 {
     const OPERATOR_LOGICAL_OR = '||';
 
     /**
-     * @var Operand
+     * @var Term
      */
     private $left;
 
@@ -19,16 +25,16 @@ final class Disjunction implements \JsonSerializable
     private $operator;
 
     /**
-     * @var Operand
+     * @var Term
      */
     private $right;
 
     /**
-     * @param Operand $left
+     * @param Term $left
      * @param string $operator
-     * @param Operand $right
+     * @param Term $right
      */
-    private function __construct($left, string $operator, $right)
+    private function __construct(Term $left, string $operator, Term $right)
     {
         if ($operator !== self::OPERATOR_LOGICAL_OR) {
             throw new \Exception('@TODO: Unknown Operator');
@@ -40,15 +46,13 @@ final class Disjunction implements \JsonSerializable
     }
 
     /**
-     * @param Operand $left
+     * @param Term $left
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream($left, TokenStream $stream): self 
+    public static function createFromTokenStream(Term $left, TokenStream $stream): self 
     {
-        if (!$stream->valid()) {
-            throw new \Exception('@TODO: Unexpected end of file');
-        }
+        Util::ensureValid($stream);
 
         $operator = null;
         switch ($stream->current()->getType()) {
@@ -60,22 +64,20 @@ final class Disjunction implements \JsonSerializable
                 throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
         }
 
-        $right = Expression::createFromTokenStream(
-            $stream,
-            Expression::PRIORITY_DISJUNCTION
+        Util::skipWhiteSpaceAndComments($stream);
+        Util::ensureValid($stream);
+
+        return new self(
+            $left, 
+            $operator, 
+            ExpressionParser::parseTerm($stream, ExpressionParser::PRIORITY_DISJUNCTION)
         );
-
-        if ($right === null) {
-            throw new \Exception('@TODO: Unexpected empty operand');
-        }
-
-        return new self($left, $operator, $right);
     }
 
     /**
-     * @return Operand
+     * @return Term
      */
-    public function getLeft()
+    public function getLeft(): Term
     {
         return $this->left;
     }
@@ -89,9 +91,9 @@ final class Disjunction implements \JsonSerializable
     }
 
     /**
-     * @return Operand
+     * @return Term
      */
-    public function getRight()
+    public function getRight(): Term
     {
         return $this->right;
     }

@@ -13,7 +13,7 @@ final class OnConjunction
      */
     public static function evaluate(Runtime $runtime, Conjunction $conjunction) 
     {
-        $left = OnExpression::evaluate($runtime, $conjunction->getLeft());
+        $left = OnTerm::evaluate($runtime, $conjunction->getLeft());
         if (is_string($left)) {
             $left = $left !== '';
         } elseif (is_numeric($left)) {
@@ -27,7 +27,7 @@ final class OnConjunction
         }
 
         if ($left === true) {
-            return OnExpression::evaluate($runtime, $conjunction->getRight());
+            return OnTerm::evaluate($runtime, $conjunction->getRight());
         } else {
             return false;
         }

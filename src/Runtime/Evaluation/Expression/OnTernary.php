@@ -13,12 +13,12 @@ final class OnTernary
      */
     public static function evaluate(Runtime $runtime, Ternary $ternary) 
     {
-        $condition = OnExpression::evaluate($runtime, $ternary->getCondition());
+        $condition = OnTerm::evaluate($runtime, $ternary->getCondition());
         
         if ($condition) {
-            return OnExpression::evaluate($runtime, $ternary->getTrueBranch());
+            return OnTerm::evaluate($runtime, $ternary->getTrueBranch());
         } else {
-            return OnExpression::evaluate($runtime, $ternary->getFalseBranch());
+            return OnTerm::evaluate($runtime, $ternary->getFalseBranch());
         }
     }
 }

@@ -16,41 +16,20 @@ final class OnChain
      */
     public static function evaluate(Runtime $runtime, Chain $chain)
     {
-        $segments = $chain->getSegments();
-        $root = array_shift($segments);
-
-        if ($root === null) {
-            throw new \Exception('@TODO: Broken chain');
-        }
-
-        if ($root->getSubject() instanceof Identifier) {
-            array_unshift($segments, $root);
-            $value = $runtime->getContext();
+        if ($chain->getRoot() instanceof Identifier) {
+            /** @var Identifier $identifier */
+            $identifier = $chain->getRoot();
+            $value = $runtime->getContext()->getProperty($identifier->getValue());
         } else {
-            $subject = $root->getSubject();
-            if ($subject instanceof Call) {
-                throw new \Exception('@TODO: Unexpected call');
-            }
-            $value = OnExpression::evaluate($runtime, $subject);
+            $value = OnTerm::evaluate($runtime, $chain->getRoot());
         }
 
-        foreach ($segments as $segment) {
-            $subject = $segment->getSubject();
-            if ($subject instanceof Identifier) {
-                $key = $subject->getValue();
-            } elseif ($subject instanceof Call) {
-                if ($value instanceof \Closure) {
-                    $arguments = [];
-                    foreach ($subject->getArguments() as $argument) {
-                        $arguments[] = OnExpression::evaluate($runtime, $argument);
-                    }
-
-                    return $value(...$arguments);
-                } else {
-                    throw new \Exception('@TODO: Subject cannot be called.');
-                }
+        foreach ($chain->getSegments() as $segment) {
+            $key = $segment->getKey();
+            if ($key instanceof Identifier) {
+                $key = $key->getValue();
             } else {
-                $key = OnExpression::evaluate($runtime, $subject);
+                $key = OnTerm::evaluate($runtime, $key);
             }
 
             if (!is_scalar($key)) {
@@ -116,6 +95,19 @@ final class OnChain
                 }
             } else {
                 throw new \RuntimeException('@TODO: Invalid value type: ' . gettype($value));
+            }
+
+            if ($call = $segment->getCall()) {
+                if ($value instanceof \Closure) {
+                    $arguments = [];
+                    foreach ($call->getArguments() as $argument) {
+                        $arguments[] = OnTerm::evaluate($runtime, $argument);
+                    }
+
+                    $value = $value(...$arguments);
+                } else {
+                    throw new \RuntimeException('@TODO: Invalid call.');
+                }
             }
         }
 

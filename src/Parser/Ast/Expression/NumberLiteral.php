@@ -1,12 +1,18 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Child;
+use PackageFactory\ComponentEngine\Parser\Ast\Key;
+use PackageFactory\ComponentEngine\Parser\Ast\Literal;
+use PackageFactory\ComponentEngine\Parser\Ast\Statement;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Parser\Ast\Value;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Util;
 
-final class NumberLiteral implements \JsonSerializable
+final class NumberLiteral implements Value, Literal, Term, Statement, Key, Child, \JsonSerializable
 {
     /**
      * @var Token
@@ -18,6 +24,9 @@ final class NumberLiteral implements \JsonSerializable
      */
     private $number;
 
+    /**
+     * @param Token $token
+     */
     public function __construct(Token $token)
     {
         $this->token = $token;
@@ -43,9 +52,13 @@ final class NumberLiteral implements \JsonSerializable
         }
     }
 
+    /**
+     * @param TokenStream $stream
+     * @return self
+     */
     public static function createFromTokenStream(TokenStream $stream): self
     {
-        Util::skipWhiteSpaceAndComments($stream);
+        Util::ensureValid($stream);
 
         $value = $stream->current();
         if ($value->getType() === TokenType::NUMBER()) {

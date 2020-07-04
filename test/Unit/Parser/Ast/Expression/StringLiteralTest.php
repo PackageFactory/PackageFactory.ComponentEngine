@@ -77,6 +77,7 @@ final class StringLiteralTest extends TestCase
     /**
      * @dataProvider provider
      * @test
+     * @small
      * @param string $input
      * @param string $output
      * @param array<mixed> $asJson

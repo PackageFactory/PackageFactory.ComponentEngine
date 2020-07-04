@@ -1,12 +1,18 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Child;
+use PackageFactory\ComponentEngine\Parser\Ast\Key;
+use PackageFactory\ComponentEngine\Parser\Ast\Literal;
+use PackageFactory\ComponentEngine\Parser\Ast\Statement;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
 
-final class TemplateLiteral implements \JsonSerializable
+final class TemplateLiteral implements Literal, Term, Statement, Key, Child, \JsonSerializable
 {
     /**
      * @var Token
@@ -19,14 +25,14 @@ final class TemplateLiteral implements \JsonSerializable
     private $end;
 
     /**
-     * @var array|(string|Operand)[]
+     * @var array|(string|Term)[]
      */
     private $segments;
 
     /**
      * @param Token $start
      * @param Token $end
-     * @param array|(string|Operand)[] $segments
+     * @param array|(string|Term)[] $segments
      */
     private function __construct(
         Token $start,
@@ -64,15 +70,11 @@ final class TemplateLiteral implements \JsonSerializable
                         $string = '';
                     }
                     $stream->next();
-                    $segment = Expression::createFromTokenStream(
+                    $segments[] = ExpressionParser::parseTerm(
                         $stream,
-                        Expression::PRIORITY_TERNARY,
-                        TokenType::TEMPLATE_LITERAL_INTERPOLATION_END()
+                        ExpressionParser::PRIORITY_TERNARY
                     );
-                    if ($segment === null) {
-                        throw new \Exception('@TODO: Unexpected empty segment');
-                    }
-                    $segments[] = $segment;
+                    Util::expect($stream, TokenType::TEMPLATE_LITERAL_INTERPOLATION_END());
                     break;
 
                 case TokenType::TEMPLATE_LITERAL_END():
@@ -109,7 +111,7 @@ final class TemplateLiteral implements \JsonSerializable
     }
 
     /**
-     * @return array|(string|Operand)[]
+     * @return array|(string|Term)[]
      */
     public function getSegments(): array
     {

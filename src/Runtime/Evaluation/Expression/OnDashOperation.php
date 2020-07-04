@@ -13,8 +13,8 @@ final class OnDashOperation
      */
     public static function evaluate(Runtime $runtime, DashOperation $dashOperation)
     {
-        $left = OnExpression::evaluate($runtime, $dashOperation->getLeft());
-        $right = OnExpression::evaluate($runtime, $dashOperation->getRight());
+        $left = OnTerm::evaluate($runtime, $dashOperation->getLeft());
+        $right = OnTerm::evaluate($runtime, $dashOperation->getRight());
 
         if ($dashOperation->getOperator() === DashOperation::OPERATOR_ADD) {
             if (is_string($left) || is_string($right)) {

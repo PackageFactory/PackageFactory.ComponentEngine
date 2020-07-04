@@ -13,8 +13,8 @@ final class OnComparison
      */
     public static function evaluate(Runtime $runtime, Comparison $comparison): bool 
     {
-        $left = OnExpression::evaluate($runtime, $comparison->getLeft());
-        $right = OnExpression::evaluate($runtime, $comparison->getRight());
+        $left = OnTerm::evaluate($runtime, $comparison->getLeft());
+        $right = OnTerm::evaluate($runtime, $comparison->getRight());
 
         if ($comparison->getOperator() === Comparison::COMPARATOR_EQ) {
             return $left === $right;

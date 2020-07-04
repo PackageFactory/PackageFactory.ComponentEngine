@@ -1,12 +1,19 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Child;
+use PackageFactory\ComponentEngine\Parser\Ast\Key;
+use PackageFactory\ComponentEngine\Parser\Ast\Spreadable;
+use PackageFactory\ComponentEngine\Parser\Ast\Statement;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Parser\ExpressionParser;
+use PackageFactory\ComponentEngine\Parser\Lexer\Scope\Expression;
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
 
-final class Chain implements \JsonSerializable
+final class Chain implements Spreadable, Term, Statement, Key, Child, \JsonSerializable
 {
     /**
      * @var Token
@@ -19,41 +26,46 @@ final class Chain implements \JsonSerializable
     private $end;
 
     /**
-     * @var array<int, ChainSegment>
+     * @var Term
+     */
+    private $root;
+
+    /**
+     * @var array|ChainSegment[]
      */
     private $segments;
 
     /**
      * @param Token $start
      * @param Token $end
-     * @param array<int, ChainSegment> $segments
+     * @param array|ChainSegment[] $segments
      */
     private function __construct(
         Token $start,
         Token $end,
+        Term $root,
         array $segments
     ) {
         $this->start = $start;
         $this->end = $end;
+        $this->root = $root;
         $this->segments = $segments;
     }
 
     /**
-     * @param Operand $root
+     * @param Term $root
      * @param TokenStream $stream
      * @return self
      */
     public static function createFromTokenStream(
-        $root,
+        Term $root,
         TokenStream $stream
     ): self {
-        Util::skipWhiteSpaceAndComments($stream);
         $start = $stream->current();
         $end = $start;
         
         $segments = [];
-        $operandOrCall = $root;
-        $append = false;
+        $optional = false;
         while ($stream->valid()) {
             Util::skipWhiteSpaceAndComments($stream);
             if (!$stream->valid()) {
@@ -62,79 +74,62 @@ final class Chain implements \JsonSerializable
 
             switch ($stream->current()->getType()) {
                 case TokenType::OPERATOR_OPTCHAIN():
-                    if ($operandOrCall !== null) {
                         $end = $stream->current();
-                        $segments[] = ChainSegment::createFromOperandOrCall(true, $operandOrCall);
+                        $optional = true;
                         $stream->next();
-                        $operandOrCall = null;
-                        $append = true;
-                    } else {
-                        throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
-                    }
                     break;
-                
                 case TokenType::PERIOD():
-                    if ($operandOrCall !== null) {
-                        $end = $stream->current();
-                        $segments[] = ChainSegment::createFromOperandOrCall(false, $operandOrCall);
-                        $stream->next();
-                        $operandOrCall = null;
-                        $append = false;
-                    } else {
-                        throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
-                    }
+                    $end = $stream->current();
+                    $optional = false;
+                    $stream->next();
                     break;
-                
                 case TokenType::BRACKETS_SQUARE_OPEN():
-                    if ($operandOrCall !== null) {
-                        $segments[] = ChainSegment::createFromOperandOrCall(false, $operandOrCall);
-                    } else if (!$append) {
-                        throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
-                    }
+                case TokenType::BRACKETS_ROUND_OPEN():
+                    $optional = false;
+                    break;
+                default:
+                    break 2;
+            }
+
+            Util::skipWhiteSpaceAndComments($stream);
+            Util::ensureValid($stream);
+
+            switch ($stream->current()->getType()) {
+                case TokenType::BRACKETS_SQUARE_OPEN():
                     $end = $stream->current();
                     $stream->next();
-                    $operandOrCall = Expression::createFromTokenStream($stream);
-                    Util::skipWhiteSpaceAndComments($stream);
-                    Util::expect($stream, TokenType::BRACKETS_SQUARE_CLOSE());
-                    $append = true;
+                    $key = ExpressionParser::parseTerm($stream);
+                    if ($key instanceof Key) {
+                        $segments[] = ChainSegment::createFromKey($optional, $key);
+                        Util::skipWhiteSpaceAndComments($stream);
+                        Util::expect($stream, TokenType::BRACKETS_SQUARE_CLOSE());
+                    } else {
+                        throw new \Exception('@TODO: Unexpected Term: ' . get_class($key));
+                    }
                     break;
                 
                 case TokenType::BRACKETS_ROUND_OPEN():
-                    if ($operandOrCall !== null) {
-                        $segments[] = ChainSegment::createFromOperandOrCall(false, $operandOrCall);
-                    } else if (!$append) {
-                        throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
-                    }
                     $end = $stream->current();
-                    $operandOrCall = Call::createFromTokenStream($stream);
-                    $append = true;
+                    $segment = array_pop($segments);
+                    $segments[] = $segment->withCall(
+                        Call::createFromTokenStream($stream)
+                    );
                     break;
 
                 case TokenType::IDENTIFIER():
-                    if ($operandOrCall === null) {
-                        $end = $stream->current();
-                        $operandOrCall = Identifier::createFromTokenStream($stream);
-                        $append = true;
-                    } else {
-                        throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
-                    }
+                    $end = $stream->current();
+                    $segments[] = ChainSegment::createFromKey(
+                        $optional, 
+                        Identifier::createFromTokenStream($stream)
+                    );
                     break;
                 
                 default:
-                    if ($operandOrCall !== null) {
-                        $segments[] = ChainSegment::createFromOperandOrCall(false, $operandOrCall);
-                        return new self($start, $end, $segments);
-                    } else {
-                        throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
-                    }
+                    throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
             }
         }
 
-        if ($operandOrCall !== null) {
-            $segments[] = ChainSegment::createFromOperandOrCall(false, $operandOrCall);
-        }
-
-        return new self($start, $end, $segments);
+        return new self($start, $end, $root, $segments);
     }
 
     /**
@@ -154,7 +149,15 @@ final class Chain implements \JsonSerializable
     }
 
     /**
-     * @return array<int, ChainSegment>
+     * @return Term
+     */
+    public function getRoot(): Term
+    {
+        return $this->root;
+    }
+
+    /**
+     * @return array|ChainSegment[]
      */
     public function getSegments(): array
     {
@@ -172,6 +175,7 @@ final class Chain implements \JsonSerializable
                 $this->start->getStart()->getIndex(),
                 $this->end->getEnd()->getIndex()
             ],
+            'root' => $this->root,
             'segments' => $this->segments
         ];
     }

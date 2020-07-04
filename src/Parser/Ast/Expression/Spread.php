@@ -1,12 +1,17 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Parser\Ast\ParameterAssignment;
+use PackageFactory\ComponentEngine\Parser\Ast\Spreadable;
+use PackageFactory\ComponentEngine\Parser\Ast\Statement;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
 
-final class Spread implements \JsonSerializable
+final class Spread implements Statement, ParameterAssignment, \JsonSerializable
 {
     /**
      * @var Token
@@ -14,17 +19,17 @@ final class Spread implements \JsonSerializable
     private $token;
 
     /**
-     * @var Operand
+     * @var Spreadable
      */
     private $subject;
 
     /**
      * @param Token $token
-     * @param Operand $subject
+     * @param Spreadable $subject
      */
     private function __construct(
         Token $token,
-        $subject
+        Spreadable $subject
     ) {
         $this->token = $token;
         $this->subject = $subject;
@@ -36,21 +41,19 @@ final class Spread implements \JsonSerializable
      */
     public static function createFromTokenStream(TokenStream $stream): self
     {
-        Util::skipWhiteSpaceAndComments($stream);
+        Util::ensureValid($stream);
         
         $value = $stream->current();
         if ($value->getType() === TokenType::OPERATOR_SPREAD()) {
             $stream->next();
-            if (!$stream->valid()) {
-                throw new \Exception('@TODO: Unexpected end of file: ' . $value);
-            }
+            Util::ensureValid($stream);
 
-            $subject = Expression::createFromTokenStream($stream);
-            if ($subject === null) {
-                throw new \Exception('@TODO: Unexpected empty subject');
+            $subject = ExpressionParser::parseTerm($stream);
+            if ($subject instanceof Spreadable) {
+                return new self($value, $subject);
+            } else {
+                throw new \Exception('@TODO: Unexpected Term: ' . get_class($subject));
             }
-
-            return new self($value, $subject);
         } else {
             throw new \Exception('@TODO: Unexpected Token: ' . $value);
         }
@@ -65,11 +68,13 @@ final class Spread implements \JsonSerializable
     }
 
     /**
-     * @return Operand
+     * @return Term
      */
-    public function getSubject()
+    public function getSubject(): Term
     {
-        return $this->subject;
+        /** @var Term $subject  */
+        $subject = $this->subject;
+        return $subject;
     }
 
     /**

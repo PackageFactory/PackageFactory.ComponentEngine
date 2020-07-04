@@ -1,6 +1,10 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Key;
+use PackageFactory\ComponentEngine\Parser\Ast\Statement;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
@@ -8,48 +12,54 @@ use PackageFactory\ComponentEngine\Parser\Util;
 final class ObjectLiteralProperty implements \JsonSerializable
 {
     /**
-     * @var null|Identifier|Operand
+     * @var null|Key
      */
     private $key;
 
     /**
-     * @var Operand
+     * @var Statement
      */
     private $value;
 
     /**
-     * @param null|Identifier|Operand $key
-     * @param Operand $value
+     * @param null|Key $key
+     * @param Statement $value
      */
-    private function __construct($key, $value)
+    private function __construct(?Key $key, Statement $value)
     {
         $this->key = $key;
         $this->value = $value;
     }
 
+    /**
+     * @param TokenStream $stream
+     * @return self
+     */
     public static function createFromTokenStream(TokenStream $stream): self
     {
+        Util::ensureValid($stream);
+
         $key = null;
         $value = null;
-
-        Util::skipWhiteSpaceAndComments($stream);
-        if (!$stream->valid()) {
-            throw new \Exception('@TODO: Unexpected end of file');
-        }
-
         switch ($stream->current()->getType()) {                
             case TokenType::IDENTIFIER():
                 $key = Identifier::createFromTokenStream($stream);
                 break;
             case TokenType::BRACKETS_SQUARE_OPEN():
                 $stream->next();
-                $key = Expression::createFromTokenStream($stream);
-                Util::skipWhiteSpaceAndComments($stream);
-                Util::expect($stream, TokenType::BRACKETS_SQUARE_CLOSE());
+                $key = ExpressionParser::parseTerm($stream);
+                if ($key instanceof Key) {
+                    Util::skipWhiteSpaceAndComments($stream);
+                    Util::expect($stream, TokenType::BRACKETS_SQUARE_CLOSE());
+                } else {
+                    throw new \Exception('@TODO: Unexpected Term: ' . get_class($key));
+                }
                 break;
             case TokenType::OPERATOR_SPREAD():
-                $value = Spread::createFromTokenStream($stream);
-                return new self(null, $value);
+                return new self(
+                    null, 
+                    ExpressionParser::parseStatement($stream,  ExpressionParser::PRIORITY_LIST)
+                );
 
             default:
                 throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
@@ -59,30 +69,28 @@ final class ObjectLiteralProperty implements \JsonSerializable
         Util::expect($stream, TokenType::COLON());
 
         Util::skipWhiteSpaceAndComments($stream);
-        if (!$stream->valid()) {
-            throw new \Exception('@TODO: Unexpected end of file');
-        }
+        Util::ensureValid($stream);
 
-        $value = Expression::createFromTokenStream($stream);
-        if ($value === null) {
-            throw new \Exception('@TODO: Unexpected empty value');
-        }
-
-        return new self($key, $value);
+        return new self(
+            $key, 
+            ExpressionParser::parseStatement($stream, ExpressionParser::PRIORITY_LIST)
+        );
     }
 
     /**
-     * @return null|Identifier|Operand
+     * @return null|Term
      */
-    public function getKey()
+    public function getKey(): ?Term
     {
-        return $this->key;
+        /** @var Term $key */
+        $key = $this->key;
+        return $key;
     }
 
     /**
-     * @return Operand
+     * @return Statement
      */
-    public function getValue()
+    public function getValue(): Statement
     {
         return $this->value;
     }

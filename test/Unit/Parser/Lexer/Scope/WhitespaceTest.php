@@ -14,6 +14,7 @@ final class WhitespaceTest extends TestCase
 
     /**
      * @test
+     * @small
      * @return void
      */
     public function spaces(): void
@@ -33,6 +34,7 @@ final class WhitespaceTest extends TestCase
 
     /**
      * @test
+     * @small
      * @return void
      */
     public function tabs(): void
@@ -52,6 +54,7 @@ final class WhitespaceTest extends TestCase
 
     /**
      * @test
+     * @small
      * @return void
      */
     public function newline(): void
@@ -72,6 +75,7 @@ final class WhitespaceTest extends TestCase
 
     /**
      * @test
+     * @small
      * @return void
      */
     public function mixed(): void

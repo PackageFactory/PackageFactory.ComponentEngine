@@ -574,6 +574,7 @@ final class ExpressionTest extends TestCase
     /**
      * @dataProvider happyPathProvider
      * @test
+     * @small
      * @param string $input
      * @param array<int, array{TokenType, string}> $tokens
      * @return void
@@ -608,6 +609,7 @@ final class ExpressionTest extends TestCase
     /**
      * @dataProvider exceptionPathProvider
      * @test
+     * @small
      * @param string $input
      * @return void
      */
@@ -681,6 +683,7 @@ final class ExpressionTest extends TestCase
     /**
      * @dataProvider exitPathProvider
      * @test
+     * @small
      * @param string $input
      * @param array<int, array{TokenType, string}> $tokens
      * @return void
@@ -725,6 +728,7 @@ final class ExpressionTest extends TestCase
     /**
      * @dataProvider edgeCaseProvider
      * @test
+     * @small
      * @param string $input
      * @param array<int, array{TokenType, string}> $tokens
      * @return void

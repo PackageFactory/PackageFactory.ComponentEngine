@@ -4,6 +4,8 @@ namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Afx;
 use PackageFactory\VirtualDOM;
 use PackageFactory\ComponentEngine\Parser\Ast\Afx\Content;
 use PackageFactory\ComponentEngine\Parser\Ast\Afx\Tag;
+use PackageFactory\ComponentEngine\Parser\Ast\Child;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
 use PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
@@ -11,18 +13,19 @@ final class OnChild
 {
     /**
      * @param Runtime $runtime
-     * @param Content|Tag|Operand $child
+     * @param Child $child
      * @return \Iterator<int, VirtualDOM\Node>
      */
-    public static function evaluate(Runtime $runtime, $child): \Iterator 
+    public static function evaluate(Runtime $runtime, Child $child): \Iterator 
     {
         if ($child instanceof Content) {
             yield VirtualDOM\Text::createFromString($child->getValue());
         } elseif ($child instanceof Tag) {
             yield OnTag::evaluate($runtime, $child);
         } else {
+            /** @var Term $child */
             yield from self::getContentFromValue(
-                Expression\OnExpression::evaluate($runtime, $child)
+                Expression\OnTerm::evaluate($runtime, $child)
             );
         }
     }

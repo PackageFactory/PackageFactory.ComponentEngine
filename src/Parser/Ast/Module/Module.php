@@ -51,21 +51,14 @@ final class Module implements \JsonSerializable
      */
     public static function createFromTokenStream(TokenStream $stream): self
     {
-        if (!$stream->valid()) {
-            throw new \Exception('@TODO: Unexpected end of file');
-        }
-
         $source = $stream->current()->getSource();
-        Util::skipWhiteSpaceAndComments($stream);
 
         $imports = [];
         $exports = [];
         $constants = [];
         while ($stream->valid()) {
             Util::skipWhiteSpaceAndComments($stream);
-            if (!$stream->valid()) {
-                throw new \Exception('@TODO: Unexpected end of file');
-            }
+            Util::ensureValid($stream);
 
             switch ($stream->current()->getType()) {
                 case TokenType::MODULE_KEYWORD_IMPORT():

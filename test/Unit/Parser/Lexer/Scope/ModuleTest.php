@@ -806,7 +806,8 @@ final class ModuleTest extends TestCase
 
     /**
      * @dataProvider exitPathProvider
-     * 
+     * @test
+     * @small
      * @param string $input
      * @param array<int, array{TokenType, string}> $tokens
      * @return void
@@ -834,7 +835,8 @@ final class ModuleTest extends TestCase
 
     /**
      * @dataProvider edgeCaseProvider
-     * 
+     * @test
+     * @small
      * @param string $input
      * @param array<int, array{TokenType, string}> $tokens
      * @return void

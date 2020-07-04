@@ -3,6 +3,7 @@ analyse::
 
 test::
 	./vendor/bin/phpunit \
+		--enforce-time-limit \
 		--bootstrap vendor/autoload.php \
 		--testdox test \
 		--coverage-html build/coverage-report \

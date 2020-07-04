@@ -1,13 +1,12 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Module;
 
-use PackageFactory\ComponentEngine\Parser\Ast\Afx\Tag;
-use PackageFactory\ComponentEngine\Parser\Ast\Expression\Expression;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Identifier;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Util;
-use PackageFactory\ComponentEngine\Runtime\Context;
 
 final class Constant implements \JsonSerializable
 {
@@ -17,17 +16,17 @@ final class Constant implements \JsonSerializable
     private $name;
 
     /**
-     * @var Tag|Operand
+     * @var Term
      */
     private $value;
 
     /**
      * @param Identifier $name
-     * @param Tag|Operand $value
+     * @param Term $value
      */
     private function __construct(
         Identifier $name,
-        $value
+        Term $value
     ) {
         $this->name = $name;
         $this->value = $value;
@@ -35,58 +34,41 @@ final class Constant implements \JsonSerializable
 
     public static function createFromTokenStream(TokenStream $stream): self
     {
-        Util::skipWhiteSpaceAndComments($stream);
-        if (!$stream->valid()) {
-            throw new \Exception('@TODO: Unexpected end of file');
-        }
         Util::expect($stream, TokenType::MODULE_KEYWORD_CONST());
-        
+
         Util::skipWhiteSpaceAndComments($stream);
-        if (!$stream->valid()) {
-            throw new \Exception('@TODO: Unexpected end of file');
-        }
+        Util::ensureValid($stream);
+
         $name = Identifier::createFromTokenStream($stream);
-        
+
         Util::skipWhiteSpaceAndComments($stream);
-        if (!$stream->valid()) {
-            throw new \Exception('@TODO: Unexpected end of file');
-        }
         Util::expect($stream, TokenType::MODULE_ASSIGNMENT());
 
         $value = null;
         $brackets = 0;
         while ($value === null) {
             Util::skipWhiteSpaceAndComments($stream);
-            if (!$stream->valid()) {
-                throw new \Exception('@TODO: Unexpected end of file');
-            }
+            Util::ensureValid($stream);
 
             switch ($stream->current()->getType()) {
                 case TokenType::BRACKETS_ROUND_OPEN():
                     $brackets++;
                     $stream->next();
                     break;
-                case TokenType::AFX_TAG_START():
-                    $value = Tag::createFromTokenStream($stream);
-                    break;
                 default:
-                    $value = Expression::createFromTokenStream($stream);
+                    $value = ExpressionParser::parseTerm($stream);
                     break;
             }
         }
 
         while ($brackets > 0) {
             Util::skipWhiteSpaceAndComments($stream);
-            if (!$stream->valid()) {
-                throw new \Exception('@TODO: Unexpected end of file');
-            }
-
             Util::expect($stream, TokenType::BRACKETS_ROUND_CLOSE());
             $brackets--;
         }
 
         if ($value === null) {
-            throw new \Exception('@TODO: Unexpected empty assignment');
+            throw new \Exception('@TODO: Unexpected empty constant');
         }
 
         return new self($name, $value);
@@ -101,9 +83,9 @@ final class Constant implements \JsonSerializable
     }
 
     /**
-     * @return Tag|Operand
+     * @return Term
      */
-    public function getValue()
+    public function getValue(): Term
     {
         return $this->value;
     }

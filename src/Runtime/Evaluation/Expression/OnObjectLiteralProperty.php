@@ -4,6 +4,7 @@ namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Identifier;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\ObjectLiteralProperty;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Spread;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnObjectLiteralProperty
@@ -20,7 +21,9 @@ final class OnObjectLiteralProperty
         if ($value instanceof Spread) {
             yield from OnSpread::evaluate($runtime, $value);
         } else {
-            $value = OnExpression::evaluate($runtime, $value);
+            /** @var Term $value */
+            $value = $value;
+            $value = OnTerm::evaluate($runtime, $value);
             
             if ($value !== null) {
                 $key = $objectLiteralProperty->getKey();
@@ -30,7 +33,7 @@ final class OnObjectLiteralProperty
                 } elseif ($key instanceof Identifier) {
                     yield $key->getValue() => $value;
                 } else {
-                    yield OnExpression::evaluate($runtime, $key) => $value;
+                    yield OnTerm::evaluate($runtime, $key) => $value;
                 }
             }
         }

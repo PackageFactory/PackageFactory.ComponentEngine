@@ -21,7 +21,7 @@ final class OnExport
         if ($value instanceof Tag) {
             return Afx\OnTag::evaluate($runtime, $value);
         } else {
-            return Expression\OnExpression::evaluate($runtime, $value);
+            return Expression\OnTerm::evaluate($runtime, $value);
         }
     }
 }

@@ -1,10 +1,11 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Afx;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Child;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 
-final class Content implements \JsonSerializable
+final class Content implements Child, \JsonSerializable
 {
     /**
      * @var string

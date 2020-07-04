@@ -30,6 +30,7 @@ final class NullLiteralTest extends TestCase
     /**
      * @dataProvider provider
      * @test
+     * @small
      * @param string $input
      * @param string $asString
      * @param array<mixed> $asJson

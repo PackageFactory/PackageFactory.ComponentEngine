@@ -3,6 +3,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Parser\Ast\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Expression;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Ternary;
+use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\Scope;
@@ -126,6 +127,7 @@ final class TernaryTest extends TestCase
     /**
      * @dataProvider provider
      * @test
+     * @small
      * @param string $input
      * @param array<mixed> $asJson
      * @return void
@@ -136,7 +138,7 @@ final class TernaryTest extends TestCase
         $tokenizer = Tokenizer::createFromSource($source, Scope\Expression::class);
         $stream = TokenStream::createFromTokenizer($tokenizer);
 
-        $result = Expression::createFromTokenStream($stream);
+        $result = ExpressionParser::parse($stream);
 
         $this->assertNotNull($result);
         $this->assertJsonStringEqualsJsonString(

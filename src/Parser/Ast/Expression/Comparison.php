@@ -1,11 +1,14 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Statement;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
 
-final class Comparison implements \JsonSerializable
+final class Comparison implements Term, Statement, \JsonSerializable
 {
     const COMPARATOR_EQ = '===';
     const COMPARATOR_GT = '>';
@@ -14,7 +17,7 @@ final class Comparison implements \JsonSerializable
     const COMPARATOR_LTE = '<=';
 
     /**
-     * @var Operand
+     * @var Term
      */
     private $left;
 
@@ -24,16 +27,16 @@ final class Comparison implements \JsonSerializable
     private $operator;
 
     /**
-     * @var Operand
+     * @var Term
      */
     private $right;
 
     /**
-     * @param Operand $left
+     * @param Term $left
      * @param string $operator
-     * @param Operand $right
+     * @param Term $right
      */
-    private function __construct($left, string $operator, $right)
+    private function __construct(Term $left, string $operator, Term $right)
     {
         if ((
             $operator !== self::COMPARATOR_EQ &&
@@ -51,15 +54,13 @@ final class Comparison implements \JsonSerializable
     }
 
     /**
-     * @param Operand $left
+     * @param Term $left
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream($left, TokenStream $stream): self 
+    public static function createFromTokenStream(Term $left, TokenStream $stream): self
     {
-        if (!$stream->valid()) {
-            throw new \Exception('@TODO: Unexpected end of file');
-        }
+        Util::ensureValid($stream);
 
         $operator = null;
         switch ($stream->current()->getType()) {
@@ -76,60 +77,19 @@ final class Comparison implements \JsonSerializable
         }
 
         Util::skipWhiteSpaceAndComments($stream);
-        if (!$stream->valid()) {
-            throw new \Exception('@TODO: Unexpected end of file');
-        }
+        Util::ensureValid($stream);
 
-        $right = null;
-        switch ($stream->current()->getType()) {
-            case TokenType::KEYWORD_TRUE():
-            case TokenType::KEYWORD_FALSE():
-                $right = BooleanLiteral::createFromTokenStream($stream);
-                break;
-            case TokenType::KEYWORD_NULL():
-                $right = NullLiteral::createFromTokenStream($stream);
-                break;
-            case TokenType::NUMBER():
-                $right = NumberLiteral::createFromTokenStream($stream);
-                break;
-            case TokenType::STRING_LITERAL_START():
-                $right = StringLiteral::createFromTokenStream($stream);
-                break;
-            case TokenType::TEMPLATE_LITERAL_START():
-                $right = TemplateLiteral::createFromTokenStream($stream);
-                break;
-            case TokenType::BRACKETS_CURLY_OPEN():
-                $right = ObjectLiteral::createFromTokenStream($stream);
-                break;
-            case TokenType::BRACKETS_SQUARE_OPEN():
-                $right = ArrayLiteral::createFromTokenStream($stream);
-                break;
-            case TokenType::OPERATOR_LOGICAL_NOT():
-                $right = Negation::createFromTokenStream($stream);
-                break;
-            case TokenType::BRACKETS_ROUND_OPEN():
-                $stream->next();
-                $right = Expression::createFromTokenStream(
-                    $stream, 
-                    Expression::PRIORITY_COMPARISON,
-                    TokenType::BRACKETS_ROUND_CLOSE()
-                );
-                break;
-            default:
-                throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
-        }
-
-        if ($right === null) {
-            throw new \Exception('@TODO: Unexpected empty operand');
-        }
-
-        return new self($left, $operator, $right);
+        return new self(
+            $left, 
+            $operator, 
+            ExpressionParser::parseTerm($stream, ExpressionParser::PRIORITY_COMPARISON)
+        );
     }
 
     /**
-     * @return Operand
+     * @return Term
      */
-    public function getLeft()
+    public function getLeft(): Term
     {
         return $this->left;
     }
@@ -143,9 +103,9 @@ final class Comparison implements \JsonSerializable
     }
 
     /**
-     * @return Operand
+     * @return Term
      */
-    public function getRight()
+    public function getRight(): Term
     {
         return $this->right;
     }

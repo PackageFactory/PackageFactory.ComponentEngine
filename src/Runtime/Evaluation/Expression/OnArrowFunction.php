@@ -27,7 +27,7 @@ final class OnArrowFunction
                 }
             }
 
-            return OnExpression::evaluate(
+            return OnTerm::evaluate(
                 $runtime->withContext(
                     $runtime->getContext()->withMergedProperties($properties)
                 ),

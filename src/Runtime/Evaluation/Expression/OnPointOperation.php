@@ -13,12 +13,12 @@ final class OnPointOperation
      */
     public static function evaluate(Runtime $runtime, PointOperation $pointOperation): float 
     {
-        $left = OnExpression::evaluate($runtime, $pointOperation->getLeft());
+        $left = OnTerm::evaluate($runtime, $pointOperation->getLeft());
         if ($left === 0) {
             return 0;
         }
 
-        $right = OnExpression::evaluate($runtime, $pointOperation->getRight());
+        $right = OnTerm::evaluate($runtime, $pointOperation->getRight());
         if ($right === 0) {
             return 0;
         }

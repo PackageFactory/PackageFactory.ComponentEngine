@@ -55,6 +55,7 @@ final class CommentTest extends TestCase
     /**
      * @dataProvider provider
      * @test
+     * @small
      * @param string $input
      * @param array<int, array{TokenType, string}> $tokens
      * @return void

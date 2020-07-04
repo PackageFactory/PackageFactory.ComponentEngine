@@ -420,7 +420,8 @@ final class AfxTest extends TestCase
 
     /**
      * @dataProvider happyPathProvider
-     * 
+     * @test
+     * @small
      * @param string $input
      * @param array<int, array{TokenType, string}> $tokens
      * @return void
@@ -448,9 +449,10 @@ final class AfxTest extends TestCase
         ];
     }
 
-        /**
+    /**
      * @dataProvider exitPathProvider
-     * 
+     * @test
+     * @small
      * @param string $input
      * @param array<int, array{TokenType, string}> $tokens
      * @return void

@@ -1,13 +1,18 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Afx;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Child;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Expression;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Spread;
+use PackageFactory\ComponentEngine\Parser\Ast\ParameterAssignment;
+use PackageFactory\ComponentEngine\Parser\Ast\Statement;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
 
-final class Tag implements \JsonSerializable
+final class Tag implements Term, Statement, Child, \JsonSerializable
 {
     /**
      * @var null|TagName
@@ -15,19 +20,19 @@ final class Tag implements \JsonSerializable
     private $tagName;
 
     /**
-     * @var array|(Attribute|Spread)[]
+     * @var array|ParameterAssignment[]
      */
     private $attributes;
 
     /**
-     * @var array|(Content|Tag|Operand)[]
+     * @var array|Child[]
      */
     private $children;
 
     /**
      * @param null|TagName $tagName
-     * @param array|(Attribute|Spread)[] $attributes
-     * @param array|(Content|Operand)[] $children
+     * @param array|ParameterAssignment[] $attributes
+     * @param array|Child[] $children
      */
     public function __construct(
         ?TagName $tagName,
@@ -45,11 +50,8 @@ final class Tag implements \JsonSerializable
      */
     public static function createFromTokenStream(TokenStream $stream): self
     {
-        Util::skipWhiteSpaceAndComments($stream);
         Util::expect($stream, TokenType::AFX_TAG_START());
-        if (!$stream->valid()) {
-            throw new \Exception('@TODO: Unexpected end of file');
-        }
+        Util::ensureValid($stream);
 
         if ($stream->current()->getType() === TokenType::IDENTIFIER()) {
             $tagName = TagName::createFromTokenStream($stream);
@@ -62,9 +64,7 @@ final class Tag implements \JsonSerializable
         $attributes = [];
         while ($stream->valid()) {
             Util::skipWhiteSpaceAndComments($stream);
-            if (!$stream->valid()) {
-                throw new \Exception('@TODO: Unexpected end of file');
-            }
+            Util::ensureValid($stream);
 
             switch ($stream->current()->getType()) {
                 case TokenType::AFX_TAG_END():
@@ -96,9 +96,7 @@ final class Tag implements \JsonSerializable
         }
 
         Util::skipWhiteSpaceAndComments($stream);
-        if (!$stream->valid()) {
-            throw new \Exception('@TODO: Unexpected end of file');
-        }
+        Util::ensureValid($stream);
 
         $children = [];
         while ($stream->valid()) {
@@ -110,14 +108,12 @@ final class Tag implements \JsonSerializable
                     break;
                 case TokenType::AFX_EXPRESSION_START():
                     $stream->next();
-                    $child = Expression::createFromTokenStream(
-                        $stream, 
-                        Expression::PRIORITY_TERNARY,
-                        TokenType::AFX_EXPRESSION_END()
-                    );
-
-                    if ($child !== null) {
+                    $child = ExpressionParser::parseTerm($stream);
+                    if ($child instanceof Child) {
                         $children[] = $child;
+                        Util::expect($stream, TokenType::AFX_EXPRESSION_END());
+                    } else {
+                        throw new \Exception('@TODO: Unexpected Term: ' . get_class($child));
                     }
                     break;
                 case TokenType::AFX_TAG_START():
@@ -138,7 +134,7 @@ final class Tag implements \JsonSerializable
                                     $stream->next();
                                     break 2;
                                 } else {
-                                    throw new \Exception('@TODO: Unexpected Closing Fragment: ' . $stream->current());
+                                    throw new \Exception('@TODO: Unexpected Closing Tag: ' . $stream->current());
                                 }
                             } else {
                                 throw new \Exception('@TODO: Unexpected Token: ' . $stream->current());
@@ -173,7 +169,7 @@ final class Tag implements \JsonSerializable
     }
 
     /**
-     * @return array|(Attribute|Spread)[]
+     * @return array|ParameterAssignment[]
      */
     public function getAttributes(): array
     {
@@ -181,7 +177,7 @@ final class Tag implements \JsonSerializable
     }
 
     /**
-     * @return array|(Content|Operand)[]
+     * @return array|Child[]
      */
     public function getChildren(): array
     {

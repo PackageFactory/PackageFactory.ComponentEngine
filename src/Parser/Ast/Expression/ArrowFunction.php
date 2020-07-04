@@ -1,11 +1,14 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Statement;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
 
-final class ArrowFunction implements \JsonSerializable
+final class ArrowFunction implements Term, Statement, \JsonSerializable
 {
     /**
      * @var array|Identifier[]
@@ -13,17 +16,17 @@ final class ArrowFunction implements \JsonSerializable
     private $parameters;
 
     /**
-     * @var Operand
+     * @var Term
      */
     private $body;
 
     /**
      * @param array|Identifier[] $parameters
-     * @param Operand $body
+     * @param Term $body
      */
     private function __construct(
         array $parameters,
-        $body
+        Term $body
     ) {
         $this->parameters = $parameters;
         $this->body = $body;
@@ -34,8 +37,10 @@ final class ArrowFunction implements \JsonSerializable
      * @param TokenStream $stream
      * @return self
      */
-    public static function createFromTokenStream(?Identifier $firstParameter, TokenStream $stream): self
-    {
+    public static function createFromTokenStream(
+        ?Identifier $firstParameter, 
+        TokenStream $stream
+    ): self {
         if ($firstParameter === null) {
             $parameters = [];
         } else {
@@ -76,12 +81,10 @@ final class ArrowFunction implements \JsonSerializable
             throw new \Exception('@TODO: Unexpected end of file');
         }
 
-        $body = Expression::createFromTokenStream($stream);
-        if ($body === null) {
-            throw new \Exception('@TODO: Unexpected empty function body');
-        }
-
-        return new self($parameters, $body);
+        return new self(
+            $parameters, 
+            ExpressionParser::parseTerm($stream)
+        );
     }
 
     /**
@@ -93,9 +96,9 @@ final class ArrowFunction implements \JsonSerializable
     }
 
     /**
-     * @return Operand
+     * @return Term
      */
-    public function getBody()
+    public function getBody(): Term
     {
         return $this->body;
     }

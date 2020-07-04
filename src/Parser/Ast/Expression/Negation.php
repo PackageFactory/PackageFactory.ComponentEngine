@@ -1,12 +1,15 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Statement;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
 
-final class Negation implements \JsonSerializable
+final class Negation implements Term, Statement, \JsonSerializable
 {
     /**
      * @var Token
@@ -14,17 +17,17 @@ final class Negation implements \JsonSerializable
     private $token;
 
     /**
-     * @var Operand
+     * @var Term
      */
     private $subject;
 
     /**
      * @param Token $token
-     * @param Operand $subject
+     * @param Term $subject
      */
     private function __construct(
         Token $token,
-        $subject
+        Term $subject
     ) {
         $this->token = $token;
         $this->subject = $subject;
@@ -41,11 +44,7 @@ final class Negation implements \JsonSerializable
         $value = $stream->current();
         if ($value->getType() === TokenType::OPERATOR_LOGICAL_NOT()) {
             $stream->next();
-            $subject = Expression::createFromTokenStream($stream);
-            if ($subject === null) {
-                throw new \Exception('@TODO: Unexpected empty subject');
-            }
-            return new self($value, $subject);
+            return new self($value, ExpressionParser::parseTerm($stream));
         } else {
             throw new \Exception('@TODO: Unexpected Token: ' . $value);
         }
@@ -60,9 +59,9 @@ final class Negation implements \JsonSerializable
     }
 
     /**
-     * @return Operand
+     * @return Term
      */
-    public function getSubject()
+    public function getSubject(): Term
     {
         return $this->subject;
     }

@@ -3,6 +3,7 @@ namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\ArrayLiteral;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Spread;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnArrayLiteral
@@ -27,8 +28,10 @@ final class OnArrayLiteral
                         throw new \RuntimeException('@TODO: Cannot spread non-numerical array');
                     }
                 }
-            } else {    
-                $result[] = OnExpression::evaluate($runtime, $item);
+            } else {
+                /** @var Term $item */
+                $item = $item;
+                $result[] = OnTerm::evaluate($runtime, $item);
             }
         }
 

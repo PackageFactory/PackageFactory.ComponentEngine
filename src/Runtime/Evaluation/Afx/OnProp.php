@@ -17,10 +17,10 @@ final class OnProp
         $name = $prop->getAttributeName()->getValue();
         $value = $prop->getValue();
 
-        if (is_bool($value)) {
-            yield $name => $value;
+        if (is_null($value)) {
+            yield $name => true;
         } else {
-            yield $name => Expression\OnExpression::evaluate($runtime, $value);
+            yield $name => Expression\OnTerm::evaluate($runtime, $value);
         }
     }
 }

@@ -1,12 +1,24 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Child;
+use PackageFactory\ComponentEngine\Parser\Ast\Literal;
+use PackageFactory\ComponentEngine\Parser\Ast\Spreadable;
+use PackageFactory\ComponentEngine\Parser\Ast\Statement;
+use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
 
-final class ArrayLiteral implements \JsonSerializable
+final class ArrayLiteral implements 
+    Literal,
+    Spreadable,
+    Term,
+    Statement,
+    Child,
+    \JsonSerializable
 {
     /**
      * @var Token
@@ -19,14 +31,14 @@ final class ArrayLiteral implements \JsonSerializable
     private $end;
 
     /**
-     * @var array<int, Operand>
+     * @var array|Statement[]
      */
     private $items;
 
     /**
      * @param Token $start
      * @param Token $end
-     * @param array<int, Operand> $items
+     * @param array|Statement[] $items
      */
     private function __construct(
         Token $start,
@@ -38,10 +50,12 @@ final class ArrayLiteral implements \JsonSerializable
         $this->items = $items;
     }
 
+    /**
+     * @param TokenStream $stream
+     * @return self
+     */
     public static function createFromTokenStream(TokenStream $stream): self
     {
-        Util::skipWhiteSpaceAndComments($stream);
-
         $start = $stream->current();
         $end = $stream->current();
         Util::expect($stream, TokenType::BRACKETS_SQUARE_OPEN());
@@ -49,6 +63,9 @@ final class ArrayLiteral implements \JsonSerializable
         $items = [];
         while ($stream->valid()) {
             Util::skipWhiteSpaceAndComments($stream);
+            if (!$stream->valid()) {
+                throw new \Exception('@TODO: Unexpected end of file');
+            }
 
             switch ($stream->current()->getType()) {
                 case TokenType::BRACKETS_SQUARE_CLOSE():
@@ -57,12 +74,10 @@ final class ArrayLiteral implements \JsonSerializable
                     break 2;
 
                 default:
-                    $item = Expression::createFromTokenStream($stream);
-                    if ($item === null) {
-                        throw new \Exception('@TODO: Unexpected empty array item');
-                    }
-
-                    $items[] = $item;
+                    $items[] = ExpressionParser::parseStatement(
+                        $stream, 
+                        ExpressionParser::PRIORITY_LIST
+                    );
                     break;
             }
 
@@ -97,7 +112,7 @@ final class ArrayLiteral implements \JsonSerializable
     }
 
     /**
-     * @return array<int, Operand>
+     * @return array|Statement[]
      */
     public function getItems(): array
     {
