@@ -67,6 +67,15 @@ final class Source implements \IteratorAggregate
     }
 
     /**
+     * @param Source $other
+     * @return bool
+     */
+    public function equals(Source $other): bool
+    {
+        return $this->contents === $other->getContents();
+    }
+
+    /**
      * @return \Iterator<Fragment>
      */
     public function getIterator(): \Iterator

@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Lexer;
 
-use ArrayIterator;
-
 /**
  * @implements \IteratorAggregate<mixed, Token>
  */
@@ -29,6 +27,28 @@ final class Line implements \IteratorAggregate
     }
 
     /**
+     * @param integer $number
+     * @param TokenStream $stream
+     * @return self
+     */
+    public static function fromTokenStream(int $number, TokenStream $stream): self
+    {
+        $tokens = [];
+        while ($stream->valid()) {
+            $token = $stream->current();
+            $stream->next();
+
+            if ($token->getType() === TokenType::END_OF_LINE()) {
+                break;
+            } else {
+                $tokens[] = $token;
+            }
+        }
+
+        return new self($number, $tokens);
+    }
+
+    /**
      * @return int
      */
     public function getNumber(): int
@@ -37,7 +57,7 @@ final class Line implements \IteratorAggregate
     }
 
     /**
-     * @return array<Token>
+     * @return array|Token[]
      */
     public function getTokens(): array
     {
@@ -49,6 +69,6 @@ final class Line implements \IteratorAggregate
      */
     public function getIterator()
     {
-        return new ArrayIterator($this->tokens);
+        return new \ArrayIterator($this->tokens);
     }
 }

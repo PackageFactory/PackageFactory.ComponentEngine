@@ -111,6 +111,24 @@ final class Token
         return $this->source;
     }
 
+    /**
+     * @param Token $other
+     * @return bool
+     */
+    public function equals(Token $other): bool
+    {
+        return (
+            $this->type === $other->getType()
+            && $this->value === $other->getValue()
+            && $this->start->equals($other->getStart())
+            && $this->end->equals($other->getEnd())
+            && $this->source->equals($other->getSource())
+        );
+    }
+
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return $this->value;
