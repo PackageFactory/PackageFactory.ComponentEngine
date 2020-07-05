@@ -169,6 +169,7 @@ final class ExpressionParser
                     break;
                 case TokenType::OPERATOR_MULTIPLY():
                 case TokenType::OPERATOR_DIVIDE():
+                case TokenType::OPERATOR_MODULO():
                     if ($priority < self::PRIORITY_POINT_OPERATION) {
                         return $term;
                     }
