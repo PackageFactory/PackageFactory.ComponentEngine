@@ -71,6 +71,8 @@ final class DashOperation implements Term, Statement, Key, Child, \JsonSerializa
                 );
         }
 
+        $stream->skipWhiteSpaceAndComments();
+
         return new self(
             $left, 
             $operator, 
