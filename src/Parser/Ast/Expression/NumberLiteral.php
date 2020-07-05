@@ -59,8 +59,6 @@ final class NumberLiteral implements Value, Literal, Term, Statement, Key, Child
      */
     public static function fromTokenStream(TokenStream $stream): self
     {
-        Util::ensureValid($stream);
-
         $value = $stream->current();
         if ($value->getType() === TokenType::NUMBER()) {
             $stream->next();

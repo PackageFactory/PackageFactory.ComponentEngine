@@ -61,8 +61,6 @@ final class Comparison implements Term, Statement, \JsonSerializable
      */
     public static function fromTokenStream(Term $left, TokenStream $stream): self
     {
-        Util::ensureValid($stream);
-
         $operator = null;
         switch ($stream->current()->getType()) {
             case TokenType::COMPARATOR_EQ():
@@ -86,8 +84,7 @@ final class Comparison implements Term, Statement, \JsonSerializable
                 );
         }
 
-        Util::skipWhiteSpaceAndComments($stream);
-        Util::ensureValid($stream);
+        $stream->skipWhiteSpaceAndComments();
 
         return new self(
             $left, 

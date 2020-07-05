@@ -51,8 +51,7 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
      */
     public static function fromTokenStream(TokenStream $stream): self
     {
-        Util::expect($stream, TokenType::AFX_TAG_START());
-        Util::ensureValid($stream);
+        $stream->consume(TokenType::AFX_TAG_START());
 
         if ($stream->current()->getType() === TokenType::IDENTIFIER()) {
             $tagName = TagName::fromTokenStream($stream);
@@ -67,8 +66,7 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
 
         $attributes = [];
         while ($stream->valid()) {
-            Util::skipWhiteSpaceAndComments($stream);
-            Util::ensureValid($stream);
+            $stream->skipWhiteSpaceAndComments();
 
             switch ($stream->current()->getType()) {
                 case TokenType::AFX_TAG_END():
@@ -82,7 +80,7 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
                         if ($lookAhead->getType() === TokenType::OPERATOR_SPREAD()) {
                             $stream->next();
                             $attributes[] = Spread::fromTokenStream($stream);
-                            Util::expect($stream, TokenType::AFX_EXPRESSION_END());
+                            $stream->consume(TokenType::AFX_EXPRESSION_END());
                         } else {
                             throw ParserFailed::becauseOfUnexpectedToken(
                                 $stream->current(),
@@ -95,7 +93,7 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
                     break;
                 case TokenType::AFX_TAG_CLOSE():
                     $stream->next();
-                    Util::expect($stream, TokenType::AFX_TAG_END());
+                    $stream->consume(TokenType::AFX_TAG_END());
                     return new self($tagName, $attributes, []);
                 default:
                     throw ParserFailed::becauseOfUnexpectedToken(
@@ -110,8 +108,7 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
             }
         }
 
-        Util::skipWhiteSpaceAndComments($stream);
-        Util::ensureValid($stream);
+        $stream->skipWhiteSpaceAndComments();
 
         $children = [];
         while ($stream->valid()) {
@@ -123,13 +120,12 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
                     break;
                 case TokenType::AFX_EXPRESSION_START():
                     $stream->next();
-                    Util::ensureValid($stream);
                     
                     $token = $stream->current();
                     $child = ExpressionParser::parseTerm($stream);
                     if ($child instanceof Child) {
                         $children[] = $child;
-                        Util::expect($stream, TokenType::AFX_EXPRESSION_END());
+                        $stream->consume(TokenType::AFX_EXPRESSION_END());
                     } else {
                         throw ParserFailed::becauseOfUnexpectedTerm(
                             $token,
@@ -160,7 +156,7 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
                             if ($stream->current()->getType() === TokenType::IDENTIFIER()) {
                                 if ($tagName && $stream->current()->getValue() === $tagName->getValue()) {
                                     $stream->next();
-                                    Util::expect($stream, TokenType::AFX_TAG_END());
+                                    $stream->consume(TokenType::AFX_TAG_END());
                                     break 2;
                                 } else {
                                     throw ParserFailed::becauseOfUnexpectedClosingTag($stream->current());

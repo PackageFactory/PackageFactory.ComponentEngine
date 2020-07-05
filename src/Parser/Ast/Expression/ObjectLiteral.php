@@ -48,16 +48,13 @@ final class ObjectLiteral implements Literal, Spreadable, Term, Statement, \Json
      */
     public static function fromTokenStream(TokenStream $stream): self
     {
-        Util::ensureValid($stream);
-
         $start = $stream->current();
         $end = $stream->current();
-        Util::expect($stream, TokenType::BRACKETS_CURLY_OPEN());
+        $stream->consume(TokenType::BRACKETS_CURLY_OPEN());
 
         $properties = [];
         while ($stream->valid()) {
-            Util::skipWhiteSpaceAndComments($stream);
-            Util::ensureValid($stream);
+            $stream->skipWhiteSpaceAndComments();
 
             switch ($stream->current()->getType()) {
                 case TokenType::COMMA():
@@ -68,7 +65,7 @@ final class ObjectLiteral implements Literal, Spreadable, Term, Statement, \Json
                     $end = $stream->current();
                     $stream->next();
                     break 2;
-                
+
                 default:
                     $properties[] = ObjectLiteralProperty::fromTokenStream($stream);
                     break;

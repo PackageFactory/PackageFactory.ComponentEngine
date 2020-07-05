@@ -58,8 +58,7 @@ final class Module implements \JsonSerializable
         $exports = [];
         $constants = [];
         while ($stream->valid()) {
-            Util::skipWhiteSpaceAndComments($stream);
-            Util::ensureValid($stream);
+            $stream->skipWhiteSpaceAndComments();
 
             switch ($stream->current()->getType()) {
                 case TokenType::MODULE_KEYWORD_IMPORT():

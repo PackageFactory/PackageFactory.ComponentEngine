@@ -49,12 +49,11 @@ final class ArrowFunction implements Term, Statement, \JsonSerializable
         }
 
         while ($stream->valid()) {
-            Util::skipWhiteSpaceAndComments($stream);
-            Util::ensureValid($stream);
+            $stream->skipWhiteSpaceAndComments();
 
             if ($stream->current()->getType() === TokenType::COMMA()) {
                 $stream->next();
-                Util::skipWhiteSpaceAndComments($stream);
+                $stream->skipWhiteSpaceAndComments();
             } elseif ($stream->current()->getType() === TokenType::BRACKETS_ROUND_CLOSE()) {
                 $stream->next();
                 break;
@@ -62,8 +61,6 @@ final class ArrowFunction implements Term, Statement, \JsonSerializable
                 $stream->next();
                 break;
             }
-
-            Util::ensureValid($stream);
 
             switch ($stream->current()->getType()) {
                 case TokenType::IDENTIFIER():
@@ -78,8 +75,7 @@ final class ArrowFunction implements Term, Statement, \JsonSerializable
             }
         }
 
-        Util::skipWhiteSpaceAndComments($stream);
-        Util::ensureValid($stream);
+        $stream->skipWhiteSpaceAndComments();
 
         return new self(
             $parameters, 

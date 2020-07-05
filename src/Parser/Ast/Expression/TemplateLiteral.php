@@ -48,7 +48,7 @@ final class TemplateLiteral implements Literal, Term, Statement, Key, Child, \Js
     public static function fromTokenStream(TokenStream $stream): self
     {
         $start = $stream->current();
-        Util::expect($stream, TokenType::TEMPLATE_LITERAL_START());
+        $stream->consume(TokenType::TEMPLATE_LITERAL_START());
 
         $segments = [];
         $string = '';
@@ -75,7 +75,7 @@ final class TemplateLiteral implements Literal, Term, Statement, Key, Child, \Js
                         $stream,
                         ExpressionParser::PRIORITY_TERNARY
                     );
-                    Util::expect($stream, TokenType::TEMPLATE_LITERAL_INTERPOLATION_END());
+                    $stream->consume(TokenType::TEMPLATE_LITERAL_INTERPOLATION_END());
                     break;
 
                 case TokenType::TEMPLATE_LITERAL_END():

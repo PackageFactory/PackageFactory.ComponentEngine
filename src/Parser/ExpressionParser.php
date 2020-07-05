@@ -26,7 +26,7 @@ final class ExpressionParser
      */
     public static function parse(TokenStream $stream): ?Statement
     {
-        Util::skipWhiteSpaceAndComments($stream);
+        $stream->skipWhiteSpaceAndComments();
         if (!$stream->valid()) {
             return null;
         }
@@ -83,8 +83,7 @@ final class ExpressionParser
                 break;
             case TokenType::BRACKETS_ROUND_OPEN():
                 $stream->next();
-                Util::skipWhiteSpaceAndComments($stream);
-                Util::ensureValid($stream);
+                $stream->skipWhiteSpaceAndComments();
                 $term = self::parseTerm($stream, $priority, true);
                 break;
             case TokenType::AFX_TAG_START():
@@ -113,8 +112,7 @@ final class ExpressionParser
 
         /** @var Term $term */
         while ($stream->valid()) {
-            Util::skipWhiteSpaceAndComments($stream);
-            Util::ensureValid($stream);
+            $stream->skipWhiteSpaceAndComments();
 
             switch ($stream->current()->getType()) {
                 case TokenType::COMMA():

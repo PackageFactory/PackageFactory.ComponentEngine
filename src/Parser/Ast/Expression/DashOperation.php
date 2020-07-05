@@ -54,8 +54,6 @@ final class DashOperation implements Term, Statement, Key, Child, \JsonSerializa
      */
     public static function fromTokenStream(Term $left, TokenStream $stream): self 
     {
-        Util::ensureValid($stream);
-
         $operator = null;
         switch ($stream->current()->getType()) {
             case TokenType::OPERATOR_ADD():

@@ -42,12 +42,9 @@ final class Spread implements Statement, ParameterAssignment, \JsonSerializable
      */
     public static function fromTokenStream(TokenStream $stream): self
     {
-        Util::ensureValid($stream);
-        
         $value = $stream->current();
         if ($value->getType() === TokenType::OPERATOR_SPREAD()) {
             $stream->next();
-            Util::ensureValid($stream);
 
             $token = $stream->current();
             $subject = ExpressionParser::parseTerm($stream);

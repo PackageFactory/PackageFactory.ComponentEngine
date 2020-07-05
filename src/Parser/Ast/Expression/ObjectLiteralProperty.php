@@ -38,8 +38,6 @@ final class ObjectLiteralProperty implements \JsonSerializable
      */
     public static function fromTokenStream(TokenStream $stream): self
     {
-        Util::ensureValid($stream);
-
         $key = null;
         switch ($stream->current()->getType()) {                
             case TokenType::IDENTIFIER():
@@ -48,13 +46,11 @@ final class ObjectLiteralProperty implements \JsonSerializable
             case TokenType::BRACKETS_SQUARE_OPEN():
                 $stream->next();
 
-                Util::ensureValid($stream);
-
                 $token = $stream->current();
                 $key = ExpressionParser::parseTerm($stream);
                 if ($key instanceof Key) {
-                    Util::skipWhiteSpaceAndComments($stream);
-                    Util::expect($stream, TokenType::BRACKETS_SQUARE_CLOSE());
+                    $stream->skipWhiteSpaceAndComments();
+                    $stream->consume(TokenType::BRACKETS_SQUARE_CLOSE());
                 } else {
                     throw ParserFailed::becauseOfUnexpectedTerm(
                         $token,
@@ -87,11 +83,10 @@ final class ObjectLiteralProperty implements \JsonSerializable
                 );
         }
 
-        Util::skipWhiteSpaceAndComments($stream);
-        Util::expect($stream, TokenType::COLON());
+        $stream->skipWhiteSpaceAndComments();
+        $stream->consume(TokenType::COLON());
 
-        Util::skipWhiteSpaceAndComments($stream);
-        Util::ensureValid($stream);
+        $stream->skipWhiteSpaceAndComments();
 
         return new self(
             $key, 

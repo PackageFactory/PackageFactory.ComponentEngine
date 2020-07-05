@@ -58,12 +58,11 @@ final class ArrayLiteral implements
     {
         $start = $stream->current();
         $end = $stream->current();
-        Util::expect($stream, TokenType::BRACKETS_SQUARE_OPEN());
+        $stream->consume(TokenType::BRACKETS_SQUARE_OPEN());
 
         $items = [];
         while ($stream->valid()) {
-            Util::skipWhiteSpaceAndComments($stream);
-            Util::ensureValid($stream);
+            $stream->skipWhiteSpaceAndComments();
 
             switch ($stream->current()->getType()) {
                 case TokenType::BRACKETS_SQUARE_CLOSE():
@@ -79,13 +78,13 @@ final class ArrayLiteral implements
                     break;
             }
 
-            Util::skipWhiteSpaceAndComments($stream);
+            $stream->skipWhiteSpaceAndComments();
 
             if ($stream->current()->getType() === TokenType::COMMA()) {
                 $stream->next();
             } else {
-                Util::skipWhiteSpaceAndComments($stream);
-                $end = Util::expect($stream, TokenType::BRACKETS_SQUARE_CLOSE());
+                $stream->skipWhiteSpaceAndComments();
+                $end = $stream->consume(TokenType::BRACKETS_SQUARE_CLOSE());
                 break;
             }
         }

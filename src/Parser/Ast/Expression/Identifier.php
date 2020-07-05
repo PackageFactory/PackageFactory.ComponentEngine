@@ -33,8 +33,6 @@ final class Identifier implements Spreadable, Term, Statement, Key, Child, \Json
      */
     public static function fromTokenStream(TokenStream $stream): self
     {
-        Util::ensureValid($stream);
-
         $value = $stream->current();
         if ($value->getType() === TokenType::IDENTIFIER()) {
             $stream->next();

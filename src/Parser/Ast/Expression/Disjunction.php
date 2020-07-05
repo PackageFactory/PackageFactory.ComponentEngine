@@ -53,8 +53,6 @@ final class Disjunction implements Spreadable, Term, Statement, Child, \JsonSeri
      */
     public static function fromTokenStream(Term $left, TokenStream $stream): self 
     {
-        Util::ensureValid($stream);
-
         $operator = null;
         switch ($stream->current()->getType()) {
             case TokenType::OPERATOR_LOGICAL_OR():
@@ -68,8 +66,7 @@ final class Disjunction implements Spreadable, Term, Statement, Child, \JsonSeri
                 );
         }
 
-        Util::skipWhiteSpaceAndComments($stream);
-        Util::ensureValid($stream);
+        $stream->skipWhiteSpaceAndComments();
 
         return new self(
             $left, 

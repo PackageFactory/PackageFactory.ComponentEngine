@@ -41,11 +41,9 @@ final class Attribute implements ParameterAssignment, \JsonSerializable
     public static function fromTokenStream(TokenStream $stream): self
     {
         $attributeName = AttributeName::fromTokenStream($stream);
-        Util::ensureValid($stream);
 
         if ($stream->current()->getType() === TokenType::AFX_ATTRIBUTE_ASSIGNMENT()) {
             $stream->next();
-            Util::ensureValid($stream);
         } else {
             return new self($attributeName, null);
         }
@@ -57,7 +55,7 @@ final class Attribute implements ParameterAssignment, \JsonSerializable
             case TokenType::AFX_EXPRESSION_START():
                 $stream->next();
                 $value = ExpressionParser::parseTerm($stream);
-                Util::expect($stream, TokenType::AFX_EXPRESSION_END());
+                $stream->consume(TokenType::AFX_EXPRESSION_END());
                 break;
             default:
                 throw ParserFailed::becauseOfUnexpectedToken(

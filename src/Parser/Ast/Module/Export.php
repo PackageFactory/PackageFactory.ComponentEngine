@@ -42,10 +42,8 @@ final class Export implements \JsonSerializable
     public static function fromTokenStream(TokenStream $stream): self
     {
         $token = $stream->current();
-        Util::expect($stream, TokenType::MODULE_KEYWORD_EXPORT());
-
-        Util::skipWhiteSpaceAndComments($stream);
-        Util::ensureValid($stream);
+        $stream->consume(TokenType::MODULE_KEYWORD_EXPORT());
+        $stream->skipWhiteSpaceAndComments();
 
         switch ($stream->current()->getType()) {
             case TokenType::MODULE_KEYWORD_CONST():
@@ -69,8 +67,7 @@ final class Export implements \JsonSerializable
         $value = null;
         $brackets = 0;
         while ($value === null) {
-            Util::skipWhiteSpaceAndComments($stream);
-            Util::ensureValid($stream);
+            $stream->skipWhiteSpaceAndComments();
 
             switch ($stream->current()->getType()) {
                 case TokenType::BRACKETS_ROUND_OPEN():
@@ -87,8 +84,8 @@ final class Export implements \JsonSerializable
         }
 
         while ($brackets > 0) {
-            Util::skipWhiteSpaceAndComments($stream);
-            Util::expect($stream, TokenType::BRACKETS_ROUND_CLOSE());
+            $stream->skipWhiteSpaceAndComments();
+            $stream->consume(TokenType::BRACKETS_ROUND_CLOSE());
             $brackets--;
         }
 

@@ -48,8 +48,7 @@ final class StringLiteral implements Value, Literal, Term, Statement, Key, Child
     public static function fromTokenStream(TokenStream $stream): self
     {
         $start = $stream->current();
-        Util::expect($stream, TokenType::STRING_LITERAL_START());
-        Util::ensureValid($stream);
+        $stream->consume(TokenType::STRING_LITERAL_START());
 
         $value = '';
         while ($stream->valid()) {
@@ -85,7 +84,7 @@ final class StringLiteral implements Value, Literal, Term, Statement, Key, Child
         }
 
         $end = $stream->current();
-        Util::expect($stream, TokenType::STRING_LITERAL_END());
+        $stream->consume(TokenType::STRING_LITERAL_END());
 
         return new self($start, $end, $value);
     }

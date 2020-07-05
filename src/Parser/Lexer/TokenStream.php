@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Lexer;
 
+use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 
 /**
@@ -75,11 +76,45 @@ final class TokenStream implements \Iterator
         }
     }
 
+    public function skipWhiteSpaceAndComments(): void
+    {
+        while (
+            $this->valid() && 
+            (
+                $this->current()->getType() === TokenType::WHITESPACE() ||
+                $this->current()->getType() === TokenType::END_OF_LINE() ||
+                $this->current()->getType() === TokenType::COMMENT_START() ||
+                $this->current()->getType() === TokenType::COMMENT_CONTENT() ||
+                $this->current()->getType() === TokenType::COMMENT_END()
+            )
+        ) {
+            $this->next();
+        }
+    }
+
+    public function consume(TokenType $type): Token
+    {
+        if ($this->current()->getType() === $type) {
+            $result = $this->current();
+            $this->next();
+            return $result;
+        } else {
+            throw ParserFailed::becauseOfUnexpectedToken(
+                $this->current(),
+                [$type]
+            );
+        }
+    }
+
     /**
      * @return Token
      */
     public function current()
     {
+        if (!$this->valid()) {
+            throw ParserFailed::becauseOfUnexpectedEndOfFile($this);
+        }
+
         if ($this->lookAheadBuffer) {
             return $this->lookAheadBuffer[0];
         } else {
@@ -102,8 +137,7 @@ final class TokenStream implements \Iterator
     {
         if ($this->lookAheadBuffer) {
             array_shift($this->lookAheadBuffer);
-        }
-        else {
+        } else {
             $this->iterator->next();
         }
 

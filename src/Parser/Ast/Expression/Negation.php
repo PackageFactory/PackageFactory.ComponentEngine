@@ -40,7 +40,7 @@ final class Negation implements Term, Statement, \JsonSerializable
      */
     public static function fromTokenStream(TokenStream $stream): self
     {
-        Util::skipWhiteSpaceAndComments($stream);
+        $stream->skipWhiteSpaceAndComments();
         
         $value = $stream->current();
         if ($value->getType() === TokenType::OPERATOR_LOGICAL_NOT()) {

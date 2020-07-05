@@ -33,8 +33,6 @@ final class NullLiteral implements Value, Literal, Term, Statement, Child, \Json
      */
     public static function fromTokenStream(TokenStream $stream): self
     {
-        Util::ensureValid($stream);
-
         $value = $stream->current();
         if ($value->getType() === TokenType::KEYWORD_NULL()) {
             $stream->next();

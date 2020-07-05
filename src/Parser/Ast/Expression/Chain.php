@@ -69,7 +69,7 @@ final class Chain implements Spreadable, Term, Statement, Key, Child, \JsonSeria
         $segments = [];
         $optional = false;
         while ($stream->valid()) {
-            Util::skipWhiteSpaceAndComments($stream);
+            $stream->skipWhiteSpaceAndComments();
             if (!$stream->valid()) {
                 break;
             }
@@ -93,22 +93,19 @@ final class Chain implements Spreadable, Term, Statement, Key, Child, \JsonSeria
                     break 2;
             }
 
-            Util::skipWhiteSpaceAndComments($stream);
-            Util::ensureValid($stream);
+            $stream->skipWhiteSpaceAndComments();
 
             switch ($stream->current()->getType()) {
                 case TokenType::BRACKETS_SQUARE_OPEN():
                     $end = $stream->current();
                     $stream->next();
-
-                    Util::ensureValid($stream);
                     
                     $token = $stream->current();
                     $key = ExpressionParser::parseTerm($stream);
                     if ($key instanceof Key) {
                         $segments[] = ChainSegment::fromKey($optional, $key);
-                        Util::skipWhiteSpaceAndComments($stream);
-                        Util::expect($stream, TokenType::BRACKETS_SQUARE_CLOSE());
+                        $stream->skipWhiteSpaceAndComments();
+                        $stream->consume(TokenType::BRACKETS_SQUARE_CLOSE());
                     } else {
                         throw ParserFailed::becauseOfUnexpectedTerm(
                             $token,

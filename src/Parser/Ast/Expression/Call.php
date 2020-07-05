@@ -29,12 +29,11 @@ final class Call implements \JsonSerializable
      */
     public static function fromTokenStream(TokenStream $stream): self
     {
-        Util::expect($stream, TokenType::BRACKETS_ROUND_OPEN());
+        $stream->consume(TokenType::BRACKETS_ROUND_OPEN());
 
         $arguments = [];
         while ($stream->valid()) {
-            Util::skipWhiteSpaceAndComments($stream);
-            Util::ensureValid($stream);
+            $stream->skipWhiteSpaceAndComments();
             
             switch ($stream->current()->getType()) {
                 case TokenType::BRACKETS_ROUND_CLOSE():
@@ -46,14 +45,13 @@ final class Call implements \JsonSerializable
                     break;
             }
 
-            Util::skipWhiteSpaceAndComments($stream);
-            Util::ensureValid($stream);
+            $stream->skipWhiteSpaceAndComments();
 
             if ($stream->current()->getType() === TokenType::COMMA()) {
                 $stream->next();
             } else {
-                Util::skipWhiteSpaceAndComments($stream);
-                Util::expect($stream, TokenType::BRACKETS_ROUND_CLOSE());
+                $stream->skipWhiteSpaceAndComments();
+                $stream->consume(TokenType::BRACKETS_ROUND_CLOSE());
                 break;
             }
         }

@@ -45,16 +45,13 @@ final class Import implements \JsonSerializable
      */
     public static function fromTokenStream(TokenStream $stream): \Iterator
     {
-        Util::skipWhiteSpaceAndComments($stream);
-        Util::expect($stream, TokenType::MODULE_KEYWORD_IMPORT());
-
-        Util::skipWhiteSpaceAndComments($stream);
-        Util::ensureValid($stream);
+        $stream->skipWhiteSpaceAndComments();
+        $stream->consume(TokenType::MODULE_KEYWORD_IMPORT());
+        $stream->skipWhiteSpaceAndComments();
 
         $importMap = [];
         while ($stream->valid()) {
-            Util::skipWhiteSpaceAndComments($stream);
-            Util::ensureValid($stream);
+            $stream->skipWhiteSpaceAndComments();
 
             switch ($stream->current()->getType()) {
                 case TokenType::IDENTIFIER():
@@ -75,8 +72,7 @@ final class Import implements \JsonSerializable
             }
         }
 
-        Util::skipWhiteSpaceAndComments($stream);
-        Util::ensureValid($stream);
+        $stream->skipWhiteSpaceAndComments();
 
         $target = StringLiteral::fromTokenStream($stream);
 

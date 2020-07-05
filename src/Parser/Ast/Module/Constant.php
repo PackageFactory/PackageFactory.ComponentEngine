@@ -36,21 +36,19 @@ final class Constant implements \JsonSerializable
     public static function fromTokenStream(TokenStream $stream): self
     {
         $token = $stream->current();
-        Util::expect($stream, TokenType::MODULE_KEYWORD_CONST());
+        $stream->consume(TokenType::MODULE_KEYWORD_CONST());
 
-        Util::skipWhiteSpaceAndComments($stream);
-        Util::ensureValid($stream);
+        $stream->skipWhiteSpaceAndComments();
 
         $name = Identifier::fromTokenStream($stream);
 
-        Util::skipWhiteSpaceAndComments($stream);
-        Util::expect($stream, TokenType::MODULE_ASSIGNMENT());
+        $stream->skipWhiteSpaceAndComments();
+        $stream->consume(TokenType::MODULE_ASSIGNMENT());
 
         $value = null;
         $brackets = 0;
         while ($value === null) {
-            Util::skipWhiteSpaceAndComments($stream);
-            Util::ensureValid($stream);
+            $stream->skipWhiteSpaceAndComments();
 
             switch ($stream->current()->getType()) {
                 case TokenType::BRACKETS_ROUND_OPEN():
@@ -64,8 +62,8 @@ final class Constant implements \JsonSerializable
         }
 
         while ($brackets > 0) {
-            Util::skipWhiteSpaceAndComments($stream);
-            Util::expect($stream, TokenType::BRACKETS_ROUND_CLOSE());
+            $stream->skipWhiteSpaceAndComments();
+            $stream->consume(TokenType::BRACKETS_ROUND_CLOSE());
             $brackets--;
         }
 
