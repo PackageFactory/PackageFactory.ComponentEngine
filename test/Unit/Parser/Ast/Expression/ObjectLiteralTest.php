@@ -175,7 +175,44 @@ final class ObjectLiteralTest extends TestCase
                         ],
                     ]
                 ]
-            ]
+            ],
+            'computed key' => [
+                '{ [styles.active]: true }',
+                [
+                    'type' => 'ObjectLiteral',
+                    'offset' => [0, 24],
+                    'properties' => [
+                        [
+                            'key' => [
+                                'type' => 'Chain',
+                                'offset' => [9, 15],
+                                'root' => [
+                                    'offset' => [3, 8],
+                                    'type' => 'Identifier',
+                                    'value' => 'styles'
+                                ],
+                                'segments' => [
+                                    [
+                                        'type' => 'ChainSegment',
+                                        'isOptional' => false,
+                                        'call' => null,
+                                        'key' => [
+                                            'offset' => [10, 15],
+                                            'type' => 'Identifier',
+                                            'value' => 'active'
+                                        ],
+                                    ]
+                                ],
+                            ],
+                            'value' => [
+                                'type' => 'BooleanLiteral',
+                                'offset' => [19, 22],
+                                'value' => 'true'
+                            ],
+                        ],
+                    ],
+                ],                
+            ],
         ];
     }
 
