@@ -39,16 +39,6 @@ final class Comparison implements Term, Statement, \JsonSerializable
      */
     private function __construct(Term $left, string $operator, Term $right)
     {
-        if ((
-            $operator !== self::COMPARATOR_EQ &&
-            $operator !== self::COMPARATOR_GT &&
-            $operator !== self::COMPARATOR_GTE &&
-            $operator !== self::COMPARATOR_LT &&
-            $operator !== self::COMPARATOR_LTE
-        )) {
-            throw new \Exception('@TODO: Unknown Operator');
-        }
-
         $this->left = $left;
         $this->operator = $operator;
         $this->right = $right;
