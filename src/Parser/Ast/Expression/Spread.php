@@ -47,7 +47,7 @@ final class Spread implements Statement, ParameterAssignment, \JsonSerializable
             $stream->next();
 
             $token = $stream->current();
-            $subject = ExpressionParser::parseTerm($stream);
+            $subject = ExpressionParser::parseTerm($stream, ExpressionParser::PRIORITY_LIST);
             if ($subject instanceof Spreadable) {
                 return new self($value, $subject);
             } else {

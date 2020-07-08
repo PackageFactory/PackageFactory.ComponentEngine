@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 final class TemplateLiteralTest extends TestCase
 {
     /**
-     * @return array<string, array{string, string, array<mixed>}>
+     * @return array<string, array{string, array<mixed>}>
      */
     public function provider(): array 
     {

@@ -117,11 +117,11 @@ final class ExpressionParser
             switch ($stream->current()->getType()) {
                 case TokenType::COMMA():
                 case TokenType::ARROW():
-                    if ($term instanceof Expression\Identifier) {
+                    if ($priority >= self::PRIORITY_LIST) {
+                        return $term;
+                    } elseif ($term instanceof Expression\Identifier) {
                         $term = Expression\ArrowFunction::fromTokenStream($term, $stream);
                         break;
-                    } elseif ($priority >= self::PRIORITY_LIST) {
-                        return $term;
                     } else {
                         throw ParserFailed::becauseOfUnexpectedToken($stream->current());
                     }
