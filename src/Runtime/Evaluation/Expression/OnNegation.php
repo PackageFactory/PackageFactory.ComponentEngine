@@ -3,6 +3,7 @@ namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Negation;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
+use PackageFactory\ComponentEngine\Util;
 
 final class OnNegation
 {
@@ -13,7 +14,9 @@ final class OnNegation
      */
     public static function evaluate(Runtime $runtime, Negation $negation): bool 
     {
-        throw new \Exception('@TODO: onNegation');
+        $subject = OnTerm::evaluate($runtime, $negation->getSubject());
+
+        return !Util::isTrueish($subject);
     }
 }
 

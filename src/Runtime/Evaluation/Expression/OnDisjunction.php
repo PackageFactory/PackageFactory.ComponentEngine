@@ -3,6 +3,7 @@ namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Disjunction;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
+use PackageFactory\ComponentEngine\Util;
 
 final class OnDisjunction
 {
@@ -15,12 +16,12 @@ final class OnDisjunction
     {
         $left = OnTerm::evaluate($runtime, $disjunction->getLeft());
 
-        if (self::isTrueish($left)) {
+        if (Util::isTrueish($left)) {
             return $left;
         } else {
             $right = OnTerm::evaluate($runtime, $disjunction->getRight());
 
-            if (self::isTrueish($right)) {
+            if (Util::isTrueish($right)) {
                 return $right;
             } elseif ($right === null) {
                 return null;
@@ -29,25 +30,6 @@ final class OnDisjunction
             } else {
                 return false;
             }
-        }
-    }
-
-    /**
-     * @param mixed $value
-     * @return boolean
-     */
-    private static function isTrueish($value): bool
-    {
-        if (is_string($value)) {
-            return $value !== '';
-        } elseif (is_numeric($value)) {
-            return $value !== 0.0;
-        } elseif (is_null($value)) {
-            return false;
-        } elseif (is_bool($value)) {
-            return $value;
-        } else {
-            return (bool) $value;
         }
     }
 }
