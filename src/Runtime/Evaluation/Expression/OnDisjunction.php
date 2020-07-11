@@ -14,22 +14,40 @@ final class OnDisjunction
     public static function evaluate(Runtime $runtime, Disjunction $disjunction)
     {
         $left = OnTerm::evaluate($runtime, $disjunction->getLeft());
-        if (is_string($left)) {
-            $left = $left !== '';
-        } elseif (is_numeric($left)) {
-            $left = $left !== 0.0;
-        } elseif (is_null($left)) {
-            $left = false;
-        } elseif (is_bool($left)) {
-            $left = $left;
-        } else {
-            $left = (bool) $left;
-        }
 
-        if ($left) {
-            return true;
+        if (self::isTrueish($left)) {
+            return $left;
         } else {
-            return OnTerm::evaluate($runtime, $disjunction->getRight());
+            $right = OnTerm::evaluate($runtime, $disjunction->getRight());
+
+            if (self::isTrueish($right)) {
+                return $right;
+            } elseif ($right === null) {
+                return null;
+            } elseif ($right === 0.0) {
+                return 0.0;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * @param mixed $value
+     * @return boolean
+     */
+    private static function isTrueish($value): bool
+    {
+        if (is_string($value)) {
+            return $value !== '';
+        } elseif (is_numeric($value)) {
+            return $value !== 0.0;
+        } elseif (is_null($value)) {
+            return false;
+        } elseif (is_bool($value)) {
+            return $value;
+        } else {
+            return (bool) $value;
         }
     }
 }
