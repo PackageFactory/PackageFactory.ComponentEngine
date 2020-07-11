@@ -84,7 +84,7 @@ final class ExpressionParser
             case TokenType::BRACKETS_ROUND_OPEN():
                 $stream->next();
                 $stream->skipWhiteSpaceAndComments();
-                $term = self::parseTerm($stream, $priority, true);
+                $term = self::parseTerm($stream, self::PRIORITY_TERNARY, true);
                 break;
             case TokenType::AFX_TAG_START():
                 $term = Afx\Tag::fromTokenStream($stream);
@@ -163,7 +163,7 @@ final class ExpressionParser
                 
                 case TokenType::OPERATOR_ADD():
                 case TokenType::OPERATOR_SUBTRACT():
-                    if ($priority < self::PRIORITY_DASH_OPERATION) {
+                    if ($priority <= self::PRIORITY_DASH_OPERATION) {
                         return $term;
                     }
                     $term = Expression\DashOperation::fromTokenStream($term, $stream);
@@ -171,7 +171,7 @@ final class ExpressionParser
                 case TokenType::OPERATOR_MULTIPLY():
                 case TokenType::OPERATOR_DIVIDE():
                 case TokenType::OPERATOR_MODULO():
-                    if ($priority < self::PRIORITY_POINT_OPERATION) {
+                    if ($priority <= self::PRIORITY_POINT_OPERATION) {
                         return $term;
                     }
                     $term = Expression\PointOperation::fromTokenStream($term, $stream);

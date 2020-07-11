@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Parser\Ast\Expression;
 
-use PackageFactory\ComponentEngine\Parser\Ast\Expression\DashOperation;
 use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
@@ -65,6 +64,32 @@ final class DashOperationTest extends TestCase
                         'type' => 'StringLiteral',
                         'offset' => [11, 18],
                         'value' => 'World!'
+                    ],
+                ]
+            ],
+            'subtraction with three operands' => [
+                '12.5 - 13 - 42',
+                [
+                    'type' => 'DashOperation',
+                    'left' => [
+                        'type' => 'DashOperation',
+                        'left' => [
+                            'type' => 'NumberLiteral',
+                            'offset' => [0, 3],
+                            'value' => '12.5'
+                        ],
+                        'operator' => '-',
+                        'right' => [
+                            'type' => 'NumberLiteral',
+                            'offset' => [7, 8],
+                            'value' => '13'
+                        ],
+                    ],
+                    'operator' => '-',
+                    'right' => [
+                        'type' => 'NumberLiteral',
+                        'offset' => [12, 13],
+                        'value' => '42'
                     ],
                 ]
             ],
