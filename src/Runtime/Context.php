@@ -39,7 +39,7 @@ final class Context
      */
     public function getProperty(string $propertyName)
     {
-        if (!isset($this->properties[$propertyName])) {
+        if (!$this->hasProperty($propertyName)) {
             throw new \Exception('@TODO: unknown context property ' . $propertyName);
         }
 
@@ -52,7 +52,7 @@ final class Context
      */
     public function hasProperty(string $propertyName)
     {
-        return isset($this->properties[$propertyName]);
+        return array_key_exists($propertyName, $this->properties);
     }
 
     /**

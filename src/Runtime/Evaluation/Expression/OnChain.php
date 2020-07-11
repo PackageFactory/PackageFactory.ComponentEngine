@@ -57,7 +57,10 @@ final class OnChain
                     throw new \RuntimeException('@TODO: Invalid property access: ' . $key);
                 }
             } elseif (is_array($value)) {
-                if (isset($value[$key])) {
+                if (is_numeric($key) && !is_int($key) && intval($key) == $key) {
+                    $key = (int) $key;
+                }
+                if (array_key_exists($key, $value)) {
                     $value = $value[$key];
                 } elseif ($key === 'map') {
                     $items = $value;
@@ -77,13 +80,13 @@ final class OnChain
                 if (!is_string($key)) {
                     throw new \RuntimeException('@TODO: Invalid key');
                 } elseif (isset($value->{ $key })) {
-                    return $value->{ $key };
+                    $value = $value->{ $key };
                 } else {
                     $getter = 'get' . ucfirst($key);
 
                     if (is_callable([$value, $getter])) {
                         try {
-                            return $value->{ $getter }();
+                            $value = $value->{ $getter }();
                         } catch (\Throwable $err) {
                             throw new \RuntimeException('@TODO: An error occured during PHP execution: ' . $err->getMessage());
                         }
