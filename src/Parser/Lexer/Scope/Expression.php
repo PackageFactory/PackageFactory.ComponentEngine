@@ -63,11 +63,19 @@ final class Expression
             
             switch ($iterator->current()->getValue()) {
                 case '!':
-                    yield Token::fromFragment(
-                        TokenType::OPERATOR_LOGICAL_NOT(),
-                        $iterator->current()
-                    );
-                    $iterator->next();
+                    if ($lookAhead = $iterator->willBe('!==')) {
+                        yield Token::fromFragment(
+                            TokenType::COMPARATOR_NEQ(),
+                            $lookAhead
+                        );
+                        $iterator->skip(3);
+                    } else {
+                        yield Token::fromFragment(
+                            TokenType::OPERATOR_LOGICAL_NOT(),
+                            $iterator->current()
+                        );
+                        $iterator->next();
+                    }
                     $operand = false;
                     break;
                 case '&':

@@ -80,6 +80,7 @@ final class TokenType
     public static function OPERATOR_OPTCHAIN(): TokenType { return self::create('OPERATOR_OPTCHAIN'); }
     public static function OPERATOR_NULLISH_COALESCE(): TokenType { return self::create('OPERATOR_NULLISH_COALESCE'); }
     public static function COMPARATOR_EQ(): TokenType { return self::create('COMPARATOR_EQ'); }
+    public static function COMPARATOR_NEQ(): TokenType { return self::create('COMPARATOR_NEQ'); }
     public static function COMPARATOR_GT(): TokenType { return self::create('COMPARATOR_GT'); }
     public static function COMPARATOR_GTE(): TokenType { return self::create('COMPARATOR_GTE'); }
     public static function COMPARATOR_LT(): TokenType { return self::create('COMPARATOR_LT'); }

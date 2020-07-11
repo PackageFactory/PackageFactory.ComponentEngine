@@ -18,6 +18,8 @@ final class OnComparison
 
         if ($comparison->getOperator() === Comparison::COMPARATOR_EQ) {
             return $left === $right;
+        } elseif ($comparison->getOperator() === Comparison::COMPARATOR_NEQ) {
+            return $left !== $right;
         } elseif ($comparison->getOperator() === Comparison::COMPARATOR_GT) {
             return $left > $right;
         } elseif ($comparison->getOperator() === Comparison::COMPARATOR_GTE) {

@@ -34,6 +34,23 @@ final class ComparisonTest extends TestCase
                     ],
                 ]
             ],
+            'primitive inequality comparison' => [
+                'true !== false',
+                [
+                    'type' => 'Comparison',
+                    'left' => [
+                        'type' => 'BooleanLiteral',
+                        'offset' => [0, 3],
+                        'value' => 'true'
+                    ],
+                    'operator' => '!==',
+                    'right' => [
+                        'type' => 'BooleanLiteral',
+                        'offset' => [9, 13],
+                        'value' => 'false'
+                    ],
+                ]
+            ],
             'primitive greater than comparison' => [
                 '12 > 11',
                 [

@@ -12,6 +12,7 @@ use PackageFactory\ComponentEngine\Parser\Util;
 final class Comparison implements Term, Statement, \JsonSerializable
 {
     const COMPARATOR_EQ = '===';
+    const COMPARATOR_NEQ = '!==';
     const COMPARATOR_GT = '>';
     const COMPARATOR_GTE = '>=';
     const COMPARATOR_LT = '<';
@@ -54,6 +55,7 @@ final class Comparison implements Term, Statement, \JsonSerializable
         $operator = null;
         switch ($stream->current()->getType()) {
             case TokenType::COMPARATOR_EQ():
+            case TokenType::COMPARATOR_NEQ():
             case TokenType::COMPARATOR_GT():
             case TokenType::COMPARATOR_GTE():
             case TokenType::COMPARATOR_LT():

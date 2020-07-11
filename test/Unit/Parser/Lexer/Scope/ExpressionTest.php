@@ -201,6 +201,16 @@ final class ExpressionTest extends TestCase
                     [TokenType::IDENTIFIER(), 'bar'],
                 ]
             ],
+            'comparison: inequality' => [
+                'foo !== bar',
+                [
+                    [TokenType::IDENTIFIER(), 'foo'],
+                    [TokenType::WHITESPACE(), ' '],
+                    [TokenType::COMPARATOR_NEQ(), '!=='],
+                    [TokenType::WHITESPACE(), ' '],
+                    [TokenType::IDENTIFIER(), 'bar'],
+                ]
+            ],
             'comparison: greater than' => [
                 'foo > bar',
                 [

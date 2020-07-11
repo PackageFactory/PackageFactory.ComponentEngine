@@ -138,6 +138,7 @@ final class ExpressionParser
                     $term = Expression\Ternary::fromTokenStream($term, $stream);
                     break;
                 case TokenType::COMPARATOR_EQ():
+                case TokenType::COMPARATOR_NEQ():
                 case TokenType::COMPARATOR_GT():
                 case TokenType::COMPARATOR_GTE():
                 case TokenType::COMPARATOR_LT():
