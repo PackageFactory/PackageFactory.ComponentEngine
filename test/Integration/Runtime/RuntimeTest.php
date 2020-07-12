@@ -93,4 +93,41 @@ final class RuntimeTest extends BaseTestCase
             HTML5StringRenderer::render($result)
         );
     }
+
+    /**
+     * @return iterable<string, array<int, string>>
+     */
+    public function siteHeaderProvider(): iterable
+    {
+        yield from $this->fixtures('siteheader');
+    }
+
+    /**
+     * @test
+     * @small
+     * @dataProvider siteHeaderProvider
+     * @param string $filename
+     * @return void
+     */
+    public function siteHeaderTest(string $filename): void
+    {
+        $source = Source::fromFile($filename);
+        $tokenizer = Tokenizer::fromSource($source);
+        $stream = TokenStream::fromTokenizer($tokenizer);
+
+        $module = Module::fromTokenStream($stream);
+        $runtime = Runtime::default()->withContext(
+            Context::fromArray([
+                'props' => [
+                    'urlToHomePage' => '/'
+                ]
+            ])
+        );
+
+        $result = OnModule::evaluate($runtime, $module);
+
+        $this->assertMatchesSnapshot(
+            HTML5StringRenderer::render($result)
+        );
+    }
 }

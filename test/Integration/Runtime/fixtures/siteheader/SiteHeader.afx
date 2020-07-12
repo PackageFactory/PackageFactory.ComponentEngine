@@ -1,0 +1,7 @@
+export default (
+	<header class="p-5">
+		<a href={props.urlToHomePage}>
+			{props.urlToHomePage}
+		</a>
+	</header>
+);
