@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2c094c64a087e19e5712824abf4abadc",
+    "content-hash": "eaa6aa197c04a867f6fb4f85cc2a534d",
     "packages": [
         {
             "name": "packagefactory/virtualdom",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PackageFactory/PackageFactory.VirtualDOM.git",
-                "reference": "ad25c14ade7feaeed598e80096b600d6d91f0c68"
+                "reference": "8f30f7537a7789e3a6dc13e925be16952503f67f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PackageFactory/PackageFactory.VirtualDOM/zipball/ad25c14ade7feaeed598e80096b600d6d91f0c68",
-                "reference": "ad25c14ade7feaeed598e80096b600d6d91f0c68",
+                "url": "https://api.github.com/repos/PackageFactory/PackageFactory.VirtualDOM/zipball/8f30f7537a7789e3a6dc13e925be16952503f67f",
+                "reference": "8f30f7537a7789e3a6dc13e925be16952503f67f",
                 "shasum": ""
             },
             "type": "library",
@@ -34,7 +34,7 @@
                 "source": "https://github.com/PackageFactory/PackageFactory.VirtualDOM/tree/master",
                 "issues": "https://github.com/PackageFactory/PackageFactory.VirtualDOM/issues"
             },
-            "time": "2020-07-12T18:47:15+00:00"
+            "time": "2020-07-18T16:16:51+00:00"
         }
     ],
     "packages-dev": [
@@ -2833,7 +2833,7 @@
     "stability-flags": {
         "packagefactory/virtualdom": 20
     },
-    "prefer-stable": false,
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],

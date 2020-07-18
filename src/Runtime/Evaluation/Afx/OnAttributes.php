@@ -13,7 +13,7 @@ final class OnAttributes
      *
      * @param Runtime $runtime
      * @param array<int, ParameterAssignment> $attributes
-     * @return \Iterator<int, mixed>
+     * @return \Iterator<string, mixed>
      */
     public static function evaluate(Runtime $runtime, array $attributes): \Iterator
     {

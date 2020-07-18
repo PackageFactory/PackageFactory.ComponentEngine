@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Afx;
 
-use PackageFactory\VirtualDOM;
 use PackageFactory\ComponentEngine\Parser\Ast\Afx\Content;
 use PackageFactory\ComponentEngine\Parser\Ast\Afx\Tag;
 use PackageFactory\ComponentEngine\Parser\Ast\Child;
 use PackageFactory\ComponentEngine\Parser\Ast\Term;
 use PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
+use PackageFactory\VirtualDOM\Model as VirtualDOM;
 
 final class OnChild
 {
@@ -48,7 +48,7 @@ final class OnChild
             // Ignore
         } elseif (is_bool($value) && !$value) {
             // Ignore
-        } elseif ($value instanceof VirtualDOM\Node) {
+        } elseif ($value instanceof VirtualDOM\ComponentInterface) {
             yield $value;
         } elseif (is_object($value) && method_exists($value, '__toString')) {
             yield VirtualDOM\Text::fromString((string) $value);
