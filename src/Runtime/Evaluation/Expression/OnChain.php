@@ -60,7 +60,7 @@ final class OnChain
                 if (is_numeric($key) && !is_int($key) && intval($key) == $key) {
                     $key = (int) $key;
                 }
-                if (array_key_exists($key, $value)) {
+                if ((is_int($key) || is_string($key)) && array_key_exists($key, $value)) {
                     $value = $value[$key];
                 } elseif ($key === 'map') {
                     $items = $value;

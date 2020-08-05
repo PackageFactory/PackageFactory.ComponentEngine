@@ -14,7 +14,7 @@ final class OnChild
     /**
      * @param Runtime $runtime
      * @param Child $child
-     * @return \Iterator<int, VirtualDOM\Node>
+     * @return \Iterator<int, VirtualDOM\ComponentInterface>
      */
     public static function evaluate(Runtime $runtime, Child $child): \Iterator 
     {
@@ -32,7 +32,7 @@ final class OnChild
 
     /**
      * @param mixed $value
-     * @return \Iterator<int, VirtualDOM\Node>
+     * @return \Iterator<int, VirtualDOM\ComponentInterface>
      */
     private static function getContentFromValue($value): \Iterator
     {

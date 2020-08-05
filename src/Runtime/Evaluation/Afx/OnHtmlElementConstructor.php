@@ -4,19 +4,19 @@ namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Afx;
 use PackageFactory\ComponentEngine\Parser\Ast\Afx\Tag;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 use PackageFactory\VirtualDOM\VirtualDOM;
-use PackageFactory\VirtualDOM\Model\ComponentInterface;
+use PackageFactory\VirtualDOM\Model\Element;
 
 final class OnHtmlElementConstructor
 {
     /**
      * @param Runtime $runtime
      * @param Tag $htmlElementConstructor
-     * @return VirtualDOM\Element
+     * @return Element
      */
     public static function evaluate(
         Runtime $runtime, 
         Tag $htmlElementConstructor
-    ): ComponentInterface {
+    ): Element {
         $tagName = $htmlElementConstructor->getTagName();
 
         return VirtualDOM::element(

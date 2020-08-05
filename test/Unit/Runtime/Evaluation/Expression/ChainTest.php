@@ -40,8 +40,19 @@ final class ChainTest extends TestCase
                 'baz' => "Hello baz!"
             ],
             'class' => new class {
+                /**
+                 * @var int
+                 */
                 public $foo = 12;
+
+                /**
+                 * @var string
+                 */
                 public $bar = 'Hello Class!';
+
+                /**
+                 * @var int
+                 */
                 public $baz = 25;
             }
         ];
@@ -79,8 +90,14 @@ final class ChainTest extends TestCase
 
             $input = 'foo.property.baz';
             $context = Context::fromArray(['foo' => new class($value) {
+                /**
+                 * @var array<mixed>
+                 */
                 public $property;
 
+                /**
+                 * @param mixed $value
+                 */
                 public function __construct($value) 
                 {
                     $this->property = ['baz' => $value];
@@ -92,14 +109,23 @@ final class ChainTest extends TestCase
 
             $input = 'foo.gettableProperty.baz';
             $context = Context::fromArray(['foo' => new class($value) {
+                /**
+                 * @var array<mixed>
+                 */
                 private $property;
 
+                /**
+                 * @param mixed $value
+                 */
                 public function __construct($value) 
                 {
                     $this->property = ['baz' => $value];
                 }
 
-                public function getGettableProperty()
+                /**
+                 * @return array<mixed>
+                 */
+                public function getGettableProperty(): array
                 {
                     return $this->property;
                 }
