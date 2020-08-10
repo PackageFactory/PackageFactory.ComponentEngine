@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Runtime\Evaluation\Expression;
 
-use PackageFactory\ComponentEngine\Parser\Ast\Expression\ArrayLiteral;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Chain;
 use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\Tokenizer;
@@ -18,7 +17,7 @@ final class ChainTest extends TestCase
     /**
      * @return \Iterator<string, array{string, Context, mixed}>
      */
-    public function arrayContextAverageCaseProvider(): \Iterator
+    public function averageCaseProvider(): \Iterator
     {
         $values = [
             'number' => 42, 
@@ -178,12 +177,17 @@ final class ChainTest extends TestCase
         $input = '{foo: [1, { bar: [0, 23] }]}.foo[1].bar[1]';
         $result = 23;
         yield "$input = $result" => [$input, Context::createEmpty(), $result];
+
+        $input = '"Hello World"[2]';
+        $result = 'l';
+        yield "$input = $result" => [$input, Context::createEmpty(), $result];
+
     }
 
     /**
      * @test
      * @small
-     * @dataProvider arrayContextAverageCaseProvider
+     * @dataProvider averageCaseProvider
      * @param string $input
      * @param Context $context
      * @param mixed $value

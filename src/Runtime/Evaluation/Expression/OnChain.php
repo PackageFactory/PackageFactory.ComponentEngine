@@ -49,10 +49,8 @@ final class OnChain
             } elseif (is_string($value)) {
                 if (!is_numeric($key)) {
                     throw new \RuntimeException('@TODO: Invalid key');
-                } elseif ($key < mb_strlen($value)) {
-                    $value = $value[$key];
-                } elseif ($segment->getIsOptional()) {
-                    return null;
+                } elseif ((int) $key < mb_strlen($value)) {
+                    $value = $value[(int) $key];
                 } else {
                     throw new \RuntimeException('@TODO: Invalid property access: ' . $key);
                 }
