@@ -2,6 +2,7 @@
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Ternary;
+use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnTernary
@@ -9,13 +10,13 @@ final class OnTernary
     /**
      * @param Runtime $runtime
      * @param Ternary $ternary
-     * @return mixed
+     * @return ValueInterface
      */
-    public static function evaluate(Runtime $runtime, Ternary $ternary) 
+    public static function evaluate(Runtime $runtime, Ternary $ternary): ValueInterface
     {
         $condition = OnTerm::evaluate($runtime, $ternary->getCondition());
         
-        if ($condition) {
+        if ($condition->isTrueish()) {
             return OnTerm::evaluate($runtime, $ternary->getTrueBranch());
         } else {
             return OnTerm::evaluate($runtime, $ternary->getFalseBranch());

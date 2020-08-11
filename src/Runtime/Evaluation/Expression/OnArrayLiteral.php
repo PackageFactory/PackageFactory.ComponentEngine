@@ -4,6 +4,7 @@ namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\ArrayLiteral;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Spread;
 use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\ArrayValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnArrayLiteral
@@ -11,9 +12,9 @@ final class OnArrayLiteral
     /**
      * @param Runtime $runtime
      * @param ArrayLiteral $arrayLiteral
-     * @return array<int, mixed>
+     * @return ArrayValue
      */
-    public static function evaluate(Runtime $runtime, ArrayLiteral $arrayLiteral): array 
+    public static function evaluate(Runtime $runtime, ArrayLiteral $arrayLiteral): ArrayValue 
     {
         $result = [];
 
@@ -31,11 +32,11 @@ final class OnArrayLiteral
             } else {
                 /** @var Term $item */
                 $item = $item;
-                $result[] = OnTerm::evaluate($runtime, $item);
+                $result[] = OnTerm::evaluate($runtime, $item)->getValue();
             }
         }
 
-        return $result;
+        return ArrayValue::fromArray($result);
     }
 }
 

@@ -2,6 +2,7 @@
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Identifier;
+use PackageFactory\ComponentEngine\Runtime\Context\Key;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnIdentifier
@@ -13,7 +14,7 @@ final class OnIdentifier
      */
     public static function evaluate(Runtime $runtime, Identifier $identifier)
     {
-        return $runtime->getContext()->getProperty($identifier->getValue());
+        return $runtime->getContext()->get(Key::fromIdentifier($identifier), true);
     }
 }
 

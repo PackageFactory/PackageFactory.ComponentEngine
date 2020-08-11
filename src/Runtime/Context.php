@@ -1,72 +1,26 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Runtime;
 
+use PackageFactory\ComponentEngine\Runtime\Context\Value\DictionaryValue;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\NullValue;
+use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
+
 final class Context
 {
     /**
-     * @var array<string, mixed>
+     * @return ValueInterface
      */
-    protected $properties;
-
-    /**
-     * @param array<string, mixed> $properties
-     */
-    private function __construct(array $properties)
+    public static function createEmpty(): ValueInterface
     {
-        $this->properties = $properties;
-    }
-
-    /**
-     * @return self
-     */
-    public static function createEmpty(): self
-    {
-        return new self([]);
+        return NullValue::create();
     }
 
     /**
      * @param array<string, mixed> $data
-     * @return self
+     * @return ValueInterface
      */
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data): ValueInterface
     {
-        return new self($data);
-    }
-
-    /**
-     * @param string $propertyName
-     * @return mixed
-     */
-    public function getProperty(string $propertyName)
-    {
-        if (!$this->hasProperty($propertyName)) {
-            throw new \Exception('@TODO: unknown context property ' . $propertyName);
-        }
-
-        return $this->properties[$propertyName];
-    }
-
-    /**
-     * @param string $propertyName
-     * @return boolean
-     */
-    public function hasProperty(string $propertyName)
-    {
-        return array_key_exists($propertyName, $this->properties);
-    }
-
-    /**
-     * @param array<string, mixed> $newProperties
-     * @return self
-     */
-    public function withMergedProperties(array $newProperties): self
-    {
-        $nextProperties = $this->properties;
-
-        foreach ($newProperties as $key => $value) {
-            $nextProperties[$key] = $value;
-        }
-
-        return new self($nextProperties);
+        return DictionaryValue::fromArray($data);
     }
 }

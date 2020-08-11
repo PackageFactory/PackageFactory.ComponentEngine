@@ -2,6 +2,7 @@
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\StringLiteral;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\StringValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnStringLiteral
@@ -9,11 +10,11 @@ final class OnStringLiteral
     /**
      * @param Runtime $runtime
      * @param StringLiteral $stringLiteral
-     * @return string
+     * @return StringValue
      */
-    public static function evaluate(Runtime $runtime, StringLiteral $stringLiteral): string 
+    public static function evaluate(Runtime $runtime, StringLiteral $stringLiteral): StringValue 
     {
-        return $stringLiteral->getValue();
+        return StringValue::fromStringLiteral($stringLiteral);
     }
 }
 

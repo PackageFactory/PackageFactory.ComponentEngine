@@ -2,8 +2,8 @@
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Disjunction;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\BooleanValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
-use PackageFactory\ComponentEngine\Util;
 
 final class OnDisjunction
 {
@@ -16,19 +16,15 @@ final class OnDisjunction
     {
         $left = OnTerm::evaluate($runtime, $disjunction->getLeft());
 
-        if (Util::isTrueish($left)) {
+        if ($left->isTrueish()) {
             return $left;
         } else {
             $right = OnTerm::evaluate($runtime, $disjunction->getRight());
 
-            if (Util::isTrueish($right)) {
+            if ($right->isTrueish() || $right->getValue() === null || $right->getValue() === 0.0) {
                 return $right;
-            } elseif ($right === null) {
-                return null;
-            } elseif ($right === 0.0) {
-                return 0.0;
             } else {
-                return false;
+                return BooleanValue::false();
             }
         }
     }

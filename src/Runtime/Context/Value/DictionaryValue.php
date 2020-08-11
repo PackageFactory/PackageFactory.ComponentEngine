@@ -3,31 +3,30 @@ namespace PackageFactory\ComponentEngine\Runtime\Context\Value;
 
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Context\Key;
-use PackageFactory\ComponentEngine\Runtime\Context\ProtectedContextAwareInterface;
 use PackageFactory\ComponentEngine\Runtime\Context\Value;
 
-final class ObjectValue implements ValueInterface
+final class DictionaryValue implements ValueInterface
 {
     /**
-     * @var object
+     * @var array<mixed>
      */
     private $value;
 
     /**
-     * @param object $value
+     * @param array<mixed> $value
      */
-    private function __construct($value)
+    private function __construct(array $value)
     {
         $this->value = $value;
     }
 
     /**
-     * @param object $value
+     * @param array<mixed> $array
      * @return self
      */
-    public static function fromObject($value): self
+    public static function fromArray(array $array): self
     {
-        return new self($value);
+        return new self($array);
     }
 
     /**
@@ -37,27 +36,13 @@ final class ObjectValue implements ValueInterface
      */
     public function get(Key $key, bool $optional): ValueInterface
     {
-        if (isset($this->value->{ $key->getValue() })) {
-            return Value::fromAny($this->value->{ $key->getValue() });
-        } elseif (is_callable([$this->value, (string) $key])) {
-            if ($this->value instanceof ProtectedContextAwareInterface && $this->value->allowsCallOfMethod((string) $key->getValue())) {
-                return CallableValue::fromObjectAndMember($this->value, (string) $key->getValue());
-            } else {
-                throw new \RuntimeException('@TODO: Call to ' . get_class($this->value) . '->' . $key->getValue() . '() is not allowed.');
-            }
+        if (array_key_exists($key->getValue(), $this->value)) {
+            return Value::fromAny($this->value[$key->getValue()]);
+        } elseif ($optional) {
+            return NullValue::create();
         } else {
-            $getter = $key->asGetter();
-
-            if (is_callable([$this->value, $getter])) {
-                try {
-                    return Value::fromAny($this->value->{ $getter }());
-                } catch (\Throwable $err) {
-                    throw new \RuntimeException('@TODO: An error occured during PHP execution: ' . $err->getMessage());
-                }
-            }
+            throw new \RuntimeException('@TODO: Invalid property access');
         }
-
-        return NullValue::create();
     }
 
     /**
@@ -66,7 +51,11 @@ final class ObjectValue implements ValueInterface
      */
     public function merge(ValueInterface $other): ValueInterface
     {
-        throw new \RuntimeException('@TODO: Object cannot be merged with ' . get_class($other));
+        if ($other instanceof DictionaryValue) {
+            return new self(array_replace($this->value, $other->getArray()));
+        } else {
+            throw new \RuntimeException('@TODO: Dictionary cannot be merged with ' . get_class($other));
+        }
     }
 
     /**
@@ -76,17 +65,7 @@ final class ObjectValue implements ValueInterface
      */
     public function call(array $arguments, bool $optional): ValueInterface
     {
-        if (is_callable([$this->value, '__invoke'], true) && $this->value instanceof ProtectedContextAwareInterface && $this->value->allowsCallOfMethod('__invoke')) {
-            $function = $this->value;
-            $result = $function(...array_map(
-                function (ValueInterface $value) { return $value->getValue(); }, 
-                $arguments
-            ));
-
-            return Value::fromAny($result);
-        } else {
-            throw new \RuntimeException('@TODO: Object cannot be called');
-        }
+        throw new \RuntimeException('@TODO: Dictionary cannot be called');
     }
 
     /**
@@ -95,7 +74,7 @@ final class ObjectValue implements ValueInterface
      */
     public function greaterThan(ValueInterface $other): BooleanValue
     {
-        throw new \RuntimeException('@TODO: Object cannot be compared');
+        throw new \RuntimeException('@TODO: Dictionary cannot be compared');
     }
 
     /**
@@ -104,7 +83,7 @@ final class ObjectValue implements ValueInterface
      */
     public function lessThan(ValueInterface $other): BooleanValue
     {
-        throw new \RuntimeException('@TODO: Object cannot be compared');
+        throw new \RuntimeException('@TODO: Dictionary cannot be compared');
     }
 
     /**
@@ -122,7 +101,7 @@ final class ObjectValue implements ValueInterface
      */
     public function add(ValueInterface $other): ValueInterface
     {
-        throw new \RuntimeException('@TODO: Object cannot be added to');
+        throw new \RuntimeException('@TODO: Dictionary cannot be added to');
     }
 
     /**
@@ -131,7 +110,7 @@ final class ObjectValue implements ValueInterface
      */
     public function subtract(ValueInterface $other): ValueInterface
     {
-        throw new \RuntimeException('@TODO: Object cannot be subtracted from');
+        throw new \RuntimeException('@TODO: Dictionary cannot be subtracted from');
     }
 
     /**
@@ -140,7 +119,7 @@ final class ObjectValue implements ValueInterface
      */
     public function multiply(ValueInterface $other): ValueInterface
     {
-        throw new \RuntimeException('@TODO: Object cannot be multiplied');
+        throw new \RuntimeException('@TODO: Dictionary cannot be multiplied');
     }
 
     /**
@@ -149,7 +128,7 @@ final class ObjectValue implements ValueInterface
      */
     public function divide(ValueInterface $other): ValueInterface
     {
-        throw new \RuntimeException('@TODO: Object cannot be divided');
+        throw new \RuntimeException('@TODO: Dictionary cannot be divided');
     }
 
     /**
@@ -158,7 +137,7 @@ final class ObjectValue implements ValueInterface
      */
     public function modulo(ValueInterface $other): ValueInterface
     {
-        throw new \RuntimeException('@TODO: Object does not allow modulo operation');
+        throw new \RuntimeException('@TODO: Dictionary does not allow modulo operation');
     }
 
     /**
@@ -166,13 +145,21 @@ final class ObjectValue implements ValueInterface
      */
     public function isTrueish(): bool
     {
-        return true;
+        return count($this->value) !== 0;
     }
 
     /**
      * @return object
      */
     public function getValue()
+    {
+        return (object) $this->value;
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getArray(): array
     {
         return $this->value;
     }

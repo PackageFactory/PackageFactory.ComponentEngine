@@ -8,6 +8,7 @@ use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\Scope;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Runtime\Context;
+use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Evaluation\Expression\OnTerm;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 use PHPUnit\Framework\TestCase;
@@ -15,80 +16,97 @@ use PHPUnit\Framework\TestCase;
 final class ChainTest extends TestCase
 {
     /**
-     * @return \Iterator<string, array{string, Context, mixed}>
+     * @return \Iterator<string, array{string, ValueInterface, mixed}>
      */
     public function averageCaseProvider(): \Iterator
     {
         $values = [
-            'number' => 42, 
-            'number with decimal point' => 12.3, 
-            'boolean (true)' => true, 
-            'boolean (false)' => false,
-            'null' => null, 
-            'string' => "Hello Chain!",
-            'array of numbers' => [12, 13, 14],
-            'array of strings' => ["foo", "bar", "baz"],
+            'number' => [42, 42], 
+            'number with decimal point' => [12.3, 12.3], 
+            'boolean (true)' => [true, true], 
+            'boolean (false)' => [false, false],
+            'null' => [null, null], 
+            'string' => ["Hello Chain!", "Hello Chain!"],
+            'array of numbers' => [[12, 13, 14], [12, 13, 14]],
+            'array of strings' => [["foo", "bar", "baz"], ["foo", "bar", "baz"]],
             'associative array of numbers' => [
-                'twelve' => 12,
-                'thirteen' => 13,
-                'fourteen' => 14,
+                [
+                    'twelve' => 12,
+                    'thirteen' => 13,
+                    'fourteen' => 14,
+                ],
+                (object) [
+                    'twelve' => 12,
+                    'thirteen' => 13,
+                    'fourteen' => 14,
+                ]
             ],
             'associative array of strings' => [
-                'foo' => "Hello foo!",
-                'bar' => "Hello bar!",
-                'baz' => "Hello baz!"
+                [
+                    'foo' => "Hello foo!",
+                    'bar' => "Hello bar!",
+                    'baz' => "Hello baz!"
+                ],
+                (object) [
+                    'foo' => "Hello foo!",
+                    'bar' => "Hello bar!",
+                    'baz' => "Hello baz!"
+                ]
             ],
-            'class' => new class {
-                /**
-                 * @var int
-                 */
-                public $foo = 12;
-
-                /**
-                 * @var string
-                 */
-                public $bar = 'Hello Class!';
-
-                /**
-                 * @var int
-                 */
-                public $baz = 25;
-            }
+            'class' => [
+                $newClass =  new class {
+                    /**
+                     * @var int
+                     */
+                    public $foo = 12;
+    
+                    /**
+                     * @var string
+                     */
+                    public $bar = 'Hello Class!';
+    
+                    /**
+                     * @var int
+                     */
+                    public $baz = 25;
+                },
+                $newClass
+            ]
         ];
 
         foreach ($values as $description => $value) {
             $input = 'value';
-            $context = Context::fromArray(['value' => $value]);
-            $result = $value;
+            $context = Context::fromArray(['value' => $value[0]]);
+            $result = $value[1];
             yield "$input = $description" => 
                 [$input, $context, $result];
     
             $input = 'foo.bar';
-            $context = Context::fromArray(['foo' => ['bar' => $value]]);
-            $result = $value;
+            $context = Context::fromArray(['foo' => ['bar' => $value[0]]]);
+            $result = $value[1];
             yield "$input = $description" => 
                 [$input, $context, $result];
     
             $input = 'foo.bar.baz';
-            $context = Context::fromArray(['foo' => ['bar' => ['baz' => $value]]]);
-            $result = $value;
+            $context = Context::fromArray(['foo' => ['bar' => ['baz' => $value[0]]]]);
+            $result = $value[1];
             yield "$input = $description" => 
                 [$input, $context, $result];
 
             $input = 'foo[2]';
-            $context = Context::fromArray(['foo' => [null, null, $value, null, null]]);
-            $result = $value;
+            $context = Context::fromArray(['foo' => [null, null, $value[0], null, null]]);
+            $result = $value[1];
             yield "$input = $description" => 
                 [$input, $context, $result];
 
             $input = 'foo.bar[2]';
-            $context = Context::fromArray(['foo' => ['bar' => [null, null, $value, null, null]]]);
-            $result = $value;
+            $context = Context::fromArray(['foo' => ['bar' => [null, null, $value[0], null, null]]]);
+            $result = $value[1];
             yield "$input = $description" => 
                 [$input, $context, $result];
 
             $input = 'foo.property.baz';
-            $context = Context::fromArray(['foo' => new class($value) {
+            $context = Context::fromArray(['foo' => new class($value[0]) {
                 /**
                  * @var array<mixed>
                  */
@@ -102,12 +120,12 @@ final class ChainTest extends TestCase
                     $this->property = ['baz' => $value];
                 }
             }]);
-            $result = $value;
+            $result = $value[1];
             yield "$input = $description" => 
                 [$input, $context, $result];
 
             $input = 'foo.gettableProperty.baz';
-            $context = Context::fromArray(['foo' => new class($value) {
+            $context = Context::fromArray(['foo' => new class($value[0]) {
                 /**
                  * @var array<mixed>
                  */
@@ -129,7 +147,7 @@ final class ChainTest extends TestCase
                     return $this->property;
                 }
             }]);
-            $result = $value;
+            $result = $value[1];
             yield "$input = $description" => 
                 [$input, $context, $result];
         }
@@ -189,11 +207,11 @@ final class ChainTest extends TestCase
      * @small
      * @dataProvider averageCaseProvider
      * @param string $input
-     * @param Context $context
+     * @param ValueInterface $context
      * @param mixed $value
      * @return void
      */
-    public function testAverageCase(string $input, Context $context, $value): void
+    public function testAverageCase(string $input, ValueInterface $context, $value): void
     {
         $source = Source::fromString($input);
         $tokenizer = Tokenizer::fromSource($source, Scope\Expression::class);
@@ -207,6 +225,7 @@ final class ChainTest extends TestCase
             $ast
         );
 
-        $this->assertEquals($value, $result);
+        $this->assertInstanceOf(ValueInterface::class, $result);
+        $this->assertEquals($value, $result->getValue());
     }
 }

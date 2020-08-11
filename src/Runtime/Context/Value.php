@@ -12,7 +12,14 @@ final class Value
         if (is_null($value)) {
             return Value\NullValue::create();
         } elseif (is_array($value)) {
-            return Value\ArrayValue::fromArray($value);
+            // @NOTE: This is not an exact method to distinguish numerical and associative
+            //        PHP Arrays - but it is the one that is going to be used here for 
+            //        performance reasons.
+            if (array_key_exists(0, $value)) {
+                return Value\ArrayValue::fromArray($value);
+            } else {
+                return Value\DictionaryValue::fromArray($value);
+            }
         } elseif (is_bool($value)) {
             return Value\BooleanValue::fromBoolean($value);
         } elseif ($value instanceof \Closure) {

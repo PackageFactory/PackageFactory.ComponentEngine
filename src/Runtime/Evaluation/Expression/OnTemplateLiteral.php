@@ -2,6 +2,7 @@
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\TemplateLiteral;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\StringValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnTemplateLiteral
@@ -9,9 +10,9 @@ final class OnTemplateLiteral
     /**
      * @param Runtime $runtime
      * @param TemplateLiteral $templateLiteral
-     * @return string
+     * @return StringValue
      */
-    public static function evaluate(Runtime $runtime, TemplateLiteral $templateLiteral): string 
+    public static function evaluate(Runtime $runtime, TemplateLiteral $templateLiteral): StringValue 
     {
         $result = '';
 
@@ -19,7 +20,7 @@ final class OnTemplateLiteral
             if (is_string($segment)) {
                 $result .= $segment;
             } else {
-                $value = OnTerm::evaluate($runtime, $segment);
+                $value = OnTerm::evaluate($runtime, $segment)->getValue();
 
                 if (is_string($value)) {
                     $result .= $value;
@@ -46,7 +47,7 @@ final class OnTemplateLiteral
             }
         }
 
-        return $result;
+        return StringValue::fromString($result);
     }
 }
 

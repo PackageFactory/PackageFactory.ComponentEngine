@@ -21,6 +21,15 @@ final class CallableValue implements ValueInterface
     }
 
     /**
+     * @param callable $value
+     * @return self
+     */
+    public static function fromCallable(callable $value): self
+    {
+        return new self($value);
+    }
+
+    /**
      * @param \Closure $value
      * @return self
      */
@@ -56,6 +65,15 @@ final class CallableValue implements ValueInterface
     }
 
     /**
+     * @param ValueInterface $other
+     * @return ValueInterface
+     */
+    public function merge(ValueInterface $other): ValueInterface
+    {
+        throw new \RuntimeException('@TODO: Callable cannot be merged with ' . get_class($other));
+    }
+
+    /**
      * @param array<int, ValueInterface> $arguments
      * @param bool $optional
      * @return ValueInterface
@@ -73,27 +91,27 @@ final class CallableValue implements ValueInterface
 
     /**
      * @param ValueInterface $other
-     * @return ValueInterface
+     * @return BooleanValue
      */
-    public function greaterThan(ValueInterface $other): ValueInterface
+    public function greaterThan(ValueInterface $other): BooleanValue
     {
         throw new \RuntimeException('@TODO: Callable cannot be compared');
     }
 
     /**
      * @param ValueInterface $other
-     * @return ValueInterface
+     * @return BooleanValue
      */
-    public function lessThan(ValueInterface $other): ValueInterface
+    public function lessThan(ValueInterface $other): BooleanValue
     {
         throw new \RuntimeException('@TODO: Callable cannot be compared');
     }
 
     /**
      * @param ValueInterface $other
-     * @return ValueInterface
+     * @return BooleanValue
      */
-    public function equals(ValueInterface $other): ValueInterface
+    public function equals(ValueInterface $other): BooleanValue
     {
         throw new \RuntimeException('@TODO: Callable cannot be compared');
     }
@@ -144,29 +162,11 @@ final class CallableValue implements ValueInterface
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @return bool
      */
-    public function and(ValueInterface $other): ValueInterface
+    public function isTrueish(): bool
     {
-        throw new \RuntimeException('@TODO: Callable does not allow conjunction');
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return ValueInterface
-     */
-    public function or(ValueInterface $other): ValueInterface
-    {
-        throw new \RuntimeException('@TODO: Callable does not allow disjunction');
-    }
-
-    /**
-     * @return ValueInterface
-     */
-    public function not(): ValueInterface
-    {
-        throw new \RuntimeException('@TODO: Callable does not allow negation');
+        return true;
     }
 
     /**

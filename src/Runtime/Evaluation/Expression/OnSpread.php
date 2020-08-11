@@ -13,7 +13,7 @@ final class OnSpread
      */
     public static function evaluate(Runtime $runtime, Spread $spread): \Iterator 
     {
-        $subject = OnTerm::evaluate($runtime, $spread->getSubject());
+        $subject = OnTerm::evaluate($runtime, $spread->getSubject())->getValue();
 
         if (is_object($subject)) {
             $subject = (array) $subject;

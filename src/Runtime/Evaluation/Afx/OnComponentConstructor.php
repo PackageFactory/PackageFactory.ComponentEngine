@@ -4,6 +4,8 @@ namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Afx;
 use PackageFactory\VirtualDOM\Model as VirtualDOM;
 use PackageFactory\ComponentEngine\Parser\Ast\Afx\Tag;
 use PackageFactory\ComponentEngine\Parser\Ast\Afx\TagName;
+use PackageFactory\ComponentEngine\Runtime\Context\Key;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\DictionaryValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnComponentConstructor
@@ -17,9 +19,8 @@ final class OnComponentConstructor
     {
         /** @var TagName $tagName */
         $tagName = $componentConstructor->getTagName();
-        $constructor = $runtime->getContext()->getProperty(
-            $tagName->getValue()
-        );
+        $constructor = $runtime->getContext()->get(Key::fromTagName($tagName), false);
+
         $props = iterator_to_array(
             OnProps::evaluate(
                 $runtime, 
@@ -34,11 +35,12 @@ final class OnComponentConstructor
             false
         );
 
-        return $constructor(
-            $runtime->getContext()->withMergedProperties([
-                'props' => $props
-            ])
-        );
+        $result = $constructor->call([DictionaryValue::fromArray($props)], false)->getValue();
+        if ($result instanceof VirtualDOM\ComponentInterface) {
+            return $result;
+        } else {
+            throw new \RuntimeException('@TODO: Component Constructor is supposed to return a ' . VirtualDOM\ComponentInterface::class);
+        }
     }
 }
 

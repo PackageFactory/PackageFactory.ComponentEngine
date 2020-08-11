@@ -2,6 +2,7 @@
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Conjunction;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\BooleanValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnConjunction
@@ -14,22 +15,11 @@ final class OnConjunction
     public static function evaluate(Runtime $runtime, Conjunction $conjunction) 
     {
         $left = OnTerm::evaluate($runtime, $conjunction->getLeft());
-        if (is_string($left)) {
-            $left = $left !== '';
-        } elseif (is_numeric($left)) {
-            $left = $left !== 0;
-        } elseif (is_null($left)) {
-            $left = false;
-        } elseif (is_bool($left)) {
-            $left = $left;
-        } else {
-            $left = (bool) $left;
-        }
 
-        if ($left === true) {
+        if ($left->isTrueish()) {
             return OnTerm::evaluate($runtime, $conjunction->getRight());
         } else {
-            return false;
+            return BooleanValue::false();
         }
     }
 }

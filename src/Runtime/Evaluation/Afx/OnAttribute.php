@@ -23,7 +23,7 @@ final class OnAttribute
         } else {
             yield $name => VirtualDOM\Attribute::fromNameAndValue(
                 $name,
-                Expression\OnTerm::evaluate($runtime, $value)
+                Expression\OnTerm::evaluate($runtime, $value)->getValue()
             );
         }
     }

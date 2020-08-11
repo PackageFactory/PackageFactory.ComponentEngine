@@ -3,6 +3,7 @@ namespace PackageFactory\ComponentEngine\Runtime\Context\Value;
 
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Context\Key;
+use PackageFactory\ComponentEngine\Runtime\Context\Value;
 
 final class ArrayValue implements ValueInterface
 {
@@ -36,10 +37,26 @@ final class ArrayValue implements ValueInterface
     public function get(Key $key, bool $optional): ValueInterface
     {
         if ($key->isNumeric()) {
-            return $this->value[$key->getValue()] ?? NullValue::create();
+            if (array_key_exists($key->getValue(), $this->value)) {
+                return Value::fromAny($this->value[$key->getValue()]);
+            } elseif ($optional) {
+                return NullValue::create();
+            } else {
+                throw new \RuntimeException('@TODO: Invalid property access');
+            }
         } else {
+            var_dump($key);
             throw new \RuntimeException('@TODO: Invalid key');
         }
+    }
+
+    /**
+     * @param ValueInterface $other
+     * @return ValueInterface
+     */
+    public function merge(ValueInterface $other): ValueInterface
+    {
+        throw new \RuntimeException('@TODO: Array cannot be merged with ' . get_class($other));
     }
 
     /**
@@ -54,27 +71,27 @@ final class ArrayValue implements ValueInterface
 
     /**
      * @param ValueInterface $other
-     * @return ValueInterface
+     * @return BooleanValue
      */
-    public function greaterThan(ValueInterface $other): ValueInterface
+    public function greaterThan(ValueInterface $other): BooleanValue
     {
         throw new \RuntimeException('@TODO: Array cannot be compared');
     }
 
     /**
      * @param ValueInterface $other
-     * @return ValueInterface
+     * @return BooleanValue
      */
-    public function lessThan(ValueInterface $other): ValueInterface
+    public function lessThan(ValueInterface $other): BooleanValue
     {
         throw new \RuntimeException('@TODO: Array cannot be compared');
     }
 
     /**
      * @param ValueInterface $other
-     * @return ValueInterface
+     * @return BooleanValue
      */
-    public function equals(ValueInterface $other): ValueInterface
+    public function equals(ValueInterface $other): BooleanValue
     {
         return BooleanValue::fromBoolean($this->value === $other->getValue());
     }
@@ -125,37 +142,11 @@ final class ArrayValue implements ValueInterface
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @return bool
      */
-    public function and(ValueInterface $other): ValueInterface
+    public function isTrueish(): bool
     {
-        if (count($this->value) === 0) {
-            return BooleanValue::fromBoolean(false);
-        } else {
-            return $other;
-        }
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return ValueInterface
-     */
-    public function or(ValueInterface $other): ValueInterface
-    {
-        if (count($this->value) === 0) {
-            return $other;
-        } else {
-            return $this;
-        }
-    }
-
-    /**
-     * @return ValueInterface
-     */
-    public function not(): ValueInterface
-    {
-        return BooleanValue::fromBoolean(count($this->value) === 0);
+        return count($this->value) !== 0;
     }
 
     /**
@@ -165,4 +156,5 @@ final class ArrayValue implements ValueInterface
     {
         return $this->value;
     }
+
 }

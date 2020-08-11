@@ -1,6 +1,11 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Runtime\Context;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Afx\TagName;
+use PackageFactory\ComponentEngine\Parser\Ast\Expression\Identifier;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\NumberValue;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\StringValue;
+
 final class Key
 {
     /**
@@ -33,12 +38,45 @@ final class Key
     }
 
     /**
+     * @param Identifier $identifier
+     * @return self
+     */
+    public static function fromIdentifier(Identifier $identifier): self
+    {
+        return new self(false, $identifier->getValue());
+    }
+
+    /**
+     * @param TagName $tagName
+     * @return self
+     */
+    public static function fromTagName(TagName $tagName): self
+    {
+        return new self(false, $tagName->getValue());
+    }
+
+    /**
      * @param int $value
      * @return self
      */
     public static function fromInteger(int $value): self
     {
         return new self(true, $value);
+    }
+
+    /**
+     * @param ValueInterface $value
+     * @return self
+     */
+    public static function fromValue(ValueInterface $value): self
+    {
+        if ($value instanceof NumberValue) {
+            return new self(true, (int) $value->getValue());
+        } elseif ($value instanceof StringValue) {
+            return new self(false, $value->getValue());
+        } else {
+            throw new \RuntimeException('@TODO: Illegal value as key');
+        }
     }
 
     /**

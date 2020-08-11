@@ -2,6 +2,7 @@
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\NullLiteral;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\NullValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnNullLiteral
@@ -9,11 +10,11 @@ final class OnNullLiteral
     /**
      * @param Runtime $runtime
      * @param NullLiteral $nullLiteral
-     * @return null
+     * @return NullValue
      */
-    public static function evaluate(Runtime $runtime, NullLiteral $nullLiteral) 
+    public static function evaluate(Runtime $runtime, NullLiteral $nullLiteral): NullValue
     {
-        return null;
+        return NullValue::create();
     }
 }
 

@@ -2,6 +2,7 @@
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Module;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Module\Module;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\DictionaryValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnModule
@@ -15,20 +16,18 @@ final class OnModule
     public static function evaluate(Runtime $runtime, Module $module, string $exportName = 'default') {
         $export = $module->getExport($exportName);
         $context = $runtime->getContext();
-    
+        
+        $imports = [];
         foreach ($module->getImports() as $import) {
-            $context = $context->withMergedProperties([
-                (string) $import->getDomesticName() => 
-                    OnImport::evaluate($runtime, $module, $import)
-            ]);
+            $imports[(string) $import->getDomesticName()] = OnImport::evaluate($runtime, $module, $import);
         }
+        $context = $context->merge(DictionaryValue::fromArray($imports));
     
+        $constants = [];
         foreach ($module->getConstants() as $constant) {
-            $context = $context->withMergedProperties([
-                (string) $constant->getName() =>
-                    OnConstant::evaluate($runtime->withContext($context), $constant)
-            ]);
+            $constants[(string) $constant->getName()] = OnConstant::evaluate($runtime->withContext($context), $constant)->getValue();
         }
+        $context = $context->merge(DictionaryValue::fromArray($constants));
     
         return OnExport::evaluate($runtime->withContext($context), $export);
     }

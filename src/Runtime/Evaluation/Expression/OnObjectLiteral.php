@@ -2,6 +2,7 @@
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\ObjectLiteral;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\DictionaryValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnObjectLiteral
@@ -9,9 +10,9 @@ final class OnObjectLiteral
     /**
      * @param Runtime $runtime
      * @param ObjectLiteral $objectLiteral
-     * @return \stdClass
+     * @return DictionaryValue
      */
-    public static function evaluate(Runtime $runtime, ObjectLiteral $objectLiteral): \stdClass 
+    public static function evaluate(Runtime $runtime, ObjectLiteral $objectLiteral): DictionaryValue
     {
         $properties = [];
         foreach ($objectLiteral->getProperties() as $property) {
@@ -20,7 +21,7 @@ final class OnObjectLiteral
             }
         }
 
-        return (object) $properties;
+        return DictionaryValue::fromArray($properties);
     }
 }
 

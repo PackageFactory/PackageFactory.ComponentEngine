@@ -17,21 +17,21 @@ use PackageFactory\ComponentEngine\Parser\Ast\Expression\NullLiteral;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\NumberLiteral;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\ObjectLiteral;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\PointOperation;
-use PackageFactory\ComponentEngine\Parser\Ast\Expression\Spread;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\StringLiteral;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\TemplateLiteral;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Ternary;
 use PackageFactory\ComponentEngine\Parser\Ast\Afx\Tag;
 use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 
 final class OnTerm
 {
     /**
      * @param Runtime $runtime
      * @param Term $term
-     * @return mixed
+     * @return ValueInterface
      */
-    public static function evaluate(Runtime $runtime, Term $term)
+    public static function evaluate(Runtime $runtime, Term $term): ValueInterface
     {
         if ($term instanceof NullLiteral) {
             return OnNullLiteral::evaluate($runtime, $term);

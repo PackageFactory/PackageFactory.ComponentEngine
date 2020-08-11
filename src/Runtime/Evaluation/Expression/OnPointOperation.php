@@ -2,6 +2,7 @@
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\PointOperation;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\NumberValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnPointOperation
@@ -9,28 +10,28 @@ final class OnPointOperation
     /**
      * @param Runtime $runtime
      * @param PointOperation $pointOperation
-     * @return float
+     * @return NumberValue
      */
-    public static function evaluate(Runtime $runtime, PointOperation $pointOperation): float 
+    public static function evaluate(Runtime $runtime, PointOperation $pointOperation): NumberValue 
     {
         $left = OnTerm::evaluate($runtime, $pointOperation->getLeft());
-        if ($left === 0) {
-            return 0;
+        if ($left->getValue() === 0) {
+            return NumberValue::zero();
         }
 
         $right = OnTerm::evaluate($runtime, $pointOperation->getRight());
-        if ($right === 0) {
-            return 0;
+        if ($right->getValue() === 0) {
+            return NumberValue::zero();
         }
 
-        if ($pointOperation->getOperator() === PointOperation::OPERATOR_MULTIPLY) {
-            return $left * $right;
-        } elseif ($pointOperation->getOperator() === PointOperation::OPERATOR_DIVIDE) {
-            return $left / $right;
-        } elseif ($pointOperation->getOperator() === PointOperation::OPERATOR_MODULO) {
-            return $left % $right;
-        } else {
-            throw new \RuntimeException('@TODO: Unknown operator');
+        switch ($pointOperation->getOperator()) {
+            default:
+            case PointOperation::OPERATOR_MULTIPLY:
+                return $left->multiply($right);
+            case PointOperation::OPERATOR_DIVIDE:
+                return $left->divide($right);
+            case PointOperation::OPERATOR_MODULO:
+                return $left->modulo($right);
         }
     }
 }

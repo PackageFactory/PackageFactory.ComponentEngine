@@ -2,21 +2,21 @@
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Negation;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\BooleanValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
-use PackageFactory\ComponentEngine\Util;
 
 final class OnNegation
 {
     /**
      * @param Runtime $runtime
      * @param Negation $negation
-     * @return bool
+     * @return BooleanValue
      */
-    public static function evaluate(Runtime $runtime, Negation $negation): bool 
+    public static function evaluate(Runtime $runtime, Negation $negation): BooleanValue 
     {
-        $subject = OnTerm::evaluate($runtime, $negation->getSubject());
-
-        return !Util::isTrueish($subject);
+        return BooleanValue::fromBoolean(
+            !OnTerm::evaluate($runtime, $negation->getSubject())->isTrueish()
+        );
     }
 }
 

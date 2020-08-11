@@ -31,9 +31,9 @@ final class OnObjectLiteralProperty
                 if ($key === null) {
                     throw new \Exception('@TODO: Unexpected empty key');
                 } elseif ($key instanceof Identifier) {
-                    yield $key->getValue() => $value;
+                    yield $key->getValue() => $value->getValue();
                 } else {
-                    yield OnTerm::evaluate($runtime, $key) => $value;
+                    yield OnTerm::evaluate($runtime, $key) => $value->getValue();
                 }
             }
         }

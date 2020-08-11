@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Runtime\Context\Value;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Expression\NumberLiteral;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Context\Key;
 
@@ -17,6 +18,14 @@ final class NumberValue implements ValueInterface
     private function __construct(float $value)
     {
         $this->value = $value;
+    }
+
+    /**
+     * @return self
+     */
+    public static function zero(): self
+    {
+        return new self(0.0);
     }
 
     /**
@@ -38,6 +47,15 @@ final class NumberValue implements ValueInterface
     }
 
     /**
+     * @param NumberLiteral $numberLiteral
+     * @return self
+     */
+    public static function fromNumberLiteral(NumberLiteral $numberLiteral): self
+    {
+        return new self($numberLiteral->getNumber());
+    }
+
+    /**
      * @param Key $key
      * @param bool $optional
      * @return ValueInterface
@@ -45,6 +63,15 @@ final class NumberValue implements ValueInterface
     public function get(Key $key, bool $optional): ValueInterface
     {
         throw new \RuntimeException('@TODO: Number has no children');
+    }
+
+    /**
+     * @param ValueInterface $other
+     * @return ValueInterface
+     */
+    public function merge(ValueInterface $other): ValueInterface
+    {
+        throw new \RuntimeException('@TODO: Number cannot be merged with ' . get_class($other));
     }
 
     /**
@@ -59,9 +86,9 @@ final class NumberValue implements ValueInterface
 
     /**
      * @param ValueInterface $other
-     * @return ValueInterface
+     * @return BooleanValue
      */
-    public function greaterThan(ValueInterface $other): ValueInterface
+    public function greaterThan(ValueInterface $other): BooleanValue
     {
         if ($other instanceof BooleanValue || $other instanceof NumberValue) {
             return BooleanValue::fromBoolean($this->value > $other->getValue());
@@ -72,9 +99,9 @@ final class NumberValue implements ValueInterface
 
     /**
      * @param ValueInterface $other
-     * @return ValueInterface
+     * @return BooleanValue
      */
-    public function lessThan(ValueInterface $other): ValueInterface
+    public function lessThan(ValueInterface $other): BooleanValue
     {
         if ($other instanceof BooleanValue || $other instanceof NumberValue) {
             return BooleanValue::fromBoolean($this->value < $other->getValue());
@@ -85,9 +112,9 @@ final class NumberValue implements ValueInterface
 
     /**
      * @param ValueInterface $other
-     * @return ValueInterface
+     * @return BooleanValue
      */
-    public function equals(ValueInterface $other): ValueInterface
+    public function equals(ValueInterface $other): BooleanValue
     {
         if ($other instanceof NumberValue) {
             return BooleanValue::fromBoolean($this->value === $other->getValue());
@@ -172,37 +199,11 @@ final class NumberValue implements ValueInterface
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @return bool
      */
-    public function and(ValueInterface $other): ValueInterface
+    public function isTrueish(): bool
     {
-        if ($this->value === 0.0) {
-            return BooleanValue::fromBoolean(false);
-        } else {
-            return $other;
-        }
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return ValueInterface
-     */
-    public function or(ValueInterface $other): ValueInterface
-    {
-        if ($this->value === 0.0) {
-            return $other;
-        } else {
-            return $this;
-        }
-    }
-
-    /**
-     * @return ValueInterface
-     */
-    public function not(): ValueInterface
-    {
-        return BooleanValue::fromBoolean($this->value === 0.0);
+        return $this->value !== 0.0;
     }
 
     /**

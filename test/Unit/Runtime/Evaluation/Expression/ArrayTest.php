@@ -8,6 +8,7 @@ use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\Scope;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Runtime\Context;
+use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Evaluation\Expression\OnTerm;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 use PHPUnit\Framework\TestCase;
@@ -108,7 +109,8 @@ final class ArrayTest extends TestCase
             $ast
         );
 
-        $this->assertEquals($value, $result);
+        $this->assertInstanceOf(ValueInterface::class, $result);
+        $this->assertEquals($value, $result->getValue());
     }
 
     /**
@@ -140,7 +142,7 @@ final class ArrayTest extends TestCase
         /** @var ArrayLiteral $ast */
         $ast = ExpressionParser::parse($stream);
 
-        $result = OnTerm::evaluate(
+        OnTerm::evaluate(
             Runtime::default()->withContext(Context::fromArray($context)),
             $ast
         );

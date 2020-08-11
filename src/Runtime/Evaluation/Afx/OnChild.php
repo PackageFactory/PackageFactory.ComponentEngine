@@ -25,7 +25,7 @@ final class OnChild
         } else {
             /** @var Term $child */
             yield from self::getContentFromValue(
-                Expression\OnTerm::evaluate($runtime, $child)
+                Expression\OnTerm::evaluate($runtime, $child)->getValue()
             );
         }
     }

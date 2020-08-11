@@ -5,6 +5,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\Module\Import;
 use PackageFactory\ComponentEngine\Parser\Ast\Module\Module;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Runtime\Context;
+use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnImport
@@ -21,7 +22,7 @@ final class OnImport
             Path::fromString($import->getTarget())
         ));
     
-        return function(Context $context) use ($runtime, $module, $import) {
+        return function(ValueInterface $context) use ($runtime, $module, $import) {
             return OnModule::evaluate(
                 $runtime->withContext($context),
                 $module,

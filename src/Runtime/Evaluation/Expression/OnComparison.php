@@ -2,6 +2,7 @@
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Comparison;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\BooleanValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnComparison
@@ -9,27 +10,27 @@ final class OnComparison
     /**
      * @param Runtime $runtime
      * @param Comparison $comparison
-     * @return bool
+     * @return BooleanValue
      */
-    public static function evaluate(Runtime $runtime, Comparison $comparison): bool 
+    public static function evaluate(Runtime $runtime, Comparison $comparison): BooleanValue 
     {
         $left = OnTerm::evaluate($runtime, $comparison->getLeft());
         $right = OnTerm::evaluate($runtime, $comparison->getRight());
 
-        if ($comparison->getOperator() === Comparison::COMPARATOR_EQ) {
-            return $left === $right;
-        } elseif ($comparison->getOperator() === Comparison::COMPARATOR_NEQ) {
-            return $left !== $right;
-        } elseif ($comparison->getOperator() === Comparison::COMPARATOR_GT) {
-            return $left > $right;
-        } elseif ($comparison->getOperator() === Comparison::COMPARATOR_GTE) {
-            return $left >= $right;
-        } elseif ($comparison->getOperator() === Comparison::COMPARATOR_LT) {
-            return $left < $right;
-        } elseif ($comparison->getOperator() === Comparison::COMPARATOR_LTE) {
-            return $left <= $right;
-        } else {
-            throw new \RuntimeException('@TODO: Unknown operator');
+        switch ($comparison->getOperator()) {
+            default:
+            case Comparison::COMPARATOR_EQ:
+                return $left->equals($right);
+            case Comparison::COMPARATOR_NEQ:
+                return $left->equals($right)->not();
+            case Comparison::COMPARATOR_GT:
+                return $left->greaterThan($right);
+            case Comparison::COMPARATOR_GTE:
+                return $left->equals($right)->or($left->greaterThan($right));
+            case Comparison::COMPARATOR_LT:
+                return $left->lessThan($right);
+            case Comparison::COMPARATOR_LTE:
+                return $left->equals($right)->or($left->lessThan($right));
         }
     }
 }

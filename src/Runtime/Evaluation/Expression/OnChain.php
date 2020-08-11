@@ -5,6 +5,8 @@ use PackageFactory\ComponentEngine\Parser\Ast\Expression\Call;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Chain;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Identifier;
 use PackageFactory\ComponentEngine\Runtime\Context;
+use PackageFactory\ComponentEngine\Runtime\Context\Key;
+use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnChain
@@ -12,14 +14,14 @@ final class OnChain
     /**
      * @param Runtime $runtime
      * @param Chain $chain
-     * @return mixed
+     * @return ValueInterface
      */
-    public static function evaluate(Runtime $runtime, Chain $chain)
+    public static function evaluate(Runtime $runtime, Chain $chain): ValueInterface
     {
         if ($chain->getRoot() instanceof Identifier) {
             /** @var Identifier $identifier */
             $identifier = $chain->getRoot();
-            $value = $runtime->getContext()->getProperty($identifier->getValue());
+            $value = $runtime->getContext()->get(Key::fromIdentifier($identifier), true);
         } else {
             $value = OnTerm::evaluate($runtime, $chain->getRoot());
         }
@@ -27,88 +29,21 @@ final class OnChain
         foreach ($chain->getSegments() as $segment) {
             $key = $segment->getKey();
             if ($key instanceof Identifier) {
-                $key = $key->getValue();
+                $key = Key::fromIdentifier($key);
             } else {
-                $key = OnTerm::evaluate($runtime, $key);
+                $key = Key::fromValue(OnTerm::evaluate($runtime, $key));
             }
 
-            if (!is_scalar($key)) {
-                throw new \RuntimeException('@TODO: Invalid key');
-            }
-
-            if ($value instanceof Context) {
-                if (!is_string($key)) {
-                    throw new \RuntimeException('@TODO: Invalid key');
-                } elseif ($value->hasProperty($key)) {
-                    $value = $value->getProperty($key);
-                } elseif ($segment->getIsOptional()) {
-                    return null;
-                } else {
-                    throw new \RuntimeException('@TODO: Invalid property access: ' . $key);
-                }
-            } elseif (is_string($value)) {
-                if (!is_numeric($key)) {
-                    throw new \RuntimeException('@TODO: Invalid key');
-                } elseif ((int) $key < mb_strlen($value)) {
-                    $value = $value[(int) $key];
-                } else {
-                    throw new \RuntimeException('@TODO: Invalid property access: ' . $key);
-                }
-            } elseif (is_array($value)) {
-                if (is_numeric($key) && !is_int($key) && intval($key) == $key) {
-                    $key = (int) $key;
-                }
-                if ((is_int($key) || is_string($key)) && array_key_exists($key, $value)) {
-                    $value = $value[$key];
-                } elseif ($key === 'map') {
-                    $items = $value;
-                    $value = function(callable $callback) use ($items) {
-                        $result = [];
-                        foreach ($items as $item) {
-                            $result[] = $callback($item);
-                        }
-                        return $result;
-                    };
-                } elseif ($segment->getIsOptional()) {
-                    return null;
-                } else {
-                    throw new \RuntimeException('@TODO: Invalid property access: ' . $key);
-                }
-            } elseif (is_object($value)) {
-                if (!is_string($key)) {
-                    throw new \RuntimeException('@TODO: Invalid key');
-                } elseif (isset($value->{ $key })) {
-                    $value = $value->{ $key };
-                } else {
-                    $getter = 'get' . ucfirst($key);
-
-                    if (is_callable([$value, $getter])) {
-                        try {
-                            $value = $value->{ $getter }();
-                        } catch (\Throwable $err) {
-                            throw new \RuntimeException('@TODO: An error occured during PHP execution: ' . $err->getMessage());
-                        }
-                    } elseif ($segment->getIsOptional()) {
-                        return null;
-                    } else {
-                        throw new \RuntimeException('@TODO: Invalid property access: ' . $key);
-                    }
-                }
-            } else {
-                throw new \RuntimeException('@TODO: Invalid value type: ' . gettype($value));
-            }
+            /** @var ValueInterface $value */
+            $value = $value->get($key, $segment->getIsOptional());
 
             if ($call = $segment->getCall()) {
-                if ($value instanceof \Closure) {
-                    $arguments = [];
-                    foreach ($call->getArguments() as $argument) {
-                        $arguments[] = OnTerm::evaluate($runtime, $argument);
-                    }
-
-                    $value = $value(...$arguments);
-                } else {
-                    throw new \RuntimeException('@TODO: Invalid call.');
+                $arguments = [];
+                foreach ($call->getArguments() as $argument) {
+                    $arguments[] = OnTerm::evaluate($runtime, $argument);
                 }
+                
+                $value = $value->call($arguments, $segment->getIsOptional());
             }
         }
 

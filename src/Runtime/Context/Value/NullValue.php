@@ -33,6 +33,15 @@ final class NullValue implements ValueInterface
     }
 
     /**
+     * @param ValueInterface $other
+     * @return ValueInterface
+     */
+    public function merge(ValueInterface $other): ValueInterface
+    {
+        return $other;
+    }
+
+    /**
      * @param array<int, ValueInterface> $arguments
      * @param bool $optional
      * @return ValueInterface
@@ -48,27 +57,27 @@ final class NullValue implements ValueInterface
 
     /**
      * @param ValueInterface $other
-     * @return ValueInterface
+     * @return BooleanValue
      */
-    public function greaterThan(ValueInterface $other): ValueInterface
+    public function greaterThan(ValueInterface $other): BooleanValue
     {
         throw new \RuntimeException('@TODO: Null cannot be compared');
     }
 
     /**
      * @param ValueInterface $other
-     * @return ValueInterface
+     * @return BooleanValue
      */
-    public function lessThan(ValueInterface $other): ValueInterface
+    public function lessThan(ValueInterface $other): BooleanValue
     {
         throw new \RuntimeException('@TODO: Null cannot be compared');
     }
 
     /**
      * @param ValueInterface $other
-     * @return ValueInterface
+     * @return BooleanValue
      */
-    public function equals(ValueInterface $other): ValueInterface
+    public function equals(ValueInterface $other): BooleanValue
     {
         return BooleanValue::fromBoolean($other instanceof NullValue);
     }
@@ -119,29 +128,11 @@ final class NullValue implements ValueInterface
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @return bool
      */
-    public function and(ValueInterface $other): ValueInterface
+    public function isTrueish(): bool
     {
-        return BooleanValue::fromBoolean(false);
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return ValueInterface
-     */
-    public function or(ValueInterface $other): ValueInterface
-    {
-        return $other;
-    }
-
-    /**
-     * @return ValueInterface
-     */
-    public function not(): ValueInterface
-    {
-        return BooleanValue::fromBoolean(true);
+        return false;
     }
 
     /**
