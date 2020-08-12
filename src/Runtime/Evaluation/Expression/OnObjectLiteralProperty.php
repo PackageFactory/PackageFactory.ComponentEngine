@@ -33,7 +33,7 @@ final class OnObjectLiteralProperty
                 } elseif ($key instanceof Identifier) {
                     yield $key->getValue() => $value->getValue();
                 } else {
-                    yield OnTerm::evaluate($runtime, $key) => $value->getValue();
+                    yield OnTerm::evaluate($runtime, $key)->getValue() => $value->getValue();
                 }
             }
         }

@@ -28,7 +28,7 @@ final class OnArrowFunction
                         throw new \Exception('@TODO: Missing argument: ' . $parameter->getValue());
                     }
                 }
-    
+
                 return OnTerm::evaluate(
                     $runtime->withContext(
                         $runtime->getContext()->merge(DictionaryValue::fromArray($properties))

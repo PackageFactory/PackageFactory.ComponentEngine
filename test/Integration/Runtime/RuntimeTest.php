@@ -46,7 +46,7 @@ final class RuntimeTest extends BaseTestCase
         $result = OnModule::evaluate($runtime, $module);
 
         $this->assertMatchesSnapshot(
-            HTML5StringRenderer::render($result)
+            HTML5StringRenderer::render($result->getValue())
         );
     }
 
@@ -90,7 +90,7 @@ final class RuntimeTest extends BaseTestCase
         $result = OnModule::evaluate($runtime, $module);
 
         $this->assertMatchesSnapshot(
-            HTML5StringRenderer::render($result)
+            HTML5StringRenderer::render($result->getValue())
         );
     }
 
@@ -127,7 +127,7 @@ final class RuntimeTest extends BaseTestCase
         $result = OnModule::evaluate($runtime, $module);
 
         $this->assertMatchesSnapshot(
-            HTML5StringRenderer::render($result)
+            HTML5StringRenderer::render($result->getValue())
         );
     }
 }

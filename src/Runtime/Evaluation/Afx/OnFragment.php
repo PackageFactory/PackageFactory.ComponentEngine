@@ -2,8 +2,8 @@
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Afx;
 
 use PackageFactory\VirtualDOM\VirtualDOM;
-use PackageFactory\VirtualDOM\Model\Fragment;
 use PackageFactory\ComponentEngine\Parser\Ast\Afx\Tag;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\AfxValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnFragment
@@ -11,17 +11,19 @@ final class OnFragment
     /**
      * @param Runtime $runtime
      * @param Tag $fragment
-     * @return Fragment
+     * @return AfxValue
      */
-    public static function evaluate(Runtime $runtime, Tag $fragment): Fragment
+    public static function evaluate(Runtime $runtime, Tag $fragment): AfxValue
     {
-        return VirtualDOM::fragment(
-            iterator_to_array(
-                OnChildren::evaluate(
-                    $runtime,
-                    $fragment->getChildren()
-                ),
-                false
+        return AfxValue::fromComponent(
+            VirtualDOM::fragment(
+                iterator_to_array(
+                    OnChildren::evaluate(
+                        $runtime,
+                        $fragment->getChildren()
+                    ),
+                    false
+                )
             )
         );
     }

@@ -2,7 +2,7 @@
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Comparison;
-use PackageFactory\ComponentEngine\Runtime\Context\Value\BooleanValue;
+use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnComparison
@@ -10,9 +10,9 @@ final class OnComparison
     /**
      * @param Runtime $runtime
      * @param Comparison $comparison
-     * @return BooleanValue
+     * @return ValueInterface
      */
-    public static function evaluate(Runtime $runtime, Comparison $comparison): BooleanValue 
+    public static function evaluate(Runtime $runtime, Comparison $comparison): ValueInterface
     {
         $left = OnTerm::evaluate($runtime, $comparison->getLeft());
         $right = OnTerm::evaluate($runtime, $comparison->getRight());

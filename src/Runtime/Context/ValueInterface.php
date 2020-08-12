@@ -23,9 +23,10 @@ interface ValueInterface
     /**
      * @param array<int, ValueInterface> $arguments
      * @param bool $optional
+     * @param Runtime $runtime
      * @return ValueInterface
      */
-    public function call(array $arguments, bool $optional): ValueInterface;
+    public function call(array $arguments, bool $optional, Runtime $runtime): ValueInterface;
 
     /**
      * @param ValueInterface $other

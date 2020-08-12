@@ -1,42 +1,33 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Runtime\Context\Value;
 
-use PackageFactory\ComponentEngine\Parser\Ast\Expression\StringLiteral;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Context\Key;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
+use PackageFactory\VirtualDOM\Model\ComponentInterface;
 
-final class StringValue implements ValueInterface
+final class AfxValue implements ValueInterface
 {
     /**
-     * @var string
+     * @var ComponentInterface
      */
-    private $value;
+    private $component;
 
     /**
-     * @param string $value
+     * @param ComponentInterface $component
      */
-    private function __construct(string $value)
+    private function __construct(ComponentInterface $component)
     {
-        $this->value = $value;
+        $this->component = $component;
     }
 
     /**
-     * @param string $value
+     * @param ComponentInterface $component
      * @return self
      */
-    public static function fromString(string $value): self
+    public static function fromComponent(ComponentInterface $component): self
     {
-        return new self($value);
-    }
-
-    /**
-     * @param StringLiteral $value
-     * @return self
-     */
-    public static function fromStringLiteral(StringLiteral $value): self
-    {
-        return new self($value->getValue());
+        return new self($component);
     }
 
     /**
@@ -47,11 +38,7 @@ final class StringValue implements ValueInterface
      */
     public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface
     {
-        if ($key->isNumeric()) {
-            return StringValue::fromString($this->value[$key->getValue()]) ?? NullValue::create();
-        } else {
-            throw new \RuntimeException('@TODO: Invalid key');
-        }
+        throw new \RuntimeException('@TODO: Afx Value has no children');
     }
 
     /**
@@ -60,7 +47,7 @@ final class StringValue implements ValueInterface
      */
     public function merge(ValueInterface $other): ValueInterface
     {
-        throw new \RuntimeException('@TODO: String cannot be merged with ' . get_class($other));
+        throw new \RuntimeException('@TODO: Afx Value cannot be merged with ' . get_class($other));
     }
 
     /**
@@ -71,7 +58,7 @@ final class StringValue implements ValueInterface
      */
     public function call(array $arguments, bool $optional, Runtime $runtime): ValueInterface
     {
-        throw new \RuntimeException('@TODO: String cannot be called');
+        throw new \RuntimeException('@TODO: Afx Value cannot be called');
     }
 
     /**
@@ -80,11 +67,7 @@ final class StringValue implements ValueInterface
      */
     public function greaterThan(ValueInterface $other): BooleanValue
     {
-        if ($other instanceof StringValue) {
-            return BooleanValue::fromBoolean($this->value > $other->getValue());
-        } else {
-            throw new \RuntimeException('@TODO: String cannot be compared with ' . get_class($other));
-        }
+        throw new \RuntimeException('@TODO: Afx Value cannot be compared');
     }
 
     /**
@@ -93,11 +76,7 @@ final class StringValue implements ValueInterface
      */
     public function lessThan(ValueInterface $other): BooleanValue
     {
-        if ($other instanceof StringValue) {
-            return BooleanValue::fromBoolean($this->value < $other->getValue());
-        } else {
-            throw new \RuntimeException('@TODO: String cannot be compared with ' . get_class($other));
-        }
+        throw new \RuntimeException('@TODO: Afx Value cannot be compared');
     }
 
     /**
@@ -106,7 +85,7 @@ final class StringValue implements ValueInterface
      */
     public function equals(ValueInterface $other): BooleanValue
     {
-        return BooleanValue::fromBoolean($this->value === $other->getValue());
+        return BooleanValue::fromBoolean($this->component === $other->getValue());
     }
 
     /**
@@ -115,11 +94,7 @@ final class StringValue implements ValueInterface
      */
     public function add(ValueInterface $other): ValueInterface
     {
-        if ($other instanceof StringValue || $other instanceof BooleanValue || $other instanceof NumberValue) {
-            return StringValue::fromString($this->value . ((string) $other->getValue()));
-        } else {
-            throw new \RuntimeException('@TODO: String cannot be compared with ' . get_class($other));
-        }
+        throw new \RuntimeException('@TODO: Afx Value cannot be added to');
     }
 
     /**
@@ -128,7 +103,7 @@ final class StringValue implements ValueInterface
      */
     public function subtract(ValueInterface $other): ValueInterface
     {
-        throw new \RuntimeException('@TODO: String cannot be subtracted from');
+        throw new \RuntimeException('@TODO: Afx Value cannot be subtracted from');
     }
 
     /**
@@ -137,7 +112,7 @@ final class StringValue implements ValueInterface
      */
     public function multiply(ValueInterface $other): ValueInterface
     {
-        throw new \RuntimeException('@TODO: String cannot be multiplied');
+        throw new \RuntimeException('@TODO: Afx Value cannot be multiplied');
     }
 
     /**
@@ -146,7 +121,7 @@ final class StringValue implements ValueInterface
      */
     public function divide(ValueInterface $other): ValueInterface
     {
-        throw new \RuntimeException('@TODO: String cannot be divided');
+        throw new \RuntimeException('@TODO: Afx Value cannot be divided');
     }
 
     /**
@@ -155,7 +130,7 @@ final class StringValue implements ValueInterface
      */
     public function modulo(ValueInterface $other): ValueInterface
     {
-        throw new \RuntimeException('@TODO: String does not allow modulo operation');
+        throw new \RuntimeException('@TODO: Afx Value does not allow modulo operation');
     }
 
     /**
@@ -163,14 +138,14 @@ final class StringValue implements ValueInterface
      */
     public function isTrueish(): bool
     {
-        return $this->value !== '';
+        return true;
     }
 
     /**
-     * @return string
+     * @return object
      */
     public function getValue()
     {
-        return $this->value;
+        return $this->component;
     }
 }

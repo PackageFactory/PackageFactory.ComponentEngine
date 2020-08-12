@@ -16,19 +16,20 @@ final class OnModule
     public static function evaluate(Runtime $runtime, Module $module, string $exportName = 'default') {
         $export = $module->getExport($exportName);
         $context = $runtime->getContext();
-        
+
         $imports = [];
         foreach ($module->getImports() as $import) {
             $imports[(string) $import->getDomesticName()] = OnImport::evaluate($runtime, $module, $import);
         }
         $context = $context->merge(DictionaryValue::fromArray($imports));
-    
+
         $constants = [];
         foreach ($module->getConstants() as $constant) {
             $constants[(string) $constant->getName()] = OnConstant::evaluate($runtime->withContext($context), $constant)->getValue();
         }
         $context = $context->merge(DictionaryValue::fromArray($constants));
-    
+
+
         return OnExport::evaluate($runtime->withContext($context), $export);
     }
 }

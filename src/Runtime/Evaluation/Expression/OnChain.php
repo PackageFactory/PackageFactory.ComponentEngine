@@ -1,10 +1,8 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
-use PackageFactory\ComponentEngine\Parser\Ast\Expression\Call;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Chain;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Identifier;
-use PackageFactory\ComponentEngine\Runtime\Context;
 use PackageFactory\ComponentEngine\Runtime\Context\Key;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
@@ -21,7 +19,7 @@ final class OnChain
         if ($chain->getRoot() instanceof Identifier) {
             /** @var Identifier $identifier */
             $identifier = $chain->getRoot();
-            $value = $runtime->getContext()->get(Key::fromIdentifier($identifier), true);
+            $value = $runtime->getContext()->get(Key::fromIdentifier($identifier), true, $runtime);
         } else {
             $value = OnTerm::evaluate($runtime, $chain->getRoot());
         }
@@ -35,7 +33,7 @@ final class OnChain
             }
 
             /** @var ValueInterface $value */
-            $value = $value->get($key, $segment->getIsOptional());
+            $value = $value->get($key, $segment->getIsOptional(), $runtime);
 
             if ($call = $segment->getCall()) {
                 $arguments = [];
@@ -43,7 +41,7 @@ final class OnChain
                     $arguments[] = OnTerm::evaluate($runtime, $argument);
                 }
                 
-                $value = $value->call($arguments, $segment->getIsOptional());
+                $value = $value->call($arguments, $segment->getIsOptional(), $runtime);
             }
         }
 

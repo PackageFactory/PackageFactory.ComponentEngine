@@ -5,6 +5,7 @@ use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Context\Key;
 use PackageFactory\ComponentEngine\Runtime\Context\ProtectedContextAwareInterface;
 use PackageFactory\ComponentEngine\Runtime\Context\Value;
+use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class ObjectValue implements ValueInterface
 {
@@ -33,9 +34,10 @@ final class ObjectValue implements ValueInterface
     /**
      * @param Key $key
      * @param bool $optional
+     * @param Runtime $runtime
      * @return ValueInterface
      */
-    public function get(Key $key, bool $optional): ValueInterface
+    public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface
     {
         if (isset($this->value->{ $key->getValue() })) {
             return Value::fromAny($this->value->{ $key->getValue() });
@@ -72,9 +74,10 @@ final class ObjectValue implements ValueInterface
     /**
      * @param array<int, ValueInterface> $arguments
      * @param bool $optional
+     * @param Runtime $runtime
      * @return ValueInterface
      */
-    public function call(array $arguments, bool $optional): ValueInterface
+    public function call(array $arguments, bool $optional, Runtime $runtime): ValueInterface
     {
         if (is_callable([$this->value, '__invoke'], true) && $this->value instanceof ProtectedContextAwareInterface && $this->value->allowsCallOfMethod('__invoke')) {
             $function = $this->value;

@@ -19,7 +19,7 @@ final class OnComponentConstructor
     {
         /** @var TagName $tagName */
         $tagName = $componentConstructor->getTagName();
-        $constructor = $runtime->getContext()->get(Key::fromTagName($tagName), false);
+        $constructor = $runtime->getContext()->get(Key::fromTagName($tagName), false, $runtime);
 
         $props = iterator_to_array(
             OnProps::evaluate(
@@ -35,7 +35,7 @@ final class OnComponentConstructor
             false
         );
 
-        $result = $constructor->call([DictionaryValue::fromArray($props)], false)->getValue();
+        $result = $constructor->call([DictionaryValue::fromArray($props)], false, $runtime)->getValue();
         if ($result instanceof VirtualDOM\ComponentInterface) {
             return $result;
         } else {

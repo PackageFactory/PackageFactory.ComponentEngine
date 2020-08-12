@@ -4,6 +4,7 @@ namespace PackageFactory\ComponentEngine\Runtime\Context\Value;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\NumberLiteral;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Context\Key;
+use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class NumberValue implements ValueInterface
 {
@@ -58,9 +59,10 @@ final class NumberValue implements ValueInterface
     /**
      * @param Key $key
      * @param bool $optional
+     * @param Runtime $runtime
      * @return ValueInterface
      */
-    public function get(Key $key, bool $optional): ValueInterface
+    public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface
     {
         throw new \RuntimeException('@TODO: Number has no children');
     }
@@ -77,9 +79,10 @@ final class NumberValue implements ValueInterface
     /**
      * @param array<int, ValueInterface> $arguments
      * @param bool $optional
+     * @param Runtime $runtime
      * @return ValueInterface
      */
-    public function call(array $arguments, bool $optional): ValueInterface
+    public function call(array $arguments, bool $optional, Runtime $runtime): ValueInterface
     {
         throw new \RuntimeException('@TODO: Number cannot be called');
     }

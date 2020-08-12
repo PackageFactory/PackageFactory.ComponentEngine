@@ -3,6 +3,7 @@ namespace PackageFactory\ComponentEngine\Runtime\Context\Value;
 
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Context\Key;
+use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class NullValue implements ValueInterface
 {
@@ -21,9 +22,10 @@ final class NullValue implements ValueInterface
     /**
      * @param Key $key
      * @param bool $optional
+     * @param Runtime $runtime
      * @return ValueInterface
      */
-    public function get(Key $key, bool $optional): ValueInterface
+    public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface
     {
         if ($optional) {
             return $this;
@@ -44,9 +46,10 @@ final class NullValue implements ValueInterface
     /**
      * @param array<int, ValueInterface> $arguments
      * @param bool $optional
+     * @param Runtime $runtime
      * @return ValueInterface
      */
-    public function call(array $arguments, bool $optional): ValueInterface
+    public function call(array $arguments, bool $optional, Runtime $runtime): ValueInterface
     {
         if ($optional) {
             return $this;

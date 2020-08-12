@@ -3,6 +3,7 @@ namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\PointOperation;
 use PackageFactory\ComponentEngine\Runtime\Context\Value\NumberValue;
+use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnPointOperation
@@ -10,9 +11,9 @@ final class OnPointOperation
     /**
      * @param Runtime $runtime
      * @param PointOperation $pointOperation
-     * @return NumberValue
+     * @return ValueInterface
      */
-    public static function evaluate(Runtime $runtime, PointOperation $pointOperation): NumberValue 
+    public static function evaluate(Runtime $runtime, PointOperation $pointOperation): ValueInterface 
     {
         $left = OnTerm::evaluate($runtime, $pointOperation->getLeft());
         if ($left->getValue() === 0) {

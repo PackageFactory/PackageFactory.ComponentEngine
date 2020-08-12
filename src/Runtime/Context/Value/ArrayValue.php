@@ -4,6 +4,7 @@ namespace PackageFactory\ComponentEngine\Runtime\Context\Value;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Context\Key;
 use PackageFactory\ComponentEngine\Runtime\Context\Value;
+use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class ArrayValue implements ValueInterface
 {
@@ -32,9 +33,10 @@ final class ArrayValue implements ValueInterface
     /**
      * @param Key $key
      * @param bool $optional
+     * @param Runtime $runtime
      * @return ValueInterface
      */
-    public function get(Key $key, bool $optional): ValueInterface
+    public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface
     {
         if ($key->isNumeric()) {
             if (array_key_exists($key->getValue(), $this->value)) {
@@ -44,8 +46,9 @@ final class ArrayValue implements ValueInterface
             } else {
                 throw new \RuntimeException('@TODO: Invalid property access');
             }
+        } elseif ($runtime->getLibrary()->hasMethod('array', (string) $key->getValue())) {
+            return $runtime->getLibrary()->getMethod('array', (string) $key->getValue(), $this);
         } else {
-            var_dump($key);
             throw new \RuntimeException('@TODO: Invalid key');
         }
     }
@@ -62,9 +65,10 @@ final class ArrayValue implements ValueInterface
     /**
      * @param array<int, ValueInterface> $arguments
      * @param bool $optional
+     * @param Runtime $runtime
      * @return ValueInterface
      */
-    public function call(array $arguments, bool $optional): ValueInterface
+    public function call(array $arguments, bool $optional, Runtime $runtime): ValueInterface
     {
         throw new \RuntimeException('@TODO: Array cannot be called');
     }

@@ -14,7 +14,7 @@ final class OnIdentifier
      */
     public static function evaluate(Runtime $runtime, Identifier $identifier)
     {
-        return $runtime->getContext()->get(Key::fromIdentifier($identifier), true);
+        return $runtime->getContext()->get(Key::fromIdentifier($identifier), true, $runtime);
     }
 }
 

@@ -1,42 +1,33 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Runtime\Context\Value;
 
-use PackageFactory\ComponentEngine\Parser\Ast\Expression\StringLiteral;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Context\Key;
+use PackageFactory\ComponentEngine\Runtime\Context\Value;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
-final class StringValue implements ValueInterface
+final class IterableValue implements ValueInterface
 {
     /**
-     * @var string
+     * @var iterable<mixed>
      */
     private $value;
 
     /**
-     * @param string $value
+     * @param iterable<mixed> $value
      */
-    private function __construct(string $value)
+    private function __construct(iterable $value)
     {
         $this->value = $value;
     }
 
     /**
-     * @param string $value
+     * @param \Iterator<mixed> $iterator
      * @return self
      */
-    public static function fromString(string $value): self
+    public static function fromIterator(\Iterator $iterator): self
     {
-        return new self($value);
-    }
-
-    /**
-     * @param StringLiteral $value
-     * @return self
-     */
-    public static function fromStringLiteral(StringLiteral $value): self
-    {
-        return new self($value->getValue());
+        return new self($iterator);
     }
 
     /**
@@ -47,11 +38,21 @@ final class StringValue implements ValueInterface
      */
     public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface
     {
-        if ($key->isNumeric()) {
-            return StringValue::fromString($this->value[$key->getValue()]) ?? NullValue::create();
-        } else {
-            throw new \RuntimeException('@TODO: Invalid key');
+        if ($runtime->getLibrary()->hasMethod('iterable', (string) $key->getValue())) {
+            return $runtime->getLibrary()->getMethod('iterable', (string) $key->getValue(), $this);
+        } elseif ($this->value instanceof \Iterator) {
+            foreach ($this->value as $k => $v) {
+                if (is_string($k)) {
+                    return DictionaryValue::fromArray(iterator_to_array($this->value, true))
+                        ->get($key, $optional, $runtime);
+                } else {
+                    return ArrayValue::fromArray(iterator_to_array($this->value, true))
+                        ->get($key, $optional, $runtime);
+                }
+            }
         }
+
+        return Value::fromAny($this->value)->get($key, $optional, $runtime);
     }
 
     /**
@@ -60,7 +61,7 @@ final class StringValue implements ValueInterface
      */
     public function merge(ValueInterface $other): ValueInterface
     {
-        throw new \RuntimeException('@TODO: String cannot be merged with ' . get_class($other));
+        throw new \RuntimeException('@TODO: Iterable Value cannot be merged with ' . get_class($other));
     }
 
     /**
@@ -71,7 +72,7 @@ final class StringValue implements ValueInterface
      */
     public function call(array $arguments, bool $optional, Runtime $runtime): ValueInterface
     {
-        throw new \RuntimeException('@TODO: String cannot be called');
+        throw new \RuntimeException('@TODO: Iterable Value cannot be called');
     }
 
     /**
@@ -80,11 +81,7 @@ final class StringValue implements ValueInterface
      */
     public function greaterThan(ValueInterface $other): BooleanValue
     {
-        if ($other instanceof StringValue) {
-            return BooleanValue::fromBoolean($this->value > $other->getValue());
-        } else {
-            throw new \RuntimeException('@TODO: String cannot be compared with ' . get_class($other));
-        }
+        throw new \RuntimeException('@TODO: Iterable Value cannot be compared');
     }
 
     /**
@@ -93,11 +90,7 @@ final class StringValue implements ValueInterface
      */
     public function lessThan(ValueInterface $other): BooleanValue
     {
-        if ($other instanceof StringValue) {
-            return BooleanValue::fromBoolean($this->value < $other->getValue());
-        } else {
-            throw new \RuntimeException('@TODO: String cannot be compared with ' . get_class($other));
-        }
+        throw new \RuntimeException('@TODO: Iterable Value cannot be compared');
     }
 
     /**
@@ -115,11 +108,7 @@ final class StringValue implements ValueInterface
      */
     public function add(ValueInterface $other): ValueInterface
     {
-        if ($other instanceof StringValue || $other instanceof BooleanValue || $other instanceof NumberValue) {
-            return StringValue::fromString($this->value . ((string) $other->getValue()));
-        } else {
-            throw new \RuntimeException('@TODO: String cannot be compared with ' . get_class($other));
-        }
+        throw new \RuntimeException('@TODO: Iterable Value cannot be added to');
     }
 
     /**
@@ -128,7 +117,7 @@ final class StringValue implements ValueInterface
      */
     public function subtract(ValueInterface $other): ValueInterface
     {
-        throw new \RuntimeException('@TODO: String cannot be subtracted from');
+        throw new \RuntimeException('@TODO: Iterable Value cannot be subtracted from');
     }
 
     /**
@@ -137,7 +126,7 @@ final class StringValue implements ValueInterface
      */
     public function multiply(ValueInterface $other): ValueInterface
     {
-        throw new \RuntimeException('@TODO: String cannot be multiplied');
+        throw new \RuntimeException('@TODO: Iterable Value cannot be multiplied');
     }
 
     /**
@@ -146,7 +135,7 @@ final class StringValue implements ValueInterface
      */
     public function divide(ValueInterface $other): ValueInterface
     {
-        throw new \RuntimeException('@TODO: String cannot be divided');
+        throw new \RuntimeException('@TODO: Iterable Value cannot be divided');
     }
 
     /**
@@ -155,7 +144,7 @@ final class StringValue implements ValueInterface
      */
     public function modulo(ValueInterface $other): ValueInterface
     {
-        throw new \RuntimeException('@TODO: String does not allow modulo operation');
+        throw new \RuntimeException('@TODO: Iterable Value does not allow modulo operation');
     }
 
     /**
@@ -163,11 +152,15 @@ final class StringValue implements ValueInterface
      */
     public function isTrueish(): bool
     {
-        return $this->value !== '';
+        if (is_countable($this->value)) {
+            return count($this->value) !== 0;
+        } else {
+            return true;
+        }
     }
 
     /**
-     * @return string
+     * @return iterable<mixed>
      */
     public function getValue()
     {

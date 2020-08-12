@@ -1,6 +1,8 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Runtime\Context;
 
+use PackageFactory\VirtualDOM\Model\ComponentInterface;
+
 final class Value
 {
     /**
@@ -9,7 +11,9 @@ final class Value
      */
     public static function fromAny($value): ValueInterface
     {
-        if (is_null($value)) {
+        if ($value instanceof ValueInterface) {
+            return $value;
+        } elseif (is_null($value)) {
             return Value\NullValue::create();
         } elseif (is_array($value)) {
             // @NOTE: This is not an exact method to distinguish numerical and associative
@@ -24,6 +28,10 @@ final class Value
             return Value\BooleanValue::fromBoolean($value);
         } elseif ($value instanceof \Closure) {
             return Value\CallableValue::fromClosure($value);
+        } elseif ($value instanceof RuntimeAwareClosure) {
+            return Value\CallableValue::fromRuntimeAwareClosure($value);
+        } elseif ($value instanceof ComponentInterface) {
+            return Value\AfxValue::fromComponent($value);
         } elseif (is_float($value)) {
             return Value\NumberValue::fromFloat($value);
         } elseif (is_int($value)) {
