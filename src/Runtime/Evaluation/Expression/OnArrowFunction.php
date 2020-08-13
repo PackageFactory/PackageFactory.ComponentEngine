@@ -31,7 +31,7 @@ final class OnArrowFunction
 
                 return OnTerm::evaluate(
                     $runtime->withContext(
-                        $runtime->getContext()->merge(DictionaryValue::fromArray($properties))
+                        $runtime->getContext()->merge(DictionaryValue::fromArray($properties), $runtime)
                     ),
                     $arrowFunction->getBody()
                 );

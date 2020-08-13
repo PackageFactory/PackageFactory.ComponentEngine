@@ -21,13 +21,13 @@ final class OnModule
         foreach ($module->getImports() as $import) {
             $imports[(string) $import->getDomesticName()] = OnImport::evaluate($runtime, $module, $import);
         }
-        $context = $context->merge(DictionaryValue::fromArray($imports));
+        $context = $context->merge(DictionaryValue::fromArray($imports), $runtime);
 
         $constants = [];
         foreach ($module->getConstants() as $constant) {
-            $constants[(string) $constant->getName()] = OnConstant::evaluate($runtime->withContext($context), $constant)->getValue();
+            $constants[(string) $constant->getName()] = OnConstant::evaluate($runtime->withContext($context), $constant)->getValue($runtime);
         }
-        $context = $context->merge(DictionaryValue::fromArray($constants));
+        $context = $context->merge(DictionaryValue::fromArray($constants), $runtime);
 
 
         return OnExport::evaluate($runtime->withContext($context), $export);

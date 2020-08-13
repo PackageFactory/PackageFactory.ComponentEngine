@@ -7,12 +7,12 @@ use PackageFactory\ComponentEngine\Runtime\Context\Value;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 /**
- * @implements ValueInterface<\stdClass>
+ * @implements ValueInterface<array<int, mixed>>
  */
-final class DictionaryValue extends Value
+final class ListValue extends Value
 {
     /**
-     * @var array<string, ValueInterface>
+     * @var array<int, ValueInterface>
      */
     private $value;
 
@@ -25,12 +25,12 @@ final class DictionaryValue extends Value
     }
 
     /**
-     * @param array<mixed> $array
+     * @param array<mixed> $value
      * @return self
      */
-    public static function fromArray(array $array): self
+    public static function fromArray(array $value): self
     {
-        return new self($array);
+        return new self($value);
     }
 
     /**
@@ -49,40 +49,25 @@ final class DictionaryValue extends Value
      */
     public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface
     {
-        if (array_key_exists($key->getValue(), $this->value)) {
-            return Value::fromAny($this->value[$key->getValue()]);
-        } elseif ($optional) {
-            return NullValue::create();
+        if ($key->isNumeric()) {
+            if (array_key_exists($key->getValue(), $this->value)) {
+                return Value::fromAny($this->value[$key->getValue()]);
+            } elseif ($optional) {
+                return NullValue::create();
+            } else {
+                throw new \RuntimeException('@TODO: Invalid property access');
+            }
+        } elseif ($runtime->getLibrary()->hasMethod('array', (string) $key->getValue())) {
+            return $runtime->getLibrary()->getMethod('array', (string) $key->getValue(), $this);
         } else {
-            throw new \RuntimeException('@TODO: Invalid property access: ' . $key);
+            throw new \RuntimeException('@TODO: Invalid key');
         }
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
-     */
-    public function merge(ValueInterface $other): ValueInterface
-    {
-        if ($other instanceof DictionaryValue) {
-            return new self(array_replace($this->value, $other->getArray()));
-        } else {
-            return parent::merge($other);
-        }
-    }
-
-    /**
-     * @return object
+     * @return array<int, mixed>
      */
     public function getValue()
-    {
-        return (object) $this->value;
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function getArray(): array
     {
         return $this->value;
     }

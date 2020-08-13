@@ -4,7 +4,6 @@ namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Module;
 use PackageFactory\ComponentEngine\Parser\Ast\Module\Import;
 use PackageFactory\ComponentEngine\Parser\Ast\Module\Module;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
-use PackageFactory\ComponentEngine\Runtime\Context;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 

@@ -32,7 +32,7 @@ final class OnArrayLiteral
             } else {
                 /** @var Term $item */
                 $item = $item;
-                $result[] = OnTerm::evaluate($runtime, $item)->getValue();
+                $result[] = OnTerm::evaluate($runtime, $item)->getValue($runtime);
             }
         }
 

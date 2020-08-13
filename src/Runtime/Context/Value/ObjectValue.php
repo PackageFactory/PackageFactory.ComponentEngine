@@ -7,7 +7,10 @@ use PackageFactory\ComponentEngine\Runtime\Context\ProtectedContextAwareInterfac
 use PackageFactory\ComponentEngine\Runtime\Context\Value;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
-final class ObjectValue implements ValueInterface
+/**
+ * @implements ValueInterface<object>
+ */
+final class ObjectValue extends Value
 {
     /**
      * @var object
@@ -32,6 +35,14 @@ final class ObjectValue implements ValueInterface
     }
 
     /**
+     * @return BooleanValue
+     */
+    public function asBooleanValue(): BooleanValue
+    {
+        return BooleanValue::true();
+    }
+
+    /**
      * @param Key $key
      * @param bool $optional
      * @param Runtime $runtime
@@ -43,7 +54,7 @@ final class ObjectValue implements ValueInterface
             return Value::fromAny($this->value->{ $key->getValue() });
         } elseif (is_callable([$this->value, (string) $key])) {
             if ($this->value instanceof ProtectedContextAwareInterface && $this->value->allowsCallOfMethod((string) $key->getValue())) {
-                return CallableValue::fromObjectAndMember($this->value, (string) $key->getValue());
+                return ArrowFunctionValue::fromObjectAndMember($this->value, (string) $key->getValue());
             } else {
                 throw new \RuntimeException('@TODO: Call to ' . get_class($this->value) . '->' . $key->getValue() . '() is not allowed.');
             }
@@ -63,26 +74,16 @@ final class ObjectValue implements ValueInterface
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
-     */
-    public function merge(ValueInterface $other): ValueInterface
-    {
-        throw new \RuntimeException('@TODO: Object cannot be merged with ' . get_class($other));
-    }
-
-    /**
      * @param array<int, ValueInterface> $arguments
      * @param bool $optional
-     * @param Runtime $runtime
      * @return ValueInterface
      */
-    public function call(array $arguments, bool $optional, Runtime $runtime): ValueInterface
+    public function call(array $arguments, bool $optional): ValueInterface
     {
         if (is_callable([$this->value, '__invoke'], true) && $this->value instanceof ProtectedContextAwareInterface && $this->value->allowsCallOfMethod('__invoke')) {
             $function = $this->value;
             $result = $function(...array_map(
-                function (ValueInterface $value) { return $value->getValue(); }, 
+                function (ValueInterface $value) { return $value->getValue(); },
                 $arguments
             ));
 
@@ -90,86 +91,6 @@ final class ObjectValue implements ValueInterface
         } else {
             throw new \RuntimeException('@TODO: Object cannot be called');
         }
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return BooleanValue
-     */
-    public function greaterThan(ValueInterface $other): BooleanValue
-    {
-        throw new \RuntimeException('@TODO: Object cannot be compared');
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return BooleanValue
-     */
-    public function lessThan(ValueInterface $other): BooleanValue
-    {
-        throw new \RuntimeException('@TODO: Object cannot be compared');
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return BooleanValue
-     */
-    public function equals(ValueInterface $other): BooleanValue
-    {
-        return BooleanValue::fromBoolean($this->value === $other->getValue());
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return ValueInterface
-     */
-    public function add(ValueInterface $other): ValueInterface
-    {
-        throw new \RuntimeException('@TODO: Object cannot be added to');
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return ValueInterface
-     */
-    public function subtract(ValueInterface $other): ValueInterface
-    {
-        throw new \RuntimeException('@TODO: Object cannot be subtracted from');
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return ValueInterface
-     */
-    public function multiply(ValueInterface $other): ValueInterface
-    {
-        throw new \RuntimeException('@TODO: Object cannot be multiplied');
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return ValueInterface
-     */
-    public function divide(ValueInterface $other): ValueInterface
-    {
-        throw new \RuntimeException('@TODO: Object cannot be divided');
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return ValueInterface
-     */
-    public function modulo(ValueInterface $other): ValueInterface
-    {
-        throw new \RuntimeException('@TODO: Object does not allow modulo operation');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isTrueish(): bool
-    {
-        return true;
     }
 
     /**

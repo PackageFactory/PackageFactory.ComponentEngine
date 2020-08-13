@@ -3,10 +3,12 @@ namespace PackageFactory\ComponentEngine\Runtime\Context\Value;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\BooleanLiteral;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
-use PackageFactory\ComponentEngine\Runtime\Context\Key;
-use PackageFactory\ComponentEngine\Runtime\Runtime;
+use PackageFactory\ComponentEngine\Runtime\Context\Value;
 
-final class BooleanValue implements ValueInterface
+/**
+ * @implements ValueInterface<bool>
+ */
+final class BooleanValue extends Value
 {
     /**
      * @var bool
@@ -33,6 +35,14 @@ final class BooleanValue implements ValueInterface
     /**
      * @return self
      */
+    public static function true(): self
+    {
+        return new self(true);
+    }
+
+    /**
+     * @return self
+     */
     public static function false(): self
     {
         return new self(false);
@@ -48,34 +58,11 @@ final class BooleanValue implements ValueInterface
     }
 
     /**
-     * @param Key $key
-     * @param bool $optional
-     * @param Runtime $runtime
-     * @return ValueInterface
+     * @return BooleanValue
      */
-    public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface
+    public function asBooleanValue(): BooleanValue
     {
-        throw new \RuntimeException('@TODO: Boolean has no children');
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return ValueInterface
-     */
-    public function merge(ValueInterface $other): ValueInterface
-    {
-        throw new \RuntimeException('@TODO: Boolean cannot be merged with ' . get_class($other));
-    }
-
-    /**
-     * @param array<int, ValueInterface> $arguments
-     * @param bool $optional
-     * @param Runtime $runtime
-     * @return ValueInterface
-     */
-    public function call(array $arguments, bool $optional, Runtime $runtime): ValueInterface
-    {
-        throw new \RuntimeException('@TODO: Boolean cannot be called');
+        return $this;
     }
 
     /**
@@ -87,7 +74,7 @@ final class BooleanValue implements ValueInterface
         if ($other instanceof BooleanValue || $other instanceof NumberValue) {
             return BooleanValue::fromBoolean($this->value > $other->getValue());
         } else {
-            throw new \RuntimeException('@TODO: Boolean cannot be compared with ' . get_class($other));
+            return parent::greaterThan($other);
         }
     }
 
@@ -100,7 +87,7 @@ final class BooleanValue implements ValueInterface
         if ($other instanceof BooleanValue || $other instanceof NumberValue) {
             return BooleanValue::fromBoolean($this->value < $other->getValue());
         } else {
-            throw new \RuntimeException('@TODO: Boolean cannot be compared with ' . get_class($other));
+            return parent::lessThan($other);
         }
     }
 
@@ -128,7 +115,7 @@ final class BooleanValue implements ValueInterface
         } elseif ($other instanceof StringValue) {
             return StringValue::fromString(((string) (int) $this->value) . $other->getValue());
         } else {
-            throw new \RuntimeException('@TODO: ' . get_class($other) . ' cannot be added to Boolean');
+            return parent::add($other);
         }
     }
 
@@ -141,7 +128,7 @@ final class BooleanValue implements ValueInterface
         if ($other instanceof BooleanValue || $other instanceof NumberValue) {
             return NumberValue::fromFloat((float) ($this->value - $other->getValue()));
         } else {
-            throw new \RuntimeException('@TODO: ' . get_class($other) . ' cannot be subtracted from Boolean');
+            return parent::subtract($other);
         }
     }
 
@@ -154,7 +141,7 @@ final class BooleanValue implements ValueInterface
         if ($other instanceof BooleanValue || $other instanceof NumberValue) {
             return NumberValue::fromFloat($this->value * $other->getValue());
         } else {
-            throw new \RuntimeException('@TODO: Boolean cannot be multiplied with ' . get_class($other));
+            return parent::multiply($other);
         }
     }
 
@@ -171,7 +158,7 @@ final class BooleanValue implements ValueInterface
 
             return NumberValue::fromFloat($this->value / $other->getValue());
         } else {
-            throw new \RuntimeException('@TODO: Boolean cannot be divided by ' . get_class($other));
+            return parent::divide($other);
         }
     }
 
@@ -188,7 +175,7 @@ final class BooleanValue implements ValueInterface
 
             return NumberValue::fromFloat((float) ($this->value % $other->getValue()));
         } else {
-            throw new \RuntimeException('@TODO: Modulo operation is not allowed between Boolean and ' . get_class($other));
+            return parent::modulo($other);
         }
     }
 
@@ -224,14 +211,6 @@ final class BooleanValue implements ValueInterface
     public function not(): ValueInterface
     {
         return new self(!$this->value);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isTrueish(): bool
-    {
-        return $this->value;
     }
 
     /**

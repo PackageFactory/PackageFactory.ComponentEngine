@@ -2,10 +2,39 @@
 namespace PackageFactory\ComponentEngine\Runtime\Context;
 
 use PackageFactory\ComponentEngine\Runtime\Context\Value\BooleanValue;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\StringValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
+/**
+ * @template V
+ */
 interface ValueInterface
 {
+    /**
+     * @return bool
+     */
+    public function isCountable(): bool;
+
+    /**
+     * @return bool
+     */
+    public function isCastableToString(): bool;
+
+    /**
+     * @return StringValue
+     */
+    public function asStringValue(): StringValue;
+
+    /**
+     * @return BooleanValue
+     */
+    public function asBooleanValue(): BooleanValue;
+
+    /**
+     * @return iterable
+     */
+    public function asIterable(): iterable;
+
     /**
      * @param Key $key
      * @param bool $optional
@@ -23,10 +52,9 @@ interface ValueInterface
     /**
      * @param array<int, ValueInterface> $arguments
      * @param bool $optional
-     * @param Runtime $runtime
      * @return ValueInterface
      */
-    public function call(array $arguments, bool $optional, Runtime $runtime): ValueInterface;
+    public function call(array $arguments, bool $optional): ValueInterface;
 
     /**
      * @param ValueInterface $other
@@ -77,12 +105,7 @@ interface ValueInterface
     public function modulo(ValueInterface $other): ValueInterface;
 
     /**
-     * @return bool
-     */
-    public function isTrueish(): bool;
-
-    /**
-     * @return mixed
+     * @return V
      */
     public function getValue();
 }

@@ -16,7 +16,7 @@ final class OnTernary
     {
         $condition = OnTerm::evaluate($runtime, $ternary->getCondition());
         
-        if ($condition->isTrueish()) {
+        if ($condition->isTrueish($runtime)) {
             return OnTerm::evaluate($runtime, $ternary->getTrueBranch());
         } else {
             return OnTerm::evaluate($runtime, $ternary->getFalseBranch());

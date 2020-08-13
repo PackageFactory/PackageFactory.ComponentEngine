@@ -35,7 +35,7 @@ final class OnComponentConstructor
             false
         );
 
-        $result = $constructor->call([DictionaryValue::fromArray($props)], false, $runtime)->getValue();
+        $result = $constructor->call([DictionaryValue::fromArray($props)], false, $runtime)->getValue($runtime);
         if ($result instanceof VirtualDOM\ComponentInterface) {
             return $result;
         } else {

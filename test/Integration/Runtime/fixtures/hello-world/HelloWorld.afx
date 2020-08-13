@@ -1,4 +1,4 @@
-export default (
+export default props => (
     <article class="article">
         <header class="header">
             <h1 class="headline">Title: {props.title}</h1>

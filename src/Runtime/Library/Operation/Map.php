@@ -3,34 +3,25 @@ namespace PackageFactory\ComponentEngine\Runtime\Library;
 
 use PackageFactory\ComponentEngine\Runtime\Context\Value\IterableValue;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
+use PackageFactory\ComponentEngine\Runtime\Runtime;
 
-final class Map
+final class Map extends Operation
 {
     /**
-     * @var ValueInterface
-     */
-    private $value;
-
-    /**
      * @param ValueInterface $value
-     */
-    public function __construct(ValueInterface $value)
-    {
-        $this->value = $value;
-    }
-
-    /**
-     * @param callable $itemCallback
-     * @param null|callable $keyCallback
+     * @param Runtime $runtime
+     * @param array<mixed> $arguments
      * @return void
      */
-    public function __invoke(callable $itemCallback, ?callable $keyCallback = null)
+    public function run(ValueInterface $value, Runtime $runtime, array $arguments): ValueInterface
     {
-        $iterable = $this->value->getValue();
-        if (!is_iterable($iterable)) {
-            throw new \RuntimeException('@TODO: Cannot map over non-iterable value.');
-        }
+        /** @var callable $itemCallback */
+        $itemCallback = $arguments[0];
 
+        /** @var null|callable $keyCallback */
+        $keyCallback = $arguments[1] ?? null;
+
+        $iterable = $value->asIterable($runtime);
         $iterator = function() use ($itemCallback, $keyCallback, $iterable): \Iterator {
             $iteration = ['items' => $iterable];
 

@@ -46,7 +46,7 @@ final class RuntimeTest extends BaseTestCase
         $result = OnModule::evaluate($runtime, $module);
 
         $this->assertMatchesSnapshot(
-            HTML5StringRenderer::render($result->getValue())
+            HTML5StringRenderer::render($result->getValue($runtime))
         );
     }
 
@@ -90,7 +90,7 @@ final class RuntimeTest extends BaseTestCase
         $result = OnModule::evaluate($runtime, $module);
 
         $this->assertMatchesSnapshot(
-            HTML5StringRenderer::render($result->getValue())
+            HTML5StringRenderer::render($result->getValue($runtime))
         );
     }
 
@@ -119,7 +119,17 @@ final class RuntimeTest extends BaseTestCase
         $runtime = Runtime::default()->withContext(
             Context::fromArray([
                 'props' => [
-                    'urlToHomePage' => '/'
+                    'urlToHomePage' => '/',
+                    'navigation' => [
+                        'items' => [
+                            ['href' => '#item-1', 'label' => 'Item #1', 'items' => []],
+                            ['href' => '#item-2', 'label' => 'Item #2', 'items' => [
+                                ['href' => '#sub-item-1', 'label' => 'SubItem #1', 'items' => []],
+                                ['href' => '#sub-item-2', 'label' => 'SubItem #2', 'items' => []],
+                            ]],
+                            ['href' => '#item-3', 'label' => 'Item #3', 'items' => []],
+                        ]
+                    ]
                 ]
             ])
         );
@@ -127,7 +137,7 @@ final class RuntimeTest extends BaseTestCase
         $result = OnModule::evaluate($runtime, $module);
 
         $this->assertMatchesSnapshot(
-            HTML5StringRenderer::render($result->getValue())
+            HTML5StringRenderer::render($result->getValue($runtime))
         );
     }
 }

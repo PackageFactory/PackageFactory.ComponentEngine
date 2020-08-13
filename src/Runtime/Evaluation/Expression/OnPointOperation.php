@@ -16,23 +16,23 @@ final class OnPointOperation
     public static function evaluate(Runtime $runtime, PointOperation $pointOperation): ValueInterface 
     {
         $left = OnTerm::evaluate($runtime, $pointOperation->getLeft());
-        if ($left->getValue() === 0) {
+        if ($left->getValue($runtime) === 0) {
             return NumberValue::zero();
         }
 
         $right = OnTerm::evaluate($runtime, $pointOperation->getRight());
-        if ($right->getValue() === 0) {
+        if ($right->getValue($runtime) === 0) {
             return NumberValue::zero();
         }
 
         switch ($pointOperation->getOperator()) {
             default:
             case PointOperation::OPERATOR_MULTIPLY:
-                return $left->multiply($right);
+                return $left->multiply($right, $runtime);
             case PointOperation::OPERATOR_DIVIDE:
-                return $left->divide($right);
+                return $left->divide($right, $runtime);
             case PointOperation::OPERATOR_MODULO:
-                return $left->modulo($right);
+                return $left->modulo($right, $runtime);
         }
     }
 }

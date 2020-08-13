@@ -20,9 +20,9 @@ final class OnDashOperation
         switch ($dashOperation->getOperator()) {
             default:
             case DashOperation::OPERATOR_ADD:
-                return $left->add($right);
+                return $left->add($right, $runtime);
             case DashOperation::OPERATOR_SUBTRACT:
-                return $left->subtract($right);
+                return $left->subtract($right, $runtime);
         }
     }
 }

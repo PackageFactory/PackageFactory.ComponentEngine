@@ -28,7 +28,8 @@ final class OnConstant
                         return Afx\OnTag::evaluate(
                             $runtime->withContext(
                                 $runtime->getContext()->merge(
-                                    DictionaryValue::fromArray(['props' => $props])
+                                    DictionaryValue::fromArray(['props' => $props]),
+                                    $runtime
                                 )
                             ), 
                             $value

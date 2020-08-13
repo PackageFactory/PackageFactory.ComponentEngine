@@ -20,7 +20,7 @@ final class OnTemplateLiteral
             if (is_string($segment)) {
                 $result .= $segment;
             } else {
-                $value = OnTerm::evaluate($runtime, $segment)->getValue();
+                $value = OnTerm::evaluate($runtime, $segment)->getValue($runtime);
 
                 if (is_string($value)) {
                     $result .= $value;

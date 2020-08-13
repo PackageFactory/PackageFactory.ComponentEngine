@@ -48,13 +48,10 @@ final class TernaryTest extends TestCase
         
         /** @var Ternary $ast */
         $ast = ExpressionParser::parse($stream);
-
-        $result = OnTerm::evaluate(
-            Runtime::default()->withContext($context),
-            $ast
-        );
+        $runtime = Runtime::default()->withContext($context);
+        $result = OnTerm::evaluate($runtime, $ast);
 
         $this->assertInstanceOf(ValueInterface::class, $result);
-        $this->assertSame($value, $result->getValue());
+        $this->assertSame($value, $result->getValue($runtime));
     }
 }

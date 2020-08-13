@@ -16,7 +16,7 @@ final class OnConjunction
     {
         $left = OnTerm::evaluate($runtime, $conjunction->getLeft());
 
-        if ($left->isTrueish()) {
+        if ($left->isTrueish($runtime)) {
             return OnTerm::evaluate($runtime, $conjunction->getRight());
         } else {
             return BooleanValue::false();

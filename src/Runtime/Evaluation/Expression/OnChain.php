@@ -29,7 +29,7 @@ final class OnChain
             if ($key instanceof Identifier) {
                 $key = Key::fromIdentifier($key);
             } else {
-                $key = Key::fromValue(OnTerm::evaluate($runtime, $key));
+                $key = Key::fromValue(OnTerm::evaluate($runtime, $key), $runtime);
             }
 
             /** @var ValueInterface $value */

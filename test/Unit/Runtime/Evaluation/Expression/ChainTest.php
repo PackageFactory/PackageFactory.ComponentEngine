@@ -219,13 +219,10 @@ final class ChainTest extends TestCase
         
         /** @var Chain $ast */
         $ast = ExpressionParser::parse($stream);
-
-        $result = OnTerm::evaluate(
-            Runtime::default()->withContext($context),
-            $ast
-        );
+        $runtime = Runtime::default()->withContext($context);
+        $result = OnTerm::evaluate($runtime, $ast);
 
         $this->assertInstanceOf(ValueInterface::class, $result);
-        $this->assertEquals($value, $result->getValue());
+        $this->assertEquals($value, $result->getValue($runtime));
     }
 }

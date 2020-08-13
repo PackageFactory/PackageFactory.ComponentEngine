@@ -1,10 +1,10 @@
-const NavList = (
+const NavList = props => (
     <ul>
         {props.items.map(item => <NavItem {...item}/>)}
     </ul>
 )
 
-const NavItem = (
+const NavItem = props => (
     <li>
         <a href={props.href}>
             {props.label}
@@ -15,7 +15,7 @@ const NavItem = (
     </li>
 )
 
-export default (
+export default props => (
     <nav>
         <NavList {...props}/>
     </nav>

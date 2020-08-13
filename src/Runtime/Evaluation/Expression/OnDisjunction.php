@@ -16,12 +16,12 @@ final class OnDisjunction
     {
         $left = OnTerm::evaluate($runtime, $disjunction->getLeft());
 
-        if ($left->isTrueish()) {
+        if ($left->isTrueish($runtime)) {
             return $left;
         } else {
             $right = OnTerm::evaluate($runtime, $disjunction->getRight());
 
-            if ($right->isTrueish() || $right->getValue() === null || $right->getValue() === 0.0) {
+            if ($right->isTrueish($runtime) || $right->getValue($runtime) === null || $right->getValue($runtime) === 0.0) {
                 return $right;
             } else {
                 return BooleanValue::false();

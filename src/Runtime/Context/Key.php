@@ -5,6 +5,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\Afx\TagName;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Identifier;
 use PackageFactory\ComponentEngine\Runtime\Context\Value\NumberValue;
 use PackageFactory\ComponentEngine\Runtime\Context\Value\StringValue;
+use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class Key
 {
@@ -66,14 +67,15 @@ final class Key
 
     /**
      * @param ValueInterface $value
+     * @param Runtime $runtime
      * @return self
      */
-    public static function fromValue(ValueInterface $value): self
+    public static function fromValue(ValueInterface $value, Runtime $runtime): self
     {
         if ($value instanceof NumberValue) {
-            return new self(true, (int) $value->getValue());
+            return new self(true, (int) $value->getValue($runtime));
         } elseif ($value instanceof StringValue) {
-            return new self(false, $value->getValue());
+            return new self(false, $value->getValue($runtime));
         } else {
             throw new \RuntimeException('@TODO: Illegal value as key');
         }

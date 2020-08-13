@@ -54,12 +54,6 @@ final class TemplateLiteralTest extends TestCase
         $context = Context::createEmpty();
         $result = "Null: null";
         yield $input => [$input, $context, $result];
-
-        // @TODO: This is not possible yet!
-        // $input = '`Hello, ${() => 15}!`';
-        // $context = Context::createEmpty();
-        // $result = "Hello, () => 15!";
-        // yield $input => [$input, $context, $result];
     }
 
     /**
@@ -79,13 +73,10 @@ final class TemplateLiteralTest extends TestCase
         
         /** @var TemplateLiteral $ast */
         $ast = ExpressionParser::parse($stream);
-
-        $result = OnTerm::evaluate(
-            Runtime::default()->withContext($context),
-            $ast
-        );
+        $runtime = Runtime::default()->withContext($context);
+        $result = OnTerm::evaluate($runtime, $ast);
 
         $this->assertInstanceOf(ValueInterface::class, $result);
-        $this->assertSame($value, $result->getValue());
+        $this->assertSame($value, $result->getValue($runtime));
     }
 }

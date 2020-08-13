@@ -4,9 +4,10 @@ namespace PackageFactory\ComponentEngine\Runtime\Context\Value;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\StringLiteral;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Context\Key;
+use PackageFactory\ComponentEngine\Runtime\Context\Value;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
-final class StringValue implements ValueInterface
+final class StringValue extends Value
 {
     /**
      * @var string
@@ -40,6 +41,14 @@ final class StringValue implements ValueInterface
     }
 
     /**
+     * @return BooleanValue
+     */
+    public function asBooleanValue(): BooleanValue
+    {
+        return BooleanValue::fromBoolean($this->value !== '');
+    }
+
+    /**
      * @param Key $key
      * @param bool $optional
      * @param Runtime $runtime
@@ -50,28 +59,8 @@ final class StringValue implements ValueInterface
         if ($key->isNumeric()) {
             return StringValue::fromString($this->value[$key->getValue()]) ?? NullValue::create();
         } else {
-            throw new \RuntimeException('@TODO: Invalid key');
+            return parent::get($key, $optional, $runtime);
         }
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return ValueInterface
-     */
-    public function merge(ValueInterface $other): ValueInterface
-    {
-        throw new \RuntimeException('@TODO: String cannot be merged with ' . get_class($other));
-    }
-
-    /**
-     * @param array<int, ValueInterface> $arguments
-     * @param bool $optional
-     * @param Runtime $runtime
-     * @return ValueInterface
-     */
-    public function call(array $arguments, bool $optional, Runtime $runtime): ValueInterface
-    {
-        throw new \RuntimeException('@TODO: String cannot be called');
     }
 
     /**
@@ -83,7 +72,7 @@ final class StringValue implements ValueInterface
         if ($other instanceof StringValue) {
             return BooleanValue::fromBoolean($this->value > $other->getValue());
         } else {
-            throw new \RuntimeException('@TODO: String cannot be compared with ' . get_class($other));
+            return parent::greaterThan($other);
         }
     }
 
@@ -96,17 +85,8 @@ final class StringValue implements ValueInterface
         if ($other instanceof StringValue) {
             return BooleanValue::fromBoolean($this->value < $other->getValue());
         } else {
-            throw new \RuntimeException('@TODO: String cannot be compared with ' . get_class($other));
+            return parent::lessThan($other);
         }
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return BooleanValue
-     */
-    public function equals(ValueInterface $other): BooleanValue
-    {
-        return BooleanValue::fromBoolean($this->value === $other->getValue());
     }
 
     /**
@@ -118,52 +98,8 @@ final class StringValue implements ValueInterface
         if ($other instanceof StringValue || $other instanceof BooleanValue || $other instanceof NumberValue) {
             return StringValue::fromString($this->value . ((string) $other->getValue()));
         } else {
-            throw new \RuntimeException('@TODO: String cannot be compared with ' . get_class($other));
+            return parent::add($other);
         }
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return ValueInterface
-     */
-    public function subtract(ValueInterface $other): ValueInterface
-    {
-        throw new \RuntimeException('@TODO: String cannot be subtracted from');
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return ValueInterface
-     */
-    public function multiply(ValueInterface $other): ValueInterface
-    {
-        throw new \RuntimeException('@TODO: String cannot be multiplied');
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return ValueInterface
-     */
-    public function divide(ValueInterface $other): ValueInterface
-    {
-        throw new \RuntimeException('@TODO: String cannot be divided');
-    }
-
-    /**
-     * @param ValueInterface $other
-     * @return ValueInterface
-     */
-    public function modulo(ValueInterface $other): ValueInterface
-    {
-        throw new \RuntimeException('@TODO: String does not allow modulo operation');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isTrueish(): bool
-    {
-        return $this->value !== '';
     }
 
     /**

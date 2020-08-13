@@ -103,14 +103,11 @@ final class ArrayTest extends TestCase
         
         /** @var ArrayLiteral $ast */
         $ast = ExpressionParser::parse($stream);
-
-        $result = OnTerm::evaluate(
-            Runtime::default()->withContext(Context::fromArray($context)),
-            $ast
-        );
+        $runtime = Runtime::default()->withContext(Context::fromArray($context));
+        $result = OnTerm::evaluate($runtime, $ast);
 
         $this->assertInstanceOf(ValueInterface::class, $result);
-        $this->assertEquals($value, $result->getValue());
+        $this->assertEquals($value, $result->getValue($runtime));
     }
 
     /**

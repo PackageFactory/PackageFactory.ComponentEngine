@@ -20,17 +20,17 @@ final class OnComparison
         switch ($comparison->getOperator()) {
             default:
             case Comparison::COMPARATOR_EQ:
-                return $left->equals($right);
+                return $left->equals($right, $runtime);
             case Comparison::COMPARATOR_NEQ:
-                return $left->equals($right)->not();
+                return $left->equals($right, $runtime)->not();
             case Comparison::COMPARATOR_GT:
-                return $left->greaterThan($right);
+                return $left->greaterThan($right, $runtime);
             case Comparison::COMPARATOR_GTE:
-                return $left->equals($right)->or($left->greaterThan($right));
+                return $left->equals($right, $runtime)->or($left->greaterThan($right, $runtime));
             case Comparison::COMPARATOR_LT:
-                return $left->lessThan($right);
+                return $left->lessThan($right, $runtime);
             case Comparison::COMPARATOR_LTE:
-                return $left->equals($right)->or($left->lessThan($right));
+                return $left->equals($right, $runtime)->or($left->lessThan($right, $runtime));
         }
     }
 }
