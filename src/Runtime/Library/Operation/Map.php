@@ -1,17 +1,38 @@
 <?php declare(strict_types=1);
-namespace PackageFactory\ComponentEngine\Runtime\Library;
+namespace PackageFactory\ComponentEngine\Runtime\Library\Operation;
 
-use PackageFactory\ComponentEngine\Runtime\Context\Value\IterableValue;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\IteratorValue;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
+use PackageFactory\ComponentEngine\Runtime\Library\Operation;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
+/**
+ * @extends Operation<IteratorValue>
+ */
 final class Map extends Operation
 {
     /**
-     * @param ValueInterface $value
+     * @var null|self
+     */
+    private static $instance;
+
+    /**
+     * @return self
+     */
+    public static function create(): self
+    {
+        if (self::$instance) {
+            return self::$instance;
+        }
+
+        return self::$instance = new self();
+    }
+
+    /**
+     * @param ValueInterface<mixed> $value
      * @param Runtime $runtime
      * @param array<mixed> $arguments
-     * @return void
+     * @return ValueInterface<IteratorValue>
      */
     public function run(ValueInterface $value, Runtime $runtime, array $arguments): ValueInterface
     {
@@ -21,7 +42,7 @@ final class Map extends Operation
         /** @var null|callable $keyCallback */
         $keyCallback = $arguments[1] ?? null;
 
-        $iterable = $value->asIterable($runtime);
+        $iterable = $value->asIterable();
         $iterator = function() use ($itemCallback, $keyCallback, $iterable): \Iterator {
             $iteration = ['items' => $iterable];
 
@@ -57,6 +78,6 @@ final class Map extends Operation
             }
         };
 
-        return IterableValue::fromIterator($iterator());
+        return IteratorValue::fromIterator($iterator());
     }
 }

@@ -14,9 +14,7 @@ final class OnNegation
      */
     public static function evaluate(Runtime $runtime, Negation $negation): BooleanValue 
     {
-        return BooleanValue::fromBoolean(
-            !OnTerm::evaluate($runtime, $negation->getSubject())->isTrueish($runtime)
-        );
+        return OnTerm::evaluate($runtime, $negation->getSubject())->asBooleanValue()->not();
     }
 }
 

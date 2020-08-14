@@ -7,12 +7,12 @@ use PackageFactory\ComponentEngine\Runtime\Context\Value;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 /**
- * @implements ValueInterface<array<int, mixed>>
+ * @extends Value<array<int, mixed>>
  */
 final class ListValue extends Value
 {
     /**
-     * @var array<int, ValueInterface>
+     * @var array<int, ValueInterface<mixed>>
      */
     private $value;
 
@@ -25,12 +25,27 @@ final class ListValue extends Value
     }
 
     /**
-     * @param array<mixed> $value
      * @return self
      */
-    public static function fromArray(array $value): self
+    public static function empty(): self
     {
-        return new self($value);
+        return new self([]);
+    }
+
+    /**
+     * @param array<mixed> $array
+     * @return self
+     */
+    public static function fromArray(array $array): self
+    {
+        return new self(
+            array_map(
+                function ($item) {
+                    return $item instanceof ValueInterface ? $item : PhpValue::fromAny($item);
+                },
+                $array
+            )
+        );
     }
 
     /**
@@ -42,23 +57,27 @@ final class ListValue extends Value
     }
 
     /**
+     * @return iterable<mixed>
+     */
+    public function asIterable(): iterable
+    {
+        return $this->value;
+    }
+
+    /**
      * @param Key $key
      * @param bool $optional
      * @param Runtime $runtime
-     * @return ValueInterface
+     * @return ValueInterface<mixed>
      */
     public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface
     {
         if ($key->isNumeric()) {
             if (array_key_exists($key->getValue(), $this->value)) {
-                return Value::fromAny($this->value[$key->getValue()]);
-            } elseif ($optional) {
-                return NullValue::create();
+                return $this->value[$key->getValue()];
             } else {
-                throw new \RuntimeException('@TODO: Invalid property access');
+                return NullValue::create();
             }
-        } elseif ($runtime->getLibrary()->hasMethod('array', (string) $key->getValue())) {
-            return $runtime->getLibrary()->getMethod('array', (string) $key->getValue(), $this);
         } else {
             throw new \RuntimeException('@TODO: Invalid key');
         }
@@ -69,6 +88,23 @@ final class ListValue extends Value
      */
     public function getValue()
     {
-        return $this->value;
+        return array_map(
+            function (ValueInterface $item) {
+                return $item->getValue();
+            },
+            $this->value
+        );
+    }
+
+    /**
+     * @param ValueInterface<mixed> $item
+     * @return self
+     */
+    public function withAddedItem(ValueInterface $item): self
+    {
+        $items = $this->value;
+        $items[] = $item;
+
+        return new self($items);
     }
 }

@@ -4,37 +4,24 @@ namespace PackageFactory\ComponentEngine\Runtime\Library;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
+/**
+ * @template R
+ * @implements OperationInterface<R>
+ */
 abstract class Operation implements OperationInterface
 {
     /**
-     * @var array<string, OperationInterface>
-     */
-    private static $instances = [];
-
-    /**
      * Private constructor
      */
-    private function __construct()
+    final protected function __construct()
     {
     }
 
     /**
-     * @return self
-     */
-    public static function create(): self
-    {
-        if (isset(self::$instances[static::class])) {
-            return self::$instances[static::class];
-        }
-
-        return self::$instances[static::class] = new static();
-    }
-
-    /**
-     * @param ValueInterface $value
+     * @param ValueInterface<mixed> $value
      * @param Runtime $runtime
      * @param array<mixed> $arguments
-     * @return void
+     * @return ValueInterface<R>
      */
     abstract public function run(ValueInterface $value, Runtime $runtime, array $arguments): ValueInterface;
 }

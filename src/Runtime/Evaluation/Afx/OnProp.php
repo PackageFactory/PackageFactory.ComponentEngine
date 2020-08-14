@@ -20,7 +20,7 @@ final class OnProp
         if (is_null($value)) {
             yield $name => true;
         } else {
-            yield $name => Expression\OnTerm::evaluate($runtime, $value)->getValue($runtime);
+            yield $name => Expression\OnTerm::evaluate($runtime, $value)->getValue();
         }
     }
 }

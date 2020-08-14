@@ -5,30 +5,21 @@ use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Context\Value;
 
 /**
- * @implements ValueInterface<\Closure>
+ * @extends Value<\Closure>
  */
 final class ArrowFunctionValue extends Value
 {
     /**
-     * @var callable
+     * @var \Closure
      */
     private $value;
 
     /**
-     * @param callable $value
+     * @param \Closure $value
      */
-    private function __construct(callable $value)
+    private function __construct(\Closure $value)
     {
         $this->value = $value;
-    }
-
-    /**
-     * @param callable $callable
-     * @return self
-     */
-    public static function fromCallable(callable $callable): self
-    {
-        return new self($callable);
     }
 
     /**
@@ -57,9 +48,9 @@ final class ArrowFunctionValue extends Value
     }
 
     /**
-     * @param array<int, ValueInterface> $arguments
+     * @param array<int, ValueInterface<mixed>> $arguments
      * @param bool $optional
-     * @return ValueInterface
+     * @return ValueInterface<mixed>
      */
     public function call(array $arguments, bool $optional): ValueInterface
     {

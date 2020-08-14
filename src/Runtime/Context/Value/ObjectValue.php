@@ -8,7 +8,7 @@ use PackageFactory\ComponentEngine\Runtime\Context\Value;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 /**
- * @implements ValueInterface<object>
+ * @extends Value<object>
  */
 final class ObjectValue extends Value
 {
@@ -46,7 +46,7 @@ final class ObjectValue extends Value
      * @param Key $key
      * @param bool $optional
      * @param Runtime $runtime
-     * @return ValueInterface
+     * @return ValueInterface<mixed>
      */
     public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface
     {
@@ -74,9 +74,9 @@ final class ObjectValue extends Value
     }
 
     /**
-     * @param array<int, ValueInterface> $arguments
+     * @param array<int, ValueInterface<mixed>> $arguments
      * @param bool $optional
-     * @return ValueInterface
+     * @return ValueInterface<mixed>
      */
     public function call(array $arguments, bool $optional): ValueInterface
     {

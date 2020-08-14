@@ -6,7 +6,7 @@ use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Context\Value;
 
 /**
- * @implements ValueInterface<bool>
+ * @extends Value<bool>
  */
 final class BooleanValue extends Value
 {
@@ -66,7 +66,7 @@ final class BooleanValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
+     * @param ValueInterface<mixed> $other
      * @return BooleanValue
      */
     public function greaterThan(ValueInterface $other): BooleanValue
@@ -79,7 +79,7 @@ final class BooleanValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
+     * @param ValueInterface<mixed> $other
      * @return BooleanValue
      */
     public function lessThan(ValueInterface $other): BooleanValue
@@ -92,7 +92,7 @@ final class BooleanValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
+     * @param ValueInterface<mixed> $other
      * @return BooleanValue
      */
     public function equals(ValueInterface $other): BooleanValue
@@ -105,8 +105,8 @@ final class BooleanValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function add(ValueInterface $other): ValueInterface
     {
@@ -120,8 +120,8 @@ final class BooleanValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function subtract(ValueInterface $other): ValueInterface
     {
@@ -133,8 +133,8 @@ final class BooleanValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function multiply(ValueInterface $other): ValueInterface
     {
@@ -146,8 +146,8 @@ final class BooleanValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function divide(ValueInterface $other): ValueInterface
     {
@@ -163,8 +163,8 @@ final class BooleanValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function modulo(ValueInterface $other): ValueInterface
     {
@@ -180,8 +180,9 @@ final class BooleanValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @template T
+     * @param ValueInterface<T> $other
+     * @return BooleanValue|ValueInterface<T>
      */
     public function and(ValueInterface $other): ValueInterface
     {
@@ -193,8 +194,9 @@ final class BooleanValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @template T
+     * @param ValueInterface<T> $other
+     * @return BooleanValue|ValueInterface<T>
      */
     public function or(ValueInterface $other): ValueInterface
     {
@@ -206,9 +208,9 @@ final class BooleanValue extends Value
     }
 
     /**
-     * @return ValueInterface
+     * @return BooleanValue
      */
-    public function not(): ValueInterface
+    public function not(): BooleanValue
     {
         return new self(!$this->value);
     }

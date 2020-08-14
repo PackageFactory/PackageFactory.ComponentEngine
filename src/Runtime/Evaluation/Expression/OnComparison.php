@@ -10,7 +10,7 @@ final class OnComparison
     /**
      * @param Runtime $runtime
      * @param Comparison $comparison
-     * @return ValueInterface
+     * @return ValueInterface<bool>
      */
     public static function evaluate(Runtime $runtime, Comparison $comparison): ValueInterface
     {
@@ -20,17 +20,17 @@ final class OnComparison
         switch ($comparison->getOperator()) {
             default:
             case Comparison::COMPARATOR_EQ:
-                return $left->equals($right, $runtime);
+                return $left->equals($right);
             case Comparison::COMPARATOR_NEQ:
-                return $left->equals($right, $runtime)->not();
+                return $left->equals($right)->not();
             case Comparison::COMPARATOR_GT:
-                return $left->greaterThan($right, $runtime);
+                return $left->greaterThan($right);
             case Comparison::COMPARATOR_GTE:
-                return $left->equals($right, $runtime)->or($left->greaterThan($right, $runtime));
+                return $left->equals($right)->or($left->greaterThan($right));
             case Comparison::COMPARATOR_LT:
-                return $left->lessThan($right, $runtime);
+                return $left->lessThan($right);
             case Comparison::COMPARATOR_LTE:
-                return $left->equals($right, $runtime)->or($left->lessThan($right, $runtime));
+                return $left->equals($right)->or($left->lessThan($right));
         }
     }
 }

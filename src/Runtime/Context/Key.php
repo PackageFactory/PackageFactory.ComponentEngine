@@ -66,16 +66,15 @@ final class Key
     }
 
     /**
-     * @param ValueInterface $value
-     * @param Runtime $runtime
+     * @param ValueInterface<mixed> $value
      * @return self
      */
-    public static function fromValue(ValueInterface $value, Runtime $runtime): self
+    public static function fromValue(ValueInterface $value): self
     {
         if ($value instanceof NumberValue) {
-            return new self(true, (int) $value->getValue($runtime));
+            return new self(true, (int) $value->getValue());
         } elseif ($value instanceof StringValue) {
-            return new self(false, $value->getValue($runtime));
+            return new self(false, $value->getValue());
         } else {
             throw new \RuntimeException('@TODO: Illegal value as key');
         }

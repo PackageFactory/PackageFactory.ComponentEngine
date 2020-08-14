@@ -1,23 +1,67 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Runtime\Context\Value;
 
-use PackageFactory\ComponentEngine\Runtime\Context\Value;
+use PackageFactory\ComponentEngine\Runtime\Context\Key;
+use PackageFactory\ComponentEngine\Runtime\Runtime;
+use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 
 /**
- * @implements ValueInterface<array<mixed>>
+ * @extends PhpValue<array<mixed>>
  */
-final class PhpArrayValue extends Value
+final class PhpArrayValue extends PhpValue
 {
     /**
      * @var array<mixed>
      */
-    private $value;
+    private $array;
+
+    /**
+     * @param array<mixed> $array
+     */
+    private function __construct(array $array)
+    {
+        $this->array = $array;
+    }
+
+    /**
+     * @param array<mixed> $array
+     * @return self
+     */
+    public static function fromArray(array $array): self
+    {
+        return new self($array);
+    }
+
+    /**
+     * @return iterable<mixed, ValueInterface<mixed>>
+     */
+    public function asIterable(): iterable
+    {
+        foreach ($this->array as $key => $value) {
+            yield $key => PhpValue::fromAny($value);
+        }
+    }
+
+    /**
+     * @param Key $key
+     * @param boolean $optional
+     * @param Runtime $runtime
+     * @return ValueInterface<mixed>
+     */
+    public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface
+    {
+        if (array_key_exists($key->getValue(), $this->array)) {
+            return PhpValue::fromAny($this->array[$key->getValue()]);
+        } else {
+            return NullValue::create();
+        }
+    }
 
     /**
      * @return array<mixed>
      */
     public function getValue()
     {
-        return $this->value;
+        return $this->array;
     }
 }

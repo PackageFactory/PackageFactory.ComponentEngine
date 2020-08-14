@@ -2,24 +2,22 @@
 namespace PackageFactory\ComponentEngine\Runtime;
 
 use PackageFactory\ComponentEngine\Runtime\Context\Value\DictionaryValue;
-use PackageFactory\ComponentEngine\Runtime\Context\Value\NullValue;
-use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 
 final class Context
 {
     /**
-     * @return ValueInterface
+     * @return DictionaryValue
      */
-    public static function createEmpty(): ValueInterface
+    public static function empty(): DictionaryValue
     {
-        return NullValue::create();
+        return DictionaryValue::fromArray([]);
     }
 
     /**
      * @param array<string, mixed> $data
-     * @return ValueInterface
+     * @return DictionaryValue
      */
-    public static function fromArray(array $data): ValueInterface
+    public static function fromArray(array $data): DictionaryValue
     {
         return DictionaryValue::fromArray($data);
     }

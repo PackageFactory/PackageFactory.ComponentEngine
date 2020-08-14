@@ -14,14 +14,15 @@ final class OnObjectLiteral
      */
     public static function evaluate(Runtime $runtime, ObjectLiteral $objectLiteral): DictionaryValue
     {
-        $properties = [];
+        $result = DictionaryValue::empty();
+
         foreach ($objectLiteral->getProperties() as $property) {
             foreach (OnObjectLiteralProperty::evaluate($runtime, $property) as $key => $value) {
-                $properties[$key] = $value;
+                $result = $result->withAddedProperty((string) $key, $value);
             }
         }
 
-        return DictionaryValue::fromArray($properties);
+        return $result;
     }
 }
 

@@ -12,7 +12,7 @@ final class OnChain
     /**
      * @param Runtime $runtime
      * @param Chain $chain
-     * @return ValueInterface
+     * @return ValueInterface<mixed>
      */
     public static function evaluate(Runtime $runtime, Chain $chain): ValueInterface
     {
@@ -29,10 +29,10 @@ final class OnChain
             if ($key instanceof Identifier) {
                 $key = Key::fromIdentifier($key);
             } else {
-                $key = Key::fromValue(OnTerm::evaluate($runtime, $key), $runtime);
+                $key = Key::fromValue(OnTerm::evaluate($runtime, $key));
             }
 
-            /** @var ValueInterface $value */
+            /** @var ValueInterface<mixed> $value */
             $value = $value->get($key, $segment->getIsOptional(), $runtime);
 
             if ($call = $segment->getCall()) {
@@ -41,7 +41,7 @@ final class OnChain
                     $arguments[] = OnTerm::evaluate($runtime, $argument);
                 }
                 
-                $value = $value->call($arguments, $segment->getIsOptional(), $runtime);
+                $value = $value->call($arguments, $segment->getIsOptional());
             }
         }
 

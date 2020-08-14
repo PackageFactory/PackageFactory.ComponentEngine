@@ -7,19 +7,19 @@ use PackageFactory\ComponentEngine\Runtime\Context\Value;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 /**
- * @implements ValueInterface<\Iterator<mixed>>
+ * @extends Value<\Iterator<mixed>>
  */
 final class IteratorValue extends Value
 {
     /**
-     * @var iterable<mixed>
+     * @var \Iterator<mixed>
      */
     private $value;
 
     /**
-     * @param iterable<mixed> $value
+     * @param \Iterator<mixed> $value
      */
-    private function __construct(iterable $value)
+    private function __construct(\Iterator $value)
     {
         $this->value = $value;
     }
@@ -49,13 +49,13 @@ final class IteratorValue extends Value
      * @param Key $key
      * @param bool $optional
      * @param Runtime $runtime
-     * @return ValueInterface
+     * @return ValueInterface<mixed>
      */
     public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface
     {
-        if ($runtime->getLibrary()->hasMethod('iterable', (string) $key->getValue())) {
-            return $runtime->getLibrary()->getMethod('iterable', (string) $key->getValue(), $this);
-        } elseif ($this->value instanceof \Iterator) {
+        if ($runtime->getLibrary()->hasOperation(self::class, (string) $key->getValue())) {
+            return $runtime->getLibrary()->getOperation(self::class, (string) $key->getValue());
+        } else {
             foreach ($this->value as $k => $v) {
                 if (is_string($k)) {
                     return DictionaryValue::fromArray(iterator_to_array($this->value, true))
@@ -67,7 +67,7 @@ final class IteratorValue extends Value
             }
         }
 
-        return Value::fromAny($this->value)->get($key, $optional, $runtime);
+        return NullValue::create();
     }
 
     /**

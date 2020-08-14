@@ -7,12 +7,12 @@ use PackageFactory\ComponentEngine\Runtime\Context\Value;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 /**
- * @implements ValueInterface<\stdClass>
+ * @extends Value<\stdClass>
  */
 final class DictionaryValue extends Value
 {
     /**
-     * @var array<string, ValueInterface>
+     * @var array<string, ValueInterface<mixed>>
      */
     private $value;
 
@@ -25,12 +25,27 @@ final class DictionaryValue extends Value
     }
 
     /**
+     * @return self
+     */
+    public static function empty(): self
+    {
+        return new self([]);
+    }
+
+    /**
      * @param array<mixed> $array
      * @return self
      */
     public static function fromArray(array $array): self
     {
-        return new self($array);
+        return new self(
+            array_map(
+                function ($item) {
+                    return $item instanceof ValueInterface ? $item : PhpValue::fromAny($item);
+                },
+                $array
+            )
+        );
     }
 
     /**
@@ -45,22 +60,22 @@ final class DictionaryValue extends Value
      * @param Key $key
      * @param bool $optional
      * @param Runtime $runtime
-     * @return ValueInterface
+     * @return ValueInterface<mixed>
      */
     public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface
     {
-        if (array_key_exists($key->getValue(), $this->value)) {
-            return Value::fromAny($this->value[$key->getValue()]);
-        } elseif ($optional) {
-            return NullValue::create();
-        } else {
+        if ($key->isNumeric()) {
             throw new \RuntimeException('@TODO: Invalid property access: ' . $key);
+        } elseif (array_key_exists($key->getValue(), $this->value)) {
+            return Value::fromAny($this->value[$key->getValue()]);
+        } else {
+            return NullValue::create();
         }
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function merge(ValueInterface $other): ValueInterface
     {
@@ -72,11 +87,16 @@ final class DictionaryValue extends Value
     }
 
     /**
-     * @return object
+     * @return \stdClass
      */
     public function getValue()
     {
-        return (object) $this->value;
+        return (object) array_map(
+            function (ValueInterface $item) {
+                return $item->getValue();
+            },
+            $this->value
+        );
     }
 
     /**
@@ -85,5 +105,18 @@ final class DictionaryValue extends Value
     public function getArray(): array
     {
         return $this->value;
+    }
+
+    /**
+     * @param string $key
+     * @param ValueInterface<mixed> $value
+     * @return self
+     */
+    public function withAddedProperty(string $key, ValueInterface $value): self
+    {
+        $properties = $this->value;
+        $properties[$key] = $value;
+
+        return new self($properties);
     }
 }

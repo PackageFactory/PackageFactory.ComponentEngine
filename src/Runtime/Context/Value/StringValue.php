@@ -7,6 +7,9 @@ use PackageFactory\ComponentEngine\Runtime\Context\Key;
 use PackageFactory\ComponentEngine\Runtime\Context\Value;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
+/**
+ * @extends Value<string>
+ */
 final class StringValue extends Value
 {
     /**
@@ -52,7 +55,7 @@ final class StringValue extends Value
      * @param Key $key
      * @param bool $optional
      * @param Runtime $runtime
-     * @return ValueInterface
+     * @return ValueInterface<mixed>
      */
     public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface
     {
@@ -64,7 +67,7 @@ final class StringValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
+     * @param ValueInterface<mixed> $other
      * @return BooleanValue
      */
     public function greaterThan(ValueInterface $other): BooleanValue
@@ -77,7 +80,7 @@ final class StringValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
+     * @param ValueInterface<mixed> $other
      * @return BooleanValue
      */
     public function lessThan(ValueInterface $other): BooleanValue
@@ -90,8 +93,8 @@ final class StringValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function add(ValueInterface $other): ValueInterface
     {

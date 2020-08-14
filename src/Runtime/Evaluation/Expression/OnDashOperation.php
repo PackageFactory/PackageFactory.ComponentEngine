@@ -10,7 +10,7 @@ final class OnDashOperation
     /**
      * @param Runtime $runtime
      * @param DashOperation $dashOperation
-     * @return ValueInterface
+     * @return ValueInterface<mixed>
      */
     public static function evaluate(Runtime $runtime, DashOperation $dashOperation): ValueInterface
     {
@@ -20,9 +20,9 @@ final class OnDashOperation
         switch ($dashOperation->getOperator()) {
             default:
             case DashOperation::OPERATOR_ADD:
-                return $left->add($right, $runtime);
+                return $left->add($right);
             case DashOperation::OPERATOR_SUBTRACT:
-                return $left->subtract($right, $runtime);
+                return $left->subtract($right);
         }
     }
 }

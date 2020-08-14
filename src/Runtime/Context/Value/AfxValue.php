@@ -5,7 +5,7 @@ use PackageFactory\ComponentEngine\Runtime\Context\Value;
 use PackageFactory\VirtualDOM\Model\ComponentInterface;
 
 /**
- * @implements ValueInterface<ComponentInterface>
+ * @extends Value<ComponentInterface>
  */
 final class AfxValue extends Value
 {

@@ -29,7 +29,7 @@ final class OnTerm
     /**
      * @param Runtime $runtime
      * @param Term $term
-     * @return ValueInterface
+     * @return ValueInterface<mixed>
      */
     public static function evaluate(Runtime $runtime, Term $term): ValueInterface
     {

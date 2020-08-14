@@ -7,7 +7,7 @@ use PackageFactory\ComponentEngine\Runtime\Context\Value;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 /**
- * @implements ValueInterface<float>
+ * @extends Value<float>
  */
 final class NumberValue extends Value
 {
@@ -68,7 +68,7 @@ final class NumberValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
+     * @param ValueInterface<mixed> $other
      * @return BooleanValue
      */
     public function greaterThan(ValueInterface $other): BooleanValue
@@ -81,7 +81,7 @@ final class NumberValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
+     * @param ValueInterface<mixed> $other
      * @return BooleanValue
      */
     public function lessThan(ValueInterface $other): BooleanValue
@@ -94,7 +94,7 @@ final class NumberValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
+     * @param ValueInterface<mixed> $other
      * @return BooleanValue
      */
     public function equals(ValueInterface $other): BooleanValue
@@ -107,8 +107,8 @@ final class NumberValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function add(ValueInterface $other): ValueInterface
     {
@@ -122,8 +122,8 @@ final class NumberValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function subtract(ValueInterface $other): ValueInterface
     {
@@ -135,8 +135,8 @@ final class NumberValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function multiply(ValueInterface $other): ValueInterface
     {
@@ -148,8 +148,8 @@ final class NumberValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function divide(ValueInterface $other): ValueInterface
     {
@@ -165,8 +165,8 @@ final class NumberValue extends Value
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function modulo(ValueInterface $other): ValueInterface
     {

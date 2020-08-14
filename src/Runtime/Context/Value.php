@@ -6,6 +6,10 @@ use PackageFactory\ComponentEngine\Runtime\Context\Value\StringValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 use PackageFactory\VirtualDOM\Model\ComponentInterface;
 
+/**
+ * @template V
+ * @implements ValueInterface<V>
+ */
 abstract class Value implements ValueInterface
 {
     /**
@@ -46,7 +50,7 @@ abstract class Value implements ValueInterface
     }
 
     /**
-     * @return iterable
+     * @return iterable<mixed>
      */
     public function asIterable(): iterable
     {
@@ -60,7 +64,7 @@ abstract class Value implements ValueInterface
 
     /**
      * @param mixed $value
-     * @return ValueInterface
+     * @return ValueInterface<mixed>
      */
     public static function fromAny($value): ValueInterface
     {
@@ -100,22 +104,26 @@ abstract class Value implements ValueInterface
      * @param Key $key
      * @param bool $optional
      * @param Runtime $runtime
-     * @return ValueInterface
+     * @return ValueInterface<mixed>
      */
     public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface
     {
-        throw new \RuntimeException(
-            sprintf(
-                '@TODO: Cannot get %s from %s.',
-                $key,
-                static::class
-            )
-        );
+        if ($runtime->getLibrary()->hasOperation(static::class, (string) $key)) {
+            return $runtime->getLibrary()->getOperation(static::class, (string) $key);
+        } else {
+            throw new \RuntimeException(
+                sprintf(
+                    '@TODO: Cannot get %s from %s.',
+                    $key,
+                    static::class
+                )
+            );
+        }
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function merge(ValueInterface $other): ValueInterface
     {
@@ -129,9 +137,9 @@ abstract class Value implements ValueInterface
     }
 
     /**
-     * @param array<int, ValueInterface> $arguments
+     * @param array<int, ValueInterface<mixed>> $arguments
      * @param bool $optional
-     * @return ValueInterface
+     * @return ValueInterface<mixed>
      */
     public function call(array $arguments, bool $optional): ValueInterface
     {
@@ -144,7 +152,7 @@ abstract class Value implements ValueInterface
     }
 
     /**
-     * @param ValueInterface $other
+     * @param ValueInterface<mixed> $other
      * @return BooleanValue
      */
     public function greaterThan(ValueInterface $other): BooleanValue
@@ -159,7 +167,7 @@ abstract class Value implements ValueInterface
     }
 
     /**
-     * @param ValueInterface $other
+     * @param ValueInterface<mixed> $other
      * @return BooleanValue
      */
     public function lessThan(ValueInterface $other): BooleanValue
@@ -174,7 +182,7 @@ abstract class Value implements ValueInterface
     }
 
     /**
-     * @param ValueInterface $other
+     * @param ValueInterface<mixed> $other
      * @return BooleanValue
      */
     public function equals(ValueInterface $other): BooleanValue
@@ -185,8 +193,8 @@ abstract class Value implements ValueInterface
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function add(ValueInterface $other): ValueInterface
     {
@@ -200,8 +208,8 @@ abstract class Value implements ValueInterface
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function subtract(ValueInterface $other): ValueInterface
     {
@@ -215,8 +223,8 @@ abstract class Value implements ValueInterface
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function multiply(ValueInterface $other): ValueInterface
     {
@@ -230,8 +238,8 @@ abstract class Value implements ValueInterface
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function divide(ValueInterface $other): ValueInterface
     {
@@ -245,8 +253,8 @@ abstract class Value implements ValueInterface
     }
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function modulo(ValueInterface $other): ValueInterface
     {
@@ -260,7 +268,15 @@ abstract class Value implements ValueInterface
     }
 
     /**
-     * @return mixed
+     * @return V
      */
     abstract public function getValue();
+
+    /**
+     * @return string
+     */
+    public function getDebugName(): string
+    {
+        return basename(static::class);
+    }
 }

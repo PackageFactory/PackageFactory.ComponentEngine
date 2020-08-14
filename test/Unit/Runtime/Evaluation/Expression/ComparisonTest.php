@@ -8,6 +8,7 @@ use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\Scope;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Runtime\Context;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\DictionaryValue;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Evaluation\Expression\OnTerm;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
@@ -16,177 +17,177 @@ use PHPUnit\Framework\TestCase;
 final class ComparisonTest extends TestCase
 {
     /**
-     * @return \Iterator<string, array{string, ValueInterface, mixed}>
+     * @return \Iterator<string, array{string, DictionaryValue, mixed}>
      */
     public function averageCaseProvider(): \Iterator
     {
         $input = 'true === true';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = 'true !== true';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = false;
         yield $input => [$input, $context, $result];
 
         $input = 'false === false';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = 'false !== false';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = false;
         yield $input => [$input, $context, $result];
 
         $input = 'true === false';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = false;
         yield $input => [$input, $context, $result];
 
         $input = 'true !== false';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = 'false === true';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = false;
         yield $input => [$input, $context, $result];
 
         $input = 'false !== true';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '12.5 === 12.5';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '12.5 >= 12.5';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '12.5 >= 13';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = false;
         yield $input => [$input, $context, $result];
 
         $input = '12.5 > 12';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '12.5 <= 13';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '12.5 <= 12.5';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '12.5 < 13';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '12.5 !== 13';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '12.5 !== 12.5';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = false;
         yield $input => [$input, $context, $result];
 
         $input = '"Hello World" === "Hello World"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '"Hello World" !== "Hello World"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = false;
         yield $input => [$input, $context, $result];
 
         $input = '"Hello World" === "Hello World!"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = false;
         yield $input => [$input, $context, $result];
 
         $input = '"Hello World" !== "Hello World!"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '"Hello World" <= "Hello World!"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '"Hello World" < "Hello World!"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '"Hello World" > "Hello World!"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = false;
         yield $input => [$input, $context, $result];
 
         $input = '"Hello World" >= "Hello World!"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = false;
         yield $input => [$input, $context, $result];
 
         $input = '"aaaa" >= "aaaa"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '"aaaa" >= "bbbb"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = false;
         yield $input => [$input, $context, $result];
 
         $input = '"aaaa" > "bbbb"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = false;
         yield $input => [$input, $context, $result];
 
         $input = '"aaaa" < "bbbb"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '"aaaa" <= "bbbb"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '"bbbb" <= "aaaa"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = false;
         yield $input => [$input, $context, $result];
 
         $input = '"bbbb" < "aaaa"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = false;
         yield $input => [$input, $context, $result];
 
         $input = '"bbbb" > "aaaa"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '"bbbb" >= "aaaa"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
     }
@@ -196,11 +197,11 @@ final class ComparisonTest extends TestCase
      * @small
      * @dataProvider averageCaseProvider
      * @param string $input
-     * @param ValueInterface $context
+     * @param DictionaryValue $context
      * @param mixed $value
      * @return void
      */
-    public function testAverageCase(string $input, ValueInterface $context, $value): void
+    public function testAverageCase(string $input, DictionaryValue $context, $value): void
     {
         $source = Source::fromString($input);
         $tokenizer = Tokenizer::fromSource($source, Scope\Expression::class);
@@ -212,6 +213,6 @@ final class ComparisonTest extends TestCase
         $result = OnTerm::evaluate($runtime, $ast);
 
         $this->assertInstanceOf(ValueInterface::class, $result);
-        $this->assertEquals($value, $result->getValue($runtime));
+        $this->assertEquals($value, $result->getValue());
     }
 }

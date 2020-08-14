@@ -9,6 +9,7 @@ use PackageFactory\ComponentEngine\Parser\Lexer\Scope;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Runtime\Context;
 use PackageFactory\ComponentEngine\Runtime\Context\Value\BooleanValue;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\DictionaryValue;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Evaluation\Expression\OnTerm;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
@@ -17,37 +18,37 @@ use PHPUnit\Framework\TestCase;
 final class NegationTest extends TestCase
 {
     /**
-     * @return \Iterator<string, array{string, ValueInterface, mixed}>
+     * @return \Iterator<string, array{string, DictionaryValue, mixed}>
      */
     public function averageCaseProvider(): \Iterator
     {
         $input = '!true';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = false;
         yield $input => [$input, $context, $result];
 
         $input = '!false';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '!0';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
 
         $input = '!12.3';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = false;
         yield $input => [$input, $context, $result];
 
         $input = '!"Hello World"';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = false;
         yield $input => [$input, $context, $result];
 
         $input = '!null';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = true;
         yield $input => [$input, $context, $result];
     }
@@ -57,11 +58,11 @@ final class NegationTest extends TestCase
      * @small
      * @dataProvider averageCaseProvider
      * @param string $input
-     * @param ValueInterface $context
+     * @param DictionaryValue $context
      * @param mixed $value
      * @return void
      */
-    public function testAverageCase(string $input, ValueInterface $context, $value): void
+    public function testAverageCase(string $input, DictionaryValue $context, $value): void
     {
         $source = Source::fromString($input);
         $tokenizer = Tokenizer::fromSource($source, Scope\Expression::class);
@@ -73,6 +74,6 @@ final class NegationTest extends TestCase
         $result = OnTerm::evaluate($runtime, $ast);
 
         $this->assertInstanceOf(BooleanValue::class, $result);
-        $this->assertSame($value, $result->getValue($runtime));
+        $this->assertSame($value, $result->getValue());
     }
 }

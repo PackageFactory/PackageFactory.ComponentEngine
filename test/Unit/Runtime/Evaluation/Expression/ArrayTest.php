@@ -107,7 +107,7 @@ final class ArrayTest extends TestCase
         $result = OnTerm::evaluate($runtime, $ast);
 
         $this->assertInstanceOf(ValueInterface::class, $result);
-        $this->assertEquals($value, $result->getValue($runtime));
+        $this->assertEquals($value, $result->getValue());
     }
 
     /**

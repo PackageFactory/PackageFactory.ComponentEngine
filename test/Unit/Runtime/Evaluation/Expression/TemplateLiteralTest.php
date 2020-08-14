@@ -8,6 +8,7 @@ use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\Scope;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Runtime\Context;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\DictionaryValue;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Evaluation\Expression\OnTerm;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
@@ -16,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 final class TemplateLiteralTest extends TestCase
 {
     /**
-     * @return \Iterator<string, array{string, ValueInterface, mixed}>
+     * @return \Iterator<string, array{string, DictionaryValue, mixed}>
      */
     public function averageCaseProvider(): \Iterator
     {
@@ -51,7 +52,7 @@ final class TemplateLiteralTest extends TestCase
         yield $input => [$input, $context, $result];
 
         $input = '`Null: ${null}`';
-        $context = Context::createEmpty();
+        $context = Context::empty();
         $result = "Null: null";
         yield $input => [$input, $context, $result];
     }
@@ -61,11 +62,11 @@ final class TemplateLiteralTest extends TestCase
      * @small
      * @dataProvider averageCaseProvider
      * @param string $input
-     * @param ValueInterface $context
+     * @param DictionaryValue $context
      * @param mixed $value
      * @return void
      */
-    public function testAverageCase(string $input, ValueInterface $context, $value): void
+    public function testAverageCase(string $input, DictionaryValue $context, $value): void
     {
         $source = Source::fromString($input);
         $tokenizer = Tokenizer::fromSource($source, Scope\Expression::class);
@@ -77,6 +78,6 @@ final class TemplateLiteralTest extends TestCase
         $result = OnTerm::evaluate($runtime, $ast);
 
         $this->assertInstanceOf(ValueInterface::class, $result);
-        $this->assertSame($value, $result->getValue($runtime));
+        $this->assertSame($value, $result->getValue());
     }
 }

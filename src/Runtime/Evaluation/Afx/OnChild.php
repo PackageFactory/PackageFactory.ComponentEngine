@@ -23,14 +23,11 @@ final class OnChild
             yield VirtualDOM\Text::fromString($child->getValue());
         } elseif ($child instanceof Tag) {
             /** @var VirtualDOM\ComponentInterface $component */
-            $component = OnTag::evaluate($runtime, $child)->getValue($runtime);
+            $component = OnTag::evaluate($runtime, $child)->getValue();
             yield $component;
         } else {
             /** @var Term $child */
-            yield from self::getContentFromValue(
-                Expression\OnTerm::evaluate($runtime, $child)->getValue($runtime),
-                $runtime
-            );
+            yield from self::getContentFromValue(Expression\OnTerm::evaluate($runtime, $child)->getValue());
         }
     }
 
@@ -38,11 +35,11 @@ final class OnChild
      * @param mixed $value
      * @return \Iterator<int, VirtualDOM\ComponentInterface>
      */
-    private static function getContentFromValue($value, Runtime $runtime): \Iterator
+    private static function getContentFromValue($value): \Iterator
     {
         // @TODO: Find a more consistent solution for this
         if ($value instanceof ValueInterface) {
-            $value = $value->getValue($runtime);
+            $value = $value->getValue();
         }
 
         if (is_string($value)) {
@@ -51,7 +48,7 @@ final class OnChild
             yield VirtualDOM\Text::fromString((string) $value);
         } elseif (is_iterable($value)) {
             foreach ($value as $item) {
-                yield from self::getContentFromValue($item, $runtime);
+                yield from self::getContentFromValue($item);
             }
         } elseif (is_null($value)) {
             // Ignore

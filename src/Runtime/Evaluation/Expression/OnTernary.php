@@ -10,13 +10,13 @@ final class OnTernary
     /**
      * @param Runtime $runtime
      * @param Ternary $ternary
-     * @return ValueInterface
+     * @return ValueInterface<mixed>
      */
     public static function evaluate(Runtime $runtime, Ternary $ternary): ValueInterface
     {
         $condition = OnTerm::evaluate($runtime, $ternary->getCondition());
         
-        if ($condition->isTrueish($runtime)) {
+        if ($condition->asBooleanValue()->getValue()) {
             return OnTerm::evaluate($runtime, $ternary->getTrueBranch());
         } else {
             return OnTerm::evaluate($runtime, $ternary->getFalseBranch());

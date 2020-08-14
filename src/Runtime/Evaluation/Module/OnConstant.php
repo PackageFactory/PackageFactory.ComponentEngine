@@ -20,25 +20,7 @@ final class OnConstant
     public static function evaluate(Runtime $runtime, Constant $constant) 
     {
         $value = $constant->getValue();
-    
-        if ($value instanceof Tag) {
-            return CallableValue::fromRuntimeAwareClosure(
-                RuntimeAwareClosure::fromClosure(function (Runtime $runtime) use ($value) {
-                    return function ($props) use ($runtime, $value) {
-                        return Afx\OnTag::evaluate(
-                            $runtime->withContext(
-                                $runtime->getContext()->merge(
-                                    DictionaryValue::fromArray(['props' => $props]),
-                                    $runtime
-                                )
-                            ), 
-                            $value
-                        );
-                    };
-                })
-            );
-        } else {
-            return Expression\OnTerm::evaluate($runtime, $value);
-        }
+
+        return Expression\OnTerm::evaluate($runtime, $value);
     }
 }

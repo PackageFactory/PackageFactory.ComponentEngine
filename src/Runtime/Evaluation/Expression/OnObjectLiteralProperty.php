@@ -5,6 +5,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\Expression\Identifier;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\ObjectLiteralProperty;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Spread;
 use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnObjectLiteralProperty
@@ -12,7 +13,7 @@ final class OnObjectLiteralProperty
     /**
      * @param Runtime $runtime
      * @param ObjectLiteralProperty $objectLiteralProperty
-     * @return \Iterator<int|string, mixed>
+     * @return \Iterator<int|string, ValueInterface<mixed>>
      */
     public static function evaluate(Runtime $runtime, ObjectLiteralProperty $objectLiteralProperty): \Iterator
     {
@@ -31,9 +32,9 @@ final class OnObjectLiteralProperty
                 if ($key === null) {
                     throw new \Exception('@TODO: Unexpected empty key');
                 } elseif ($key instanceof Identifier) {
-                    yield $key->getValue() => $value->getValue($runtime);
+                    yield $key->getValue() => $value;
                 } else {
-                    yield OnTerm::evaluate($runtime, $key)->getValue($runtime) => $value->getValue($runtime);
+                    yield OnTerm::evaluate($runtime, $key)->getValue() => $value;
                 }
             }
         }

@@ -8,7 +8,7 @@ use PackageFactory\ComponentEngine\Runtime\Loader\RootLoader;
 final class Runtime
 {
     /**
-     * @var ValueInterface
+     * @var ValueInterface<mixed>
      */
     private $context;
 
@@ -23,7 +23,9 @@ final class Runtime
     private $library;
 
     /**
-     * @param ValueInterface $context
+     * @param ValueInterface<mixed> $context
+     * @param LoaderInterface $loader
+     * @param Library $library
      */
     private function __construct(
         ValueInterface $context, 
@@ -40,11 +42,11 @@ final class Runtime
      */
     public static function default(): self
     {
-        return new self(Context::createEmpty(), RootLoader::fromConfiguration([]), Library::default());
+        return new self(Context::empty(), RootLoader::fromConfiguration([]), Library::default());
     }
 
     /**
-     * @return ValueInterface
+     * @return ValueInterface<mixed>
      */
     public function getContext(): ValueInterface
     {
@@ -52,7 +54,7 @@ final class Runtime
     }
 
     /**
-     * @param ValueInterface $context
+     * @param ValueInterface<mixed> $context
      * @return self
      */
     public function withContext(ValueInterface $context): self

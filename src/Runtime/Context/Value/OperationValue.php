@@ -3,20 +3,36 @@ namespace PackageFactory\ComponentEngine\Runtime\Context\Value;
 
 use PackageFactory\ComponentEngine\Runtime\Context\Value;
 use PackageFactory\ComponentEngine\Runtime\Library\OperationInterface;
-use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 /**
- * @implements ValueInterface<OperationInterface>
+ * @extends Value<OperationInterface<mixed>>
  */
 final class OperationValue extends Value
 {
     /**
-     * @var OperationInterface
+     * @var OperationInterface<mixed>
      */
     private $operation;
 
     /**
-     * @return OperationInterface
+     * @param OperationInterface<mixed> $operation
+     */
+    private function __construct(OperationInterface $operation)
+    {
+        $this->operation = $operation;
+    }
+
+    /**
+     * @param OperationInterface<mixed> $operation
+     * @return self
+     */
+    public static function fromOperation(OperationInterface $operation): self
+    {
+        return new self($operation);
+    }
+
+    /**
+     * @return OperationInterface<mixed>
      */
     public function getValue()
     {

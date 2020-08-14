@@ -4,7 +4,6 @@ namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Module;
 use PackageFactory\ComponentEngine\Parser\Ast\Module\Import;
 use PackageFactory\ComponentEngine\Parser\Ast\Module\Module;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
-use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnImport
@@ -20,13 +19,7 @@ final class OnImport
         $module = $runtime->getLoader()->load($root->getSource()->getPath()->getRelativePathTo(
             Path::fromString($import->getTarget())
         ));
-    
-        return function(ValueInterface $context) use ($runtime, $module, $import) {
-            return OnModule::evaluate(
-                $runtime->withContext($context),
-                $module,
-                $import->getForeignName()
-            );
-        };
+
+        return OnModule::evaluate($runtime, $module, $import->getForeignName());
     }
 }

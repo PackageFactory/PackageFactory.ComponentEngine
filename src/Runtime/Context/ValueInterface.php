@@ -31,7 +31,7 @@ interface ValueInterface
     public function asBooleanValue(): BooleanValue;
 
     /**
-     * @return iterable
+     * @return iterable<mixed, ValueInterface<mixed>>
      */
     public function asIterable(): iterable;
 
@@ -39,68 +39,68 @@ interface ValueInterface
      * @param Key $key
      * @param bool $optional
      * @param Runtime $runtime
-     * @return ValueInterface
+     * @return ValueInterface<mixed>
      */
     public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface;
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<V>
      */
     public function merge(ValueInterface $other): ValueInterface;
 
     /**
-     * @param array<int, ValueInterface> $arguments
+     * @param array<int, ValueInterface<mixed>> $arguments
      * @param bool $optional
-     * @return ValueInterface
+     * @return ValueInterface<mixed>
      */
     public function call(array $arguments, bool $optional): ValueInterface;
 
     /**
-     * @param ValueInterface $other
+     * @param ValueInterface<mixed> $other
      * @return BooleanValue
      */
     public function greaterThan(ValueInterface $other): BooleanValue;
 
     /**
-     * @param ValueInterface $other
+     * @param ValueInterface<mixed> $other
      * @return BooleanValue
      */
     public function lessThan(ValueInterface $other): BooleanValue;
 
     /**
-     * @param ValueInterface $other
+     * @param ValueInterface<mixed> $other
      * @return BooleanValue
      */
     public function equals(ValueInterface $other): BooleanValue;
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function add(ValueInterface $other): ValueInterface;
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function subtract(ValueInterface $other): ValueInterface;
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function multiply(ValueInterface $other): ValueInterface;
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function divide(ValueInterface $other): ValueInterface;
 
     /**
-     * @param ValueInterface $other
-     * @return ValueInterface
+     * @param ValueInterface<mixed> $other
+     * @return ValueInterface<mixed>
      */
     public function modulo(ValueInterface $other): ValueInterface;
 
@@ -108,4 +108,9 @@ interface ValueInterface
      * @return V
      */
     public function getValue();
+
+    /**
+     * @return string
+     */
+    public function getDebugName(): string;
 }
