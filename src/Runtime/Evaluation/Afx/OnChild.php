@@ -5,6 +5,9 @@ use PackageFactory\ComponentEngine\Parser\Ast\Afx\Content;
 use PackageFactory\ComponentEngine\Parser\Ast\Afx\Tag;
 use PackageFactory\ComponentEngine\Parser\Ast\Child;
 use PackageFactory\ComponentEngine\Parser\Ast\Term;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\AfxValue;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\BooleanValue;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\NullValue;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
@@ -15,51 +18,38 @@ final class OnChild
     /**
      * @param Runtime $runtime
      * @param Child $child
-     * @return \Iterator<int, VirtualDOM\ComponentInterface>
+     * @return \Iterator<int, ValueInterface<mixed>>
      */
-    public static function evaluate(Runtime $runtime, Child $child): \Iterator 
+    public static function evaluate(Runtime $runtime, Child $child): \Iterator
     {
         if ($child instanceof Content) {
-            yield VirtualDOM\Text::fromString($child->getValue());
+            yield AfxValue::fromComponent(VirtualDOM\Text::fromString($child->getValue()));
         } elseif ($child instanceof Tag) {
-            /** @var VirtualDOM\ComponentInterface $component */
-            $component = OnTag::evaluate($runtime, $child)->getValue();
-            yield $component;
+            yield OnTag::evaluate($runtime, $child);
         } else {
             /** @var Term $child */
-            yield from self::getContentFromValue(Expression\OnTerm::evaluate($runtime, $child)->getValue());
+            yield from self::getContentFromValue(Expression\OnTerm::evaluate($runtime, $child));
         }
     }
 
     /**
-     * @param mixed $value
-     * @return \Iterator<int, VirtualDOM\ComponentInterface>
+     * @param ValueInterface<mixed> $value
+     * @return \Iterator<int, ValueInterface<mixed>>
      */
-    private static function getContentFromValue($value): \Iterator
+    private static function getContentFromValue(ValueInterface $value): \Iterator
     {
-        // @TODO: Find a more consistent solution for this
-        if ($value instanceof ValueInterface) {
-            $value = $value->getValue();
-        }
-
-        if (is_string($value)) {
-            yield VirtualDOM\Text::fromString($value);
-        } elseif (is_float($value)) {
-            yield VirtualDOM\Text::fromString((string) $value);
-        } elseif (is_iterable($value)) {
-            foreach ($value as $item) {
+        if ($value->isCastableToString()) {
+            yield AfxValue::fromComponent(VirtualDOM\Text::fromString($value->asStringValue()->getValue()));
+        } elseif ($value instanceof AfxValue) {
+            yield $value;
+        } elseif ($value instanceof BooleanValue && $value->getValue() === false) {
+            // Ignore
+        } elseif ($value instanceof NullValue) {
+            // Ignore
+        } else {
+            foreach ($value->asIterable() as $item) {
                 yield from self::getContentFromValue($item);
             }
-        } elseif (is_null($value)) {
-            // Ignore
-        } elseif (is_bool($value) && !$value) {
-            // Ignore
-        } elseif ($value instanceof VirtualDOM\ComponentInterface) {
-            yield $value;
-        } elseif (is_object($value) && method_exists($value, '__toString')) {
-            yield VirtualDOM\Text::fromString((string) $value);
-        } else {
-            throw new \Exception('@TODO: Illegal content value of type ' . gettype($value));
         }
     }
 }

@@ -3,6 +3,8 @@ namespace PackageFactory\ComponentEngine\Runtime;
 
 use PackageFactory\ComponentEngine\Runtime\Context\Value\ListValue;
 use PackageFactory\ComponentEngine\Runtime\Context\Value\OperationValue;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\PhpArrayValue;
+use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Library\OperationInterface;
 
 final class Library
@@ -28,6 +30,9 @@ final class Library
         return new self([
             ListValue::class => [
                 'map' => Library\Operation\Map::create()
+            ],
+            PhpArrayValue::class => [
+                'map' => Library\Operation\Map::create()
             ]
         ]);
     }
@@ -45,15 +50,19 @@ final class Library
     /**
      * @param class-string $typeName
      * @param string $operationName
+     * @param ValueInterface<mixed> $value
      * @return OperationValue
      */
-    public function getOperation(string $typeName, string $operationName): OperationValue
+    public function getOperation(string $typeName, string $operationName, ValueInterface $value): OperationValue
     {
         if (!$this->hasOperation($typeName, $operationName)) {
             throw new \Exception('@TODO: Cannot retrieve undefined operation!');
         }
 
-        return OperationValue::fromOperation($this->operations[$typeName][$operationName]);
+        return OperationValue::fromValueAndOperation(
+            $value,
+            $this->operations[$typeName][$operationName]
+        );
     }
 
     /**

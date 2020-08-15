@@ -44,6 +44,22 @@ final class StringValue extends Value
     }
 
     /**
+     * @return boolean
+     */
+    public function isCastableToString(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return StringValue
+     */
+    public function asStringValue(): StringValue
+    {
+        return $this;
+    }
+
+    /**
      * @return BooleanValue
      */
     public function asBooleanValue(): BooleanValue

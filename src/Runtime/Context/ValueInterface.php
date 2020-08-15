@@ -2,6 +2,7 @@
 namespace PackageFactory\ComponentEngine\Runtime\Context;
 
 use PackageFactory\ComponentEngine\Runtime\Context\Value\BooleanValue;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\ListValue;
 use PackageFactory\ComponentEngine\Runtime\Context\Value\StringValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
@@ -50,11 +51,12 @@ interface ValueInterface
     public function merge(ValueInterface $other): ValueInterface;
 
     /**
-     * @param array<int, ValueInterface<mixed>> $arguments
+     * @param ListValue $arguments
      * @param bool $optional
+     * @param Runtime $runtime
      * @return ValueInterface<mixed>
      */
-    public function call(array $arguments, bool $optional): ValueInterface;
+    public function call(ListValue $arguments, bool $optional, Runtime $runtime): ValueInterface;
 
     /**
      * @param ValueInterface<mixed> $other

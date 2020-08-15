@@ -2,21 +2,25 @@
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Afx;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Child;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\ListValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
-use PackageFactory\VirtualDOM\Model\ComponentInterface;
 
 final class OnChildren
 {
     /**
      * @param Runtime $runtime
      * @param array<int, Child> $children
-     * @return \Iterator<int, ComponentInterface>
+     * @return ListValue
      */
-    public static function evaluate(Runtime $runtime, array $children): \Iterator 
+    public static function evaluate(Runtime $runtime, array $children): ListValue 
     {
-        foreach ($children as $child) {
-            yield from OnChild::evaluate($runtime, $child);
-        }
+        $iterator = function() use ($runtime, $children) {
+            foreach ($children as $child) {
+                yield from OnChild::evaluate($runtime, $child);
+            }
+        };
+
+        return ListValue::fromValueIterator($iterator());
     }
 }
 

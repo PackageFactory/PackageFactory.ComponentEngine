@@ -1,13 +1,15 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Runtime\Library\Operation;
 
+use PackageFactory\ComponentEngine\Runtime\Context\Key;
 use PackageFactory\ComponentEngine\Runtime\Context\Value\IteratorValue;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\ListValue;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Library\Operation;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 /**
- * @extends Operation<IteratorValue>
+ * @extends Operation<\Iterator>
  */
 final class Map extends Operation
 {
@@ -31,19 +33,16 @@ final class Map extends Operation
     /**
      * @param ValueInterface<mixed> $value
      * @param Runtime $runtime
-     * @param array<mixed> $arguments
-     * @return ValueInterface<IteratorValue>
+     * @param ListValue $arguments
+     * @return IteratorValue
      */
-    public function run(ValueInterface $value, Runtime $runtime, array $arguments): ValueInterface
+    public function run(ValueInterface $value, Runtime $runtime, ListValue $arguments): ValueInterface
     {
-        /** @var callable $itemCallback */
-        $itemCallback = $arguments[0];
-
-        /** @var null|callable $keyCallback */
-        $keyCallback = $arguments[1] ?? null;
+        $itemCallback = $arguments->get(Key::fromInteger(0), false, $runtime);
+        $keyCallback = $arguments->get(Key::fromInteger(1), true, $runtime);
 
         $iterable = $value->asIterable();
-        $iterator = function() use ($itemCallback, $keyCallback, $iterable): \Iterator {
+        $iterator = function() use ($runtime, $itemCallback, $keyCallback, $iterable): \Iterator {
             $iteration = ['items' => $iterable];
 
             if (is_countable($iterable)) {
@@ -53,8 +52,11 @@ final class Map extends Operation
             $index = 0;
             foreach ($iterable as $key => $value) {
                 if ($index > 0) {
-                    $nextKey = $keyCallback ? $keyCallback($iteration['key'], $iteration) : $iteration['key'];
-                    $nextValue = $itemCallback($iteration['value'], $iteration);
+                    $nextKey = $keyCallback
+                        ->call(ListValue::fromArray([$iteration['key']]), true, $runtime)
+                        ->getValue() ?? $iteration['key'];
+                    $nextValue = $itemCallback
+                        ->call(ListValue::fromArray([$iteration['value'], $iteration]), false, $runtime);
 
                     yield $nextKey => $nextValue;
                 }
@@ -70,9 +72,11 @@ final class Map extends Operation
             }
 
             if ($index > 0) {
-                $iteration['isLast'] = true;
-                $nextKey = $keyCallback ? $keyCallback($iteration['key'], $iteration) : $iteration['key'];
-                $nextValue = $itemCallback($iteration['value'], $iteration);
+                $nextKey = $keyCallback
+                    ->call(ListValue::fromArray([$iteration['key']]), true, $runtime)
+                    ->getValue() ?? $iteration['key'];
+                $nextValue = $itemCallback
+                    ->call(ListValue::fromArray([$iteration['value'], $iteration]), false, $runtime);
 
                 yield $nextKey => $nextValue;
             }

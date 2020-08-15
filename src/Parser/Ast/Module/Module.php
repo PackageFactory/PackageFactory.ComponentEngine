@@ -71,7 +71,8 @@ final class Module implements \JsonSerializable
                     $exports[(string) $export->getName()] = $export;
                     break;
                 case TokenType::MODULE_KEYWORD_CONST():
-                    $constants[] = Constant::fromTokenStream($stream);
+                    $constant = Constant::fromTokenStream($stream);
+                    $constants[(string) $constant->getName()] = $constant;
                     break;
                 default:
                     throw ParserFailed::becauseOfUnexpectedToken(
@@ -105,6 +106,28 @@ final class Module implements \JsonSerializable
     }
 
     /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasImport(string $name): bool
+    {
+        return isset($this->imports[$name]);
+    }
+
+    /**
+     * @param string $name
+     * @return Import
+     */
+    public function getImport(string $name): Import
+    {
+        if (isset($this->imports[$name])) {
+            return $this->imports[$name];
+        }
+
+        throw new \Exception('@TODO: Import does not exist: ' . $name);
+    }
+
+    /**
      * @return array|Export[]
      */
     public function getExports(): array
@@ -131,6 +154,28 @@ final class Module implements \JsonSerializable
     public function getConstants(): array
     {
         return $this->constants;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasConstant(string $name): bool
+    {
+        return isset($this->constants[$name]);
+    }
+
+    /**
+     * @param string $name
+     * @return Constant
+     */
+    public function getConstant(string $name): Constant
+    {
+        if (isset($this->constants[$name])) {
+            return $this->constants[$name];
+        }
+
+        throw new \Exception('@TODO: Constant does not exist: ' . $name);
     }
 
     /**

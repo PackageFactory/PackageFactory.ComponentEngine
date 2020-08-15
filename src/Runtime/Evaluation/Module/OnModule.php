@@ -2,7 +2,8 @@
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Module;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Module\Module;
-use PackageFactory\ComponentEngine\Runtime\Context\Value\DictionaryValue;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\ModuleScopeValue;
+use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnModule
@@ -11,27 +12,20 @@ final class OnModule
      * @param Runtime $runtime
      * @param Module $module
      * @param string $exportName
-     * @return mixed
+     * @return ValueInterface<mixed>
      */
-    public static function evaluate(Runtime $runtime, Module $module, string $exportName = 'default') {
+    public static function evaluate(Runtime $runtime, Module $module, string $exportName = 'default'): ValueInterface 
+    {
         $export = $module->getExport($exportName);
-        $context = $runtime->getContext();
+        $context = ModuleScopeValue::fromModule($module);
+        $runtime = $context->bindRuntime(
+            $runtime->withContext(
+                $context->merge($runtime->getContext())
+            )
+        );
 
-        $imports = [];
-        foreach ($module->getImports() as $import) {
-            $imports[(string) $import->getDomesticName()] = OnImport::evaluate($runtime, $module, $import);
-        }
-        
-        $constants = [];
-        foreach ($module->getConstants() as $constant) {
-            $constants[(string) $constant->getName()] = OnConstant::evaluate($runtime->withContext($context), $constant)->getValue($runtime);
-        }
-
-        /** @var DictionaryValue $context */
-        $context = $context
-            ->merge(DictionaryValue::fromArray($imports))
-            ->merge(DictionaryValue::fromArray($constants));
-
-        return OnExport::evaluate($runtime->withContext($context), $export);
+        return OnExport::evaluate($runtime, $export);
     }
+
+
 }

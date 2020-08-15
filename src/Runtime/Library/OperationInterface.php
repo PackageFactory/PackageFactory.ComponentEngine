@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Runtime\Library;
 
+use PackageFactory\ComponentEngine\Runtime\Context\Value\ListValue;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
@@ -12,8 +13,8 @@ interface OperationInterface
     /**
      * @param ValueInterface<mixed> $value
      * @param Runtime $runtime
-     * @param array<mixed> $arguments
+     * @param ListValue $arguments
      * @return ValueInterface<R>
      */
-    public function run(ValueInterface $value, Runtime $runtime, array $arguments): ValueInterface;
+    public function run(ValueInterface $value, Runtime $runtime, ListValue $arguments): ValueInterface;
 }

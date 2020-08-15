@@ -2,6 +2,7 @@
 namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Afx;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Spread;
+use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 use PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
@@ -10,7 +11,7 @@ final class OnPropSpread
     /**
      * @param Runtime $runtime
      * @param Spread $propSpread
-     * @return \Iterator<int|string, mixed>
+     * @return \Iterator<int|string, ValueInterface<mixed>>
      */
     public static function evaluate(Runtime $runtime, Spread $propSpread): \Iterator 
     {

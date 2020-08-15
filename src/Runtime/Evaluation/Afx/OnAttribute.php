@@ -11,7 +11,7 @@ final class OnAttribute
     /**
      * @param Runtime $runtime
      * @param Attribute $attribute
-     * @return \Iterator<string, mixed>
+     * @return \Iterator<string, VirtualDOM\Attribute>
      */
     public static function evaluate(Runtime $runtime, Attribute $attribute): \Iterator 
     {

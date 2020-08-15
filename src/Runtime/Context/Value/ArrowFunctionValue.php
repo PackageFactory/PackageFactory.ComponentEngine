@@ -3,6 +3,7 @@ namespace PackageFactory\ComponentEngine\Runtime\Context\Value;
 
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Context\Value;
+use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 /**
  * @extends Value<\Closure>
@@ -48,19 +49,15 @@ final class ArrowFunctionValue extends Value
     }
 
     /**
-     * @param array<int, ValueInterface<mixed>> $arguments
+     * @param ListValue $arguments
      * @param bool $optional
+     * @param Runtime $runtime
      * @return ValueInterface<mixed>
      */
-    public function call(array $arguments, bool $optional): ValueInterface
+    public function call(ListValue $arguments, bool $optional, Runtime $runtime): ValueInterface
     {
         $function = $this->value;
-        $result = $function(...array_map(
-            function (ValueInterface $value) { return $value->getValue(); }, 
-            $arguments
-        ));
-
-        return Value::fromAny($result);
+        return $function($arguments);
     }
 
     /**

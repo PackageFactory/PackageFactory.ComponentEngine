@@ -3,8 +3,10 @@ namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\ArrowFunction;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Identifier;
+use PackageFactory\ComponentEngine\Runtime\Context\Key;
 use PackageFactory\ComponentEngine\Runtime\Context\Value\ArrowFunctionValue;
 use PackageFactory\ComponentEngine\Runtime\Context\Value\DictionaryValue;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\ListValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
 final class OnArrowFunction
@@ -17,22 +19,18 @@ final class OnArrowFunction
     public static function evaluate(Runtime $runtime, ArrowFunction $arrowFunction): ArrowFunctionValue
     {
         return ArrowFunctionValue::fromClosure(
-            function (...$arguments) use ($runtime, $arrowFunction) {
+            function (ListValue $arguments) use ($runtime, $arrowFunction) {
                 $index = 0;
-                $properties = [];
+                $properties = DictionaryValue::empty();
                 foreach ($arrowFunction->getParameters() as $parameter) {
-                    /** @var Identifier $parameter */
-                    if (isset($arguments[$index])) {
-                        $properties[$parameter->getValue()] = $arguments[$index];
-                    } else {
-                        throw new \Exception('@TODO: Missing argument: ' . $parameter->getValue());
-                    }
+                    $properties = $properties->withAddedProperty(
+                        $parameter->getValue(), 
+                        $arguments->get(Key::fromInteger($index), false, $runtime)
+                    );
                 }
 
                 return OnTerm::evaluate(
-                    $runtime->withContext(
-                        $runtime->getContext()->merge(DictionaryValue::fromArray($properties))
-                    ),
+                    $runtime->withContext($runtime->getContext()->merge($properties)),
                     $arrowFunction->getBody()
                 );
             }

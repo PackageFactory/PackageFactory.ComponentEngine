@@ -17,13 +17,10 @@ final class OnFragment
     {
         return AfxValue::fromComponent(
             VirtualDOM::fragment(
-                iterator_to_array(
-                    OnChildren::evaluate(
-                        $runtime,
-                        $fragment->getChildren()
-                    ),
-                    false
-                )
+                OnChildren::evaluate(
+                    $runtime,
+                    $fragment->getChildren()
+                )->getValue()
             )
         );
     }

@@ -12,12 +12,12 @@ use PackageFactory\ComponentEngine\Runtime\Runtime;
 final class IteratorValue extends Value
 {
     /**
-     * @var \Iterator<mixed>
+     * @var \Iterator<ValueInterface>
      */
     private $value;
 
     /**
-     * @param \Iterator<mixed> $value
+     * @param \Iterator<ValueInterface> $value
      */
     private function __construct(\Iterator $value)
     {
@@ -25,7 +25,7 @@ final class IteratorValue extends Value
     }
 
     /**
-     * @param \Iterator<mixed> $iterator
+     * @param \Iterator<ValueInterface> $iterator
      * @return self
      */
     public static function fromIterator(\Iterator $iterator): self
@@ -46,6 +46,14 @@ final class IteratorValue extends Value
     }
 
     /**
+     * @return iterable<ValueInterface<mixed>>
+     */
+    public function asIterable(): iterable
+    {
+        return $this->value;
+    }
+
+    /**
      * @param Key $key
      * @param bool $optional
      * @param Runtime $runtime
@@ -54,7 +62,7 @@ final class IteratorValue extends Value
     public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface
     {
         if ($runtime->getLibrary()->hasOperation(self::class, (string) $key->getValue())) {
-            return $runtime->getLibrary()->getOperation(self::class, (string) $key->getValue());
+            return $runtime->getLibrary()->getOperation(self::class, (string) $key->getValue(), $this);
         } else {
             foreach ($this->value as $k => $v) {
                 if (is_string($k)) {
@@ -75,6 +83,8 @@ final class IteratorValue extends Value
      */
     public function getValue()
     {
-        return $this->value;
+        foreach ($this->value as $key => $value) {
+            yield $key => $value->getValue();
+        }
     }
 }

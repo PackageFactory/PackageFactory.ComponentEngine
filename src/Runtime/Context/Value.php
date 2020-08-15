@@ -2,6 +2,7 @@
 namespace PackageFactory\ComponentEngine\Runtime\Context;
 
 use PackageFactory\ComponentEngine\Runtime\Context\Value\BooleanValue;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\ListValue;
 use PackageFactory\ComponentEngine\Runtime\Context\Value\StringValue;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 use PackageFactory\VirtualDOM\Model\ComponentInterface;
@@ -63,44 +64,6 @@ abstract class Value implements ValueInterface
     }
 
     /**
-     * @param mixed $value
-     * @return ValueInterface<mixed>
-     */
-    public static function fromAny($value): ValueInterface
-    {
-        if ($value instanceof ValueInterface) {
-            return $value;
-        } elseif (is_null($value)) {
-            return Value\NullValue::create();
-        } elseif (is_array($value)) {
-            // @NOTE: This is not an exact method to distinguish numerical and associative
-            //        PHP Arrays - but it is the one that is going to be used here for 
-            //        performance reasons.
-            if (array_key_exists(0, $value)) {
-                return Value\ListValue::fromArray($value);
-            } else {
-                return Value\DictionaryValue::fromArray($value);
-            }
-        } elseif (is_bool($value)) {
-            return Value\BooleanValue::fromBoolean($value);
-        } elseif ($value instanceof \Closure) {
-            return Value\ArrowFunctionValue::fromClosure($value);
-        } elseif ($value instanceof ComponentInterface) {
-            return Value\AfxValue::fromComponent($value);
-        } elseif (is_float($value)) {
-            return Value\NumberValue::fromFloat($value);
-        } elseif (is_int($value)) {
-            return Value\NumberValue::fromInteger($value);
-        } elseif (is_object($value)) {
-            return Value\ObjectValue::fromObject($value);
-        } elseif (is_string($value)) {
-            return Value\StringValue::fromString($value);
-        } else {
-            throw new \RuntimeException('@TODO: Unrecognized Value.');
-        }
-    }
-
-    /**
      * @param Key $key
      * @param bool $optional
      * @param Runtime $runtime
@@ -109,7 +72,7 @@ abstract class Value implements ValueInterface
     public function get(Key $key, bool $optional, Runtime $runtime): ValueInterface
     {
         if ($runtime->getLibrary()->hasOperation(static::class, (string) $key)) {
-            return $runtime->getLibrary()->getOperation(static::class, (string) $key);
+            return $runtime->getLibrary()->getOperation(static::class, (string) $key, $this);
         } else {
             throw new \RuntimeException(
                 sprintf(
@@ -137,11 +100,12 @@ abstract class Value implements ValueInterface
     }
 
     /**
-     * @param array<int, ValueInterface<mixed>> $arguments
+     * @param ListValue $arguments
      * @param bool $optional
+     * @param Runtime $runtime
      * @return ValueInterface<mixed>
      */
-    public function call(array $arguments, bool $optional): ValueInterface
+    public function call(ListValue $arguments, bool $optional, Runtime $runtime): ValueInterface
     {
         throw new \RuntimeException(
             sprintf(
@@ -270,7 +234,15 @@ abstract class Value implements ValueInterface
     /**
      * @return V
      */
-    abstract public function getValue();
+    public function getValue()
+    {
+        throw new \RuntimeException(
+            sprintf(
+                '@TODO: Cannot get value of %s',
+                static::class
+            )
+        );
+    }
 
     /**
      * @return string

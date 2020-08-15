@@ -68,16 +68,17 @@ final class NullValue extends Value
     }
 
     /**
-     * @param array<int, ValueInterface<mixed>> $arguments
+     * @param ListValue $arguments
      * @param bool $optional
+     * @param Runtime $runtime
      * @return ValueInterface<mixed>
      */
-    public function call(array $arguments, bool $optional): ValueInterface
+    public function call(ListValue $arguments, bool $optional, Runtime $runtime): ValueInterface
     {
         if ($optional) {
             return $this;
         } else {
-            return parent::call($arguments, $optional);
+            return parent::call($arguments, $optional, $runtime);
         }
     }
 

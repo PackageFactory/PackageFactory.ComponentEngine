@@ -33,6 +33,14 @@ final class PhpArrayValue extends PhpValue
     }
 
     /**
+     * @return BooleanValue
+     */
+    public function asBooleanValue(): BooleanValue
+    {
+        return BooleanValue::fromBoolean(count($this->array) !== 0);
+    }
+
+    /**
      * @return iterable<mixed, ValueInterface<mixed>>
      */
     public function asIterable(): iterable
@@ -52,6 +60,8 @@ final class PhpArrayValue extends PhpValue
     {
         if (array_key_exists($key->getValue(), $this->array)) {
             return PhpValue::fromAny($this->array[$key->getValue()]);
+        } elseif ($runtime->getLibrary()->hasOperation(self::class, (string) $key)) {
+            return $runtime->getLibrary()->getOperation(self::class, (string) $key, $this);
         } else {
             return NullValue::create();
         }

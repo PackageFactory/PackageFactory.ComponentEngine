@@ -49,6 +49,15 @@ final class ListValue extends Value
     }
 
     /**
+     * @param \Iterator<ValueInterface<mixed>> $iterator
+     * @return self
+     */
+    public static function fromValueIterator(\Iterator $iterator): self
+    {
+        return new self(iterator_to_array($iterator, false));
+    }
+
+    /**
      * @return BooleanValue
      */
     public function asBooleanValue(): BooleanValue

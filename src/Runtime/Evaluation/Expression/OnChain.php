@@ -4,6 +4,8 @@ namespace PackageFactory\ComponentEngine\Runtime\Evaluation\Expression;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Chain;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Identifier;
 use PackageFactory\ComponentEngine\Runtime\Context\Key;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\ListValue;
+use PackageFactory\ComponentEngine\Runtime\Context\Value\NullValue;
 use PackageFactory\ComponentEngine\Runtime\Context\ValueInterface;
 use PackageFactory\ComponentEngine\Runtime\Runtime;
 
@@ -36,12 +38,12 @@ final class OnChain
             $value = $value->get($key, $segment->getIsOptional(), $runtime);
 
             if ($call = $segment->getCall()) {
-                $arguments = [];
+                $arguments = ListValue::empty();
                 foreach ($call->getArguments() as $argument) {
-                    $arguments[] = OnTerm::evaluate($runtime, $argument);
+                    $arguments = $arguments->withAddedItem(OnTerm::evaluate($runtime, $argument));
                 }
                 
-                $value = $value->call($arguments, $segment->getIsOptional());
+                $value = $value->call($arguments, $segment->getIsOptional(), $runtime);
             }
         }
 

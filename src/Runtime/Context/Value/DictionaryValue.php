@@ -49,11 +49,30 @@ final class DictionaryValue extends Value
     }
 
     /**
+     * @param \Iterator<ValueInterface<mixed>> $iterator
+     * @return self
+     */
+    public static function fromValueIterator(\Iterator $iterator): self
+    {
+        return new self(iterator_to_array($iterator, true));
+    }
+
+    /**
      * @return BooleanValue
      */
     public function asBooleanValue(): BooleanValue
     {
         return BooleanValue::fromBoolean(count($this->value) !== 0);
+    }
+
+    /**
+     * @return iterable<string, ValueInterface<mixed>>
+     */
+    public function asIterable(): iterable
+    {
+        foreach ($this->value as $key => $value) {
+            yield $key => $value;
+        }
     }
 
     /**
@@ -67,7 +86,7 @@ final class DictionaryValue extends Value
         if ($key->isNumeric()) {
             throw new \RuntimeException('@TODO: Invalid property access: ' . $key);
         } elseif (array_key_exists($key->getValue(), $this->value)) {
-            return Value::fromAny($this->value[$key->getValue()]);
+            return $this->value[$key->getValue()];
         } else {
             return NullValue::create();
         }
