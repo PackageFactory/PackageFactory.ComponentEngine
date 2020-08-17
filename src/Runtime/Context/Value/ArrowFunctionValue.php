@@ -33,22 +33,6 @@ final class ArrowFunctionValue extends Value
     }
 
     /**
-     * @param object $object
-     * @param string $member
-     * @return self
-     */
-    public static function fromObjectAndMember($object, string $member): self
-    {
-        if (is_callable([$object, $member])) {
-            return new self(function (...$arguments) use ($object, $member) {
-                return $object->{ $member }(...$arguments);
-            });
-        } else {
-            throw new \RuntimeException('@TODO: ' . get_class($object) . '->' . $member . '() is not callable.');
-        }
-    }
-
-    /**
      * @param ListValue $arguments
      * @param bool $optional
      * @param Runtime $runtime
