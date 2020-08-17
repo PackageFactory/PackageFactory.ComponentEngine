@@ -20,7 +20,7 @@ final class ModuleScopeValue extends Value
     private $module;
 
     /**
-     * @var DictionaryValue
+     * @var ValueInterface<mixed>
      */
     private $fallback;
 
@@ -57,9 +57,9 @@ final class ModuleScopeValue extends Value
     }
 
     /**
-     * @return DictionaryValue
+     * @return ValueInterface<mixed>
      */
-    public function getFallback(): DictionaryValue
+    public function getFallback(): ValueInterface
     {
         return $this->fallback;
     }
