@@ -1,58 +1,51 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Ast\Module;
 
 use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Util;
 
 final class Module implements \JsonSerializable
 {
     /**
-     * @var Source
-     */
-    private $source;
-
-    /**
-     * @var array|Import[]
-     */
-    private $imports;
-
-    /**
-     * @var array|Export[]
-     */
-    private $exports;
-
-    /**
-     * @var array|Constant[]
-     */
-    private $constants;
-
-    /**
+     * @param Source $source
      * @param array|Import[] $imports
      * @param array|Export[] $exports
      * @param array|Constant[] $constants
      */
     private function __construct(
-        Source $source,
-        array $imports,
-        array $exports,
-        array $constants
+        public readonly Source $source,
+        public readonly array $imports,
+        public readonly array $exports,
+        public readonly array $constants
     ) {
-        $this->source = $source;
-        $this->imports = $imports;
-        $this->exports = $exports;
-        $this->constants = $constants;
     }
 
-    /**
-     * @param TokenStream $stream
-     * @return self
-     */
     public static function fromTokenStream(TokenStream $stream): self
     {
-        $source = $stream->current()->getSource();
+        $source = $stream->current()->source;
 
         $imports = [];
         $exports = [];
@@ -60,64 +53,45 @@ final class Module implements \JsonSerializable
         while ($stream->valid()) {
             $stream->skipWhiteSpaceAndComments();
 
-            switch ($stream->current()->getType()) {
-                case TokenType::MODULE_KEYWORD_IMPORT():
+            switch ($stream->current()->type) {
+                case TokenType::MODULE_KEYWORD_IMPORT:
                     foreach (Import::fromTokenStream($stream) as $import) {
-                        $imports[(string) $import->getDomesticName()] = $import;
+                        $imports[(string) $import->domesticName] = $import;
                     }
                     break;
-                case TokenType::MODULE_KEYWORD_EXPORT():
+                case TokenType::MODULE_KEYWORD_EXPORT:
                     $export = Export::fromTokenStream($stream);
-                    $exports[(string) $export->getName()] = $export;
+                    $exports[(string) $export->name] = $export;
                     break;
-                case TokenType::MODULE_KEYWORD_CONST():
+                case TokenType::MODULE_KEYWORD_CONST:
                     $constant = Constant::fromTokenStream($stream);
-                    $constants[(string) $constant->getName()] = $constant;
+                    $constants[(string) $constant->name] = $constant;
                     break;
                 default:
                     throw ParserFailed::becauseOfUnexpectedToken(
                         $stream->current(),
                         [
-                            TokenType::MODULE_KEYWORD_IMPORT(),
-                            TokenType::MODULE_KEYWORD_EXPORT(),
-                            TokenType::MODULE_KEYWORD_CONST()
+                            TokenType::MODULE_KEYWORD_IMPORT,
+                            TokenType::MODULE_KEYWORD_EXPORT,
+                            TokenType::MODULE_KEYWORD_CONST
                         ]
                     );
             }
         }
 
-        return new self($source, $imports, $exports, $constants);
+        return new self(
+            source: $source,
+            imports: $imports,
+            exports: $exports,
+            constants: $constants
+        );
     }
 
-    /**
-     * @return Source
-     */
-    public function getSource(): Source
-    {
-        return $this->source;
-    }
-
-    /**
-     * @return array|Import[]
-     */
-    public function getImports(): array
-    {
-        return $this->imports;
-    }
-
-    /**
-     * @param string $name
-     * @return bool
-     */
     public function hasImport(string $name): bool
     {
         return isset($this->imports[$name]);
     }
 
-    /**
-     * @param string $name
-     * @return Import
-     */
     public function getImport(string $name): Import
     {
         if (isset($this->imports[$name])) {
@@ -127,18 +101,6 @@ final class Module implements \JsonSerializable
         throw new \Exception('@TODO: Import does not exist: ' . $name);
     }
 
-    /**
-     * @return array|Export[]
-     */
-    public function getExports(): array
-    {
-        return $this->exports;
-    }
-
-    /**
-     * @param string $name
-     * @return Export
-     */
     public function getExport(string $name): Export
     {
         if (isset($this->exports[$name])) {
@@ -148,27 +110,11 @@ final class Module implements \JsonSerializable
         throw new \Exception('@TODO: Export does not exist: ' . $name);
     }
 
-    /**
-     * @return array|Constant[]
-     */
-    public function getConstants(): array
-    {
-        return $this->constants;
-    }
-
-    /**
-     * @param string $name
-     * @return bool
-     */
     public function hasConstant(string $name): bool
     {
         return isset($this->constants[$name]);
     }
 
-    /**
-     * @param string $name
-     * @return Constant
-     */
     public function getConstant(string $name): Constant
     {
         if (isset($this->constants[$name])) {
@@ -178,10 +124,7 @@ final class Module implements \JsonSerializable
         throw new \Exception('@TODO: Constant does not exist: ' . $name);
     }
 
-    /**
-     * @return array<mixed>
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         throw new \Exception('@TODO: Module::jsonSerialize');
     }

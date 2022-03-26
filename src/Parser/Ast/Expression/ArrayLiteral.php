@@ -1,4 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Child;
@@ -10,9 +31,8 @@ use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
-use PackageFactory\ComponentEngine\Parser\Util;
 
-final class ArrayLiteral implements 
+final class ArrayLiteral implements
     Literal,
     Spreadable,
     Term,
@@ -21,58 +41,36 @@ final class ArrayLiteral implements
     \JsonSerializable
 {
     /**
-     * @var Token
-     */
-    private $start;
-
-    /**
-     * @var Token
-     */
-    private $end;
-
-    /**
-     * @var array|Statement[]
-     */
-    private $items;
-
-    /**
      * @param Token $start
      * @param Token $end
      * @param array|Statement[] $items
      */
     private function __construct(
-        Token $start,
-        Token $end,
-        array $items
+        public readonly Token $start,
+        public readonly Token $end,
+        public readonly array $items
     ) {
-        $this->start = $start;
-        $this->end = $end;
-        $this->items = $items;
     }
 
-    /**
-     * @param TokenStream $stream
-     * @return self
-     */
     public static function fromTokenStream(TokenStream $stream): self
     {
         $start = $stream->current();
         $end = $stream->current();
-        $stream->consume(TokenType::BRACKETS_SQUARE_OPEN());
+        $stream->consume(TokenType::BRACKETS_SQUARE_OPEN);
 
         $items = [];
         while ($stream->valid()) {
             $stream->skipWhiteSpaceAndComments();
 
-            switch ($stream->current()->getType()) {
-                case TokenType::BRACKETS_SQUARE_CLOSE():
+            switch ($stream->current()->type) {
+                case TokenType::BRACKETS_SQUARE_CLOSE:
                     $end = $stream->current();
                     $stream->next();
                     break 2;
 
                 default:
                     $items[] = ExpressionParser::parseStatement(
-                        $stream, 
+                        $stream,
                         ExpressionParser::PRIORITY_LIST
                     );
                     break;
@@ -80,40 +78,20 @@ final class ArrayLiteral implements
 
             $stream->skipWhiteSpaceAndComments();
 
-            if ($stream->current()->getType() === TokenType::COMMA()) {
+            if ($stream->current()->type === TokenType::COMMA) {
                 $stream->next();
             } else {
                 $stream->skipWhiteSpaceAndComments();
-                $end = $stream->consume(TokenType::BRACKETS_SQUARE_CLOSE());
+                $end = $stream->consume(TokenType::BRACKETS_SQUARE_CLOSE);
                 break;
             }
         }
 
-        return new self($start, $end, $items);
-    }
-
-    /**
-     * @return Token
-     */
-    public function getStart(): Token
-    {
-        return $this->start;
-    }
-
-    /**
-     * @return Token
-     */
-    public function getEnd(): Token
-    {
-        return $this->end;
-    }
-
-    /**
-     * @return array|Statement[]
-     */
-    public function getItems(): array
-    {
-        return $this->items;
+        return new self(
+            start: $start,
+            end: $end,
+            items: $items
+        );
     }
 
     /**
@@ -124,8 +102,8 @@ final class ArrayLiteral implements
         return [
             'type' => 'ArrayLiteral',
             'offset' => [
-                $this->start->getStart()->getIndex(),
-                $this->end->getEnd()->getIndex()
+                $this->start->start->index,
+                $this->end->end->index
             ],
             'items' => $this->items
         ];

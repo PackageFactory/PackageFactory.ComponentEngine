@@ -1,128 +1,96 @@
-<?php declare(strict_types=1);
-namespace PackageFactory\ComponentEngine\Parser\Lexer;
+<?php
 
 /**
- * @codeCoverageIgnore
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-final class TokenType
+
+declare(strict_types=1);
+
+namespace PackageFactory\ComponentEngine\Parser\Lexer;
+
+enum TokenType
 {
-    /**
-     * @var string
-     */
-    private $identifier;
-
-    /**
-     * @var array<string, TokenType>
-     */
-    private static $instances = [];
-
-    private function __construct(string $identifier) 
-    {
-        $this->identifier = $identifier;
-    }
-
-    private static function create(string $identifier): self
-    {
-        if (isset(self::$instances[$identifier])) {
-            return self::$instances[$identifier];
-        }
-
-        return self::$instances[$identifier] = new TokenType($identifier);
-    }
-
-    public function __toString()
-    {
-        return $this->identifier;
-    }
-
-    // IDENTIFIER
-    public static function IDENTIFIER(): TokenType { return self::create('IDENTIFIER'); }
-
-    // NUMBER
-    public static function NUMBER(): TokenType { return self::create('NUMBER'); }
-
-    // MODULE
-    public static function MODULE_KEYWORD_IMPORT(): TokenType { return self::create('MODULE_KEYWORD_IMPORT'); }
-    public static function MODULE_KEYWORD_FROM(): TokenType { return self::create('MODULE_KEYWORD_FROM'); }
-    public static function MODULE_KEYWORD_AS(): TokenType { return self::create('MODULE_KEYWORD_AS'); }
-    public static function MODULE_KEYWORD_CONST(): TokenType { return self::create('MODULE_KEYWORD_CONST'); }
-    public static function MODULE_KEYWORD_EXPORT(): TokenType { return self::create('MODULE_KEYWORD_EXPORT'); }
-    public static function MODULE_KEYWORD_DEFAULT(): TokenType { return self::create('MODULE_KEYWORD_DEFAULT'); }
-    public static function MODULE_ASSIGNMENT(): TokenType { return self::create('MODULE_ASSIGNMENT'); }
-    public static function MODULE_WILDCARD(): TokenType { return self::create('MODULE_WILDCARD'); }
-    public static function MODULE_AFX_START(): TokenType { return self::create('MODULE_AFX_START'); }
-    public static function MODULE_AFX_END(): TokenType { return self::create('MODULE_AFX_END'); }
-
-    // AFX
-    public static function AFX_TAG_START(): TokenType { return self::create('AFX_TAG_START'); }
-    public static function AFX_TAG_END(): TokenType { return self::create('AFX_TAG_END'); }
-    public static function AFX_TAG_CLOSE(): TokenType { return self::create('AFX_TAG_CLOSE'); }
-    public static function AFX_TAG_CONTENT(): TokenType { return self::create('AFX_TAG_CONTENT'); }
-    public static function AFX_ATTRIBUTE_ASSIGNMENT(): TokenType { return self::create('AFX_ATTRIBUTE_ASSIGNMENT'); }
-    public static function AFX_EXPRESSION_START(): TokenType { return self::create('AFX_EXPRESSION_START'); }
-    public static function AFX_EXPRESSION_END(): TokenType { return self::create('AFX_EXPRESSION_END'); }
-    public static function AFX_EMBED_START(): TokenType { return self::create('AFX_EMBED_START'); }
-    public static function AFX_EMBED_END(): TokenType { return self::create('AFX_EMBED_END'); }
-
-    // EXPRESSION
-    public static function KEYWORD_TRUE(): TokenType { return self::create('KEYWORD_TRUE'); }
-    public static function KEYWORD_FALSE(): TokenType { return self::create('KEYWORD_FALSE'); }
-    public static function KEYWORD_NULL(): TokenType { return self::create('KEYWORD_NULL'); }
-    public static function OPERATOR_LOGICAL_NOT(): TokenType { return self::create('OPERATOR_LOGICAL_NOT'); }
-    public static function OPERATOR_LOGICAL_AND(): TokenType { return self::create('OPERATOR_LOGICAL_AND'); }
-    public static function OPERATOR_LOGICAL_OR(): TokenType { return self::create('OPERATOR_LOGICAL_OR'); }
-    public static function OPERATOR_SPREAD(): TokenType { return self::create('OPERATOR_SPREAD'); }
-    public static function OPERATOR_ADD(): TokenType { return self::create('OPERATOR_ADD'); }
-    public static function OPERATOR_SUBTRACT(): TokenType { return self::create('OPERATOR_SUBTRACT'); }
-    public static function OPERATOR_MULTIPLY(): TokenType { return self::create('OPERATOR_MULTIPLY'); }
-    public static function OPERATOR_DIVIDE(): TokenType { return self::create('OPERATOR_DIVIDE'); }
-    public static function OPERATOR_MODULO(): TokenType { return self::create('OPERATOR_MODULO'); }
-    public static function OPERATOR_OPTCHAIN(): TokenType { return self::create('OPERATOR_OPTCHAIN'); }
-    public static function OPERATOR_NULLISH_COALESCE(): TokenType { return self::create('OPERATOR_NULLISH_COALESCE'); }
-    public static function COMPARATOR_EQ(): TokenType { return self::create('COMPARATOR_EQ'); }
-    public static function COMPARATOR_NEQ(): TokenType { return self::create('COMPARATOR_NEQ'); }
-    public static function COMPARATOR_GT(): TokenType { return self::create('COMPARATOR_GT'); }
-    public static function COMPARATOR_GTE(): TokenType { return self::create('COMPARATOR_GTE'); }
-    public static function COMPARATOR_LT(): TokenType { return self::create('COMPARATOR_LT'); }
-    public static function COMPARATOR_LTE(): TokenType { return self::create('COMPARATOR_LTE'); }
-    public static function ARROW(): TokenType { return self::create('ARROW'); }
-
-    // STRING LITERALS
-    public static function STRING_LITERAL_START(): TokenType { return self::create('STRING_LITERAL_START'); }
-    public static function STRING_LITERAL_CONTENT(): TokenType { return self::create('STRING_LITERAL_CONTENT'); }
-    public static function STRING_LITERAL_ESCAPE(): TokenType { return self::create('STRING_LITERAL_ESCAPE'); }
-    public static function STRING_LITERAL_ESCAPED_CHARACTER(): TokenType { return self::create('STRING_LITERAL_ESCAPED_CHARACTER'); }
-    public static function STRING_LITERAL_END(): TokenType { return self::create('STRING_LITERAL_END'); }
-
-    // TEMPLATE LITERALS
-    public static function TEMPLATE_LITERAL_START(): TokenType { return self::create('TEMPLATE_LITERAL_START'); }
-    public static function TEMPLATE_LITERAL_CONTENT(): TokenType { return self::create('TEMPLATE_LITERAL_CONTENT'); }
-    public static function TEMPLATE_LITERAL_ESCAPE(): TokenType { return self::create('TEMPLATE_LITERAL_ESCAPE'); }
-    public static function TEMPLATE_LITERAL_ESCAPED_CHARACTER(): TokenType { return self::create('TEMPLATE_LITERAL_ESCAPED_CHARACTER'); }
-    public static function TEMPLATE_LITERAL_INTERPOLATION_START(): TokenType { return self::create('TEMPLATE_LITERAL_INTERPOLATION_START'); }
-    public static function TEMPLATE_LITERAL_INTERPOLATION_END(): TokenType { return self::create('TEMPLATE_LITERAL_INTERPOLATION_END'); }
-    public static function TEMPLATE_LITERAL_END(): TokenType { return self::create('TEMPLATE_LITERAL_END'); }
-
-    // BRACKETS
-    public static function BRACKETS_ROUND_OPEN(): TokenType { return self::create('BRACKETS_ROUND_OPEN'); }
-    public static function BRACKETS_ROUND_CLOSE(): TokenType { return self::create('BRACKETS_ROUND_CLOSE'); }
-    public static function BRACKETS_SQUARE_OPEN(): TokenType { return self::create('BRACKETS_SQUARE_OPEN'); }
-    public static function BRACKETS_SQUARE_CLOSE(): TokenType { return self::create('BRACKETS_SQUARE_CLOSE'); }
-    public static function BRACKETS_CURLY_OPEN(): TokenType { return self::create('BRACKETS_CURLY_OPEN'); }
-    public static function BRACKETS_CURLY_CLOSE(): TokenType { return self::create('BRACKETS_CURLY_CLOSE'); }
-
-    // AMBIGUOUS PUNCTUATION
-    public static function PERIOD(): TokenType { return self::create('PERIOD'); }
-    public static function COLON(): TokenType { return self::create('COLON'); }
-    public static function QUESTIONMARK(): TokenType { return self::create('QUESTIONMARK'); }
-    public static function COMMA(): TokenType { return self::create('COMMA'); }
-
-    // COMMENT
-    public static function COMMENT_START(): TokenType { return self::create('COMMENT_START'); }
-    public static function COMMENT_CONTENT(): TokenType { return self::create('COMMENT_CONTENT'); }
-    public static function COMMENT_END(): TokenType { return self::create('COMMENT_END'); }
-
-    // WHITESPACE
-    public static function WHITESPACE(): TokenType { return self::create('WHITESPACE'); }
-    public static function END_OF_LINE(): TokenType { return self::create('END_OF_LINE'); }
+    case IDENTIFIER;
+    case NUMBER;
+    case MODULE_KEYWORD_IMPORT;
+    case MODULE_KEYWORD_FROM;
+    case MODULE_KEYWORD_AS;
+    case MODULE_KEYWORD_CONST;
+    case MODULE_KEYWORD_EXPORT;
+    case MODULE_KEYWORD_DEFAULT;
+    case MODULE_ASSIGNMENT;
+    case MODULE_WILDCARD;
+    case MODULE_AFX_START;
+    case MODULE_AFX_END;
+    case AFX_TAG_START;
+    case AFX_TAG_END;
+    case AFX_TAG_CLOSE;
+    case AFX_TAG_CONTENT;
+    case AFX_ATTRIBUTE_ASSIGNMENT;
+    case AFX_EXPRESSION_START;
+    case AFX_EXPRESSION_END;
+    case AFX_EMBED_START;
+    case AFX_EMBED_END;
+    case KEYWORD_TRUE;
+    case KEYWORD_FALSE;
+    case KEYWORD_NULL;
+    case OPERATOR_LOGICAL_NOT;
+    case OPERATOR_LOGICAL_AND;
+    case OPERATOR_LOGICAL_OR;
+    case OPERATOR_SPREAD;
+    case OPERATOR_ADD;
+    case OPERATOR_SUBTRACT;
+    case OPERATOR_MULTIPLY;
+    case OPERATOR_DIVIDE;
+    case OPERATOR_MODULO;
+    case OPERATOR_OPTCHAIN;
+    case OPERATOR_NULLISH_COALESCE;
+    case COMPARATOR_EQ;
+    case COMPARATOR_NEQ;
+    case COMPARATOR_GT;
+    case COMPARATOR_GTE;
+    case COMPARATOR_LT;
+    case COMPARATOR_LTE;
+    case ARROW;
+    case STRING_LITERAL_START;
+    case STRING_LITERAL_CONTENT;
+    case STRING_LITERAL_ESCAPE;
+    case STRING_LITERAL_ESCAPED_CHARACTER;
+    case STRING_LITERAL_END;
+    case TEMPLATE_LITERAL_START;
+    case TEMPLATE_LITERAL_CONTENT;
+    case TEMPLATE_LITERAL_ESCAPE;
+    case TEMPLATE_LITERAL_ESCAPED_CHARACTER;
+    case TEMPLATE_LITERAL_INTERPOLATION_START;
+    case TEMPLATE_LITERAL_INTERPOLATION_END;
+    case TEMPLATE_LITERAL_END;
+    case BRACKETS_ROUND_OPEN;
+    case BRACKETS_ROUND_CLOSE;
+    case BRACKETS_SQUARE_OPEN;
+    case BRACKETS_SQUARE_CLOSE;
+    case BRACKETS_CURLY_OPEN;
+    case BRACKETS_CURLY_CLOSE;
+    case PERIOD;
+    case COLON;
+    case QUESTIONMARK;
+    case COMMA;
+    case COMMENT_START;
+    case COMMENT_CONTENT;
+    case COMMENT_END;
+    case WHITESPACE;
+    case END_OF_LINE;
 }

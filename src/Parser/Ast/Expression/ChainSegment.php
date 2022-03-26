@@ -1,94 +1,61 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Key;
-use PackageFactory\ComponentEngine\Parser\Ast\Term;
 
 final class ChainSegment implements \JsonSerializable
 {
-    /**
-     * @var bool
-     */
-    private $isOptional;
-
-    /**
-     * @var Key
-     */
-    private $key;
-
-    /**
-     * @var null|Call
-     */
-    private $call;
-
-    /**
-     * @param boolean $isOptional
-     * @param Key $key
-     * @param null|Call $call
-     */
     private function __construct(
-        bool $isOptional,
-        Key $key,
-        ?Call $call
+        public readonly bool $isOptional,
+        public readonly Key $key,
+        public readonly ?Call $call
     ) {
-        $this->isOptional = $isOptional;
-        $this->key = $key;
-        $this->call = $call;
     }
 
-    /**
-     * @param boolean $isOptional
-     * @param Key $key
-     * @return self
-     */
     public static function fromKey(
         bool $isOptional,
         Key $key
     ): self {
-        return new self($isOptional, $key, null);
+        return new self(
+            isOptional: $isOptional,
+            key: $key,
+            call: null
+        );
     }
 
-    /**
-     * @return bool
-     */
-    public function getIsOptional(): bool
-    {
-        return $this->isOptional;
-    }
-
-    /**
-     * @return bool
-     */
     public function getIsCallable(): bool
     {
         return $this->call !== null;
     }
 
-    /**
-     * @return Term
-     */
-    public function getKey(): Term
-    {
-        /** @var Term $key */
-        $key = $this->key;
-        return $key;
-    }
-
-    /**
-     * @return null|Call
-     */
-    public function getCall(): ?Call
-    {
-        return $this->call;
-    }
-
-    /**
-     * @param Call $call
-     * @return self
-     */
     public function withCall(Call $call): self
     {
-        return new self($this->isOptional, $this->key, $call);
+        return new self(
+            isOptional: $this->isOptional,
+            key: $this->key,
+            call: $call
+        );
     }
 
     /**
@@ -103,4 +70,4 @@ final class ChainSegment implements \JsonSerializable
             'call' => $this->call
         ];
     }
-} 
+}

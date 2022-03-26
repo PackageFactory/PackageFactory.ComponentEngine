@@ -1,4 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
 use PackageFactory\ComponentEngine\Exception\ParserFailed;
@@ -8,78 +29,41 @@ use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
-use PackageFactory\ComponentEngine\Parser\Util;
 
 final class Negation implements Term, Statement, \JsonSerializable
 {
-    /**
-     * @var Token
-     */
-    private $token;
-
-    /**
-     * @var Term
-     */
-    private $subject;
-
-    /**
-     * @param Token $token
-     * @param Term $subject
-     */
     private function __construct(
-        Token $token,
-        Term $subject
+        public readonly Token $token,
+        public readonly Term $subject
     ) {
-        $this->token = $token;
-        $this->subject = $subject;
     }
 
-    /**
-     * @param TokenStream $stream
-     * @return self
-     */
     public static function fromTokenStream(TokenStream $stream): self
     {
         $stream->skipWhiteSpaceAndComments();
-        
+
         $value = $stream->current();
-        if ($value->getType() === TokenType::OPERATOR_LOGICAL_NOT()) {
+        if ($value->type === TokenType::OPERATOR_LOGICAL_NOT) {
             $stream->next();
-            return new self($value, ExpressionParser::parseTerm($stream));
+            return new self(
+                token: $value,
+                subject: ExpressionParser::parseTerm($stream)
+            );
         } else {
             throw ParserFailed::becauseOfUnexpectedToken(
                 $stream->current(),
-                [TokenType::OPERATOR_LOGICAL_NOT()]
+                [TokenType::OPERATOR_LOGICAL_NOT]
             );
         }
     }
 
-    /**
-     * @return Token
-     */
-    public function getToken(): Token
-    {
-        return $this->token;
-    }
-
-    /**
-     * @return Term
-     */
-    public function getSubject(): Term
-    {
-        return $this->subject;
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'type' => 'Negation',
             'offset' => [
-                $this->token->getStart()->getIndex(),
-                $this->token->getEnd()->getIndex()
+                $this->token->start->index,
+                $this->token->end->index
             ],
             'subject' => $this->subject
         ];

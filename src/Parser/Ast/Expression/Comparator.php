@@ -20,37 +20,42 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast\Afx;
+namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
 use PackageFactory\ComponentEngine\Exception\ParserFailed;
-use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
-use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
+use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 
-final class AttributeName implements \JsonSerializable
+enum Comparator implements \JsonSerializable
 {
-    private function __construct(public readonly string $value)
+    case EQ;
+    case NEQ;
+    case GT;
+    case GTE;
+    case LT;
+    case LTE;
+
+    public static function fromToken(Token $token): self
     {
+        return match ($token->value) {
+            '===' => self::EQ,
+            '!==' => self::NEQ,
+            '>' => self::GT,
+            '>=' => self::GTE,
+            '<' => self::LT,
+            '<=' => self::LTE,
+            default => throw ParserFailed::becauseOfUnknownComparator($token),
+        };
     }
 
-    public static function fromTokenStream(TokenStream $stream): self
+    public function jsonSerialize(): mixed
     {
-        $value = $stream->current();
-        if ($value->type === TokenType::IDENTIFIER) {
-            $stream->next();
-            return new self(value: $value->value);
-        } else {
-            throw ParserFailed::becauseOfUnexpectedToken(
-                $value,
-                [TokenType::IDENTIFIER]
-            );
-        }
-    }
-
-    /**
-     * @return string
-     */
-    public function jsonSerialize()
-    {
-        return $this->value;
+        return match ($this) {
+            self::EQ => '===',
+            self::NEQ => '!==',
+            self::GT => '>',
+            self::GTE => '>=',
+            self::LT => '<',
+            self::LTE => '<=',
+        };
     }
 }

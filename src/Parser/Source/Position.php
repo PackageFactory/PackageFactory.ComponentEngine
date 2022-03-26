@@ -1,129 +1,74 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Source;
 
 final class Position implements \JsonSerializable
 {
-    /**
-     * @var int
-     */
-    private $index;
-
-    /**
-     * @var int
-     */
-    private $rowIndex;
-
-    /**
-     * @var int
-     */
-    private $columnIndex;
-
-    /**
-     * @param integer $index
-     * @param integer $rowIndex
-     * @param integer $columnIndex
-     */
     private function __construct(
-        int $index,
-        int $rowIndex,
-        int $columnIndex
+        public readonly int $index,
+        public readonly int $rowIndex,
+        public readonly int $columnIndex
     ) {
-        $this->index = $index;
-        $this->rowIndex = $rowIndex;
-        $this->columnIndex = $columnIndex;
     }
 
-    /**
-     * @param integer $index
-     * @param integer $rowIndex
-     * @param integer $columnIndex
-     * @return Position
-     */
     public static function create(
         int $index,
         int $rowIndex,
         int $columnIndex
     ): Position {
         return new Position(
-            $index,
-            $rowIndex,
-            $columnIndex
+            index: $index,
+            rowIndex: $rowIndex,
+            columnIndex: $columnIndex
         );
     }
 
-    /**
-     * @return integer
-     */
-    public function getIndex(): int
-    {
-        return $this->index;
-    }
-
-    /**
-     * @return integer
-     */
-    public function getRowIndex(): int
-    {
-        return $this->rowIndex;
-    }
-
-    /**
-     * @return integer
-     */
-    public function getColumnIndex(): int
-    {
-        return $this->columnIndex;
-    }
-
-    /**
-     * @param Position $other
-     * @return boolean
-     */
     public function equals(Position $other): bool
     {
-        return $this->getIndex() === $other->getIndex();
+        return $this->index === $other->index;
     }
 
-    /**
-     * @param Position $other
-     * @return boolean
-     */
     public function gt(Position $other): bool
     {
-        return $this->getIndex() > $other->getIndex();
+        return $this->index > $other->index;
     }
 
-    /**
-     * @param Position $other
-     * @return boolean
-     */
     public function gte(Position $other): bool
     {
         return $this->gt($other) || $this->equals($other);
     }
 
-    /**
-     * @param Position $other
-     * @return boolean
-     */
     public function lt(Position $other): bool
     {
-        return $this->getIndex() < $other->getIndex();
+        return $this->index < $other->index;
     }
 
-    /**
-     * @param Position $other
-     * @return boolean
-     */
     public function lte(Position $other): bool
     {
         return $this->lt($other) || $this->equals($other);
     }
 
-    /**
-     * @return int
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->index;
     }

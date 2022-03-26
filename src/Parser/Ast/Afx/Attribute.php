@@ -1,4 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Ast\Afx;
 
 use PackageFactory\ComponentEngine\Exception\ParserFailed;
@@ -8,88 +29,54 @@ use PackageFactory\ComponentEngine\Parser\Ast\Term;
 use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
-use PackageFactory\ComponentEngine\Parser\Util;
 
 final class Attribute implements ParameterAssignment, \JsonSerializable
 {
-    /**
-     * @var AttributeName
-     */
-    private $attributeName;
-
-    /**
-     * @var null|Term
-     */
-    private $value;
-
-    /**
-     * @param AttributeName $attributeName
-     * @param null|Term $value
-     */
     private function __construct(
-        AttributeName $attributeName,
-        ?Term $value
+        public readonly AttributeName $attributeName,
+        public readonly ?Term $value
     ) {
-        $this->attributeName = $attributeName;
-        $this->value = $value;
     }
 
-    /**
-     * @param TokenStream $stream
-     * @return self
-     */
     public static function fromTokenStream(TokenStream $stream): self
     {
         $attributeName = AttributeName::fromTokenStream($stream);
 
-        if ($stream->current()->getType() === TokenType::AFX_ATTRIBUTE_ASSIGNMENT()) {
+        if ($stream->current()->type === TokenType::AFX_ATTRIBUTE_ASSIGNMENT) {
             $stream->next();
         } else {
-            return new self($attributeName, null);
+            return new self(
+                attributeName: $attributeName,
+                value: null
+            );
         }
 
-        switch ($stream->current()->getType()) {
-            case TokenType::STRING_LITERAL_START():
+        switch ($stream->current()->type) {
+            case TokenType::STRING_LITERAL_START:
                 $value = StringLiteral::fromTokenStream($stream);
                 break;
-            case TokenType::AFX_EXPRESSION_START():
+            case TokenType::AFX_EXPRESSION_START:
                 $stream->next();
                 $value = ExpressionParser::parseTerm($stream);
-                $stream->consume(TokenType::AFX_EXPRESSION_END());
+                $stream->consume(TokenType::AFX_EXPRESSION_END);
                 break;
             default:
                 throw ParserFailed::becauseOfUnexpectedToken(
                     $stream->current(),
                     [
-                        TokenType::STRING_LITERAL_START(),
-                        TokenType::AFX_EXPRESSION_START()
+                        TokenType::STRING_LITERAL_START,
+                        TokenType::AFX_EXPRESSION_START
                     ]
                 );
         }
 
-        return new self($attributeName, $value);
+        return new self(
+            attributeName: $attributeName,
+            value: $value
+        );
     }
 
-    /**
-     * @return AttributeName
-     */
-    public function getAttributeName(): AttributeName
-    {
-        return $this->attributeName;
-    }
-
-    /**
-     * @return null|Term
-     */
-    public function getValue(): ?Term
-    {
-        return $this->value;
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'name' => $this->attributeName,

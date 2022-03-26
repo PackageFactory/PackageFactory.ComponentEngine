@@ -1,111 +1,91 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Source;
 
 final class Path implements \JsonSerializable
 {
-    /**
-     * @var string
-     */
-    private $value;
 
-    private function __construct(string $value)
+    private function __construct(public readonly string $value)
     {
         if (empty(trim($value))) {
             throw new \Exception('@TODO: Invalid path');
         }
-
-        $this->value = $value;
     }
 
-    /**
-     * @return self
-     */
     public static function createMemory(): self
     {
         return new self(':memory:');
     }
 
-    /**
-     * @param string $data
-     * @return self
-     */
     public static function fromString(string $data): self
     {
         return new self($data);
     }
 
-    /**
-     * @return string
-     */
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
-    /**
-     * @return bool
-     */
     public function isMemory(): bool
     {
         return $this->value === ':memory:';
     }
 
-    /**
-     * @return bool
-     */
     public function isRelative(): bool
     {
         return $this->value[0] === '.';
     }
 
-    /**
-     * @return bool
-     */
     public function isAbsolute(): bool
     {
         return $this->value[0] === '/';
     }
 
-    /**
-     * @param Path $target
-     * @return self
-     */
     public function getRelativePathTo(Path $target): self
     {
         if ($this->isMemory()) {
             throw new \Exception('@TODO: Cannot create relative path for :memory:');
-        }
-        elseif ($this->isRelative() && $target->isAbsolute()) {
+        } elseif ($this->isRelative() && $target->isAbsolute()) {
             throw new \Exception('@TODO: Cannot create relative path from realtive source to asbolute target.');
-        }
-        elseif ($this->isAbsolute() && $target->isAbsolute()) {
+        } elseif ($this->isAbsolute() && $target->isAbsolute()) {
             $dirname = dirname($this->value);
-            if (substr($target->getValue(), 0, strlen($dirname)) === $dirname) {
-                return new self('.' . substr($target->getValue(), strlen($dirname)));
-            }
-            else {
+            if (substr($target->value, 0, strlen($dirname)) === $dirname) {
+                return new self('.' . substr($target->value, strlen($dirname)));
+            } else {
                 throw new \Exception('@TODO: Cannot create relative path due to incompatible absolute paths.');
             }
-        }
-        else {
+        } else {
             $dirname = dirname($this->value);
             $resultSegments = explode('/', $dirname);
             $overflowSegments = [];
-            $targetSegments = explode('/', $target->getValue());
+            $targetSegments = explode('/', $target->value);
 
             foreach ($targetSegments as $segment) {
                 if ($segment === '.' || $segment === '') {
                     // ignore
-                }
-                elseif ($segment === '..') {
+                } elseif ($segment === '..') {
                     if (count($resultSegments)) {
                         array_pop($resultSegments);
-                    }
-                    else {
+                    } else {
                         $overflowSegments[] = $segment;
                     }
-                }
-                else {
+                } else {
                     $resultSegments[] = $segment;
                 }
             }
@@ -114,18 +94,12 @@ final class Path implements \JsonSerializable
         }
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->value;
     }
 
-    /**
-     * @return string
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->value;
     }

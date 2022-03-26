@@ -1,4 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Source;
 
 /**
@@ -6,41 +27,17 @@ namespace PackageFactory\ComponentEngine\Parser\Source;
  */
 final class Source implements \IteratorAggregate
 {
-    /**
-     * @var Path
-     */
-    private $path;
-
-    /**
-     * @var string
-     */
-    private $contents;
-
-    /**
-     * @param Path $path
-     * @param string $contents
-     */
     private function __construct(
-        Path $path,
-        string $contents
+        public readonly Path $path,
+        public readonly string $contents
     ) {
-        $this->path = $path;
-        $this->contents = $contents;
     }
 
-    /**
-     * @param string $contents
-     * @return Source
-     */
     public static function fromString(string $contents): Source
     {
         return new Source(Path::createMemory(), $contents);
     }
 
-    /**
-     * @param string $filename
-     * @return Source
-     */
     public static function fromFile(string $filename): Source
     {
         if ($contents = file_get_contents($filename)) {
@@ -50,29 +47,9 @@ final class Source implements \IteratorAggregate
         throw new \Exception('@TODO: Could not load file');
     }
 
-    /**
-     * @return Path
-     */
-    public function getPath(): Path
-    {
-        return $this->path;
-    }
-
-    /**
-     * @return string
-     */
-    public function getContents(): string
-    {
-        return $this->contents;
-    }
-
-    /**
-     * @param Source $other
-     * @return bool
-     */
     public function equals(Source $other): bool
     {
-        return $this->contents === $other->getContents();
+        return $this->contents === $other->contents;
     }
 
     /**

@@ -1,53 +1,37 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Source;
 
 final class Fragment
 {
-    /**
-     * @var string
-     */
-    private $value;
-
-    /**
-     * @var Position
-     */
-    private $start;
-
-    /**
-     * @var Position
-     */
-    private $end;
-
-    /**
-     * @var Source
-     */
-    private $source;
-
-    /**
-     * @param string $value
-     * @param Position $start
-     * @param Position $end
-     * @param Source $source
-     */
     private function __construct(
-        string $value,
-        Position $start,
-        Position $end,
-        Source $source
+        public readonly string $value,
+        public readonly Position $start,
+        public readonly Position $end,
+        public readonly Source $source
     ) {
-        $this->value = $value;
-        $this->start = $start;
-        $this->end = $end;
-        $this->source = $source;
     }
 
-    /**
-     * @param string $value
-     * @param Position $start
-     * @param Position $end
-     * @param Source $source
-     * @return Fragment
-     */
     public static function create(
         string $value,
         Position $start,
@@ -62,56 +46,17 @@ final class Fragment
         );
     }
 
-    /**
-     * @return string
-     */
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
-    /**
-     * @return Position
-     */
-    public function getStart(): Position
-    {
-        return $this->start;
-    }
-
-    /**
-     * @return Position
-     */
-    public function getEnd(): Position
-    {
-        return $this->end;
-    }
-
-    /**
-     * @return Source
-     */
-    public function getSource(): Source
-    {
-        return $this->source;
-    }
-
-    /**
-     * @param Fragment $other
-     * @return Fragment
-     */
-    public function append(Fragment $other): Fragment 
+    public function append(Fragment $other): Fragment
     {
         return new Fragment(
-            $this->getValue() . $other->getValue(),
-            $this->getStart(),
-            $other->getEnd(),
-            $this->getSource()
+            $this->value . $other->value,
+            $this->start,
+            $other->end,
+            $this->source
         );
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }

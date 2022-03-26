@@ -1,5 +1,23 @@
 <?php
 
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Lexer;
@@ -11,8 +29,6 @@ use PackageFactory\ComponentEngine\Exception\ParserFailed;
  */
 final class TokenStream implements \Iterator
 {
-    private Tokenizer $tokenizer;
-
     /**
      * @var \Iterator<Token>
      */
@@ -25,9 +41,8 @@ final class TokenStream implements \Iterator
 
     private ?Token $last;
 
-    private function __construct(Tokenizer $tokenizer)
+    private function __construct(private readonly Tokenizer $tokenizer)
     {
-        $this->tokenizer = $tokenizer;
         $this->rewind();
     }
 
@@ -75,13 +90,14 @@ final class TokenStream implements \Iterator
     public function skipWhiteSpaceAndComments(): void
     {
         while (
-            $this->valid() &&
-            ($this->current()->getType() === TokenType::WHITESPACE() ||
-                $this->current()->getType() === TokenType::END_OF_LINE() ||
-                $this->current()->getType() === TokenType::COMMENT_START() ||
-                $this->current()->getType() === TokenType::COMMENT_CONTENT() ||
-                $this->current()->getType() === TokenType::COMMENT_END()
-            )
+            match ($this->current()->type) {
+                TokenType::WHITESPACE,
+                TokenType::END_OF_LINE,
+                TokenType::COMMENT_START,
+                TokenType::COMMENT_CONTENT,
+                TokenType::COMMENT_END => $this->valid(),
+                default => false
+            }
         ) {
             $this->next();
         }
@@ -89,7 +105,7 @@ final class TokenStream implements \Iterator
 
     public function consume(TokenType $type): Token
     {
-        if ($this->current()->getType() === $type) {
+        if ($this->current()->type === $type) {
             $result = $this->current();
             $this->next();
             return $result;

@@ -1,4 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Lexer\Scope;
 
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
@@ -17,7 +38,7 @@ final class Expression
      * @return \Iterator<Token>
      */
     public static function tokenize(
-        SourceIterator $iterator, 
+        SourceIterator $iterator,
         array $escapeSequences = []
     ): \Iterator {
         $brackets = 0;
@@ -28,9 +49,9 @@ final class Expression
             if ($brackets === 0) {
                 foreach ($escapeSequences as $escapeSequence) {
                     $length = mb_strlen($escapeSequence);
-                    if ($iterator->current()->getValue() === $escapeSequence[0]) {
+                    if ($iterator->current()->value === $escapeSequence[0]) {
                         if ($lookAhead = $iterator->lookAhead($length)) {
-                            if ($lookAhead->getValue() === $escapeSequence) {
+                            if ($lookAhead->value === $escapeSequence) {
                                 return;
                             }
                         }
@@ -40,38 +61,38 @@ final class Expression
 
             if ($keyword = Keyword::extract($iterator, self::KEYWORD_TRUE)) {
                 yield Token::fromFragment(
-                    TokenType::KEYWORD_TRUE(),
+                    TokenType::KEYWORD_TRUE,
                     $keyword
                 );
                 $operand = true;
                 continue;
             } elseif ($keyword = Keyword::extract($iterator, self::KEYWORD_FALSE)) {
                 yield Token::fromFragment(
-                    TokenType::KEYWORD_FALSE(),
+                    TokenType::KEYWORD_FALSE,
                     $keyword
                 );
                 $operand = true;
                 continue;
             } elseif ($keyword = Keyword::extract($iterator, self::KEYWORD_NULL)) {
                 yield Token::fromFragment(
-                    TokenType::KEYWORD_NULL(),
+                    TokenType::KEYWORD_NULL,
                     $keyword
                 );
                 $operand = true;
                 continue;
-            } 
-            
-            switch ($iterator->current()->getValue()) {
+            }
+
+            switch ($iterator->current()->value) {
                 case '!':
                     if ($lookAhead = $iterator->willBe('!==')) {
                         yield Token::fromFragment(
-                            TokenType::COMPARATOR_NEQ(),
+                            TokenType::COMPARATOR_NEQ,
                             $lookAhead
                         );
                         $iterator->skip(3);
                     } else {
                         yield Token::fromFragment(
-                            TokenType::OPERATOR_LOGICAL_NOT(),
+                            TokenType::OPERATOR_LOGICAL_NOT,
                             $iterator->current()
                         );
                         $iterator->next();
@@ -81,7 +102,7 @@ final class Expression
                 case '&':
                     if ($lookAhead = $iterator->willBe('&&')) {
                         yield Token::fromFragment(
-                            TokenType::OPERATOR_LOGICAL_AND(),
+                            TokenType::OPERATOR_LOGICAL_AND,
                             $lookAhead
                         );
                         $iterator->skip(2);
@@ -93,7 +114,7 @@ final class Expression
                 case '|':
                     if ($lookAhead = $iterator->willBe('||')) {
                         yield Token::fromFragment(
-                            TokenType::OPERATOR_LOGICAL_OR(),
+                            TokenType::OPERATOR_LOGICAL_OR,
                             $lookAhead
                         );
                         $iterator->skip(2);
@@ -104,13 +125,13 @@ final class Expression
                     break;
                 case '.':
                     if ($lookAhead = $iterator->lookAhead(2)) {
-                        if (Number::is($lookAhead->getValue()[1])) {
+                        if (Number::is($lookAhead->value[1])) {
                             yield from Number::tokenize($iterator);
                             $operand = true;
                             break;
-                        }  elseif ($lookAhead = $iterator->willBe('...')) {
+                        } elseif ($lookAhead = $iterator->willBe('...')) {
                             yield Token::fromFragment(
-                                TokenType::OPERATOR_SPREAD(),
+                                TokenType::OPERATOR_SPREAD,
                                 $lookAhead
                             );
                             $iterator->skip(3);
@@ -120,7 +141,7 @@ final class Expression
                     }
 
                     yield Token::fromFragment(
-                        TokenType::PERIOD(),
+                        TokenType::PERIOD,
                         $iterator->current()
                     );
                     $iterator->next();
@@ -128,7 +149,7 @@ final class Expression
                     break;
                 case '+':
                     yield Token::fromFragment(
-                        TokenType::OPERATOR_ADD(),
+                        TokenType::OPERATOR_ADD,
                         $iterator->current()
                     );
                     $iterator->next();
@@ -136,7 +157,7 @@ final class Expression
                     break;
                 case '-':
                     yield Token::fromFragment(
-                        TokenType::OPERATOR_SUBTRACT(),
+                        TokenType::OPERATOR_SUBTRACT,
                         $iterator->current()
                     );
                     $iterator->next();
@@ -144,7 +165,7 @@ final class Expression
                     break;
                 case '*':
                     yield Token::fromFragment(
-                        TokenType::OPERATOR_MULTIPLY(),
+                        TokenType::OPERATOR_MULTIPLY,
                         $iterator->current()
                     );
                     $iterator->next();
@@ -155,7 +176,7 @@ final class Expression
                         yield from Comment::tokenize($iterator);
                     } else {
                         yield Token::fromFragment(
-                            TokenType::OPERATOR_DIVIDE(),
+                            TokenType::OPERATOR_DIVIDE,
                             $iterator->current()
                         );
                         $iterator->next();
@@ -164,7 +185,7 @@ final class Expression
                     break;
                 case '%':
                     yield Token::fromFragment(
-                        TokenType::OPERATOR_MODULO(),
+                        TokenType::OPERATOR_MODULO,
                         $iterator->current()
                     );
                     $iterator->next();
@@ -173,13 +194,13 @@ final class Expression
                 case '=':
                     if ($lookAhead = $iterator->willBe('=>')) {
                         yield Token::fromFragment(
-                            TokenType::ARROW(),
+                            TokenType::ARROW,
                             $lookAhead
                         );
                         $iterator->skip(2);
                     } elseif ($lookAhead = $iterator->willBe('===')) {
                         yield Token::fromFragment(
-                            TokenType::COMPARATOR_EQ(),
+                            TokenType::COMPARATOR_EQ,
                             $lookAhead
                         );
                         $iterator->skip(3);
@@ -191,13 +212,13 @@ final class Expression
                 case '>':
                     if ($lookAhead = $iterator->willBe('>=')) {
                         yield Token::fromFragment(
-                            TokenType::COMPARATOR_GTE(),
+                            TokenType::COMPARATOR_GTE,
                             $lookAhead
                         );
                         $iterator->skip(2);
                     } else {
                         yield Token::fromFragment(
-                            TokenType::COMPARATOR_GT(),
+                            TokenType::COMPARATOR_GT,
                             $iterator->current()
                         );
                         $iterator->next();
@@ -207,13 +228,13 @@ final class Expression
                 case '<':
                     if ($lookAhead = $iterator->willBe('<=')) {
                         yield Token::fromFragment(
-                            TokenType::COMPARATOR_LTE(),
+                            TokenType::COMPARATOR_LTE,
                             $lookAhead
                         );
                         $iterator->skip(2);
-                    } elseif($operand) {
+                    } elseif ($operand) {
                         yield Token::fromFragment(
-                            TokenType::COMPARATOR_LT(),
+                            TokenType::COMPARATOR_LT,
                             $iterator->current()
                         );
                         $iterator->next();
@@ -224,7 +245,7 @@ final class Expression
                     break;
                 case '(':
                     yield Token::fromFragment(
-                        TokenType::BRACKETS_ROUND_OPEN(),
+                        TokenType::BRACKETS_ROUND_OPEN,
                         $iterator->current()
                     );
                     $iterator->next();
@@ -234,7 +255,7 @@ final class Expression
                 case ')':
                     if ($brackets > 0) {
                         yield Token::fromFragment(
-                            TokenType::BRACKETS_ROUND_CLOSE(),
+                            TokenType::BRACKETS_ROUND_CLOSE,
                             $iterator->current()
                         );
                         $iterator->next();
@@ -246,7 +267,7 @@ final class Expression
                     break;
                 case '[':
                     yield Token::fromFragment(
-                        TokenType::BRACKETS_SQUARE_OPEN(),
+                        TokenType::BRACKETS_SQUARE_OPEN,
                         $iterator->current()
                     );
                     $iterator->next();
@@ -256,7 +277,7 @@ final class Expression
                 case ']':
                     if ($brackets > 0) {
                         yield Token::fromFragment(
-                            TokenType::BRACKETS_SQUARE_CLOSE(),
+                            TokenType::BRACKETS_SQUARE_CLOSE,
                             $iterator->current()
                         );
                         $iterator->next();
@@ -269,7 +290,7 @@ final class Expression
                     break;
                 case '{':
                     yield Token::fromFragment(
-                        TokenType::BRACKETS_CURLY_OPEN(),
+                        TokenType::BRACKETS_CURLY_OPEN,
                         $iterator->current()
                     );
                     $iterator->next();
@@ -279,7 +300,7 @@ final class Expression
                 case '}':
                     if ($brackets > 0) {
                         yield Token::fromFragment(
-                            TokenType::BRACKETS_CURLY_CLOSE(),
+                            TokenType::BRACKETS_CURLY_CLOSE,
                             $iterator->current()
                         );
                         $iterator->next();
@@ -292,7 +313,7 @@ final class Expression
                     break;
                 case ':':
                     yield Token::fromFragment(
-                        TokenType::COLON(),
+                        TokenType::COLON,
                         $iterator->current()
                     );
                     $iterator->next();
@@ -300,7 +321,7 @@ final class Expression
                     break;
                 case ',':
                     yield Token::fromFragment(
-                        TokenType::COMMA(),
+                        TokenType::COMMA,
                         $iterator->current()
                     );
                     $iterator->next();
@@ -309,21 +330,21 @@ final class Expression
                 case '?':
                     if ($lookAhead = $iterator->willBe('?.')) {
                         yield Token::fromFragment(
-                            TokenType::OPERATOR_OPTCHAIN(),
+                            TokenType::OPERATOR_OPTCHAIN,
                             $lookAhead
                         );
                         $iterator->skip(2);
                         $operand = false;
                     } elseif ($lookAhead = $iterator->willBe('??')) {
                         yield Token::fromFragment(
-                            TokenType::OPERATOR_NULLISH_COALESCE(),
+                            TokenType::OPERATOR_NULLISH_COALESCE,
                             $lookAhead
                         );
                         $iterator->skip(2);
                         $operand = false;
                     } else {
                         yield Token::fromFragment(
-                            TokenType::QUESTIONMARK(),
+                            TokenType::QUESTIONMARK,
                             $iterator->current()
                         );
                         $iterator->next();
@@ -340,7 +361,7 @@ final class Expression
                     $operand = true;
                     break;
                 default:
-                    $value = $iterator->current()->getValue();
+                    $value = $iterator->current()->value;
                     if (Number::is($value)) {
                         yield from Number::tokenize($iterator);
                         $operand = true;
@@ -351,7 +372,7 @@ final class Expression
                         $operand = false;
                         return;
                     }
-                break;
+                    break;
             }
         }
     }

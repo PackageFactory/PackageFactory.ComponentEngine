@@ -1,4 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Lexer;
 
 use PackageFactory\ComponentEngine\Parser\Source\Source;
@@ -7,129 +28,39 @@ use PackageFactory\ComponentEngine\Parser\Source\Position;
 
 final class Token
 {
-    /**
-     * @var TokenType
-     */
-    private $type;
-
-    /**
-     * @var string
-     */
-    private $value;
-
-    /**
-     * @var Position
-     */
-    private $start;
-
-    /**
-     * @var Position
-     */
-    private $end;
-
-    /**
-     * @var Source
-     */
-    private $source;
-
-    /**
-     * @param TokenType $type
-     * @param string $value
-     * @param Position $start
-     * @param Position $end
-     * @param Source $source
-     */
     private function __construct(
-        TokenType $type,
-        string $value,
-        Position $start,
-        Position $end,
-        Source $source
+        public readonly TokenType $type,
+        public readonly string $value,
+        public readonly Position $start,
+        public readonly Position $end,
+        public readonly Source $source
     ) {
-        $this->type = $type;
-        $this->value = $value;
-        $this->start = $start;
-        $this->end = $end;
-        $this->source = $source;
     }
 
-    /**
-     * @param TokenType $type
-     * @param Fragment $fragment
-     * @return Token
-     */
     public static function fromFragment(
         TokenType $type,
         Fragment $fragment
     ): Token {
         return new Token(
             $type,
-            $fragment->getValue(),
-            $fragment->getStart(),
-            $fragment->getEnd(),
-            $fragment->getSource()
+            $fragment->value,
+            $fragment->start,
+            $fragment->end,
+            $fragment->source
         );
     }
 
-    /**
-     * @return TokenType
-     */
-    public function getType(): TokenType
-    {
-        return $this->type;
-    }
-
-    /**
-     * @return string
-     */
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
-    /**
-     * @return Position
-     */
-    public function getStart(): Position
-    {
-        return $this->start;
-    }
-
-    /**
-     * @return Position
-     */
-    public function getEnd(): Position
-    {
-        return $this->end;
-    }
-
-    /**
-     * @return Source
-     */
-    public function getSource(): Source
-    {
-        return $this->source;
-    }
-
-    /**
-     * @param Token $other
-     * @return bool
-     */
     public function equals(Token $other): bool
     {
-        return (
-            $this->type === $other->getType()
-            && $this->value === $other->getValue()
-            && $this->start->equals($other->getStart())
-            && $this->end->equals($other->getEnd())
-            && $this->source->equals($other->getSource())
+        return ($this->type === $other->type
+            && $this->value === $other->value
+            && $this->start->equals($other->start)
+            && $this->end->equals($other->end)
+            && $this->source->equals($other->source)
         );
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }

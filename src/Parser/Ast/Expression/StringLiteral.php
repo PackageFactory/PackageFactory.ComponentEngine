@@ -1,4 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
 use PackageFactory\ComponentEngine\Exception\ParserFailed;
@@ -11,126 +32,76 @@ use PackageFactory\ComponentEngine\Parser\Ast\Value;
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
-use PackageFactory\ComponentEngine\Parser\Util;
 
 final class StringLiteral implements Value, Literal, Term, Statement, Key, Child, \JsonSerializable
 {
-    /**
-     * @var Token
-     */
-    private $start;
-
-    /**
-     * @var Token
-     */
-    private $end;
-
-    /**
-     * @var string
-     */
-    private $value;
-
-    /**
-     * @param Token $start
-     * @param Token $end
-     * @param string $value
-     */
     private function __construct(
-        Token $start,
-        Token $end,
-        string $value
+        public readonly Token $start,
+        public readonly Token $end,
+        public readonly string $value
     ) {
-        $this->start = $start;
-        $this->end = $end;
-        $this->value = $value;
     }
 
     public static function fromTokenStream(TokenStream $stream): self
     {
         $start = $stream->current();
-        $stream->consume(TokenType::STRING_LITERAL_START());
+        $stream->consume(TokenType::STRING_LITERAL_START);
 
         $value = '';
         while ($stream->valid()) {
-            switch ($stream->current()->getType()) {
-                case TokenType::STRING_LITERAL_CONTENT():
-                    $value .= $stream->current()->getValue();
+            switch ($stream->current()->type) {
+                case TokenType::STRING_LITERAL_CONTENT:
+                    $value .= $stream->current()->value;
                     $stream->next();
                     break;
 
-                case TokenType::STRING_LITERAL_ESCAPE():
+                case TokenType::STRING_LITERAL_ESCAPE:
                     $stream->next();
                     break;
 
-                case TokenType::STRING_LITERAL_ESCAPED_CHARACTER():
-                    $value .= $stream->current()->getValue();
+                case TokenType::STRING_LITERAL_ESCAPED_CHARACTER:
+                    $value .= $stream->current()->value;
                     $stream->next();
                     break;
 
-                case TokenType::STRING_LITERAL_END():
+                case TokenType::STRING_LITERAL_END:
                     break 2;
 
                 default:
                     throw ParserFailed::becauseOfUnexpectedToken(
                         $stream->current(),
                         [
-                            TokenType::STRING_LITERAL_CONTENT(),
-                            TokenType::STRING_LITERAL_ESCAPE(),
-                            TokenType::STRING_LITERAL_ESCAPED_CHARACTER(),
-                            TokenType::STRING_LITERAL_END()
+                            TokenType::STRING_LITERAL_CONTENT,
+                            TokenType::STRING_LITERAL_ESCAPE,
+                            TokenType::STRING_LITERAL_ESCAPED_CHARACTER,
+                            TokenType::STRING_LITERAL_END
                         ]
                     );
             }
         }
 
         $end = $stream->current();
-        $stream->consume(TokenType::STRING_LITERAL_END());
+        $stream->consume(TokenType::STRING_LITERAL_END);
 
-        return new self($start, $end, $value);
+        return new self(
+            start: $start,
+            end: $end,
+            value: $value
+        );
     }
 
-    /**
-     * @return Token
-     */
-    public function getStart(): Token
-    {
-        return $this->start;
-    }
-
-    /**
-     * @return Token
-     */
-    public function getEnd(): Token
-    {
-        return $this->end;
-    }
-
-    /**
-     * @return string
-     */
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->value;
     }
 
-    /**
-     * @return array<mixed>
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'type' => 'StringLiteral',
             'offset' => [
-                $this->start->getStart()->getIndex(),
-                $this->end->getEnd()->getIndex()
+                $this->start->start->index,
+                $this->end->end->index
             ],
             'value' => $this->value
         ];

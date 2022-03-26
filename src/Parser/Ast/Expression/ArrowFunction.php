@@ -1,4 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
 use PackageFactory\ComponentEngine\Exception\ParserFailed;
@@ -7,39 +28,21 @@ use PackageFactory\ComponentEngine\Parser\Ast\Term;
 use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
-use PackageFactory\ComponentEngine\Parser\Util;
 
 final class ArrowFunction implements Term, Statement, \JsonSerializable
 {
-    /**
-     * @var array|Identifier[]
-     */
-    private $parameters;
-
-    /**
-     * @var Term
-     */
-    private $body;
-
     /**
      * @param array|Identifier[] $parameters
      * @param Term $body
      */
     private function __construct(
-        array $parameters,
-        Term $body
+        public readonly array $parameters,
+        public readonly Term $body
     ) {
-        $this->parameters = $parameters;
-        $this->body = $body;
     }
 
-    /**
-     * @param null|Identifier $firstParameter
-     * @param TokenStream $stream
-     * @return self
-     */
     public static function fromTokenStream(
-        ?Identifier $firstParameter, 
+        ?Identifier $firstParameter,
         TokenStream $stream
     ): self {
         if ($firstParameter === null) {
@@ -51,26 +54,26 @@ final class ArrowFunction implements Term, Statement, \JsonSerializable
         while ($stream->valid()) {
             $stream->skipWhiteSpaceAndComments();
 
-            if ($stream->current()->getType() === TokenType::COMMA()) {
+            if ($stream->current()->type === TokenType::COMMA) {
                 $stream->next();
                 $stream->skipWhiteSpaceAndComments();
-            } elseif ($stream->current()->getType() === TokenType::BRACKETS_ROUND_CLOSE()) {
+            } elseif ($stream->current()->type === TokenType::BRACKETS_ROUND_CLOSE) {
                 $stream->next();
                 break;
-            } elseif ($stream->current()->getType() === TokenType::ARROW()) {
+            } elseif ($stream->current()->type === TokenType::ARROW) {
                 $stream->next();
                 break;
             }
 
-            switch ($stream->current()->getType()) {
-                case TokenType::IDENTIFIER():
+            switch ($stream->current()->type) {
+                case TokenType::IDENTIFIER:
                     $parameters[] = Identifier::fromTokenStream($stream);
                     break;
 
                 default:
                     throw ParserFailed::becauseOfUnexpectedToken(
                         $stream->current(),
-                        [TokenType::IDENTIFIER()]
+                        [TokenType::IDENTIFIER]
                     );
             }
         }
@@ -78,31 +81,12 @@ final class ArrowFunction implements Term, Statement, \JsonSerializable
         $stream->skipWhiteSpaceAndComments();
 
         return new self(
-            $parameters, 
-            ExpressionParser::parseTerm($stream)
+            parameters: $parameters,
+            body: ExpressionParser::parseTerm($stream)
         );
     }
 
-    /**
-     * @return array|Identifier[]
-     */
-    public function getParameters(): array
-    {
-        return $this->parameters;
-    }
-
-    /**
-     * @return Term
-     */
-    public function getBody(): Term
-    {
-        return $this->body;
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'type' => 'ArrowFunction',

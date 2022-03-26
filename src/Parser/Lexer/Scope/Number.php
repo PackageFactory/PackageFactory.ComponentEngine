@@ -1,4 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Lexer\Scope;
 
 use PackageFactory\ComponentEngine\Parser\Lexer\Capture;
@@ -24,9 +45,9 @@ final class Number
      */
     public static function tokenize(SourceIterator $iterator): \Iterator
     {
-        if ($iterator->current()->getValue() === '0') {
+        if ($iterator->current()->value === '0') {
             if ($lookAhead = $iterator->lookAhead(2)) {
-                $lookAhead = $lookAhead->getValue();
+                $lookAhead = $lookAhead->value;
             } else {
                 $lookAhead = '';
             }
@@ -57,7 +78,7 @@ final class Number
         $iterator->next();
 
         while ($iterator->valid()) {
-            $value = $iterator->current()->getValue();
+            $value = $iterator->current()->value;
 
             if (in_array($value, self::DIGITS_BIN)) {
                 $capture->append($iterator->current());
@@ -67,7 +88,7 @@ final class Number
             $iterator->next();
         }
 
-        yield from $capture->flush(TokenType::NUMBER());
+        yield from $capture->flush(TokenType::NUMBER);
     }
 
     /**
@@ -82,7 +103,7 @@ final class Number
         $iterator->next();
 
         while ($iterator->valid()) {
-            $value = $iterator->current()->getValue();
+            $value = $iterator->current()->value;
             if (in_array($value, self::DIGITS_OCT)) {
                 $capture->append($iterator->current());
             } else {
@@ -91,7 +112,7 @@ final class Number
             $iterator->next();
         }
 
-        yield from $capture->flush(TokenType::NUMBER());
+        yield from $capture->flush(TokenType::NUMBER);
     }
 
     /**
@@ -106,7 +127,7 @@ final class Number
         $iterator->next();
 
         while ($iterator->valid()) {
-            $value = $iterator->current()->getValue();
+            $value = $iterator->current()->value;
             if (in_array($value, self::DIGITS_HEX)) {
                 $capture->append($iterator->current());
             } else {
@@ -115,7 +136,7 @@ final class Number
             $iterator->next();
         }
 
-        yield from $capture->flush(TokenType::NUMBER());
+        yield from $capture->flush(TokenType::NUMBER);
     }
 
     /**
@@ -129,7 +150,7 @@ final class Number
         $exponentiation = false;
 
         while ($iterator->valid()) {
-            $value = $iterator->current()->getValue();
+            $value = $iterator->current()->value;
             if (in_array($value, self::DIGITS_DEC)) {
                 $capture->append($iterator->current());
             } elseif ($value === '.' && !$floatingPoint && !$exponentiation) {
@@ -144,6 +165,6 @@ final class Number
             $iterator->next();
         }
 
-        yield from $capture->flush(TokenType::NUMBER());
+        yield from $capture->flush(TokenType::NUMBER);
     }
 }

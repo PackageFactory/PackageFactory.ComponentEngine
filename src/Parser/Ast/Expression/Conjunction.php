@@ -1,4 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
 use PackageFactory\ComponentEngine\Exception\ParserFailed;
@@ -9,105 +30,42 @@ use PackageFactory\ComponentEngine\Parser\Ast\Term;
 use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
-use PackageFactory\ComponentEngine\Parser\Util;
 
 final class Conjunction implements Spreadable, Term, Statement, Child, \JsonSerializable
 {
-    const OPERATOR_LOGICAL_AND = '&&';
-
-    /**
-     * @var Term
-     */
-    private $left;
-
-    /**
-     * @var string
-     */
-    private $operator;
-
-    /**
-     * @var Term
-     */
-    private $right;
-
-    /**
-     * @param Term $left
-     * @param string $operator
-     * @param Term $right
-     */
-    private function __construct(Term $left, string $operator, Term $right)
-    {
-        if ($operator !== self::OPERATOR_LOGICAL_AND) {
-            throw new \Exception('@TODO: Unknown Operator');
-        }
-
-        $this->left = $left;
-        $this->operator = $operator;
-        $this->right = $right;
+    private function __construct(
+        private readonly Term $left,
+        private readonly Term $right
+    ) {
     }
 
-    /**
-     * @param Term $left
-     * @param TokenStream $stream
-     * @return self
-     */
-    public static function fromTokenStream(Term $left, TokenStream $stream): self 
+    public static function fromTokenStream(Term $left, TokenStream $stream): self
     {
         $operator = null;
-        switch ($stream->current()->getType()) {
-            case TokenType::OPERATOR_LOGICAL_AND():
-                $operator = $stream->current()->getValue();
+        switch ($stream->current()->type) {
+            case TokenType::OPERATOR_LOGICAL_AND:
                 $stream->next();
                 break;
             default:
                 throw ParserFailed::becauseOfUnexpectedToken(
                     $stream->current(),
-                    [TokenType::OPERATOR_LOGICAL_AND()]
+                    [TokenType::OPERATOR_LOGICAL_AND]
                 );
         }
 
         $stream->skipWhiteSpaceAndComments();
 
         return new self(
-            $left, 
-            $operator, 
-            ExpressionParser::parseTerm($stream, ExpressionParser::PRIORITY_CONJUNCTION)
+            left: $left,
+            right: ExpressionParser::parseTerm($stream, ExpressionParser::PRIORITY_CONJUNCTION)
         );
     }
 
-    /**
-     * @return Term
-     */
-    public function getLeft(): Term
-    {
-        return $this->left;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOperator(): string
-    {
-        return $this->operator;
-    }
-
-    /**
-     * @return Term
-     */
-    public function getRight(): Term
-    {
-        return $this->right;
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'type' => 'Conjunction',
             'left' => $this->left,
-            'operator' => $this->operator,
             'right' => $this->right
         ];
     }

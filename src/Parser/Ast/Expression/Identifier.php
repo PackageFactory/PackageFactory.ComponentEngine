@@ -1,4 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
 use PackageFactory\ComponentEngine\Exception\ParserFailed;
@@ -10,99 +31,59 @@ use PackageFactory\ComponentEngine\Parser\Ast\Term;
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
-use PackageFactory\ComponentEngine\Parser\Util;
 
 final class Identifier implements Spreadable, Term, Statement, Key, Child, \JsonSerializable
 {
-    /**
-     * @var Token
-     */
-    private $token;
-
-    /**
-     * @param Token $token
-     */
-    private function __construct(Token $token) 
+    private function __construct(public readonly Token $token)
     {
-        $this->token = $token;
     }
 
-    /**
-     * @param TokenStream $stream
-     * @return self
-     */
     public static function fromTokenStream(TokenStream $stream): self
     {
         $value = $stream->current();
-        if ($value->getType() === TokenType::IDENTIFIER()) {
+        if ($value->type === TokenType::IDENTIFIER) {
             $stream->next();
             return new self($value);
         } else {
             throw ParserFailed::becauseOfUnexpectedToken(
                 $stream->current(),
-                [TokenType::IDENTIFIER()]
+                [TokenType::IDENTIFIER]
             );
         }
     }
 
-    /**
-     * @param Token $token
-     * @return self
-     */
     public static function fromToken(Token $token): self
     {
-        switch ($token->getType()) {
-            case TokenType::IDENTIFIER():
-            case TokenType::MODULE_KEYWORD_DEFAULT():
+        switch ($token->type) {
+            case TokenType::IDENTIFIER:
+            case TokenType::MODULE_KEYWORD_DEFAULT:
                 return new self($token);
-            
+
             default:
                 throw ParserFailed::becauseOfUnexpectedToken(
                     $token,
                     [
-                        TokenType::IDENTIFIER(),
-                        TokenType::MODULE_KEYWORD_DEFAULT()
+                        TokenType::IDENTIFIER,
+                        TokenType::MODULE_KEYWORD_DEFAULT
                     ]
                 );
         }
     }
 
-    /**
-     * @return Token
-     */
-    public function getToken(): Token
-    {
-        return $this->token;
-    }
-
-    /**
-     * @return string
-     */
-    public function getValue(): string
-    {
-        return $this->token->getValue();
-    }
-
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
-        return $this->token->getValue();
+        return $this->token->value;
     }
 
-    /**
-     * @return array<mixed>
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'type' => 'Identifier',
             'offset' => [
-                $this->token->getStart()->getIndex(),
-                $this->token->getEnd()->getIndex()
+                $this->token->start->index,
+                $this->token->end->index
             ],
-            'value' => $this->token->getValue()
+            'value' => $this->token->value
         ];
     }
 }

@@ -1,4 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser;
 
 use PackageFactory\ComponentEngine\Exception\ParserFailed;
@@ -20,10 +41,6 @@ final class ExpressionParser
     public const PRIORITY_DASH_OPERATION = 1;
     public const PRIORITY_POINT_OPERATION = 0;
 
-    /**
-     * @param TokenStream $stream
-     * @return null|Statement
-     */
     public static function parse(TokenStream $stream): ?Statement
     {
         $stream->skipWhiteSpaceAndComments();
@@ -34,17 +51,12 @@ final class ExpressionParser
         return self::parseStatement($stream);
     }
 
-    /**
-     * @param TokenStream $stream
-     * @param int $priority
-     * @return Statement
-     */
     public static function parseStatement(
         TokenStream $stream,
         int $priority = self::PRIORITY_TERNARY
     ): Statement {
-        switch ($stream->current()->getType()) {
-            case TokenType::OPERATOR_SPREAD():
+        switch ($stream->current()->type) {
+            case TokenType::OPERATOR_SPREAD:
                 return Expression\Spread::fromTokenStream($stream);
             default:
                 /** @var Statement $statement */
@@ -53,70 +65,60 @@ final class ExpressionParser
         }
     }
 
-    /**
-     * @param TokenStream $stream
-     * @param int $priority
-     * @param bool $bracket
-     * @return Term
-     */
     public static function parseTerm(
-        TokenStream $stream, 
+        TokenStream $stream,
         int $priority = self::PRIORITY_TERNARY,
         bool $bracket = false
     ): Term {
-        switch ($stream->current()->getType()) {
-            case TokenType::KEYWORD_NULL():
-            case TokenType::KEYWORD_TRUE():
-            case TokenType::KEYWORD_FALSE():
-            case TokenType::NUMBER():
-            case TokenType::STRING_LITERAL_START():
-            case TokenType::TEMPLATE_LITERAL_START():
-            case TokenType::BRACKETS_SQUARE_OPEN():
-            case TokenType::BRACKETS_CURLY_OPEN():
-                $term = self::parseLiteral($stream);
-                break;
-            case TokenType::OPERATOR_LOGICAL_NOT():
-                $term = Expression\Negation::fromTokenStream($stream);
-                break;
-            case TokenType::IDENTIFIER():
-                $term = Expression\Identifier::fromTokenStream($stream);
-                break;
-            case TokenType::BRACKETS_ROUND_OPEN():
+        $term = match ($stream->current()->type) {
+            TokenType::KEYWORD_NULL,
+            TokenType::KEYWORD_TRUE,
+            TokenType::KEYWORD_FALSE,
+            TokenType::NUMBER,
+            TokenType::STRING_LITERAL_START,
+            TokenType::TEMPLATE_LITERAL_START,
+            TokenType::BRACKETS_SQUARE_OPEN,
+            TokenType::BRACKETS_CURLY_OPEN => self::parseLiteral($stream),
+
+            TokenType::OPERATOR_LOGICAL_NOT => Expression\Negation::fromTokenStream($stream),
+
+            TokenType::IDENTIFIER => Expression\Identifier::fromTokenStream($stream),
+
+            TokenType::BRACKETS_ROUND_OPEN => (function () use ($stream) {
                 $stream->next();
                 $stream->skipWhiteSpaceAndComments();
-                $term = self::parseTerm($stream, self::PRIORITY_TERNARY, true);
-                break;
-            case TokenType::AFX_TAG_START():
-                $term = Afx\Tag::fromTokenStream($stream);
-                break;
-            default:
-                throw ParserFailed::becauseOfUnexpectedToken(
-                    $stream->current(),
-                    [
-                        TokenType::KEYWORD_NULL(),
-                        TokenType::KEYWORD_TRUE(),
-                        TokenType::KEYWORD_FALSE(),
-                        TokenType::NUMBER(),
-                        TokenType::STRING_LITERAL_START(),
-                        TokenType::TEMPLATE_LITERAL_START(),
-                        TokenType::BRACKETS_SQUARE_OPEN(),
-                        TokenType::BRACKETS_CURLY_OPEN(),
-                        TokenType::OPERATOR_LOGICAL_NOT(),
-                        TokenType::IDENTIFIER(),
-                        TokenType::BRACKETS_ROUND_OPEN(),
-                        TokenType::AFX_TAG_START()
-                    ]
-                );
-        }
 
+                return self::parseTerm($stream, self::PRIORITY_TERNARY, true);
+            })(),
+
+            TokenType::AFX_TAG_START => Afx\Tag::fromTokenStream($stream),
+
+            default => throw ParserFailed::becauseOfUnexpectedToken(
+                $stream->current(),
+                [
+                    TokenType::KEYWORD_NULL,
+                    TokenType::KEYWORD_TRUE,
+                    TokenType::KEYWORD_FALSE,
+                    TokenType::NUMBER,
+                    TokenType::STRING_LITERAL_START,
+                    TokenType::TEMPLATE_LITERAL_START,
+                    TokenType::BRACKETS_SQUARE_OPEN,
+                    TokenType::BRACKETS_CURLY_OPEN,
+                    TokenType::OPERATOR_LOGICAL_NOT,
+                    TokenType::IDENTIFIER,
+                    TokenType::BRACKETS_ROUND_OPEN,
+                    TokenType::AFX_TAG_START
+                ]
+            ),
+        };
 
         /** @var Term $term */
         while ($stream->valid()) {
             $stream->skipWhiteSpaceAndComments();
 
-            switch ($stream->current()->getType()) {
-                case TokenType::COMMA():
-                case TokenType::ARROW():
+            switch ($stream->current()->type) {
+                case TokenType::COMMA:
+                case TokenType::ARROW:
                     if ($priority >= self::PRIORITY_LIST) {
                         return $term;
                     } elseif ($term instanceof Expression\Identifier) {
@@ -125,58 +127,58 @@ final class ExpressionParser
                     } else {
                         throw ParserFailed::becauseOfUnexpectedToken($stream->current());
                     }
-                case TokenType::PERIOD():
-                case TokenType::BRACKETS_SQUARE_OPEN():
-                case TokenType::BRACKETS_ROUND_OPEN():
-                case TokenType::OPERATOR_OPTCHAIN():
+                case TokenType::PERIOD:
+                case TokenType::BRACKETS_SQUARE_OPEN:
+                case TokenType::BRACKETS_ROUND_OPEN:
+                case TokenType::OPERATOR_OPTCHAIN:
                     $term = Expression\Chain::fromTokenStream($term, $stream);
                     break;
-                case TokenType::QUESTIONMARK():
+                case TokenType::QUESTIONMARK:
                     if ($priority < self::PRIORITY_TERNARY) {
                         return $term;
                     }
                     $term = Expression\Ternary::fromTokenStream($term, $stream);
                     break;
-                case TokenType::COMPARATOR_EQ():
-                case TokenType::COMPARATOR_NEQ():
-                case TokenType::COMPARATOR_GT():
-                case TokenType::COMPARATOR_GTE():
-                case TokenType::COMPARATOR_LT():
-                case TokenType::COMPARATOR_LTE():
+                case TokenType::COMPARATOR_EQ:
+                case TokenType::COMPARATOR_NEQ:
+                case TokenType::COMPARATOR_GT:
+                case TokenType::COMPARATOR_GTE:
+                case TokenType::COMPARATOR_LT:
+                case TokenType::COMPARATOR_LTE:
                     if ($priority < self::PRIORITY_COMPARISON) {
                         return $term;
                     }
                     $term = Expression\Comparison::fromTokenStream($term, $stream);
                     break;
-                case TokenType::OPERATOR_LOGICAL_OR():
+                case TokenType::OPERATOR_LOGICAL_OR:
                     if ($priority < self::PRIORITY_DISJUNCTION) {
                         return $term;
                     }
                     $term = Expression\Disjunction::fromTokenStream($term, $stream);
                     break;
-                case TokenType::OPERATOR_LOGICAL_AND():
+                case TokenType::OPERATOR_LOGICAL_AND:
                     if ($priority < self::PRIORITY_CONJUNCTION) {
                         return $term;
                     }
                     $term = Expression\Conjunction::fromTokenStream($term, $stream);
                     break;
-                
-                case TokenType::OPERATOR_ADD():
-                case TokenType::OPERATOR_SUBTRACT():
+
+                case TokenType::OPERATOR_ADD:
+                case TokenType::OPERATOR_SUBTRACT:
                     if ($priority <= self::PRIORITY_DASH_OPERATION) {
                         return $term;
                     }
                     $term = Expression\DashOperation::fromTokenStream($term, $stream);
                     break;
-                case TokenType::OPERATOR_MULTIPLY():
-                case TokenType::OPERATOR_DIVIDE():
-                case TokenType::OPERATOR_MODULO():
+                case TokenType::OPERATOR_MULTIPLY:
+                case TokenType::OPERATOR_DIVIDE:
+                case TokenType::OPERATOR_MODULO:
                     if ($priority <= self::PRIORITY_POINT_OPERATION) {
                         return $term;
                     }
                     $term = Expression\PointOperation::fromTokenStream($term, $stream);
                     break;
-                case TokenType::BRACKETS_ROUND_CLOSE():
+                case TokenType::BRACKETS_ROUND_CLOSE:
                     if ($bracket) {
                         $stream->next();
                     }
@@ -189,40 +191,36 @@ final class ExpressionParser
         return $term;
     }
 
-    /**
-     * @param TokenStream $stream
-     * @return Literal
-     */
     public static function parseLiteral(TokenStream $stream): Literal
     {
-        switch ($stream->current()->getType()) {
-            case TokenType::KEYWORD_NULL():
+        switch ($stream->current()->type) {
+            case TokenType::KEYWORD_NULL:
                 return Expression\NullLiteral::fromTokenStream($stream);
-            case TokenType::KEYWORD_TRUE():
-            case TokenType::KEYWORD_FALSE():
+            case TokenType::KEYWORD_TRUE:
+            case TokenType::KEYWORD_FALSE:
                 return Expression\BooleanLiteral::fromTokenStream($stream);
-            case TokenType::NUMBER():
+            case TokenType::NUMBER:
                 return Expression\NumberLiteral::fromTokenStream($stream);
-            case TokenType::STRING_LITERAL_START():
+            case TokenType::STRING_LITERAL_START:
                 return Expression\StringLiteral::fromTokenStream($stream);
-            case TokenType::TEMPLATE_LITERAL_START():
+            case TokenType::TEMPLATE_LITERAL_START:
                 return Expression\TemplateLiteral::fromTokenStream($stream);
-            case TokenType::BRACKETS_SQUARE_OPEN():
+            case TokenType::BRACKETS_SQUARE_OPEN:
                 return Expression\ArrayLiteral::fromTokenStream($stream);
-            case TokenType::BRACKETS_CURLY_OPEN():
+            case TokenType::BRACKETS_CURLY_OPEN:
                 return Expression\ObjectLiteral::fromTokenStream($stream);
             default:
                 throw ParserFailed::becauseOfUnexpectedToken(
                     $stream->current(),
                     [
-                        TokenType::KEYWORD_NULL(),
-                        TokenType::KEYWORD_TRUE(),
-                        TokenType::KEYWORD_FALSE(),
-                        TokenType::NUMBER(),
-                        TokenType::STRING_LITERAL_START(),
-                        TokenType::TEMPLATE_LITERAL_START(),
-                        TokenType::BRACKETS_SQUARE_OPEN(),
-                        TokenType::BRACKETS_CURLY_OPEN()
+                        TokenType::KEYWORD_NULL,
+                        TokenType::KEYWORD_TRUE,
+                        TokenType::KEYWORD_FALSE,
+                        TokenType::NUMBER,
+                        TokenType::STRING_LITERAL_START,
+                        TokenType::TEMPLATE_LITERAL_START,
+                        TokenType::BRACKETS_SQUARE_OPEN,
+                        TokenType::BRACKETS_CURLY_OPEN
                     ]
                 );
         }

@@ -1,5 +1,23 @@
 <?php
 
+/**
+ * PackageFactory.ComponentEngine - Universal View Components for PHP
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Lexer;
@@ -10,30 +28,15 @@ namespace PackageFactory\ComponentEngine\Parser\Lexer;
 final class Line implements \IteratorAggregate
 {
     /**
-     * @var int
-     */
-    private readonly int $number;
-
-    /**
-     * @var array|Token[]
-     */
-    private array $tokens;
-
-    /**
      * @param int $number
      * @param array|Token[] $tokens
      */
-    private function __construct(int $number, array $tokens)
-    {
-        $this->number = $number;
-        $this->tokens = $tokens;
+    private function __construct(
+        public readonly int $number,
+        private readonly array $tokens
+    ) {
     }
 
-    /**
-     * @param integer $number
-     * @param TokenStream $stream
-     * @return self
-     */
     public static function fromTokenStream(int $number, TokenStream $stream): self
     {
         $tokens = [];
@@ -41,7 +44,7 @@ final class Line implements \IteratorAggregate
             $token = $stream->current();
             $stream->next();
 
-            if ($token->getType() === TokenType::END_OF_LINE()) {
+            if ($token->type === TokenType::END_OF_LINE) {
                 break;
             } else {
                 $tokens[] = $token;
@@ -54,14 +57,6 @@ final class Line implements \IteratorAggregate
     public function getNumber(): int
     {
         return $this->number;
-    }
-
-    /**
-     * @return array|Token[]
-     */
-    public function getTokens(): array
-    {
-        return $this->tokens;
     }
 
     /**
