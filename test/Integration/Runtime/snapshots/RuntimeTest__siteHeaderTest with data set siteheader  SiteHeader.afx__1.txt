@@ -1,1 +1,0 @@
-<header class="p-5"><a href="/">/</a><nav><ul><li><a href="#item-1">Item #1</a></li><li><a href="#item-2">Item #2</a><ul><li><a href="#sub-item-1">SubItem #1</a></li><li><a href="#sub-item-2">SubItem #2</a></li></ul></li><li><a href="#item-3">Item #3</a></li></ul></nav></header>
