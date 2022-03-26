@@ -1,32 +1,23 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Ast\Module;
 
 use PackageFactory\ComponentEngine\Exception\ParserFailed;
 use PackageFactory\ComponentEngine\Parser\Ast\Term;
 use PackageFactory\ComponentEngine\Parser\Ast\Afx\Tag;
-use PackageFactory\ComponentEngine\Parser\Ast\Expression\Expression;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Identifier;
 use PackageFactory\ComponentEngine\Parser\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
-use PackageFactory\ComponentEngine\Parser\Util;
 
 final class Export implements \JsonSerializable
 {
-    /**
-     * @var Identifier
-     */
-    private $name;
+    private Identifier $name;
 
-    /**
-     * @var Term
-     */
-    private $value;
+    private Term $value;
 
-    /**
-     * @param Identifier $name
-     * @param Term $value
-     */
     private function __construct(
         Identifier $name,
         Term $value
@@ -35,10 +26,6 @@ final class Export implements \JsonSerializable
         $this->value = $value;
     }
 
-    /**
-     * @param TokenStream $stream
-     * @return self
-     */
     public static function fromTokenStream(TokenStream $stream): self
     {
         $token = $stream->current();
@@ -87,10 +74,6 @@ final class Export implements \JsonSerializable
             $stream->skipWhiteSpaceAndComments();
             $stream->consume(TokenType::BRACKETS_ROUND_CLOSE());
             $brackets--;
-        }
-
-        if ($value === null) {
-            throw ParserFailed::becauseOfUnexpectedEmptyExport($token);
         }
 
         return new self($name, $value);

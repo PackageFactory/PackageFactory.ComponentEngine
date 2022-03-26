@@ -1,4 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Lexer;
 
 /**
@@ -9,12 +12,12 @@ final class Line implements \IteratorAggregate
     /**
      * @var int
      */
-    private $number;
+    private readonly int $number;
 
     /**
      * @var array|Token[]
      */
-    private $tokens;
+    private array $tokens;
 
     /**
      * @param int $number
@@ -48,9 +51,6 @@ final class Line implements \IteratorAggregate
         return new self($number, $tokens);
     }
 
-    /**
-     * @return int
-     */
     public function getNumber(): int
     {
         return $this->number;
@@ -67,7 +67,7 @@ final class Line implements \IteratorAggregate
     /**
      * @return \Traversable<Token>
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->tokens);
     }

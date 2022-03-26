@@ -1,5 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Ast;
+
+use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 
 interface Term
 {

@@ -1,4 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Lexer;
 
 use PackageFactory\ComponentEngine\Parser\Source\Source;
@@ -8,10 +11,7 @@ use PackageFactory\ComponentEngine\Parser\Source\Source;
  */
 final class LineIterator implements \IteratorAggregate
 {
-    /**
-     * @var Source
-     */
-    private $source;
+    private readonly Source $source;
 
     /**
      * @param Source $source
@@ -33,7 +33,7 @@ final class LineIterator implements \IteratorAggregate
     /**
      * @return \Iterator<mixed, Line>
      */
-    public function getIterator()
+    public function getIterator(): \Iterator
     {
         $tokenizer = Tokenizer::fromSource($this->source);
         $stream = TokenStream::fromTokenizer($tokenizer);

@@ -1,35 +1,31 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Lexer;
 
 use PackageFactory\ComponentEngine\Exception\ParserFailed;
-use PackageFactory\ComponentEngine\Parser\Source\Source;
 
 /**
  * @implements \Iterator<mixed, Token>
  */
 final class TokenStream implements \Iterator
 {
-    /**
-     * @var Tokenizer
-     */
-    private $tokenizer;
+    private Tokenizer $tokenizer;
 
     /**
      * @var \Iterator<Token>
      */
-    private $iterator;
+    private \Iterator $iterator;
 
     /**
      * @var array|Token[]
      */
-    private $lookAheadBuffer = [];
+    private array $lookAheadBuffer = [];
 
-    /**
-     * @var Token
-     */
-    private $last;
+    private ?Token $last;
 
-    private function __construct(Tokenizer $tokenizer) 
+    private function __construct(Tokenizer $tokenizer)
     {
         $this->tokenizer = $tokenizer;
         $this->rewind();
@@ -40,7 +36,7 @@ final class TokenStream implements \Iterator
         return new self($tokenizer);
     }
 
-    public function getLast(): Token
+    public function getLast(): ?Token
     {
         return $this->last;
     }
@@ -49,7 +45,7 @@ final class TokenStream implements \Iterator
     {
         $count = count($this->lookAheadBuffer);
 
-        if ($count > $length)  {
+        if ($count > $length) {
             return $this->lookAheadBuffer[$length - 1];
         }
 
@@ -79,9 +75,8 @@ final class TokenStream implements \Iterator
     public function skipWhiteSpaceAndComments(): void
     {
         while (
-            $this->valid() && 
-            (
-                $this->current()->getType() === TokenType::WHITESPACE() ||
+            $this->valid() &&
+            ($this->current()->getType() === TokenType::WHITESPACE() ||
                 $this->current()->getType() === TokenType::END_OF_LINE() ||
                 $this->current()->getType() === TokenType::COMMENT_START() ||
                 $this->current()->getType() === TokenType::COMMENT_CONTENT() ||
@@ -130,10 +125,7 @@ final class TokenStream implements \Iterator
         return $this->iterator->key();
     }
 
-    /**
-     * @return void
-     */
-    public function next()
+    public function next(): void
     {
         if ($this->lookAheadBuffer) {
             array_shift($this->lookAheadBuffer);
@@ -144,19 +136,13 @@ final class TokenStream implements \Iterator
         $this->last = $this->iterator->current();
     }
 
-    /**
-     * @return void
-     */
-    public function rewind()
+    public function rewind(): void
     {
         $this->iterator = $this->tokenizer->getIterator();
         $this->last = $this->iterator->current();
     }
 
-    /**
-     * @return bool
-     */
-    public function valid()
+    public function valid(): bool
     {
         return $this->iterator->valid();
     }

@@ -1,4 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Lexer\Scope;
 
 use PackageFactory\ComponentEngine\Parser\Lexer\Token;
@@ -38,7 +41,7 @@ final class Module
                             $fragment
                         );
                         $iterator->skip(6);
-    
+
                         yield from self::tokenizeImport($iterator);
                     }
                     continue;
@@ -79,13 +82,13 @@ final class Module
                             $fragment
                         );
                         $iterator->skip(7);
-    
+
                         yield from self::tokenizeAssignmentValue($iterator);
                     }
                     continue;
                 }
-            } 
-            
+            }
+
             if ($value === '=') {
                 yield Token::fromFragment(
                     TokenType::MODULE_ASSIGNMENT(),

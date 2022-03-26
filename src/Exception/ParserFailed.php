@@ -114,16 +114,6 @@ final class ParserFailed extends \Exception
         return new self($token, 'Encountered unexpected closing tag.');
     }
 
-    public static function becauseOfUnexpectedEmptyConstant(Token $token): self
-    {
-        return new self($token, 'Encountered unexpected empty constant.');
-    }
-
-    public static function becauseOfUnexpectedEmptyExport(Token $token): self
-    {
-        return new self($token, 'Encountered unexpected empty export.');
-    }
-
     public static function becauseOfUnexpectedEndOfFile(TokenStream $stream): self
     {
         return new self($stream->getLast(), 'Encountered unexpected end of file.');

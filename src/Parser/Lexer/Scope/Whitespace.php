@@ -18,6 +18,7 @@ final class Whitespace
     }
 
     /**
+     * @phpstan-impure
      * @param SourceIterator $iterator
      * @return \Iterator<Token>
      */

@@ -1,4 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Ast\Afx;
 
 use PackageFactory\ComponentEngine\Exception\ParserFailed;
@@ -9,26 +12,24 @@ use PackageFactory\ComponentEngine\Parser\Ast\ParameterAssignment;
 use PackageFactory\ComponentEngine\Parser\Ast\Statement;
 use PackageFactory\ComponentEngine\Parser\Ast\Term;
 use PackageFactory\ComponentEngine\Parser\ExpressionParser;
+use PackageFactory\ComponentEngine\Parser\Lexer\Token;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenStream;
 use PackageFactory\ComponentEngine\Parser\Lexer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Util;
 
 final class Tag implements Term, Statement, Child, \JsonSerializable
 {
-    /**
-     * @var null|TagName
-     */
-    private $tagName;
+    private ?TagName $tagName;
 
     /**
      * @var array|ParameterAssignment[]
      */
-    private $attributes;
+    private array $attributes;
 
     /**
      * @var array|Child[]
      */
-    private $children;
+    private array $children;
 
     /**
      * @param null|TagName $tagName
@@ -51,6 +52,7 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
      */
     public static function fromTokenStream(TokenStream $stream): self
     {
+        $start = $end = $stream->current();
         $stream->consume(TokenType::AFX_TAG_START());
 
         if ($stream->current()->getType() === TokenType::IDENTIFIER()) {
@@ -93,7 +95,7 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
                     break;
                 case TokenType::AFX_TAG_CLOSE():
                     $stream->next();
-                    $stream->consume(TokenType::AFX_TAG_END());
+                    $end = $stream->consume(TokenType::AFX_TAG_END());
                     return new self($tagName, $attributes, []);
                 default:
                     throw ParserFailed::becauseOfUnexpectedToken(
@@ -120,7 +122,7 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
                     break;
                 case TokenType::AFX_EXPRESSION_START():
                     $stream->next();
-                    
+
                     $token = $stream->current();
                     $child = ExpressionParser::parseTerm($stream);
                     if ($child instanceof Child) {
@@ -156,7 +158,7 @@ final class Tag implements Term, Statement, Child, \JsonSerializable
                             if ($stream->current()->getType() === TokenType::IDENTIFIER()) {
                                 if ($tagName && $stream->current()->getValue() === $tagName->getValue()) {
                                     $stream->next();
-                                    $stream->consume(TokenType::AFX_TAG_END());
+                                    $end = $stream->consume(TokenType::AFX_TAG_END());
                                     break 2;
                                 } else {
                                     throw ParserFailed::becauseOfUnexpectedClosingTag($stream->current());

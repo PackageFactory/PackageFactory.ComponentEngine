@@ -1,4 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Source;
 
 /**
@@ -6,22 +9,19 @@ namespace PackageFactory\ComponentEngine\Parser\Source;
  */
 final class SourceIterator implements \Iterator
 {
-    /**
-     * @var Source
-     */
-    private $source;
+    private Source $source;
 
     /**
      * @var \Iterator<Fragment>
      */
-    private $iterator;
+    private \Iterator $iterator;
 
     /**
      * @var array|Fragment[]
      */
-    private $lookAheadBuffer = [];
+    private array $lookAheadBuffer = [];
 
-    private function __construct(Source $source) 
+    private function __construct(Source $source)
     {
         $this->source = $source;
         $this->rewind();
@@ -50,8 +50,7 @@ final class SourceIterator implements \Iterator
 
             if ($lookAhead === null) {
                 $lookAhead = $fragment;
-            }
-            else {
+            } else {
                 $lookAhead = $lookAhead->append($fragment);
             }
         }
@@ -59,11 +58,7 @@ final class SourceIterator implements \Iterator
         return $lookAhead;
     }
 
-    /**
-     * @param string $characterSequence
-     * @return null|Fragment
-     */
-    public function willBe(string $characterSequence)
+    public function willBe(string $characterSequence): ?Fragment
     {
         if ($lookAhead = $this->lookAhead(mb_strlen($characterSequence))) {
             if ($lookAhead->getValue() === $characterSequence) {
@@ -101,31 +96,21 @@ final class SourceIterator implements \Iterator
         return $this->iterator->key();
     }
 
-    /**
-     * @return void
-     */
-    public function next()
+    public function next(): void
     {
         if ($this->lookAheadBuffer) {
             array_shift($this->lookAheadBuffer);
-        }
-        else {
+        } else {
             $this->iterator->next();
         }
     }
 
-    /**
-     * @return void
-     */
-    public function rewind()
+    public function rewind(): void
     {
         $this->iterator = $this->source->getIterator();
     }
 
-    /**
-     * @return bool
-     */
-    public function valid()
+    public function valid(): bool
     {
         return !empty($this->lookAheadBuffer) || $this->iterator->valid();
     }

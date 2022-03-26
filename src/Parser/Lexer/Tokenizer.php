@@ -1,4 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace PackageFactory\ComponentEngine\Parser\Lexer;
 
 use PackageFactory\ComponentEngine\Parser\Source\Source;
@@ -9,19 +12,16 @@ use PackageFactory\ComponentEngine\Parser\Source\SourceIterator;
  */
 final class Tokenizer implements \IteratorAggregate
 {
-    /**
-     * @var Source
-     */
-    private $source;
+    private Source $source;
 
     /**
-     * @var class-string<Scope\Afx::class|Scope\Comment::class|Scope\Expression::class|Scope\Identifier::class|Scope\Keyword::class|Scope\Module::class|Scope\Number::class|Scope\StringLiteral::class|Scope\TemplateLiteral::class|Scope\Whitespace::class>
+     * @var class-string<Scope\Afx|Scope\Comment|Scope\Expression|Scope\Identifier|Scope\Module|Scope\Number|Scope\StringLiteral|Scope\TemplateLiteral|Scope\Whitespace>
      */
     private $rootScope = Scope\Module::class;
 
     /**
      * @param Source $source
-     * @param class-string<Scope\Afx::class|Scope\Comment::class|Scope\Expression::class|Scope\Identifier::class|Scope\Keyword::class|Scope\Module::class|Scope\Number::class|Scope\StringLiteral::class|Scope\TemplateLiteral::class|Scope\Whitespace::class> $rootScope
+     * @param class-string<Scope\Afx|Scope\Comment|Scope\Expression|Scope\Identifier|Scope\Module|Scope\Number|Scope\StringLiteral|Scope\TemplateLiteral|Scope\Whitespace> $rootScope
      */
     private function __construct(Source $source, string $rootScope)
     {
@@ -31,7 +31,7 @@ final class Tokenizer implements \IteratorAggregate
 
     /**
      * @param Source $source
-     * @param class-string<Scope\Afx::class|Scope\Comment::class|Scope\Expression::class|Scope\Identifier::class|Scope\Keyword::class|Scope\Module::class|Scope\Number::class|Scope\StringLiteral::class|Scope\TemplateLiteral::class|Scope\Whitespace::class> $rootScope
+     * @param class-string<Scope\Afx|Scope\Comment|Scope\Expression|Scope\Identifier|Scope\Module|Scope\Number|Scope\StringLiteral|Scope\TemplateLiteral|Scope\Whitespace> $rootScope
      * @return Tokenizer
      */
     public static function fromSource(
