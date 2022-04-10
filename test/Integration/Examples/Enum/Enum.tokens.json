@@ -1,0 +1,126 @@
+[
+  {
+    "type": "KEYWORD",
+    "value": "export"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "KEYWORD",
+    "value": "enum"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "STRING",
+    "value": "DayOfWeek"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "BRACKET_OPEN",
+    "value": "{"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "STRING",
+    "value": "MONDAY"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "STRING",
+    "value": "TUESDAY"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "STRING",
+    "value": "WEDNESDAY"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "STRING",
+    "value": "THURSDAY"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "STRING",
+    "value": "FRIDAY"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "STRING",
+    "value": "SATURDAY"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "STRING",
+    "value": "SUNDAY"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "BRACKET_CLOSE",
+    "value": "}"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  }
+]
