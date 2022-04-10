@@ -1,0 +1,7 @@
+export component Image {
+  src: string
+  alt: string
+  title: string
+
+  <img src={src} alt={alt} title={title} />
+}

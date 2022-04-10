@@ -24,7 +24,6 @@ namespace PackageFactory\ComponentEngine\Parser\Tokenizer;
 
 use PackageFactory\ComponentEngine\Parser\Source\Fragment;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Source\SourceIterator;
 
 /**
  * @implements \IteratorAggregate<mixed, Token>
@@ -45,22 +44,419 @@ final class Tokenizer implements \IteratorAggregate
      */
     public function getIterator(): \Iterator
     {
-        $sourceIterator = SourceIterator::fromSource($this->source);
+        yield from self::block($this->source->getIterator());
+    }
 
-        /** @var ?Fragment $buffer */
-        $buffer = null;
-        // $captureMode = CaptureMode::DEFAULT;
+    /**
+     * @param \Iterator<mixed, Fragment> $fragments
+     * @return \Iterator<mixed, Token>
+     */
+    private static function block(\Iterator $fragments): \Iterator
+    {
+        $delimiter = match ($fragments->current()->value) {
+            '{' => '}',
+            '(' => ')',
+            '[' => ']',
+            default => null
+        };
+        $buffer = Buffer::empty();
 
-        foreach ($sourceIterator as $fragment) {
-            if ($buffer === null) {
-                $buffer = $fragment;
+        if ($delimiter) {
+            yield from $buffer->append($fragments->current())->flush(TokenType::BRACKET_OPEN);
+            $fragments->next();
+        }
+
+        while ($fragments->valid()) {
+            /** @var Fragment $fragment */
+            $fragment = $fragments->current();
+
+            if ($fragment->value === $delimiter) {
+                yield from self::flushRemainder($buffer);
+                yield from $buffer->append($fragment)->flush(TokenType::BRACKET_CLOSE);
+                $fragments->next();
+                return;
+            }
+
+            $delegate = match (CharacterType::get($fragment->value)) {
+                CharacterType::COMMENT_DELIMITER => self::comment($fragments),
+                CharacterType::STRING_DELIMITER => self::string($fragments),
+                CharacterType::TEMPLATE_LITERAL_DELIMITER => self::templateLiteral($fragments),
+                CharacterType::BRACKET_OPEN => self::block($fragments),
+                CharacterType::ANGLE_OPEN => self::angle($fragments),
+                CharacterType::PERIOD => match (TokenType::fromBuffer($buffer)) {
+                    TokenType::NUMBER_BINARY,
+                    TokenType::NUMBER_OCTAL,
+                    TokenType::NUMBER_DECIMAL,
+                    TokenType::NUMBER_HEXADECIMAL => null,
+                    default => self::period($fragments)
+                },
+                CharacterType::ANGLE_CLOSE,
+                CharacterType::FORWARD_SLASH,
+                CharacterType::SYMBOL => self::symbol($fragments),
+                CharacterType::SPACE => self::space($fragments),
+                default => null
+            };
+
+            if ($delegate) {
+                yield from self::flushRemainder($buffer);
+                yield from $delegate;
             } else {
-                $buffer = $buffer->append($fragment);
+                $buffer->append($fragment);
+                $fragments->next();
             }
         }
 
-        if ($buffer !== null) {
-            yield Token::fromFragment(TokenType::KEYWORD, $buffer);
+        yield from self::flushRemainder($buffer);
+    }
+
+    /**
+     * @param Buffer $buffer
+     * @return \Iterator<mixed, Token>
+     */
+    private static function flushRemainder(Buffer $buffer): \Iterator
+    {
+        $value = $buffer->value();
+
+        yield from $buffer->flush(TokenType::fromBuffer($buffer));
+    }
+
+    /**
+     * @param \Iterator<mixed, Fragment> $fragments
+     * @return \Iterator<mixed, Token>
+     */
+    private static function string(\Iterator $fragments): \Iterator
+    {
+        $delimiter = $fragments->current()->value;
+        $fragments->next();
+
+        $buffer = Buffer::empty();
+        $escape = false;
+
+        while ($fragments->valid()) {
+            /** @var Fragment $fragment */
+            $fragment = $fragments->current();
+
+            if (!$escape && $fragment->value === $delimiter) {
+                yield from $buffer->flush(TokenType::STRING_QUOTED);
+                $fragments->next();
+                return;
+            }
+
+            $escape = $fragment->value === '\\';
+
+            if (!$escape) {
+                $buffer->append($fragment);
+            }
+
+            $fragments->next();
         }
+    }
+
+    /**
+     * @param \Iterator<mixed, Fragment> $fragments
+     * @return \Iterator<mixed, Token>
+     */
+    public static function templateLiteral(\Iterator $fragments): \Iterator
+    {
+        $buffer = Buffer::empty();
+        $buffer->append($fragments->current());
+
+        yield from $buffer->flush(TokenType::TEMPLATE_LITERAL_START);
+
+        $fragments->next();
+
+        $escape = false;
+
+        while ($fragments->valid()) {
+            /** @var Fragment $fragment */
+            $fragment = $fragments->current();
+
+            if (!$escape && $fragment->value === '`') {
+                yield from $buffer->flush(TokenType::STRING_QUOTED);
+                $buffer->append($fragments->current());
+                yield from $buffer->flush(TokenType::TEMPLATE_LITERAL_END);
+                $fragments->next();
+                return;
+            }
+
+            if (!$escape && $fragment->value === '$') {
+                $dollarSignBuffer = Buffer::empty()->append($fragments->current());
+                $fragments->next();
+                $nextFragment = $fragments->current();
+
+                if ($nextFragment->value === '{') {
+                    yield from $buffer->flush(TokenType::STRING_QUOTED);
+                    yield from $dollarSignBuffer->flush(TokenType::DOLLAR);
+                    yield from self::block($fragments);
+                    continue;
+                }
+            }
+
+            $escape = $fragment->value === '\\';
+
+            if (!$escape) {
+                $buffer->append($fragment);
+            }
+
+            $fragments->next();
+        }
+    }
+
+    /**
+     * @param \Iterator<mixed, Fragment> $fragments
+     * @return \Iterator<mixed, Token>
+     */
+    public static function period(\Iterator $fragments): \Iterator
+    {
+        $buffer = Buffer::empty()->append($fragments->current());
+        $fragments->next();
+
+        if ($fragments->valid()) {
+            $fragment = $fragments->current();
+
+            if (CharacterType::DIGIT->is($fragment->value)) {
+                $buffer->append($fragment);
+                $fragments->next();
+
+                while ($fragments->valid()) {
+                    $fragment = $fragments->current();
+
+                    if (CharacterType::DIGIT->is($fragment->value)) {
+                        $buffer->append($fragment);
+                        $fragments->next();
+                    } else {
+                        yield from $buffer->flush(TokenType::NUMBER_DECIMAL);
+                        return;
+                    }
+                }
+            }
+        }
+
+        yield from $buffer->flush(TokenType::PERIOD);
+    }
+
+    public static function symbol(\Iterator $fragments, ?Buffer $buffer = null): \Iterator
+    {
+        $buffer = $buffer ?? Buffer::empty();
+        $capture = true;
+
+        while ($capture && $fragments->valid()) {
+            /** @var Fragment $fragment */
+            $fragment = $fragments->current();
+            $capture = match (CharacterType::get($fragment->value)) {
+                CharacterType::ANGLE_CLOSE,
+                CharacterType::FORWARD_SLASH,
+                CharacterType::PERIOD,
+                CharacterType::SYMBOL => $buffer->append($fragment) && true,
+                default => false
+            };
+
+            if ($capture) $fragments->next();
+        }
+
+        yield from match ($buffer->value()) {
+            '+', '-', '*', '/', '%' => $buffer->flush(TokenType::OPERATOR_ARITHMETIC),
+            '&&', '||', '!' => $buffer->flush(TokenType::OPERATOR_BOOLEAN),
+            '>', '>=', '<', '<=', '===' => $buffer->flush(TokenType::COMPARATOR),
+            '=>' => $buffer->flush(TokenType::ARROW),
+            ':' => $buffer->flush(TokenType::COLON),
+            '.' => $buffer->flush(TokenType::PERIOD),
+            ',' => $buffer->flush(TokenType::COMMA),
+            '=' => $buffer->flush(TokenType::EQUALS),
+            '?' => $buffer->flush(TokenType::QUESTIONMARK),
+            '$' => $buffer->flush(TokenType::DOLLAR),
+            default => self::flushRemainder($buffer)
+        };
+    }
+
+    /**
+     * @param \Iterator<mixed, Fragment> $fragments
+     * @return \Iterator<mixed, Token>
+     */
+    public static function angle(\Iterator $fragments): \Iterator
+    {
+        $buffer = Buffer::empty();
+
+        /** @var Fragment $fragment */
+        $fragment = $fragments->current();
+        $buffer->append($fragment);
+
+        $fragments->next();
+        if ($fragments->valid()) {
+            /** @var Fragment $fragment */
+            $fragment = $fragments->current();
+            yield from match (CharacterType::get($fragment->value)) {
+                CharacterType::SYMBOL => self::symbol($fragments, $buffer),
+                CharacterType::SPACE => $buffer->flush(TokenType::COMPARATOR),
+                default => self::tag($fragments, $buffer)
+            };
+        }
+    }
+
+    /**
+     * @param \Iterator<mixed, Fragment> $fragments
+     * @param null|Buffer $buffer
+     * @return \Iterator<mixed, Token>
+     */
+    public static function tag(\Iterator $fragments, ?Buffer $buffer = null): \Iterator
+    {
+        $buffer = $buffer ?? Buffer::empty();
+        $isClosing = false;
+
+        while ($fragments->valid()) {
+            /** @var Fragment $fragment */
+            $fragment = $fragments->current();
+            if ($buffer->value() === '<') {
+                if ($fragment->value === '/') {
+                    yield from $buffer->append($fragment)->flush(TokenType::TAG_START_CLOSING);
+                    $fragments->next();
+                    $isClosing = true;
+                    continue;
+                } else {
+                    yield from $buffer->flush(TokenType::TAG_START_OPENING);
+                }
+            }
+
+            switch (true) {
+                case $fragment->value === '=':
+                    yield from $buffer->flush(TokenType::STRING);
+                    yield from $buffer->append($fragment)->flush(TokenType::EQUALS);
+                    $fragments->next();
+                    break;
+                case $fragment->value === '{':
+                    yield from $buffer->flush(TokenType::STRING);
+                    yield from self::block($fragments);
+                    break;
+                case $fragment->value === '"':
+                    yield from $buffer->flush(TokenType::STRING);
+                    yield from self::string($fragments);
+                    break;
+                case $fragment->value === '/':
+                    yield from $buffer->flush(TokenType::STRING);
+                    $buffer->append($fragment);
+                    $fragments->next();
+                    if ($nextFragment = $fragments->current()) {
+                        if ($nextFragment->value === '>') {
+                            yield from $buffer->append($nextFragment)->flush(TokenType::TAG_SELF_CLOSE);
+                            $fragments->next();
+                        } else {
+                            throw new \Exception("@TODO: Illegal Character");
+                        }
+                    }
+
+
+                    return;
+                case $fragment->value === '>':
+                    yield from $buffer->flush(TokenType::STRING);
+                    yield from $buffer->append($fragment)->flush(TokenType::TAG_END);
+                    $fragments->next();
+
+                    if ($isClosing) {
+                        return;
+                    } else {
+                        $buffer = (yield from self::tagContent($fragments)) ?? Buffer::empty();
+                    }
+                    break;
+                case ctype_space($fragment->value):
+                    yield from $buffer->flush(TokenType::STRING);
+                    yield from self::space($fragments);
+                    break;
+                default:
+                    $buffer->append($fragment);
+                    $fragments->next();
+                    break;
+            }
+        }
+
+        yield from $buffer->flush(TokenType::STRING);
+    }
+
+    /**
+     * @param \Iterator<mixed, Fragment> $fragments
+     * @return \Iterator<mixed, Token>
+     */
+    public static function tagContent(\Iterator $fragments): \Iterator
+    {
+        $buffer = Buffer::empty();
+        while ($fragments->valid()) {
+            /** @var Fragment $fragment */
+            $fragment = $fragments->current();
+            switch (true) {
+                case $fragment->value === '{':
+                    yield from $buffer->flush(TokenType::STRING);
+                    yield from self::block($fragments);
+                    break;
+                case $fragment->value === '<':
+                    $fragments->next();
+                    if ($fragments->current()?->value === '/') {
+                        yield from $buffer->flush(TokenType::STRING);
+                        return Buffer::empty()->append($fragment);
+                    } else if (!ctype_space($fragments->current()?->value)) {
+                        yield from self::tag($fragments, Buffer::empty()->append($fragment));
+                    } else {
+                        $buffer->append($fragment);
+                    }
+                case ctype_space($fragment->value):
+                    yield from $buffer->flush(TokenType::STRING);
+                    yield from self::space($fragments);
+                    break;
+                default:
+                    $buffer->append($fragment);
+                    $fragments->next();
+                    break;
+            }
+        }
+
+        yield from $buffer->flush(TokenType::STRING);
+    }
+
+    /**
+     * @param \Iterator<mixed, Fragment> $fragments
+     * @return \Iterator<mixed, Token>
+     */
+    public static function space(\Iterator $fragments): \Iterator
+    {
+        $buffer = Buffer::empty();
+
+        while ($fragments->valid()) {
+            /** @var Fragment $fragment */
+            $fragment = $fragments->current();
+
+            if ($fragment->value === PHP_EOL) {
+                yield from $buffer->flush(TokenType::SPACE);
+                yield from $buffer->append($fragment)->flush(TokenType::END_OF_LINE);
+            } else if (ctype_space($fragment->value)) {
+                $buffer->append($fragment);
+            } else {
+                break;
+            }
+
+            $fragments->next();
+        }
+
+        yield from $buffer->flush(TokenType::SPACE);
+    }
+
+    /**
+     * @param \Iterator<mixed, Fragment> $fragments
+     * @return \Iterator<mixed, Token>
+     */
+    public static function comment(\Iterator $fragments): \Iterator
+    {
+        $buffer = Buffer::empty();
+
+        while ($fragments->valid()) {
+            /** @var Fragment $fragment */
+            $fragment = $fragments->current();
+
+            if ($fragment->value === PHP_EOL) {
+                break;
+            }
+
+            $buffer->append($fragment);
+            $fragments->next();
+        }
+
+        yield from $buffer->flush(TokenType::COMMENT);
     }
 }

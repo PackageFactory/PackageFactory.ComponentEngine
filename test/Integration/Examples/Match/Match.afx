@@ -1,0 +1,25 @@
+export component Button {
+  type: ButtonType
+  content: Slot
+
+  match (type) {
+    LINK => (
+      <a class="btn" href="#">{content}</a>
+    )
+    BUTTON,
+    SUBMIT => (
+      <button
+        class="btn"
+        type={match (type) {
+          SUBMIT => "submit"
+          default => "button"
+        }}
+      >
+        {content}
+      </button>
+    )
+    NONE => (
+      <div class="btn">{content}</div>
+    )
+  }
+}

@@ -1,0 +1,322 @@
+[
+  {
+    "type": "KEYWORD_EXPORT",
+    "value": "export"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "KEYWORD_COMPONENT",
+    "value": "component"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "STRING",
+    "value": "Expression"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "BRACKET_OPEN",
+    "value": "{"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "STRING",
+    "value": "nums"
+  },
+  {
+    "type": "COLON",
+    "value": ":"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "STRING",
+    "value": "number"
+  },
+  {
+    "type": "BRACKET_OPEN",
+    "value": "["
+  },
+  {
+    "type": "BRACKET_CLOSE",
+    "value": "]"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "STRING",
+    "value": "nums"
+  },
+  {
+    "type": "PERIOD",
+    "value": "."
+  },
+  {
+    "type": "STRING",
+    "value": "reduce"
+  },
+  {
+    "type": "BRACKET_OPEN",
+    "value": "("
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "    "
+  },
+  {
+    "type": "BRACKET_OPEN",
+    "value": "("
+  },
+  {
+    "type": "STRING",
+    "value": "acc"
+  },
+  {
+    "type": "COMMA",
+    "value": ","
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "STRING",
+    "value": "cur"
+  },
+  {
+    "type": "BRACKET_CLOSE",
+    "value": ")"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "ARROW",
+    "value": "=>"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "      "
+  },
+  {
+    "type": "STRING",
+    "value": "acc"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "COMPARATOR",
+    "value": "<="
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "NUMBER_DECIMAL",
+    "value": "120"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "        "
+  },
+  {
+    "type": "QUESTIONMARK",
+    "value": "?"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "STRING",
+    "value": "cur"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "*"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "STRING",
+    "value": "acc"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "+"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "BRACKET_OPEN",
+    "value": "("
+  },
+  {
+    "type": "NUMBER_DECIMAL",
+    "value": "17"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "%"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "STRING",
+    "value": "cur"
+  },
+  {
+    "type": "BRACKET_CLOSE",
+    "value": ")"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "        "
+  },
+  {
+    "type": "COLON",
+    "value": ":"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "STRING",
+    "value": "round"
+  },
+  {
+    "type": "BRACKET_OPEN",
+    "value": "("
+  },
+  {
+    "type": "STRING",
+    "value": "cur"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "/"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "STRING",
+    "value": "acc"
+  },
+  {
+    "type": "BRACKET_CLOSE",
+    "value": ")"
+  },
+  {
+    "type": "COMMA",
+    "value": ","
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "    "
+  },
+  {
+    "type": "NUMBER_DECIMAL",
+    "value": "0"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "BRACKET_CLOSE",
+    "value": ")"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "BRACKET_CLOSE",
+    "value": "}"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  }
+]

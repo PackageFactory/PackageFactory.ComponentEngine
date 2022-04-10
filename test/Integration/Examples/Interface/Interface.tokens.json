@@ -1,0 +1,90 @@
+[
+  {
+    "type": "KEYWORD_EXPORT",
+    "value": "export"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "KEYWORD_INTERFACE",
+    "value": "interface"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "STRING",
+    "value": "Link"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "BRACKET_OPEN",
+    "value": "{"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "STRING",
+    "value": "href"
+  },
+  {
+    "type": "COLON",
+    "value": ":"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "STRING",
+    "value": "string"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "STRING",
+    "value": "target"
+  },
+  {
+    "type": "COLON",
+    "value": ":"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "STRING",
+    "value": "string"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "BRACKET_CLOSE",
+    "value": "}"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  }
+]

@@ -1,0 +1,6 @@
+export component ComponentWithKeywords {
+  <div>
+    Keywords like import or export or component
+    are allowed in here.
+  </div>
+}

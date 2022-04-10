@@ -1,0 +1,23 @@
+export component TemplateLiteral {
+  expression: string
+  isActive: boolean
+  someNumber: number
+
+  `A template literal may contain ${expression}s.
+
+  It can span multiple lines.
+
+  Interpolated Expressions can be arbitrarily complex:
+  ${isActive ? 27 * someNumber : someNumber % 17}
+
+  They can also contain other template literals:
+  ${isActive ? `Is 27? ${someNumber === 27 ? "yes" : "no"}` : `Number is ${27}`}
+
+  Even markup:
+  ${
+    <header>
+      <h1>Number is {someNumber}</h1>
+    </header>
+  }
+  `
+}

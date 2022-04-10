@@ -1,0 +1,446 @@
+[
+  {
+    "type": "KEYWORD_EXPORT",
+    "value": "export"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "KEYWORD_COMPONENT",
+    "value": "component"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "STRING",
+    "value": "Numbers"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "BRACKET_OPEN",
+    "value": "{"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "COMMENT",
+    "value": "# Decimal"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "NUMBER_DECIMAL",
+    "value": "0"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "+"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "NUMBER_DECIMAL",
+    "value": "1234567890"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "+"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "NUMBER_DECIMAL",
+    "value": "42"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "+"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "COMMENT",
+    "value": "# Binary"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "NUMBER_BINARY",
+    "value": "0b10000000000000000000000000000000"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "+"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "NUMBER_BINARY",
+    "value": "0b01111111100000000000000000000000"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "+"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "NUMBER_BINARY",
+    "value": "0B00000000011111111111111111111111"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "+"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "COMMENT",
+    "value": "# Octal"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "NUMBER_OCTAL",
+    "value": "0o755"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "+"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "NUMBER_OCTAL",
+    "value": "0o644"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "+"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "COMMENT",
+    "value": "# Hexadecimal"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "NUMBER_HEXADECIMAL",
+    "value": "0xFFFFFFFFFFFFFFFFF"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "+"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "NUMBER_HEXADECIMAL",
+    "value": "0x123456789ABCDEF"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "+"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "NUMBER_HEXADECIMAL",
+    "value": "0xA"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "+"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "COMMENT",
+    "value": "# With Exponent"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "NUMBER_DECIMAL",
+    "value": "1E3"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "+"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "NUMBER_DECIMAL",
+    "value": "2e6"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "+"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "COMMENT",
+    "value": "# With Floating Point"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "NUMBER_DECIMAL",
+    "value": "123.456"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "+"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "NUMBER_DECIMAL",
+    "value": "0.1e2"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "OPERATOR_ARITHMETIC",
+    "value": "+"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "NUMBER_DECIMAL",
+    "value": ".22"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "BRACKET_CLOSE",
+    "value": "}"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  }
+]

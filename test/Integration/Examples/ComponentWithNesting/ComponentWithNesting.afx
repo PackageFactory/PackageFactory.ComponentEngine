@@ -1,0 +1,13 @@
+export component TextWithImage {
+  src: string
+  alt: string
+  title: string
+  text: string
+
+  <div class="text-with-image">
+    <img class="image" src={src} alt={alt} title={title} />
+    <p class="text">
+      {text}
+    </p>
+  </div>
+}

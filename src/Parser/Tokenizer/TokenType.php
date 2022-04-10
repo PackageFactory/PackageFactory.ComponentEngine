@@ -26,14 +26,32 @@ enum TokenType
 {
     case COMMENT;
 
-    case KEYWORD;
+    case KEYWORD_FROM;
+    case KEYWORD_IMPORT;
+    case KEYWORD_EXPORT;
+    case KEYWORD_META;
+    case KEYWORD_ENUM;
+    case KEYWORD_INTERFACE;
+    case KEYWORD_COMPONENT;
+    case KEYWORD_MATCH;
+    case KEYWORD_DEFAULT;
+
     case CONSTANT;
 
     case STRING;
     case STRING_QUOTED;
-    case NUMBER;
 
-    case OPERATOR;
+    case NUMBER_BINARY;
+    case NUMBER_OCTAL;
+    case NUMBER_DECIMAL;
+    case NUMBER_HEXADECIMAL;
+
+    case TEMPLATE_LITERAL_START;
+    case TEMPLATE_LITERAL_END;
+
+    case OPERATOR_ARITHMETIC;
+    case OPERATOR_BOOLEAN;
+
     case COMPARATOR;
     case SPREAD;
     case ARROW;
@@ -41,15 +59,53 @@ enum TokenType
     case BRACKET_OPEN;
     case BRACKET_CLOSE;
 
-    case TEMPLATE_LITERAL_START;
-    case TEMPLATE_LITERAL_INTERPOLATION_START;
-    case TEMPLATE_LITERAL_INTERPOLATION_END;
-    case TEMPLATE_LITERAL_END;
+    case TAG_START_OPENING;
+    case TAG_START_CLOSING;
+    case TAG_SELF_CLOSE;
+    case TAG_END;
 
     case PERIOD;
     case COLON;
     case QUESTIONMARK;
     case COMMA;
-    case WHITESPACE;
+    case EQUALS;
+    case SLASH_FORWARD;
+    case DOLLAR;
+
+    case SPACE;
     case END_OF_LINE;
+
+    public static function fromBuffer(Buffer $buffer): TokenType
+    {
+        $value = $buffer->value();
+
+        return match (true) {
+            $value === 'from' => self::KEYWORD_FROM,
+            $value === 'import' => self::KEYWORD_IMPORT,
+            $value === 'export' => self::KEYWORD_EXPORT,
+            $value === 'meta' => self::KEYWORD_META,
+            $value === 'enum' => self::KEYWORD_ENUM,
+            $value === 'interface' => self::KEYWORD_INTERFACE,
+            $value === 'component' => self::KEYWORD_COMPONENT,
+            $value === 'match' => self::KEYWORD_MATCH,
+            $value === 'default' => self::KEYWORD_DEFAULT,
+            (bool) preg_match(
+                '/^0[bB][0-1]+$/',
+                $value
+            ) => self::NUMBER_BINARY,
+            (bool) preg_match(
+                '/^0o[0-7]+$/',
+                $value
+            ) => self::NUMBER_OCTAL,
+            (bool) preg_match(
+                '/^([-+]?[0-9]+)?(\.[0-9]+)?([eE][0-9]+)?$/',
+                $value
+            ) => self::NUMBER_DECIMAL,
+            (bool) preg_match(
+                '/^0x[0-9a-fA-F]+$/',
+                $value
+            ) => self::NUMBER_HEXADECIMAL,
+            default => self::STRING
+        };
+    }
 }
