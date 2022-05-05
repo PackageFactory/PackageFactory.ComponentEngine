@@ -74,6 +74,7 @@ final class Children implements \JsonSerializable
                     Scanner::assertType($tokens, TokenType::BRACKET_CLOSE);
                     Scanner::assertValue($tokens, '}');
                     Scanner::skipOne($tokens);
+                    Scanner::skipSpace($tokens);
                 default:
                     Scanner::assertType($tokens, TokenType::TAG_START_CLOSING, TokenType::TAG_START_OPENING, TokenType::BRACKET_OPEN);
             }

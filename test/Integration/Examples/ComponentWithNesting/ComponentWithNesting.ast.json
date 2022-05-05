@@ -1,0 +1,165 @@
+{
+  "type": "Program",
+  "payload": {
+    "root": {
+      "type": "Module",
+      "payload": {
+        "imports": {},
+        "exports": {
+          "TextWithImage": {
+            "type": "Component",
+            "payload": {
+              "name": "TextWithImage",
+              "interface": {
+                "src": {
+                  "name": "src",
+                  "type": {
+                    "type": "TypeReference",
+                    "payload": {
+                      "name": "string",
+                      "isArray": false
+                    }
+                  }
+                },
+                "alt": {
+                  "name": "alt",
+                  "type": {
+                    "type": "TypeReference",
+                    "payload": {
+                      "name": "string",
+                      "isArray": false
+                    }
+                  }
+                },
+                "title": {
+                  "name": "title",
+                  "type": {
+                    "type": "TypeReference",
+                    "payload": {
+                      "name": "string",
+                      "isArray": false
+                    }
+                  }
+                },
+                "text": {
+                  "name": "text",
+                  "type": {
+                    "type": "TypeReference",
+                    "payload": {
+                      "name": "string",
+                      "isArray": false
+                    }
+                  }
+                }
+              },
+              "return": {
+                "type": "Hyperscript",
+                "payload": {
+                  "root": {
+                    "type": "Tag",
+                    "payload": {
+                      "tagName": "div",
+                      "attributes": [
+                        {
+                          "name": "class",
+                          "value": {
+                            "type": "StringLiteral",
+                            "payload": {
+                              "value": "text-with-image"
+                            }
+                          }
+                        }
+                      ],
+                      "children": [
+                        {
+                          "type": "Tag",
+                          "payload": {
+                            "tagName": "img",
+                            "attributes": [
+                              {
+                                "name": "class",
+                                "value": {
+                                  "type": "StringLiteral",
+                                  "payload": {
+                                    "value": "image"
+                                  }
+                                }
+                              },
+                              {
+                                "name": "src",
+                                "value": {
+                                  "type": "Expression",
+                                  "payload": {
+                                    "root": {
+                                      "type": "ValueReference",
+                                      "payload": { "name": "src" }
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "name": "alt",
+                                "value": {
+                                  "type": "Expression",
+                                  "payload": {
+                                    "root": {
+                                      "type": "ValueReference",
+                                      "payload": { "name": "alt" }
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "name": "title",
+                                "value": {
+                                  "type": "Expression",
+                                  "payload": {
+                                    "root": {
+                                      "type": "ValueReference",
+                                      "payload": { "name": "title" }
+                                    }
+                                  }
+                                }
+                              }
+                            ],
+                            "children": []
+                          }
+                        },
+                        {
+                          "type": "Tag",
+                          "payload": {
+                            "tagName": "p",
+                            "attributes": [
+                              {
+                                "name": "class",
+                                "value": {
+                                  "type": "StringLiteral",
+                                  "payload": { "value": "text" }
+                                }
+                              }
+                            ],
+                            "children": [
+                              {
+                                "type": "Expression",
+                                "payload": {
+                                  "root": {
+                                    "type": "ValueReference",
+                                    "payload": { "name": "text" }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

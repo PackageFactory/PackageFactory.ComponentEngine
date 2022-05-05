@@ -20,19 +20,16 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast\Hyperscript;
+namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
-use PackageFactory\ComponentEngine\Parser\Ast\Expression\Expression;
-use PackageFactory\ComponentEngine\Parser\Ast\Expression\StringLiteral;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class Attribute implements \JsonSerializable
+final class StringLiteral implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $name,
-        public readonly Hyperscript | Expression | StringLiteral $value
+        public readonly string $value
     ) {
     }
 
@@ -42,36 +39,13 @@ final class Attribute implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::STRING);
+        Scanner::assertType($tokens, TokenType::STRING_QUOTED);
 
-        $name = Scanner::value($tokens);
+        $value = Scanner::value($tokens);
 
         Scanner::skipOne($tokens);
-        Scanner::assertType($tokens, TokenType::EQUALS);
-        Scanner::skipOne($tokens);
-
-        if (Scanner::type($tokens) === TokenType::STRING_QUOTED) {
-            $value = StringLiteral::fromTokens($tokens);
-        } else {
-            Scanner::assertType($tokens, TokenType::BRACKET_OPEN);
-            Scanner::assertValue($tokens, '{');
-            Scanner::skipOne($tokens);
-
-            $value = match (Scanner::type($tokens)) {
-                TokenType::TAG_START_OPENING => Hyperscript::fromTokens($tokens),
-                default => Expression::fromTokens($tokens)
-            };
-    
-            Scanner::skipSpaceAndComments($tokens);
-            Scanner::assertType($tokens, TokenType::BRACKET_CLOSE);
-            Scanner::assertValue($tokens, '}');
-            Scanner::skipOne($tokens);
-        }
-
 
         return new self(
-            name: $name,
             value: $value
         );
     }
@@ -79,8 +53,10 @@ final class Attribute implements \JsonSerializable
     public function jsonSerialize(): mixed
     {
         return [
-            'name' => $this->name,
-            'value' => $this->value
+            'type' => 'StringLiteral',
+            'payload' => [
+                'value' => $this->value
+            ]
         ];
     }
 }
