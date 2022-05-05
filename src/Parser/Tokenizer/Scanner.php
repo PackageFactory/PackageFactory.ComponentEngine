@@ -87,6 +87,23 @@ final class Scanner
      * @param \Iterator<mixed,Token> $tokens
      * @return void
      */
+    public static function skipSpace(\Iterator $tokens): void
+    {
+        while (
+            $tokens->valid() && match ($tokens->current()->type) {
+                TokenType::SPACE,
+                TokenType::END_OF_LINE => true,
+                default => false
+            }
+        ) {
+            $tokens->next();
+        }
+    }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
+     * @return void
+     */
     public static function skipSpaceAndComments(\Iterator $tokens): void
     {
         while (

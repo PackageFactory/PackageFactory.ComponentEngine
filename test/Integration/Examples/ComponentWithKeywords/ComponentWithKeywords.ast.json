@@ -9,10 +9,8 @@
           "ComponentWithKeywords": {
             "type": "Component",
             "payload": {
-              "interface": {
-                "type": "interface",
-                "payload": {}
-              },
+              "name": "ComponentWithKeywords",
+              "interface": {},
               "return": {
                 "type": "Hyperscript",
                 "payload": {

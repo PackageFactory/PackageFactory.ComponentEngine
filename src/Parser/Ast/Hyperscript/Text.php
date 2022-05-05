@@ -22,68 +22,57 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast\Hyperscript;
 
-use PackageFactory\ComponentEngine\Parser\Ast\Expression\Expression;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class Children implements \JsonSerializable
+final class Text implements \JsonSerializable
 {
-    /**
-     * @var array<int,Text|Expression|Tag>
-     */
-    private readonly array $children;
-
     private function __construct(
-        Text | Expression | Tag ...$children
+        public readonly string $value
     ) {
-        $this->children = $children;
-    }
-
-    public static function empty()
-    {
-        return new self();
     }
 
     /**
      * @param \Iterator<mixed,Token> $tokens
-     * @return self
+     * @return null|self
      */
-    public static function fromTokens(\Iterator $tokens): self
+    public static function fromTokens(\Iterator $tokens): ?self
     {
-        Scanner::skipSpaceAndComments($tokens);
+        Scanner::skipSpace($tokens);
 
-        /** @var array<string,Text|Expression|Tag> $contents */
-        $contents = [];
+        $value = '';
         while (true) {
-            if ($text = Text::fromTokens($tokens)) {
-                $contents[] = $text;
-            }
-
             switch (Scanner::type($tokens)) {
+                case TokenType::BRACKET_OPEN:
+                    if (Scanner::value($tokens) === '{') {
+                        break 2;
+                    }
+                case TokenType::TAG_START_OPENING:
                 case TokenType::TAG_START_CLOSING:
                     break 2;
-                case TokenType::TAG_START_OPENING:
-                    $contents[] = Tag::fromTokens($tokens);
-                    break;
-                case TokenType::BRACKET_OPEN:
-                    Scanner::assertValue($tokens, '{');
-                    Scanner::skipOne($tokens);
-                    $contents[] = Expression::fromTokens($tokens);
+                case TokenType::SPACE:
+                case TokenType::END_OF_LINE:
+                    $value .= ' ';
                     Scanner::skipSpaceAndComments($tokens);
-                    Scanner::assertType($tokens, TokenType::BRACKET_CLOSE);
-                    Scanner::assertValue($tokens, '}');
-                    Scanner::skipOne($tokens);
+                    break;
                 default:
-                    Scanner::assertType($tokens, TokenType::TAG_START_CLOSING, TokenType::TAG_START_OPENING, TokenType::BRACKET_OPEN);
+                    $value .= Scanner::value($tokens);
+                    Scanner::skipOne($tokens);
+                    break;
             }
         }
 
-        return new self(...$contents);
+        return $value ? new self(rtrim($value)) : null;
     }
 
     public function jsonSerialize(): mixed
     {
-        return $this->children;
+        return [
+            'type' => 'Text',
+            'payload' => [
+                'value' => $this->value
+            ]
+        ];
     }
 }

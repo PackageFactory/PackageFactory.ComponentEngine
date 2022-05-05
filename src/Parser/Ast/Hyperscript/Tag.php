@@ -70,6 +70,15 @@ final class Tag implements \JsonSerializable
 
         $children = Children::fromTokens($tokens);
 
+        Scanner::assertType($tokens, TokenType::TAG_START_CLOSING);
+        Scanner::skipOne($tokens);
+        Scanner::assertType($tokens, TokenType::STRING);
+        Scanner::assertValue($tokens, $tagName);
+        Scanner::skipOne($tokens);
+        Scanner::skipSpaceAndComments($tokens);
+        Scanner::assertType($tokens, TokenType::TAG_END);
+        Scanner::skipOne($tokens);
+
         return new self(
             tagName: $tagName,
             attributes: $attributes,

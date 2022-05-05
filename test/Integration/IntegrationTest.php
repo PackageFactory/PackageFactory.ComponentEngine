@@ -77,6 +77,7 @@ final class IntegrationTest extends TestCase
         return [
             'Comment' => ["Comment"],
             'Component' => ["Component"],
+            'ComponentWithKeywords' => ["ComponentWithKeywords"],
         ];
     }
 
