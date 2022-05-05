@@ -22,13 +22,14 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Integration;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Program\Program;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PHPUnit\Framework\TestCase;
 
 final class IntegrationTest extends TestCase
 {
-    public function exampleProvider(): array
+    public function tokenizationExamples(): array
     {
         return [
             'Comment' => ["Comment"],
@@ -45,14 +46,13 @@ final class IntegrationTest extends TestCase
     }
 
     /**
-     * @dataProvider exampleProvider
+     * @dataProvider tokenizationExamples
      * @test
      * @small
      * @param string $input
-     * @param array<mixed> $asJson
      * @return void
      */
-    public function testTokenization(string $example): void
+    public function testTokenizer(string $example): void
     {
         $source = Source::fromFile(__DIR__ . '/Examples/' . $example . '/' . $example . '.afx');
         $tokenizer = Tokenizer::fromSource($source, Scope\Expression::class);
@@ -70,5 +70,34 @@ final class IntegrationTest extends TestCase
             $this->assertEquals($expected[$index]->value, $token->value, "Value mismatch at index $index");
             $index++;
         }
+    }
+
+    public function astExamples(): array
+    {
+        return [
+            'Comment' => ["Comment"],
+            'Component' => ["Component"],
+        ];
+    }
+
+    /**
+     * @dataProvider astExamples
+     * @test
+     * @small
+     * @param string $input
+     * @return void
+     */
+    public function testParser(string $example): void
+    {
+        $source = Source::fromFile(__DIR__ . '/Examples/' . $example . '/' . $example . '.afx');
+        $tokenizer = Tokenizer::fromSource($source, Scope\Expression::class);
+        $expected = json_decode(
+            file_get_contents(__DIR__ . '/Examples/' . $example . '/' . $example . '.ast.json'),
+            true
+        );
+
+        $program = Program::fromTokens($tokenizer->getIterator());
+        
+        $this->assertEquals($expected, json_decode(json_encode($program), true));
     }
 }

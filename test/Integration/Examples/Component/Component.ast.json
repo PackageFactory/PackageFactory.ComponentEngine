@@ -1,0 +1,101 @@
+{
+  "type": "Program",
+  "payload": {
+    "root": {
+      "type": "Module",
+      "payload": {
+        "imports": {},
+        "exports": {
+          "Image": {
+            "type": "Component",
+            "payload": {
+              "name": "Image",
+              "interface": {
+                "src": {
+                  "name": "src",
+                  "type": {
+                    "type": "TypeReference",
+                    "payload": {
+                      "name": "string",
+                      "isArray": false
+                    }
+                  }
+                },
+                "alt": {
+                  "name": "alt",
+                  "type": {
+                    "type": "TypeReference",
+                    "payload": {
+                      "name": "string",
+                      "isArray": false
+                    }
+                  }
+                },
+                "title": {
+                  "name": "title",
+                  "type": {
+                    "type": "TypeReference",
+                    "payload": {
+                      "name": "string",
+                      "isArray": false
+                    }
+                  }
+                }
+              },
+              "return": {
+                "type": "HyperScript",
+                "payload": {
+                  "root": {
+                    "type": "Tag",
+                    "payload": {
+                      "tagName": "img",
+                      "attributes": [
+                        {
+                          "name": "src",
+                          "value": {
+                            "type": "Expression",
+                            "payload": {
+                              "root": {
+                                "type": "ValueReference",
+                                "payload": { "name": "src" }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "name": "alt",
+                          "value": {
+                            "type": "Expression",
+                            "payload": {
+                              "root": {
+                                "type": "ValueReference",
+                                "payload": { "name": "alt" }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "name": "title",
+                          "value": {
+                            "type": "Expression",
+                            "payload": {
+                              "root": {
+                                "type": "ValueReference",
+                                "payload": { "name": "title" }
+                              }
+                            }
+                          }
+                        }
+                      ],
+                      "children": []
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

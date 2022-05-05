@@ -1,0 +1,12 @@
+{
+  "type": "Program",
+  "payload": {
+    "root": {
+      "type": "Module",
+      "payload": {
+        "imports": {},
+        "exports": {}
+      }
+    }
+  }
+}

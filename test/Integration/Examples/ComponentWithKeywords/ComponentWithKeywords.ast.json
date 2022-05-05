@@ -1,0 +1,42 @@
+{
+  "type": "Program",
+  "payload": {
+    "root": {
+      "type": "Module",
+      "payload": {
+        "imports": {},
+        "exports": {
+          "ComponentWithKeywords": {
+            "type": "Component",
+            "payload": {
+              "interface": {
+                "type": "interface",
+                "payload": {}
+              },
+              "return": {
+                "type": "HyperScript",
+                "payload": {
+                  "root": {
+                    "type": "Tag",
+                    "payload": {
+                      "tagName": "div",
+                      "attributes": [],
+                      "children": [
+                        {
+                          "type": "Text",
+                          "payload": {
+                            "value": "Keywords like import or export or component are allowed in here."
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
