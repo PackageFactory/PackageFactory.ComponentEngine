@@ -22,59 +22,59 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Tokenizer;
 
-enum TokenType
+enum TokenType: string
 {
-    case COMMENT;
+    case COMMENT = 'COMMENT';
 
-    case KEYWORD_FROM;
-    case KEYWORD_IMPORT;
-    case KEYWORD_EXPORT;
-    case KEYWORD_META;
-    case KEYWORD_ENUM;
-    case KEYWORD_INTERFACE;
-    case KEYWORD_COMPONENT;
-    case KEYWORD_MATCH;
-    case KEYWORD_DEFAULT;
-    case KEYWORD_RETURN;
+    case KEYWORD_FROM = 'KEYWORD_FROM';
+    case KEYWORD_IMPORT = 'KEYWORD_IMPORT';
+    case KEYWORD_EXPORT = 'KEYWORD_EXPORT';
+    case KEYWORD_META = 'KEYWORD_META';
+    case KEYWORD_ENUM = 'KEYWORD_ENUM';
+    case KEYWORD_INTERFACE = 'KEYWORD_INTERFACE';
+    case KEYWORD_COMPONENT = 'KEYWORD_COMPONENT';
+    case KEYWORD_MATCH = 'KEYWORD_MATCH';
+    case KEYWORD_DEFAULT = 'KEYWORD_DEFAULT';
+    case KEYWORD_RETURN = 'KEYWORD_RETURN';
 
-    case CONSTANT;
+    case CONSTANT = 'CONSTANT';
 
-    case STRING;
-    case STRING_QUOTED;
+    case STRING = 'STRING';
+    case STRING_QUOTED = 'STRING_QUOTED';
 
-    case NUMBER_BINARY;
-    case NUMBER_OCTAL;
-    case NUMBER_DECIMAL;
-    case NUMBER_HEXADECIMAL;
+    case NUMBER_BINARY = 'NUMBER_BINARY';
+    case NUMBER_OCTAL = 'NUMBER_OCTAL';
+    case NUMBER_DECIMAL = 'NUMBER_DECIMAL';
+    case NUMBER_HEXADECIMAL = 'NUMBER_HEXADECIMAL';
 
-    case TEMPLATE_LITERAL_START;
-    case TEMPLATE_LITERAL_END;
+    case TEMPLATE_LITERAL_START = 'TEMPLATE_LITERAL_START';
+    case TEMPLATE_LITERAL_END = 'TEMPLATE_LITERAL_END';
 
-    case OPERATOR_ARITHMETIC;
-    case OPERATOR_BOOLEAN;
+    case OPERATOR_ARITHMETIC = 'OPERATOR_ARITHMETIC';
+    case OPERATOR_BOOLEAN = 'OPERATOR_BOOLEAN';
 
-    case COMPARATOR;
-    case SPREAD;
-    case ARROW;
+    case COMPARATOR = 'COMPARATOR';
+    case SPREAD = 'SPREAD';
+    case ARROW = 'ARROW';
 
-    case BRACKET_OPEN;
-    case BRACKET_CLOSE;
+    case BRACKET_OPEN = 'BRACKET_OPEN';
+    case BRACKET_CLOSE = 'BRACKET_CLOSE';
 
-    case TAG_START_OPENING;
-    case TAG_START_CLOSING;
-    case TAG_SELF_CLOSE;
-    case TAG_END;
+    case TAG_START_OPENING = 'TAG_START_OPENING';
+    case TAG_START_CLOSING = 'TAG_START_CLOSING';
+    case TAG_SELF_CLOSE = 'TAG_SELF_CLOSE';
+    case TAG_END = 'TAG_END';
 
-    case PERIOD;
-    case COLON;
-    case QUESTIONMARK;
-    case COMMA;
-    case EQUALS;
-    case SLASH_FORWARD;
-    case DOLLAR;
+    case PERIOD = 'PERIOD';
+    case COLON = 'COLON';
+    case QUESTIONMARK = 'QUESTIONMARK';
+    case COMMA = 'COMMA';
+    case EQUALS = 'EQUALS';
+    case SLASH_FORWARD = 'SLASH_FORWARD';
+    case DOLLAR = 'DOLLAR';
 
-    case SPACE;
-    case END_OF_LINE;
+    case SPACE = 'SPACE';
+    case END_OF_LINE = 'END_OF_LINE';
 
     public static function fromBuffer(Buffer $buffer): TokenType
     {
