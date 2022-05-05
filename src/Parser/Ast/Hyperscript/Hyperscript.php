@@ -20,11 +20,11 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast\HyperScript;
+namespace PackageFactory\ComponentEngine\Parser\Ast\Hyperscript;
 
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 
-final class HyperScript implements \JsonSerializable
+final class Hyperscript implements \JsonSerializable
 {
     private function __construct(
         public readonly Tag $root
@@ -45,7 +45,7 @@ final class HyperScript implements \JsonSerializable
     public function jsonSerialize(): mixed
     {
         return [
-            'type' => 'HyperScript',
+            'type' => 'Hyperscript',
             'payload' => [
                 'root' => $this->root
             ]

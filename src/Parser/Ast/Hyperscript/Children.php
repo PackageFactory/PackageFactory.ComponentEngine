@@ -20,7 +20,7 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast\HyperScript;
+namespace PackageFactory\ComponentEngine\Parser\Ast\Hyperscript;
 
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;

@@ -20,18 +20,18 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast\HyperScript;
+namespace PackageFactory\ComponentEngine\Parser\Ast\Hyperscript;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Expression\Expression;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class Tag implements \JsonSerializable
+final class Attribute implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $tagName,
-        public readonly Attributes $attributes,
-        public readonly Children $children
+        public readonly string $name,
+        public readonly Hyperscript | Expression $value
     ) {
     }
 
@@ -42,50 +42,38 @@ final class Tag implements \JsonSerializable
     public static function fromTokens(\Iterator $tokens): self
     {
         Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::TAG_START_OPENING);
-
-        Scanner::skipOne($tokens);
         Scanner::assertType($tokens, TokenType::STRING);
 
-        $tagName = Scanner::value($tokens);
+        $name = Scanner::value($tokens);
 
         Scanner::skipOne($tokens);
+        Scanner::assertType($tokens, TokenType::EQUALS);
+        Scanner::skipOne($tokens);
+        Scanner::assertType($tokens, TokenType::BRACKET_OPEN);
+        Scanner::assertValue($tokens, '{');
+        Scanner::skipOne($tokens);
 
-        $attributes = Attributes::fromTokens($tokens);
+        $value = match (Scanner::type($tokens)) {
+            TokenType::TAG_START_OPENING => Hyperscript::fromTokens($tokens),
+            default => Expression::fromTokens($tokens)
+        };
 
         Scanner::skipSpaceAndComments($tokens);
-
-        if (Scanner::type($tokens) === TokenType::TAG_SELF_CLOSE) {
-            Scanner::skipOne($tokens);
-
-            return new self(
-                tagName: $tagName,
-                attributes: $attributes,
-                children: Children::empty()
-            );
-        }
-
-        Scanner::assertType($tokens, TokenType::TAG_END);
+        Scanner::assertType($tokens, TokenType::BRACKET_CLOSE);
+        Scanner::assertValue($tokens, '}');
         Scanner::skipOne($tokens);
 
-        $children = Children::fromTokens($tokens);
-
         return new self(
-            tagName: $tagName,
-            attributes: $attributes,
-            children: $children
+            name: $name,
+            value: $value
         );
     }
 
     public function jsonSerialize(): mixed
     {
         return [
-            'type' => 'Tag',
-            'payload' => [
-                'tagName' => $this->tagName,
-                'attributes' => $this->attributes,
-                'children' => $this->children
-            ]
+            'name' => $this->name,
+            'value' => $this->value
         ];
     }
 }

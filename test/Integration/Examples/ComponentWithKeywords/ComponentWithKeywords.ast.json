@@ -14,7 +14,7 @@
                 "payload": {}
               },
               "return": {
-                "type": "HyperScript",
+                "type": "Hyperscript",
                 "payload": {
                   "root": {
                     "type": "Tag",

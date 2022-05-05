@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Vendor\Project\Component;
 
-use Vendor\HyperScript;
+use Vendor\Hyperscript;
 
 final class Component
 {
@@ -17,14 +17,14 @@ final class Component
 
     public function render(): string
     {
-        return HyperScript::h(
+        return Hyperscript::h(
             "img",
-            HyperScript::attributes(
-                HyperScript::attribute("src", $this->src),
-                HyperScript::attribute("alt", $this->alt),
-                HyperScript::attribute("title", $this->title)
+            Hyperscript::attributes(
+                Hyperscript::attribute("src", $this->src),
+                Hyperscript::attribute("alt", $this->alt),
+                Hyperscript::attribute("title", $this->title)
             ),
-            HyperScript::children()
+            Hyperscript::children()
         );
     }
 }
