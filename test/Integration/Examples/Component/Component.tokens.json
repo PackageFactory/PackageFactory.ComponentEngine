@@ -112,6 +112,14 @@
     "value": "  "
   },
   {
+    "type": "KEYWORD_RETURN",
+    "value": "return"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
     "type": "TAG_START_OPENING",
     "value": "<"
   },

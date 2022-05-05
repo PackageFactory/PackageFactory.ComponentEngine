@@ -36,6 +36,18 @@
     "value": "  "
   },
   {
+    "type": "KEYWORD_RETURN",
+    "value": "return"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
     "type": "COMMENT",
     "value": "# Decimal"
   },

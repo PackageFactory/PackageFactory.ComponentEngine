@@ -2,7 +2,7 @@ export component Button {
   type: ButtonType
   content: Slot
 
-  match (type) {
+  return match (type) {
     LINK => (
       <a class="btn" href="#">{content}</a>
     )

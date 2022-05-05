@@ -3,5 +3,5 @@ export component Image {
   alt: string
   title: string
 
-  <img src={src} alt={alt} title={title} />
+  return <img src={src} alt={alt} title={title} />
 }

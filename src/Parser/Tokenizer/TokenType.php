@@ -35,6 +35,7 @@ enum TokenType
     case KEYWORD_COMPONENT;
     case KEYWORD_MATCH;
     case KEYWORD_DEFAULT;
+    case KEYWORD_RETURN;
 
     case CONSTANT;
 
@@ -89,6 +90,7 @@ enum TokenType
             $value === 'component' => self::KEYWORD_COMPONENT,
             $value === 'match' => self::KEYWORD_MATCH,
             $value === 'default' => self::KEYWORD_DEFAULT,
+            $value === 'return' => self::KEYWORD_RETURN,
             (bool) preg_match(
                 '/^0[bB][0-1]+$/',
                 $value

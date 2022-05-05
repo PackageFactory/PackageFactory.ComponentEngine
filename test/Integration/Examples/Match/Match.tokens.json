@@ -88,6 +88,14 @@
     "value": "  "
   },
   {
+    "type": "KEYWORD_RETURN",
+    "value": "return"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
     "type": "KEYWORD_MATCH",
     "value": "match"
   },

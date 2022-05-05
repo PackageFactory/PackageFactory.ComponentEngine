@@ -1,7 +1,7 @@
 export component Expression {
   nums: number[]
 
-  nums.reduce(
+  return nums.reduce(
     (acc, cur) =>
       acc <= 120
         ? cur * acc + (17 % cur)

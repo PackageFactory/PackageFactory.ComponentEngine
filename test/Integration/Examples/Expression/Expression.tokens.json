@@ -72,6 +72,14 @@
     "value": "  "
   },
   {
+    "type": "KEYWORD_RETURN",
+    "value": "return"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
     "type": "STRING",
     "value": "nums"
   },

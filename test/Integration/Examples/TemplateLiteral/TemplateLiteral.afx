@@ -3,7 +3,7 @@ export component TemplateLiteral {
   isActive: boolean
   someNumber: number
 
-  `A template literal may contain ${expression}s.
+  return `A template literal may contain ${expression}s.
 
   It can span multiple lines.
 

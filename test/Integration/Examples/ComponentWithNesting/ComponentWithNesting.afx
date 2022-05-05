@@ -4,7 +4,7 @@ export component TextWithImage {
   title: string
   text: string
 
-  <div class="text-with-image">
+  return <div class="text-with-image">
     <img class="image" src={src} alt={alt} title={title} />
     <p class="text">
       {text}
