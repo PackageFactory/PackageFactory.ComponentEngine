@@ -152,7 +152,7 @@
     "value": " "
   },
   {
-    "type": "COMPARATOR",
+    "type": "COMPARATOR_LESS_THAN_OR_EQUAL",
     "value": "<="
   },
   {
@@ -188,7 +188,7 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC",
+    "type": "OPERATOR_ARITHMETIC_MULTIPLY_BY",
     "value": "*"
   },
   {
@@ -204,7 +204,7 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC",
+    "type": "OPERATOR_ARITHMETIC_PLUS",
     "value": "+"
   },
   {
@@ -224,7 +224,7 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC",
+    "type": "OPERATOR_ARITHMETIC_MODULO",
     "value": "%"
   },
   {
@@ -272,7 +272,7 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC",
+    "type": "OPERATOR_ARITHMETIC_DIVIDE_BY",
     "value": "/"
   },
   {

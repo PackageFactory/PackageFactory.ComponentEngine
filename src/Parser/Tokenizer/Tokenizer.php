@@ -252,9 +252,19 @@ final class Tokenizer implements \IteratorAggregate
         }
 
         yield from match ($buffer->value()) {
-            '+', '-', '*', '/', '%' => $buffer->flush(TokenType::OPERATOR_ARITHMETIC),
-            '&&', '||', '!' => $buffer->flush(TokenType::OPERATOR_BOOLEAN),
-            '>', '>=', '<', '<=', '===' => $buffer->flush(TokenType::COMPARATOR),
+            '+' => $buffer->flush(TokenType::OPERATOR_ARITHMETIC_PLUS),
+            '-' => $buffer->flush(TokenType::OPERATOR_ARITHMETIC_MINUS),
+            '*' => $buffer->flush(TokenType::OPERATOR_ARITHMETIC_MULTIPLY_BY),
+            '/' => $buffer->flush(TokenType::OPERATOR_ARITHMETIC_DIVIDE_BY),
+            '%' => $buffer->flush(TokenType::OPERATOR_ARITHMETIC_MODULO),
+            '&&' => $buffer->flush(TokenType::OPERATOR_BOOLEAN_AND),
+            '||' => $buffer->flush(TokenType::OPERATOR_BOOLEAN_OR),
+            '!' => $buffer->flush(TokenType::OPERATOR_BOOLEAN_NOT),
+            '>' => $buffer->flush(TokenType::COMPARATOR_GREATER_THAN),
+            '>=' => $buffer->flush(TokenType::COMPARATOR_GREATER_THAN_OR_EQUAL),
+            '<' => $buffer->flush(TokenType::COMPARATOR_LESS_THAN),
+            '<=' => $buffer->flush(TokenType::COMPARATOR_LESS_THAN_OR_EQUAL),
+            '===' => $buffer->flush(TokenType::COMPARATOR_EQUAL),
             '=>' => $buffer->flush(TokenType::ARROW),
             ':' => $buffer->flush(TokenType::COLON),
             '.' => $buffer->flush(TokenType::PERIOD),
@@ -284,7 +294,7 @@ final class Tokenizer implements \IteratorAggregate
             $fragment = $fragments->current();
             yield from match (CharacterType::get($fragment->value)) {
                 CharacterType::SYMBOL => self::symbol($fragments, $buffer),
-                CharacterType::SPACE => $buffer->flush(TokenType::COMPARATOR),
+                CharacterType::SPACE => $buffer->flush(TokenType::COMPARATOR_LESS_THAN),
                 default => self::tag($fragments, $buffer)
             };
         }
