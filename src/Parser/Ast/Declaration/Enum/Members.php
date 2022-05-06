@@ -59,11 +59,10 @@ final class Members implements \JsonSerializable
                 case TokenType::STRING:
                     $members[] = Member::fromTokens($tokens);
                     break;
-                case TokenType::BRACKET_CLOSE:
-                    Scanner::assertValue($tokens, '}');
+                case TokenType::BRACKET_CURLY_CLOSE:
                     break 2;
                 default:
-                    Scanner::assertType($tokens, TokenType::STRING, TokenType::BRACKET_CLOSE);
+                    Scanner::assertType($tokens, TokenType::STRING, TokenType::BRACKET_CURLY_CLOSE);
             }
         }
 

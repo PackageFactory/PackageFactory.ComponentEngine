@@ -24,7 +24,7 @@
     "value": " "
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_CURLY_OPEN",
     "value": "{"
   },
   {
@@ -132,7 +132,7 @@
     "value": "$"
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_CURLY_OPEN",
     "value": "{"
   },
   {
@@ -140,7 +140,7 @@
     "value": "expression"
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_CURLY_CLOSE",
     "value": "}"
   },
   {
@@ -152,7 +152,7 @@
     "value": "$"
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_CURLY_OPEN",
     "value": "{"
   },
   {
@@ -224,7 +224,7 @@
     "value": "17"
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_CURLY_CLOSE",
     "value": "}"
   },
   {
@@ -236,7 +236,7 @@
     "value": "$"
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_CURLY_OPEN",
     "value": "{"
   },
   {
@@ -268,7 +268,7 @@
     "value": "$"
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_CURLY_OPEN",
     "value": "{"
   },
   {
@@ -324,7 +324,7 @@
     "value": "no"
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_CURLY_CLOSE",
     "value": "}"
   },
   {
@@ -356,7 +356,7 @@
     "value": "$"
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_CURLY_OPEN",
     "value": "{"
   },
   {
@@ -364,7 +364,7 @@
     "value": "27"
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_CURLY_CLOSE",
     "value": "}"
   },
   {
@@ -372,7 +372,7 @@
     "value": "`"
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_CURLY_CLOSE",
     "value": "}"
   },
   {
@@ -384,7 +384,7 @@
     "value": "$"
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_CURLY_OPEN",
     "value": "{"
   },
   {
@@ -444,7 +444,7 @@
     "value": " "
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_CURLY_OPEN",
     "value": "{"
   },
   {
@@ -452,7 +452,7 @@
     "value": "someNumber"
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_CURLY_CLOSE",
     "value": "}"
   },
   {
@@ -496,7 +496,7 @@
     "value": "  "
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_CURLY_CLOSE",
     "value": "}"
   },
   {
@@ -512,7 +512,7 @@
     "value": "\n"
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_CURLY_CLOSE",
     "value": "}"
   },
   {

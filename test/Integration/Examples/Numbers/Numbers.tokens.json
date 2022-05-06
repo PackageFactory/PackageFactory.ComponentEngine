@@ -24,7 +24,7 @@
     "value": " "
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_CURLY_OPEN",
     "value": "{"
   },
   {
@@ -448,7 +448,7 @@
     "value": "\n"
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_CURLY_CLOSE",
     "value": "}"
   },
   {

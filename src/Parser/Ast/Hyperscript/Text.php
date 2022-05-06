@@ -44,10 +44,7 @@ final class Text implements \JsonSerializable
         $value = '';
         while (true) {
             switch (Scanner::type($tokens)) {
-                case TokenType::BRACKET_OPEN:
-                    if (Scanner::value($tokens) === '{') {
-                        break 2;
-                    }
+                case TokenType::BRACKET_CURLY_OPEN:
                 case TokenType::TAG_START_OPENING:
                 case TokenType::TAG_START_CLOSING:
                     break 2;

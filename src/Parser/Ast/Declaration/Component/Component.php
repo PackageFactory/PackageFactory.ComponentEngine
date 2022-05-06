@@ -55,8 +55,7 @@ final class Component implements \JsonSerializable
 
         Scanner::skipOne($tokens);
         Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::BRACKET_OPEN);
-        Scanner::assertValue($tokens, '{');
+        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_OPEN);
 
         Scanner::skipOne($tokens);
         Scanner::skipSpaceAndComments($tokens);
@@ -74,8 +73,7 @@ final class Component implements \JsonSerializable
         };
 
         Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::BRACKET_CLOSE);
-        Scanner::assertValue($tokens, '}');
+        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
         Scanner::skipOne($tokens);
 
         return new self(

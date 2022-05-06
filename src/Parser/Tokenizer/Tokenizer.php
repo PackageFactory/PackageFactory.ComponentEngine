@@ -53,16 +53,11 @@ final class Tokenizer implements \IteratorAggregate
      */
     private static function block(\Iterator $fragments): \Iterator
     {
-        $delimiter = match ($fragments->current()->value) {
-            '{' => '}',
-            '(' => ')',
-            '[' => ']',
-            default => null
-        };
+        $bracket = TokenType::tryBracketOpenFromFragment($fragments->current());
         $buffer = Buffer::empty();
 
-        if ($delimiter) {
-            yield from $buffer->append($fragments->current())->flush(TokenType::BRACKET_OPEN);
+        if ($bracket) {
+            yield from $buffer->append($fragments->current())->flush($bracket);
             $fragments->next();
         }
 
@@ -70,11 +65,15 @@ final class Tokenizer implements \IteratorAggregate
             /** @var Fragment $fragment */
             $fragment = $fragments->current();
 
-            if ($fragment->value === $delimiter) {
-                yield from self::flushRemainder($buffer);
-                yield from $buffer->append($fragment)->flush(TokenType::BRACKET_CLOSE);
-                $fragments->next();
-                return;
+            if ($bracket) {
+                $closingBracket = $bracket->closingBracket();
+
+                if ($closingBracket->matchesString($fragment->value)) {
+                    yield from self::flushRemainder($buffer);
+                    yield from $buffer->append($fragments->current())->flush($closingBracket);
+                    $fragments->next();
+                    return;
+                }
             }
 
             $delegate = match (CharacterType::get($fragment->value)) {
@@ -115,8 +114,6 @@ final class Tokenizer implements \IteratorAggregate
      */
     private static function flushRemainder(Buffer $buffer): \Iterator
     {
-        $value = $buffer->value();
-
         yield from $buffer->flush(TokenType::fromBuffer($buffer));
     }
 

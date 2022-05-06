@@ -24,7 +24,7 @@
     "value": " "
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_CURLY_OPEN",
     "value": "{"
   },
   {
@@ -216,7 +216,7 @@
     "value": "="
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_CURLY_OPEN",
     "value": "{"
   },
   {
@@ -224,7 +224,7 @@
     "value": "src"
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_CURLY_CLOSE",
     "value": "}"
   },
   {
@@ -240,7 +240,7 @@
     "value": "="
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_CURLY_OPEN",
     "value": "{"
   },
   {
@@ -248,7 +248,7 @@
     "value": "alt"
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_CURLY_CLOSE",
     "value": "}"
   },
   {
@@ -264,7 +264,7 @@
     "value": "="
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_CURLY_OPEN",
     "value": "{"
   },
   {
@@ -272,7 +272,7 @@
     "value": "title"
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_CURLY_CLOSE",
     "value": "}"
   },
   {
@@ -328,7 +328,7 @@
     "value": "      "
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_CURLY_OPEN",
     "value": "{"
   },
   {
@@ -336,7 +336,7 @@
     "value": "text"
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_CURLY_CLOSE",
     "value": "}"
   },
   {
@@ -384,7 +384,7 @@
     "value": "\n"
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_CURLY_CLOSE",
     "value": "}"
   },
   {

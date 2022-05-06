@@ -54,8 +54,7 @@ final class Attribute implements \JsonSerializable
         if (Scanner::type($tokens) === TokenType::STRING_QUOTED) {
             $value = StringLiteral::fromTokens($tokens);
         } else {
-            Scanner::assertType($tokens, TokenType::BRACKET_OPEN);
-            Scanner::assertValue($tokens, '{');
+            Scanner::assertType($tokens, TokenType::BRACKET_CURLY_OPEN);
             Scanner::skipOne($tokens);
 
             $value = match (Scanner::type($tokens)) {
@@ -64,8 +63,7 @@ final class Attribute implements \JsonSerializable
             };
     
             Scanner::skipSpaceAndComments($tokens);
-            Scanner::assertType($tokens, TokenType::BRACKET_CLOSE);
-            Scanner::assertValue($tokens, '}');
+            Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
             Scanner::skipOne($tokens);
         }
 

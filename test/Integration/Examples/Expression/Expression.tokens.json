@@ -24,7 +24,7 @@
     "value": " "
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_CURLY_OPEN",
     "value": "{"
   },
   {
@@ -52,11 +52,11 @@
     "value": "number"
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_SQUARE_OPEN",
     "value": "["
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_SQUARE_CLOSE",
     "value": "]"
   },
   {
@@ -92,7 +92,7 @@
     "value": "reduce"
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_ROUND_OPEN",
     "value": "("
   },
   {
@@ -104,7 +104,7 @@
     "value": "    "
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_ROUND_OPEN",
     "value": "("
   },
   {
@@ -124,7 +124,7 @@
     "value": "cur"
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_ROUND_CLOSE",
     "value": ")"
   },
   {
@@ -212,7 +212,7 @@
     "value": " "
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_ROUND_OPEN",
     "value": "("
   },
   {
@@ -236,7 +236,7 @@
     "value": "cur"
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_ROUND_CLOSE",
     "value": ")"
   },
   {
@@ -260,7 +260,7 @@
     "value": "round"
   },
   {
-    "type": "BRACKET_OPEN",
+    "type": "BRACKET_ROUND_OPEN",
     "value": "("
   },
   {
@@ -284,7 +284,7 @@
     "value": "acc"
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_ROUND_CLOSE",
     "value": ")"
   },
   {
@@ -312,7 +312,7 @@
     "value": "  "
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_ROUND_CLOSE",
     "value": ")"
   },
   {
@@ -320,7 +320,7 @@
     "value": "\n"
   },
   {
-    "type": "BRACKET_CLOSE",
+    "type": "BRACKET_CURLY_CLOSE",
     "value": "}"
   },
   {

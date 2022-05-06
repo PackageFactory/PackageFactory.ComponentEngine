@@ -47,12 +47,11 @@ final class TypeReference implements \JsonSerializable
 
         Scanner::skipOne($tokens);
 
-        $isArray = Scanner::type($tokens) === TokenType::BRACKET_OPEN;
+        $isArray = Scanner::type($tokens) === TokenType::BRACKET_SQUARE_OPEN;
         if ($isArray) {
-            Scanner::assertValue($tokens, '[');
             Scanner::skipOne($tokens);
-            Scanner::assertType($tokens, TokenType::BRACKET_CLOSE);
-            Scanner::assertValue($tokens, ']');
+            Scanner::skipSpace($tokens);
+            Scanner::assertType($tokens, TokenType::BRACKET_SQUARE_CLOSE);
             Scanner::skipOne($tokens);
         }
 

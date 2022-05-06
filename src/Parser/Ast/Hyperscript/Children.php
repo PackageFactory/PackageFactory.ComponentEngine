@@ -66,17 +66,15 @@ final class Children implements \JsonSerializable
                 case TokenType::TAG_START_OPENING:
                     $contents[] = Tag::fromTokens($tokens);
                     break;
-                case TokenType::BRACKET_OPEN:
-                    Scanner::assertValue($tokens, '{');
+                case TokenType::BRACKET_CURLY_OPEN:
                     Scanner::skipOne($tokens);
                     $contents[] = Expression::fromTokens($tokens);
                     Scanner::skipSpaceAndComments($tokens);
-                    Scanner::assertType($tokens, TokenType::BRACKET_CLOSE);
-                    Scanner::assertValue($tokens, '}');
+                    Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
                     Scanner::skipOne($tokens);
                     Scanner::skipSpace($tokens);
                 default:
-                    Scanner::assertType($tokens, TokenType::TAG_START_CLOSING, TokenType::TAG_START_OPENING, TokenType::BRACKET_OPEN);
+                    Scanner::assertType($tokens, TokenType::TAG_START_CLOSING, TokenType::TAG_START_OPENING, TokenType::BRACKET_CURLY_OPEN);
             }
         }
 

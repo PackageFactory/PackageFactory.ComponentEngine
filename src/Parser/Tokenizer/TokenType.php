@@ -22,6 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Tokenizer;
 
+use PackageFactory\ComponentEngine\Parser\Source\Fragment;
+
 enum TokenType: string
 {
     case COMMENT = 'COMMENT';
@@ -57,8 +59,12 @@ enum TokenType: string
     case SPREAD = 'SPREAD';
     case ARROW = 'ARROW';
 
-    case BRACKET_OPEN = 'BRACKET_OPEN';
-    case BRACKET_CLOSE = 'BRACKET_CLOSE';
+    case BRACKET_CURLY_OPEN = 'BRACKET_CURLY_OPEN';
+    case BRACKET_CURLY_CLOSE = 'BRACKET_CURLY_CLOSE';
+    case BRACKET_ROUND_OPEN = 'BRACKET_ROUND_OPEN';
+    case BRACKET_ROUND_CLOSE = 'BRACKET_ROUND_CLOSE';
+    case BRACKET_SQUARE_OPEN = 'BRACKET_SQUARE_OPEN';
+    case BRACKET_SQUARE_CLOSE = 'BRACKET_SQUARE_CLOSE';
 
     case TAG_START_OPENING = 'TAG_START_OPENING';
     case TAG_START_CLOSING = 'TAG_START_CLOSING';
@@ -91,6 +97,7 @@ enum TokenType: string
             $value === 'match' => self::KEYWORD_MATCH,
             $value === 'default' => self::KEYWORD_DEFAULT,
             $value === 'return' => self::KEYWORD_RETURN,
+
             (bool) preg_match(
                 '/^0[bB][0-1]+$/',
                 $value
@@ -108,6 +115,36 @@ enum TokenType: string
                 $value
             ) => self::NUMBER_HEXADECIMAL,
             default => self::STRING
+        };
+    }
+
+    public static function tryBracketOpenFromFragment(Fragment $fragment): ?self
+    {
+        return match ($fragment->value) {
+            '{' => self::BRACKET_CURLY_OPEN,
+            '(' => self::BRACKET_ROUND_OPEN,
+            '[' => self::BRACKET_SQUARE_OPEN,
+            default => null
+        };
+    }
+
+    public function closingBracket(): TokenType
+    {
+        return match ($this) {
+            self::BRACKET_CURLY_OPEN => self::BRACKET_CURLY_CLOSE,
+            self::BRACKET_ROUND_OPEN => self::BRACKET_ROUND_CLOSE,
+            self::BRACKET_SQUARE_OPEN => self::BRACKET_SQUARE_CLOSE,
+            default => throw new \Exception('@TODO: Not a bracket.')
+        };
+    }
+
+    public function matchesString(string $string): bool
+    {
+        return match ($this) {
+            self::BRACKET_CURLY_CLOSE => $string === '}',
+            self::BRACKET_ROUND_CLOSE => $string === ')',
+            self::BRACKET_SQUARE_CLOSE => $string === ']',
+            default => false
         };
     }
 }

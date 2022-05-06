@@ -59,14 +59,13 @@ final class PropertyDeclarations implements \JsonSerializable
             switch (Scanner::type($tokens)) {
                 case TokenType::KEYWORD_RETURN:
                     break 2;
-                case TokenType::BRACKET_CLOSE:
-                    Scanner::assertValue($tokens, '}');
+                case TokenType::BRACKET_CURLY_CLOSE:
                     break 2;
                 case TokenType::STRING:
                     $declarations[] = PropertyDeclaration::fromTokens($tokens);
                     break;
                 default:
-                    Scanner::assertType($tokens, TokenType::KEYWORD_RETURN, TokenType::BRACKET_CLOSE, TokenType::STRING);
+                    Scanner::assertType($tokens, TokenType::KEYWORD_RETURN, TokenType::BRACKET_CURLY_CLOSE, TokenType::STRING);
             }
         }
 
