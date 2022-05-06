@@ -26,12 +26,22 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class Enum implements \JsonSerializable
+final class Members implements \JsonSerializable
 {
+    /**
+     * @var array<string,Member>
+     */
+    private readonly array $members;
+
     private function __construct(
-        public readonly string $name,
-        public readonly Members $members
+        Member ...$members
     ) {
+        $membersAsHashMap = [];
+        foreach ($members as $member) {
+            $membersAsHashMap[$member->name] = $member;
+        }
+
+        $this->members = $membersAsHashMap;
     }
 
     /**
@@ -40,42 +50,28 @@ final class Enum implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::KEYWORD_ENUM);
+        /** @var array<string,Member> $members */
+        $members = [];
+        while (true) {
+            Scanner::skipSpaceAndComments($tokens);
 
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::STRING);
+            switch (Scanner::type($tokens)) {
+                case TokenType::STRING:
+                    $members[] = Member::fromTokens($tokens);
+                    break;
+                case TokenType::BRACKET_CLOSE:
+                    Scanner::assertValue($tokens, '}');
+                    break 2;
+                default:
+                    Scanner::assertType($tokens, TokenType::STRING, TokenType::BRACKET_CLOSE);
+            }
+        }
 
-        $name = Scanner::value($tokens);
-
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::BRACKET_OPEN);
-        Scanner::assertValue($tokens, '{');
-        Scanner::skipOne($tokens);
-
-        $members = Members::fromTokens($tokens);
-
-        Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::BRACKET_CLOSE);
-        Scanner::assertValue($tokens, '}');
-        Scanner::skipOne($tokens);
-
-        return new self(
-            name: $name,
-            members: $members
-        );
+        return new self(...$members);
     }
 
     public function jsonSerialize(): mixed
     {
-        return [
-            'type' => 'Enum',
-            'payload' => [
-                'name' => $this->name,
-                'members' => $this->members
-            ]
-        ];
+        return $this->members;
     }
 }

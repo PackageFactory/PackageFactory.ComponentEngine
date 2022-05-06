@@ -26,11 +26,10 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class Enum implements \JsonSerializable
+final class Member implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $name,
-        public readonly Members $members
+        public readonly string $name
     ) {
     }
 
@@ -41,41 +40,21 @@ final class Enum implements \JsonSerializable
     public static function fromTokens(\Iterator $tokens): self
     {
         Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::KEYWORD_ENUM);
-
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
         Scanner::assertType($tokens, TokenType::STRING);
 
         $name = Scanner::value($tokens);
 
         Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::BRACKET_OPEN);
-        Scanner::assertValue($tokens, '{');
-        Scanner::skipOne($tokens);
-
-        $members = Members::fromTokens($tokens);
-
-        Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::BRACKET_CLOSE);
-        Scanner::assertValue($tokens, '}');
-        Scanner::skipOne($tokens);
 
         return new self(
-            name: $name,
-            members: $members
+            name: $name
         );
     }
 
     public function jsonSerialize(): mixed
     {
         return [
-            'type' => 'Enum',
-            'payload' => [
-                'name' => $this->name,
-                'members' => $this->members
-            ]
+            'name' => $this->name,
         ];
     }
 }
