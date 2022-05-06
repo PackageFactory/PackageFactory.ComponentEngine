@@ -40,7 +40,7 @@ final class Tokenizer implements \IteratorAggregate
     }
 
     /**
-     * @return \Iterator<mixed, Token>
+     * @return \Iterator<mixed,Token>
      */
     public function getIterator(): \Iterator
     {

@@ -20,17 +20,16 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast\Reference;
+namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class ValueReference implements \JsonSerializable
+final class NumberLiteral implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $name,
-        public readonly null | ValueReference $tail = null
+        public readonly string $value,
+        public readonly NumberFormat $format
     ) {
     }
 
@@ -40,32 +39,24 @@ final class ValueReference implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::STRING);
-
-        $name = Scanner::value($tokens);
+        $format = NumberFormat::fromTokenType(Scanner::type($tokens));
+        $value = Scanner::value($tokens);
 
         Scanner::skipOne($tokens);
 
-        $tail = null;
-        if (Scanner::type($tokens) === TokenType::PERIOD) {
-            Scanner::skipOne($tokens);
-            $tail = self::fromTokens($tokens);
-        }
-
         return new self(
-            name: $name,
-            tail: $tail
+            value: $value,
+            format: $format
         );
     }
 
     public function jsonSerialize(): mixed
     {
         return [
-            'type' => 'ValueReference',
+            'type' => 'NumberLiteral',
             'payload' => [
-                'name' => $this->name,
-                'tail' => $this->tail
+                'value' => $this->value,
+                'format' => $this->format->value
             ]
         ];
     }

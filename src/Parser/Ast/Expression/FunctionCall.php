@@ -20,52 +20,51 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast\Reference;
+namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Reference\ValueReference;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class ValueReference implements \JsonSerializable
+final class FunctionCall implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $name,
-        public readonly null | ValueReference $tail = null
+        public readonly ValueReference $function,
+        public readonly Expressions $parameters
     ) {
     }
 
     /**
+     * @param ValueReference $function
      * @param \Iterator<mixed,Token> $tokens
      * @return self
      */
-    public static function fromTokens(\Iterator $tokens): self
+    public static function fromTokens(ValueReference $function, \Iterator $tokens): self
     {
         Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::STRING);
-
-        $name = Scanner::value($tokens);
-
+        Scanner::assertType($tokens, TokenType::BRACKET_ROUND_OPEN);
         Scanner::skipOne($tokens);
 
-        $tail = null;
-        if (Scanner::type($tokens) === TokenType::PERIOD) {
-            Scanner::skipOne($tokens);
-            $tail = self::fromTokens($tokens);
-        }
+        $parameters = Expressions::fromTokens($tokens);
+
+        Scanner::skipSpaceAndComments($tokens);
+        Scanner::assertType($tokens, TokenType::BRACKET_ROUND_CLOSE);
+        Scanner::skipOne($tokens);
 
         return new self(
-            name: $name,
-            tail: $tail
+            function: $function,
+            parameters: $parameters
         );
     }
 
     public function jsonSerialize(): mixed
     {
         return [
-            'type' => 'ValueReference',
+            'type' => 'FunctionCall',
             'payload' => [
-                'name' => $this->name,
-                'tail' => $this->tail
+                'function' => $this->function,
+                'parameters' => $this->parameters
             ]
         ];
     }

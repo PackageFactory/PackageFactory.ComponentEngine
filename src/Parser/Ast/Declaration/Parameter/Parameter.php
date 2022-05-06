@@ -20,17 +20,18 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast\Reference;
+namespace PackageFactory\ComponentEngine\Parser\Ast\Declaration\Parameter;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Reference\TypeReference;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class ValueReference implements \JsonSerializable
+final class Parameter implements \JsonSerializable
 {
     private function __construct(
         public readonly string $name,
-        public readonly null | ValueReference $tail = null
+        public readonly null | TypeReference $type
     ) {
     }
 
@@ -46,27 +47,26 @@ final class ValueReference implements \JsonSerializable
         $name = Scanner::value($tokens);
 
         Scanner::skipOne($tokens);
+        Scanner::skipSpaceAndComments($tokens);
 
-        $tail = null;
-        if (Scanner::type($tokens) === TokenType::PERIOD) {
+        $type = null;
+        if (Scanner::type($tokens) === TokenType::COLON) {
             Scanner::skipOne($tokens);
-            $tail = self::fromTokens($tokens);
+            $type = TypeReference::fromTokens($tokens);
         }
+        
 
         return new self(
             name: $name,
-            tail: $tail
+            type: $type
         );
     }
 
     public function jsonSerialize(): mixed
     {
         return [
-            'type' => 'ValueReference',
-            'payload' => [
-                'name' => $this->name,
-                'tail' => $this->tail
-            ]
+            'name' => $this->name,
+            'type' => $this->type
         ];
     }
 }

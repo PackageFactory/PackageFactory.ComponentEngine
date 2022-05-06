@@ -20,17 +20,23 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast\Reference;
+namespace PackageFactory\ComponentEngine\Parser\Tokenizer;
 
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
-
-final class ValueReference implements \JsonSerializable
+/**
+ * @implements \IteratorAggregate<mixed,Token>
+ */
+final class LookAhead implements  \IteratorAggregate
 {
+    /**
+     * @var Token[]
+     */
+    private array $buffer = [];
+
+    /**
+     * @param \Iterator<Token> $tokens
+     */
     private function __construct(
-        public readonly string $name,
-        public readonly null | ValueReference $tail = null
+        public readonly \Iterator $tokens
     ) {
     }
 
@@ -40,33 +46,30 @@ final class ValueReference implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::STRING);
-
-        $name = Scanner::value($tokens);
-
-        Scanner::skipOne($tokens);
-
-        $tail = null;
-        if (Scanner::type($tokens) === TokenType::PERIOD) {
-            Scanner::skipOne($tokens);
-            $tail = self::fromTokens($tokens);
-        }
-
-        return new self(
-            name: $name,
-            tail: $tail
-        );
+        return new self(tokens: $tokens);
     }
 
-    public function jsonSerialize(): mixed
+    /**
+     * @return \Iterator<mixed,Token>
+     */
+    public function getIterator(): \Iterator
     {
-        return [
-            'type' => 'ValueReference',
-            'payload' => [
-                'name' => $this->name,
-                'tail' => $this->tail
-            ]
-        ];
+        foreach ($this->buffer as $token) {
+            yield $token;
+        }
+
+        yield from $this->tokens;
+    }
+
+    public function shift(): void
+    {
+        Scanner::assertValid($this->tokens);
+        $this->buffer[] = $this->tokens->current();
+        Scanner::skipOne($this->tokens);
+    }
+
+    public function type(): TokenType
+    {
+        return Scanner::type($this->tokens);
     }
 }

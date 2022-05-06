@@ -57,7 +57,7 @@
                             "payload": {
                               "root": {
                                 "type": "ValueReference",
-                                "payload": { "name": "src" }
+                                "payload": { "name": "src", "tail": null }
                               }
                             }
                           }
@@ -69,7 +69,7 @@
                             "payload": {
                               "root": {
                                 "type": "ValueReference",
-                                "payload": { "name": "alt" }
+                                "payload": { "name": "alt", "tail": null }
                               }
                             }
                           }
@@ -81,7 +81,7 @@
                             "payload": {
                               "root": {
                                 "type": "ValueReference",
-                                "payload": { "name": "title" }
+                                "payload": { "name": "title", "tail": null }
                               }
                             }
                           }

@@ -20,18 +20,23 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast\Reference;
+namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class ValueReference implements \JsonSerializable
+final class Expressions implements \JsonSerializable
 {
+    /**
+     * @var array<int,Expression>
+     */
+    private readonly array $expressions;
+
     private function __construct(
-        public readonly string $name,
-        public readonly null | ValueReference $tail = null
+        Expression ...$expressions
     ) {
+        $this->expressions = $expressions;
     }
 
     /**
@@ -40,33 +45,32 @@ final class ValueReference implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::STRING);
+        $expressions = [];
+        while (true) {
+            Scanner::skipSpaceAndComments($tokens);
 
-        $name = Scanner::value($tokens);
+            switch (Scanner::type($tokens)) {
+                case TokenType::BRACKET_ROUND_CLOSE:
+                    break 2;
+                default:
+                    $expressions[] = Expression::fromTokens($tokens);
+                    break;
+            }
 
-        Scanner::skipOne($tokens);
+            Scanner::skipSpace($tokens);
+            if (Scanner::type($tokens) === TokenType::BRACKET_ROUND_CLOSE) {
+                break;
+            }
 
-        $tail = null;
-        if (Scanner::type($tokens) === TokenType::PERIOD) {
+            Scanner::assertType($tokens, TokenType::COMMA);
             Scanner::skipOne($tokens);
-            $tail = self::fromTokens($tokens);
         }
-
-        return new self(
-            name: $name,
-            tail: $tail
-        );
+        
+        return new self(...$expressions);
     }
 
     public function jsonSerialize(): mixed
     {
-        return [
-            'type' => 'ValueReference',
-            'payload' => [
-                'name' => $this->name,
-                'tail' => $this->tail
-            ]
-        ];
+        return $this->expressions;
     }
 }

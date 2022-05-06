@@ -20,17 +20,19 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast\Reference;
+namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Reference\ValueReference;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class ValueReference implements \JsonSerializable
+final class BinaryOperation implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $name,
-        public readonly null | ValueReference $tail = null
+        public readonly Expression $left,
+        public readonly BinaryOperator $operator,
+        public readonly Expression $right
     ) {
     }
 
@@ -38,34 +40,31 @@ final class ValueReference implements \JsonSerializable
      * @param \Iterator<mixed,Token> $tokens
      * @return self
      */
-    public static function fromTokens(\Iterator $tokens): self
+    public static function fromTokens(Expression $left, \Iterator $tokens): self
     {
-        Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::STRING);
+        Scanner::skipSpace($tokens);
 
-        $name = Scanner::value($tokens);
+        $operator = BinaryOperator::fromTokenType(Scanner::type($tokens));
 
         Scanner::skipOne($tokens);
 
-        $tail = null;
-        if (Scanner::type($tokens) === TokenType::PERIOD) {
-            Scanner::skipOne($tokens);
-            $tail = self::fromTokens($tokens);
-        }
+        $right = Expression::fromTokens($tokens, $operator->toPrecedence());
 
         return new self(
-            name: $name,
-            tail: $tail
+            left: $left,
+            operator: $operator,
+            right: $right
         );
     }
 
     public function jsonSerialize(): mixed
     {
         return [
-            'type' => 'ValueReference',
+            'type' => 'BinaryOperation',
             'payload' => [
-                'name' => $this->name,
-                'tail' => $this->tail
+                'left' => $this->left,
+                'operator' => $this->operator,
+                'right' => $this->right
             ]
         ];
     }

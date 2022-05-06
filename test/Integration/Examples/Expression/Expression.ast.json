@@ -1,0 +1,259 @@
+{
+  "type": "Program",
+  "payload": {
+    "root": {
+      "type": "Module",
+      "payload": {
+        "imports": {},
+        "exports": {
+          "Expression": {
+            "type": "Component",
+            "payload": {
+              "name": "Expression",
+              "interface": {
+                "nums": {
+                  "name": "nums",
+                  "type": {
+                    "type": "TypeReference",
+                    "payload": {
+                      "name": "number",
+                      "isArray": true
+                    }
+                  }
+                }
+              },
+              "return": {
+                "type": "Expression",
+                "payload": {
+                  "root": {
+                    "type": "FunctionCall",
+                    "payload": {
+                      "function": {
+                        "type": "ValueReference",
+                        "payload": {
+                          "name": "nums",
+                          "tail": {
+                            "type": "ValueReference",
+                            "payload": {
+                              "name": "reduce",
+                              "tail": null
+                            }
+                          }
+                        }
+                      },
+                      "parameters": [
+                        {
+                          "type": "Expression",
+                          "payload": {
+                            "root": {
+                              "type": "ArrowFunction",
+                              "payload": {
+                                "parameters": [
+                                  { "name": "acc", "type": null },
+                                  { "name": "cur", "type": null }
+                                ],
+                                "body": {
+                                  "type": "Expression",
+                                  "payload": {
+                                    "root": {
+                                      "type": "TernaryOperation",
+                                      "payload": {
+                                        "condition": {
+                                          "type": "Expression",
+                                          "payload": {
+                                            "root": {
+                                              "type": "BinaryOperation",
+                                              "payload": {
+                                                "left": {
+                                                  "type": "Expression",
+                                                  "payload": {
+                                                    "root": {
+                                                      "type": "ValueReference",
+                                                      "payload": {
+                                                        "name": "acc",
+                                                        "tail": null
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                "operator": "LESS_THAN_OR_EQUAL",
+                                                "right": {
+                                                  "type": "Expression",
+                                                  "payload": {
+                                                    "root": {
+                                                      "type": "NumberLiteral",
+                                                      "payload": {
+                                                        "value": "120",
+                                                        "format": "DECIMAL"
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "true": {
+                                          "type": "Expression",
+                                          "payload": {
+                                            "root": {
+                                              "type": "BinaryOperation",
+                                              "payload": {
+                                                "left": {
+                                                  "type": "Expression",
+                                                  "payload": {
+                                                    "root": {
+                                                      "type": "BinaryOperation",
+                                                      "payload": {
+                                                        "left": {
+                                                          "type": "Expression",
+                                                          "payload": {
+                                                            "root": {
+                                                              "type": "ValueReference",
+                                                              "payload": {
+                                                                "name": "cur",
+                                                                "tail": null
+                                                              }
+                                                            }
+                                                          }
+                                                        },
+                                                        "operator": "MULTIPLY_BY",
+                                                        "right": {
+                                                          "type": "Expression",
+                                                          "payload": {
+                                                            "root": {
+                                                              "type": "ValueReference",
+                                                              "payload": {
+                                                                "name": "acc",
+                                                                "tail": null
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                "operator": "PLUS",
+                                                "right": {
+                                                  "type": "Expression",
+                                                  "payload": {
+                                                    "root": {
+                                                      "type": "BinaryOperation",
+                                                      "payload": {
+                                                        "left": {
+                                                          "type": "Expression",
+                                                          "payload": {
+                                                            "root": {
+                                                              "type": "NumberLiteral",
+                                                              "payload": {
+                                                                "value": "17",
+                                                                "format": "DECIMAL"
+                                                              }
+                                                            }
+                                                          }
+                                                        },
+                                                        "operator": "MODULO",
+                                                        "right": {
+                                                          "type": "Expression",
+                                                          "payload": {
+                                                            "root": {
+                                                              "type": "ValueReference",
+                                                              "payload": {
+                                                                "name": "cur",
+                                                                "tail": null
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "false": {
+                                          "type": "Expression",
+                                          "payload": {
+                                            "root": {
+                                              "type": "FunctionCall",
+                                              "payload": {
+                                                "function": {
+                                                  "type": "ValueReference",
+                                                  "payload": {
+                                                    "name": "round",
+                                                    "tail": null
+                                                  }
+                                                },
+                                                "parameters": [
+                                                  {
+                                                    "type": "Expression",
+                                                    "payload": {
+                                                      "root": {
+                                                        "type": "BinaryOperation",
+                                                        "payload": {
+                                                          "left": {
+                                                            "type": "Expression",
+                                                            "payload": {
+                                                              "root": {
+                                                                "type": "ValueReference",
+                                                                "payload": {
+                                                                  "name": "cur",
+                                                                  "tail": null
+                                                                }
+                                                              }
+                                                            }
+                                                          },
+                                                          "operator": "DIVIDE_BY",
+                                                          "right": {
+                                                            "type": "Expression",
+                                                            "payload": {
+                                                              "root": {
+                                                                "type": "ValueReference",
+                                                                "payload": {
+                                                                  "name": "acc",
+                                                                  "tail": null
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "type": "Expression",
+                          "payload": {
+                            "root": {
+                              "type": "NumberLiteral",
+                              "payload": { "value": "0", "format": "DECIMAL" }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

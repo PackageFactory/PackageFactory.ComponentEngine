@@ -80,6 +80,7 @@ final class IntegrationTest extends TestCase
             'ComponentWithKeywords' => ["ComponentWithKeywords"],
             'ComponentWithNesting' => ["ComponentWithNesting"],
             'Enum' => ["Enum"],
+            'Expression' => ["Expression"],
         ];
     }
 
@@ -100,7 +101,7 @@ final class IntegrationTest extends TestCase
         );
 
         $program = Program::fromTokens($tokenizer->getIterator());
-        
+
         $this->assertEquals($expected, json_decode(json_encode($program), true));
     }
 }
