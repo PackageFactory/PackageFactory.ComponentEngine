@@ -28,17 +28,54 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class InterfaceDeclaration implements \JsonSerializable
 {
+    private function __construct(
+        public readonly string $name,
+        public readonly PropertyDeclarations $properties
+    ) {
+    }
+
     /**
      * @param \Iterator<mixed,Token> $tokens
      * @return self
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        throw new \Exception("@TODO: Not implemented yet!");
+        Scanner::skipSpaceAndComments($tokens);
+        Scanner::assertType($tokens, TokenType::KEYWORD_INTERFACE);
+
+        Scanner::skipOne($tokens);
+        Scanner::skipSpaceAndComments($tokens);
+        Scanner::assertType($tokens, TokenType::STRING);
+
+        $name = Scanner::value($tokens);
+
+        Scanner::skipOne($tokens);
+        Scanner::skipSpaceAndComments($tokens);
+        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_OPEN);
+
+        Scanner::skipOne($tokens);
+        Scanner::skipSpaceAndComments($tokens);
+
+        $properties = PropertyDeclarations::fromTokens($tokens);
+
+        Scanner::skipSpaceAndComments($tokens);
+        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
+        Scanner::skipOne($tokens);
+
+        return new self(
+            name: $name,
+            properties: $properties
+        );
     }
 
     public function jsonSerialize(): mixed
     {
-        throw new \Exception("@TODO: Not implemented yet!");
+        return [
+            'type' => 'Interface',
+            'payload' => [
+                'name' => $this->name,
+                'properties' => $this->properties
+            ]
+        ];
     }
 }

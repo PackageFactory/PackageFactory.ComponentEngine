@@ -1,0 +1,35 @@
+{
+  "type": "Program",
+  "payload": {
+    "root": {
+      "type": "Module",
+      "payload": {
+        "imports": {},
+        "exports": {
+          "Link": {
+            "type": "Interface",
+            "payload": {
+              "name": "Link",
+              "properties": {
+                "href": {
+                  "name": "href",
+                  "type": {
+                    "type": "TypeReference",
+                    "payload": { "name": "string", "isArray": false }
+                  }
+                },
+                "target": {
+                  "name": "target",
+                  "type": {
+                    "type": "TypeReference",
+                    "payload": { "name": "string", "isArray": false }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

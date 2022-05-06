@@ -81,6 +81,7 @@ final class IntegrationTest extends TestCase
             'ComponentWithNesting' => ["ComponentWithNesting"],
             'Enum' => ["Enum"],
             'Expression' => ["Expression"],
+            'Interface' => ["Interface"],
         ];
     }
 
