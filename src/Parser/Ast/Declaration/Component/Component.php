@@ -24,7 +24,6 @@ namespace PackageFactory\ComponentEngine\Parser\Ast\Declaration\Component;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Declaration\InterfaceDeclaration\PropertyDeclarations;
 use PackageFactory\ComponentEngine\Parser\Ast\Expression\Expression;
-use PackageFactory\ComponentEngine\Parser\Ast\Hyperscript\Hyperscript;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
@@ -34,7 +33,7 @@ final class Component implements \JsonSerializable
     private function __construct(
         public readonly string $name,
         public readonly PropertyDeclarations $interface,
-        public readonly Hyperscript | Expression $return
+        public readonly Expression $return
     ) {
     }
 
@@ -67,10 +66,7 @@ final class Component implements \JsonSerializable
         Scanner::skipOne($tokens);
         Scanner::skipSpaceAndComments($tokens);
 
-        $return = match (Scanner::type($tokens)) {
-            TokenType::TAG_START_OPENING => Hyperscript::fromTokens($tokens),
-            default => Expression::fromTokens($tokens)
-        };
+        $return = Expression::fromTokens($tokens);
 
         Scanner::skipSpaceAndComments($tokens);
         Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
