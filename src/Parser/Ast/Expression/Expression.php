@@ -134,11 +134,6 @@ final class Expression implements \JsonSerializable
 
     public function jsonSerialize(): mixed
     {
-        return [
-            'type' => 'Expression',
-            'payload' => [
-                'root' => $this->root
-            ]
-        ];
+        return $this->root;
     }
 }

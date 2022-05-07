@@ -12,23 +12,18 @@
               "name": "ComponentWithKeywords",
               "interface": {},
               "return": {
-                "type": "Hyperscript",
+                "type": "Tag",
                 "payload": {
-                  "root": {
-                    "type": "Tag",
-                    "payload": {
-                      "tagName": "div",
-                      "attributes": [],
-                      "children": [
-                        {
-                          "type": "Text",
-                          "payload": {
-                            "value": "Keywords like import or export or component are allowed in here."
-                          }
-                        }
-                      ]
+                  "tagName": "div",
+                  "attributes": [],
+                  "children": [
+                    {
+                      "type": "Text",
+                      "payload": {
+                        "value": "Keywords like import or export or component are allowed in here."
+                      }
                     }
-                  }
+                  ]
                 }
               }
             }

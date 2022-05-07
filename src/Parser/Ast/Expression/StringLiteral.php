@@ -54,9 +54,7 @@ final class StringLiteral implements \JsonSerializable
     {
         return [
             'type' => 'StringLiteral',
-            'payload' => [
-                'value' => $this->value
-            ]
+            'payload' => $this->value
         ];
     }
 }

@@ -53,110 +53,81 @@
                 }
               },
               "return": {
-                "type": "Hyperscript",
+                "type": "Tag",
                 "payload": {
-                  "root": {
-                    "type": "Tag",
-                    "payload": {
-                      "tagName": "div",
-                      "attributes": [
-                        {
-                          "name": "class",
-                          "value": {
-                            "type": "StringLiteral",
-                            "payload": {
-                              "value": "text-with-image"
+                  "tagName": "div",
+                  "attributes": [
+                    {
+                      "name": "class",
+                      "value": {
+                        "type": "StringLiteral",
+                        "payload": "text-with-image"
+                      }
+                    }
+                  ],
+                  "children": [
+                    {
+                      "type": "Tag",
+                      "payload": {
+                        "tagName": "img",
+                        "attributes": [
+                          {
+                            "name": "class",
+                            "value": {
+                              "type": "StringLiteral",
+                              "payload": "image"
+                            }
+                          },
+                          {
+                            "name": "src",
+                            "value": {
+                              "type": "ValueReference",
+                              "payload": { "name": "src", "tail": null }
+                            }
+                          },
+                          {
+                            "name": "alt",
+                            "value": {
+                              "type": "ValueReference",
+                              "payload": { "name": "alt", "tail": null }
+                            }
+                          },
+                          {
+                            "name": "title",
+                            "value": {
+                              "type": "ValueReference",
+                              "payload": {
+                                "name": "title",
+                                "tail": null
+                              }
                             }
                           }
-                        }
-                      ],
-                      "children": [
-                        {
-                          "type": "Tag",
-                          "payload": {
-                            "tagName": "img",
-                            "attributes": [
-                              {
-                                "name": "class",
-                                "value": {
-                                  "type": "StringLiteral",
-                                  "payload": {
-                                    "value": "image"
-                                  }
-                                }
-                              },
-                              {
-                                "name": "src",
-                                "value": {
-                                  "type": "Expression",
-                                  "payload": {
-                                    "root": {
-                                      "type": "ValueReference",
-                                      "payload": { "name": "src", "tail": null }
-                                    }
-                                  }
-                                }
-                              },
-                              {
-                                "name": "alt",
-                                "value": {
-                                  "type": "Expression",
-                                  "payload": {
-                                    "root": {
-                                      "type": "ValueReference",
-                                      "payload": { "name": "alt", "tail": null }
-                                    }
-                                  }
-                                }
-                              },
-                              {
-                                "name": "title",
-                                "value": {
-                                  "type": "Expression",
-                                  "payload": {
-                                    "root": {
-                                      "type": "ValueReference",
-                                      "payload": {
-                                        "name": "title",
-                                        "tail": null
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            ],
-                            "children": []
+                        ],
+                        "children": []
+                      }
+                    },
+                    {
+                      "type": "Tag",
+                      "payload": {
+                        "tagName": "p",
+                        "attributes": [
+                          {
+                            "name": "class",
+                            "value": {
+                              "type": "StringLiteral",
+                              "payload": "text"
+                            }
                           }
-                        },
-                        {
-                          "type": "Tag",
-                          "payload": {
-                            "tagName": "p",
-                            "attributes": [
-                              {
-                                "name": "class",
-                                "value": {
-                                  "type": "StringLiteral",
-                                  "payload": { "value": "text" }
-                                }
-                              }
-                            ],
-                            "children": [
-                              {
-                                "type": "Expression",
-                                "payload": {
-                                  "root": {
-                                    "type": "ValueReference",
-                                    "payload": { "name": "text", "tail": null }
-                                  }
-                                }
-                              }
-                            ]
+                        ],
+                        "children": [
+                          {
+                            "type": "ValueReference",
+                            "payload": { "name": "text", "tail": null }
                           }
-                        }
-                      ]
+                        ]
+                      }
                     }
-                  }
+                  ]
                 }
               }
             }

@@ -44,11 +44,6 @@ final class Hyperscript implements \JsonSerializable
 
     public function jsonSerialize(): mixed
     {
-        return [
-            'type' => 'Hyperscript',
-            'payload' => [
-                'root' => $this->root
-            ]
-        ];
+        return $this->root;
     }
 }

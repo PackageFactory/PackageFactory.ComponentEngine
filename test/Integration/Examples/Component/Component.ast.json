@@ -43,53 +43,33 @@
                 }
               },
               "return": {
-                "type": "Hyperscript",
+                "type": "Tag",
                 "payload": {
-                  "root": {
-                    "type": "Tag",
-                    "payload": {
-                      "tagName": "img",
-                      "attributes": [
-                        {
-                          "name": "src",
-                          "value": {
-                            "type": "Expression",
-                            "payload": {
-                              "root": {
-                                "type": "ValueReference",
-                                "payload": { "name": "src", "tail": null }
-                              }
-                            }
-                          }
-                        },
-                        {
-                          "name": "alt",
-                          "value": {
-                            "type": "Expression",
-                            "payload": {
-                              "root": {
-                                "type": "ValueReference",
-                                "payload": { "name": "alt", "tail": null }
-                              }
-                            }
-                          }
-                        },
-                        {
-                          "name": "title",
-                          "value": {
-                            "type": "Expression",
-                            "payload": {
-                              "root": {
-                                "type": "ValueReference",
-                                "payload": { "name": "title", "tail": null }
-                              }
-                            }
-                          }
-                        }
-                      ],
-                      "children": []
+                  "tagName": "img",
+                  "attributes": [
+                    {
+                      "name": "src",
+                      "value": {
+                        "type": "ValueReference",
+                        "payload": { "name": "src", "tail": null }
+                      }
+                    },
+                    {
+                      "name": "alt",
+                      "value": {
+                        "type": "ValueReference",
+                        "payload": { "name": "alt", "tail": null }
+                      }
+                    },
+                    {
+                      "name": "title",
+                      "value": {
+                        "type": "ValueReference",
+                        "payload": { "name": "title", "tail": null }
+                      }
                     }
-                  }
+                  ],
+                  "children": []
                 }
               }
             }
