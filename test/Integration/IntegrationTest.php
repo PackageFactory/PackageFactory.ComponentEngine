@@ -84,6 +84,7 @@ final class IntegrationTest extends TestCase
             'Interface' => ["Interface"],
             'Match' => ["Match"],
             'Numbers' => ["Numbers"],
+            'TemplateLiteral' => ["TemplateLiteral"],
         ];
     }
 

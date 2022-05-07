@@ -32,7 +32,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class Expression implements \JsonSerializable
 {
     private function __construct(
-        public readonly ValueReference | ArrowFunction | NumberLiteral | BinaryOperation | FunctionCall | TernaryOperation | Hyperscript | StringLiteral | MatchBlock $root
+        public readonly ValueReference | ArrowFunction | NumberLiteral | BinaryOperation | FunctionCall | TernaryOperation | Hyperscript | StringLiteral | MatchBlock | TemplateLiteral $root
     ) {
     }
 
@@ -90,6 +90,9 @@ final class Expression implements \JsonSerializable
                 break;
             case TokenType::STRING_QUOTED:
                 $root = StringLiteral::fromTokens($tokens);
+                break;
+            case TokenType::TEMPLATE_LITERAL_START:
+                $root = TemplateLiteral::fromTokens($tokens);
                 break;
             default:
                 $root = ValueReference::fromTokens($tokens);
