@@ -22,16 +22,15 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
-use PackageFactory\ComponentEngine\Parser\Ast\Declaration\Parameter\Parameters;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class ArrowFunction implements \JsonSerializable
+final class MatchBlock implements \JsonSerializable
 {
     private function __construct(
-        public readonly Parameters $parameters,
-        public readonly Expression $body
+        private readonly Expression $subject,
+        private readonly MatchArms $arms
     ) {
     }
 
@@ -42,33 +41,42 @@ final class ArrowFunction implements \JsonSerializable
     public static function fromTokens(\Iterator $tokens): self
     {
         Scanner::skipSpaceAndComments($tokens);
+        Scanner::assertType($tokens, TokenType::KEYWORD_MATCH);
+        Scanner::skipOne($tokens);
+
+        Scanner::skipSpaceAndComments($tokens);
         Scanner::assertType($tokens, TokenType::BRACKET_ROUND_OPEN);
         Scanner::skipOne($tokens);
 
-        $parameters = Parameters::fromTokens($tokens);
+        $subject = Expression::fromTokens($tokens);
 
-        Scanner::skipSpace($tokens);
+        Scanner::skipSpaceAndComments($tokens);
         Scanner::assertType($tokens, TokenType::BRACKET_ROUND_CLOSE);
         Scanner::skipOne($tokens);
-        Scanner::skipSpace($tokens);
-        Scanner::assertType($tokens, TokenType::ARROW_DOUBLE);
+
+        Scanner::skipSpaceAndComments($tokens);
+        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_OPEN);
         Scanner::skipOne($tokens);
 
-        $body = Expression::fromTokens($tokens);
+        $arms = MatchArms::fromTokens($tokens);
+
+        Scanner::skipSpaceAndComments($tokens);
+        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
+        Scanner::skipOne($tokens);
 
         return new self(
-            parameters: $parameters,
-            body: $body
+            subject: $subject,
+            arms: $arms
         );
     }
 
     public function jsonSerialize(): mixed
     {
         return [
-            'type' => 'ArrowFunction',
+            'type' => 'Match',
             'payload' => [
-                'parameters' => $this->parameters,
-                'body' => $this->body
+                'subject' => $this->subject,
+                'arms' => $this->arms
             ]
         ];
     }

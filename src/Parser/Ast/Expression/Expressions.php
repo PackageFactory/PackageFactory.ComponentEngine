@@ -61,6 +61,9 @@ final class Expressions implements \JsonSerializable
             if (Scanner::type($tokens) === TokenType::BRACKET_ROUND_CLOSE) {
                 break;
             }
+            if (Scanner::type($tokens) === TokenType::ARROW_SINGLE) {
+                break;
+            }
 
             Scanner::assertType($tokens, TokenType::COMMA);
             Scanner::skipOne($tokens);

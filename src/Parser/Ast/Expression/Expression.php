@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Hyperscript\Hyperscript;
 use PackageFactory\ComponentEngine\Parser\Ast\Reference\ValueReference;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\LookAhead;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
@@ -31,7 +32,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class Expression implements \JsonSerializable
 {
     private function __construct(
-        public readonly ValueReference | ArrowFunction | NumberLiteral | BinaryOperation | FunctionCall | TernaryOperation $root
+        public readonly ValueReference | ArrowFunction | NumberLiteral | BinaryOperation | FunctionCall | TernaryOperation | Hyperscript | StringLiteral | MatchBlock $root
     ) {
     }
 
@@ -51,7 +52,7 @@ final class Expression implements \JsonSerializable
 
                 while (true) {
                     switch ($lookAhead->type()) {
-                        case TokenType::ARROW:
+                        case TokenType::ARROW_DOUBLE:
                             $tokens = $lookAhead->getIterator();
                             $root = ArrowFunction::fromTokens($tokens);
                             break 2;
@@ -77,6 +78,15 @@ final class Expression implements \JsonSerializable
                 break;
             case TokenType::NUMBER_DECIMAL:
                 $root = NumberLiteral::fromTokens($tokens);
+                break;
+            case TokenType::KEYWORD_MATCH:
+                $root = MatchBlock::fromTokens($tokens);
+                break;
+            case TokenType::TAG_START_OPENING:
+                $root = Hyperscript::fromTokens($tokens);
+                break;
+            case TokenType::STRING_QUOTED:
+                $root = StringLiteral::fromTokens($tokens);
                 break;
             default:
                 $root = ValueReference::fromTokens($tokens);
@@ -111,6 +121,7 @@ final class Expression implements \JsonSerializable
                 case TokenType::QUESTIONMARK:
                     $root = TernaryOperation::fromTokens(new self(root: $root), $tokens);
                     break;
+                case TokenType::ARROW_SINGLE:
                 default:
                     break 2;
             }

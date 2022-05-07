@@ -1,0 +1,361 @@
+{
+  "type": "Program",
+  "payload": {
+    "root": {
+      "type": "Module",
+      "payload": {
+        "imports": {},
+        "exports": {
+          "Button": {
+            "type": "Component",
+            "payload": {
+              "name": "Button",
+              "interface": {
+                "type": {
+                  "name": "type",
+                  "type": {
+                    "type": "TypeReference",
+                    "payload": {
+                      "name": "ButtonType",
+                      "isArray": false
+                    }
+                  }
+                },
+                "content": {
+                  "name": "content",
+                  "type": {
+                    "type": "TypeReference",
+                    "payload": {
+                      "name": "Slot",
+                      "isArray": false
+                    }
+                  }
+                }
+              },
+              "return": {
+                "type": "Expression",
+                "payload": {
+                  "root": {
+                    "type": "Match",
+                    "payload": {
+                      "subject": {
+                        "type": "Expression",
+                        "payload": {
+                          "root": {
+                            "type": "ValueReference",
+                            "payload": { "name": "type", "tail": null }
+                          }
+                        }
+                      },
+                      "arms": [
+                        {
+                          "type": "MatchArm",
+                          "payload": {
+                            "left": [
+                              {
+                                "type": "Expression",
+                                "payload": {
+                                  "root": {
+                                    "type": "ValueReference",
+                                    "payload": {
+                                      "name": "ButtonType",
+                                      "tail": {
+                                        "type": "ValueReference",
+                                        "payload": {
+                                          "name": "LINK",
+                                          "tail": null
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ],
+                            "right": {
+                              "type": "Expression",
+                              "payload": {
+                                "root": {
+                                  "type": "Hyperscript",
+                                  "payload": {
+                                    "root": {
+                                      "type": "Tag",
+                                      "payload": {
+                                        "tagName": "a",
+                                        "attributes": [
+                                          {
+                                            "name": "class",
+                                            "value": {
+                                              "type": "StringLiteral",
+                                              "payload": { "value": "btn" }
+                                            }
+                                          },
+                                          {
+                                            "name": "href",
+                                            "value": {
+                                              "type": "StringLiteral",
+                                              "payload": { "value": "#" }
+                                            }
+                                          }
+                                        ],
+                                        "children": [
+                                          {
+                                            "type": "Expression",
+                                            "payload": {
+                                              "root": {
+                                                "type": "ValueReference",
+                                                "payload": {
+                                                  "name": "content",
+                                                  "tail": null
+                                                }
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "type": "MatchArm",
+                          "payload": {
+                            "left": [
+                              {
+                                "type": "Expression",
+                                "payload": {
+                                  "root": {
+                                    "type": "ValueReference",
+                                    "payload": {
+                                      "name": "ButtonType",
+                                      "tail": {
+                                        "type": "ValueReference",
+                                        "payload": {
+                                          "name": "BUTTON",
+                                          "tail": null
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "type": "Expression",
+                                "payload": {
+                                  "root": {
+                                    "type": "ValueReference",
+                                    "payload": {
+                                      "name": "ButtonType",
+                                      "tail": {
+                                        "type": "ValueReference",
+                                        "payload": {
+                                          "name": "SUBMIT",
+                                          "tail": null
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ],
+                            "right": {
+                              "type": "Expression",
+                              "payload": {
+                                "root": {
+                                  "type": "Hyperscript",
+                                  "payload": {
+                                    "root": {
+                                      "type": "Tag",
+                                      "payload": {
+                                        "tagName": "button",
+                                        "attributes": [
+                                          {
+                                            "name": "class",
+                                            "value": {
+                                              "type": "StringLiteral",
+                                              "payload": { "value": "btn" }
+                                            }
+                                          },
+                                          {
+                                            "name": "type",
+                                            "value": {
+                                              "type": "Expression",
+                                              "payload": {
+                                                "root": {
+                                                  "type": "Match",
+                                                  "payload": {
+                                                    "subject": {
+                                                      "type": "Expression",
+                                                      "payload": {
+                                                        "root": {
+                                                          "type": "ValueReference",
+                                                          "payload": {
+                                                            "name": "type",
+                                                            "tail": null
+                                                          }
+                                                        }
+                                                      }
+                                                    },
+                                                    "arms": [
+                                                      {
+                                                        "type": "MatchArm",
+                                                        "payload": {
+                                                          "left": [
+                                                            {
+                                                              "type": "Expression",
+                                                              "payload": {
+                                                                "root": {
+                                                                  "type": "ValueReference",
+                                                                  "payload": {
+                                                                    "name": "ButtonType",
+                                                                    "tail": {
+                                                                      "type": "ValueReference",
+                                                                      "payload": {
+                                                                        "name": "SUBMIT",
+                                                                        "tail": null
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          ],
+                                                          "right": {
+                                                            "type": "Expression",
+                                                            "payload": {
+                                                              "root": {
+                                                                "type": "StringLiteral",
+                                                                "payload": {
+                                                                  "value": "submit"
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      },
+                                                      {
+                                                        "type": "MatchArm",
+                                                        "payload": {
+                                                          "left": null,
+                                                          "right": {
+                                                            "type": "Expression",
+                                                            "payload": {
+                                                              "root": {
+                                                                "type": "StringLiteral",
+                                                                "payload": {
+                                                                  "value": "button"
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        ],
+                                        "children": [
+                                          {
+                                            "type": "Expression",
+                                            "payload": {
+                                              "root": {
+                                                "type": "ValueReference",
+                                                "payload": {
+                                                  "name": "content",
+                                                  "tail": null
+                                                }
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "type": "MatchArm",
+                          "payload": {
+                            "left": [
+                              {
+                                "type": "Expression",
+                                "payload": {
+                                  "root": {
+                                    "type": "ValueReference",
+                                    "payload": {
+                                      "name": "ButtonType",
+                                      "tail": {
+                                        "type": "ValueReference",
+                                        "payload": {
+                                          "name": "NONE",
+                                          "tail": null
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ],
+                            "right": {
+                              "type": "Expression",
+                              "payload": {
+                                "root": {
+                                  "type": "Hyperscript",
+                                  "payload": {
+                                    "root": {
+                                      "type": "Tag",
+                                      "payload": {
+                                        "tagName": "div",
+                                        "attributes": [
+                                          {
+                                            "name": "class",
+                                            "value": {
+                                              "type": "StringLiteral",
+                                              "payload": {
+                                                "value": "btn"
+                                              }
+                                            }
+                                          }
+                                        ],
+                                        "children": [
+                                          {
+                                            "type": "Expression",
+                                            "payload": {
+                                              "root": {
+                                                "type": "ValueReference",
+                                                "payload": {
+                                                  "name": "content",
+                                                  "tail": null
+                                                }
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

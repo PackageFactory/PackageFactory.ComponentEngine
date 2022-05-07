@@ -133,6 +133,14 @@
   },
   {
     "type": "STRING",
+    "value": "ButtonType"
+  },
+  {
+    "type": "PERIOD",
+    "value": "."
+  },
+  {
+    "type": "STRING",
     "value": "LINK"
   },
   {
@@ -140,8 +148,8 @@
     "value": " "
   },
   {
-    "type": "ARROW",
-    "value": "=>"
+    "type": "ARROW_SINGLE",
+    "value": "->"
   },
   {
     "type": "SPACE",
@@ -249,6 +257,14 @@
   },
   {
     "type": "STRING",
+    "value": "ButtonType"
+  },
+  {
+    "type": "PERIOD",
+    "value": "."
+  },
+  {
+    "type": "STRING",
     "value": "BUTTON"
   },
   {
@@ -265,6 +281,14 @@
   },
   {
     "type": "STRING",
+    "value": "ButtonType"
+  },
+  {
+    "type": "PERIOD",
+    "value": "."
+  },
+  {
+    "type": "STRING",
     "value": "SUBMIT"
   },
   {
@@ -272,8 +296,8 @@
     "value": " "
   },
   {
-    "type": "ARROW",
-    "value": "=>"
+    "type": "ARROW_SINGLE",
+    "value": "->"
   },
   {
     "type": "SPACE",
@@ -377,6 +401,14 @@
   },
   {
     "type": "STRING",
+    "value": "ButtonType"
+  },
+  {
+    "type": "PERIOD",
+    "value": "."
+  },
+  {
+    "type": "STRING",
     "value": "SUBMIT"
   },
   {
@@ -384,8 +416,8 @@
     "value": " "
   },
   {
-    "type": "ARROW",
-    "value": "=>"
+    "type": "ARROW_SINGLE",
+    "value": "->"
   },
   {
     "type": "SPACE",
@@ -412,8 +444,8 @@
     "value": " "
   },
   {
-    "type": "ARROW",
-    "value": "=>"
+    "type": "ARROW_SINGLE",
+    "value": "->"
   },
   {
     "type": "SPACE",
@@ -513,6 +545,14 @@
   },
   {
     "type": "STRING",
+    "value": "ButtonType"
+  },
+  {
+    "type": "PERIOD",
+    "value": "."
+  },
+  {
+    "type": "STRING",
     "value": "NONE"
   },
   {
@@ -520,8 +560,8 @@
     "value": " "
   },
   {
-    "type": "ARROW",
-    "value": "=>"
+    "type": "ARROW_SINGLE",
+    "value": "->"
   },
   {
     "type": "SPACE",

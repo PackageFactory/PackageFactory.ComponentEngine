@@ -22,17 +22,21 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
-use PackageFactory\ComponentEngine\Parser\Ast\Declaration\Parameter\Parameters;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class ArrowFunction implements \JsonSerializable
+final class MatchArms implements \JsonSerializable
 {
+    /**
+     * @var array<int,MatchArm>
+     */
+    private readonly array $arms;
+
     private function __construct(
-        public readonly Parameters $parameters,
-        public readonly Expression $body
+        MatchArm ...$arms
     ) {
+        $this->arms = $arms;
     }
 
     /**
@@ -41,35 +45,19 @@ final class ArrowFunction implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::BRACKET_ROUND_OPEN);
-        Scanner::skipOne($tokens);
+        /** @var array<int,MatchArm> $arms */
+        $arms = [];
 
-        $parameters = Parameters::fromTokens($tokens);
+        while (Scanner::type($tokens) !== TokenType::BRACKET_CURLY_CLOSE) {
+            Scanner::skipSpaceAndComments($tokens);
+            $arms[] = MatchArm::fromTokens($tokens);
+        }
 
-        Scanner::skipSpace($tokens);
-        Scanner::assertType($tokens, TokenType::BRACKET_ROUND_CLOSE);
-        Scanner::skipOne($tokens);
-        Scanner::skipSpace($tokens);
-        Scanner::assertType($tokens, TokenType::ARROW_DOUBLE);
-        Scanner::skipOne($tokens);
-
-        $body = Expression::fromTokens($tokens);
-
-        return new self(
-            parameters: $parameters,
-            body: $body
-        );
+        return new self(...$arms);
     }
 
     public function jsonSerialize(): mixed
     {
-        return [
-            'type' => 'ArrowFunction',
-            'payload' => [
-                'parameters' => $this->parameters,
-                'body' => $this->body
-            ]
-        ];
+        return $this->arms;
     }
 }

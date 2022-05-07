@@ -3,22 +3,22 @@ export component Button {
   content: Slot
 
   return match (type) {
-    LINK => (
+    ButtonType.LINK -> (
       <a class="btn" href="#">{content}</a>
     )
-    BUTTON,
-    SUBMIT => (
+    ButtonType.BUTTON,
+    ButtonType.SUBMIT -> (
       <button
         class="btn"
         type={match (type) {
-          SUBMIT => "submit"
-          default => "button"
+          ButtonType.SUBMIT -> "submit"
+          default -> "button"
         }}
       >
         {content}
       </button>
     )
-    NONE => (
+    ButtonType.NONE -> (
       <div class="btn">{content}</div>
     )
   }

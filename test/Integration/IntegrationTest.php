@@ -82,6 +82,7 @@ final class IntegrationTest extends TestCase
             'Enum' => ["Enum"],
             'Expression' => ["Expression"],
             'Interface' => ["Interface"],
+            'Match' => ["Match"],
         ];
     }
 
