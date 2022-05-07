@@ -83,6 +83,7 @@ final class IntegrationTest extends TestCase
             'Expression' => ["Expression"],
             'Interface' => ["Interface"],
             'Match' => ["Match"],
+            'Numbers' => ["Numbers"],
         ];
     }
 

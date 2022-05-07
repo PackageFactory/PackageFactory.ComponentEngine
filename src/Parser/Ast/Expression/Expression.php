@@ -76,7 +76,10 @@ final class Expression implements \JsonSerializable
                     }
                 }
                 break;
+            case TokenType::NUMBER_BINARY:
+            case TokenType::NUMBER_OCTAL:
             case TokenType::NUMBER_DECIMAL:
+            case TokenType::NUMBER_HEXADECIMAL:
                 $root = NumberLiteral::fromTokens($tokens);
                 break;
             case TokenType::KEYWORD_MATCH:
