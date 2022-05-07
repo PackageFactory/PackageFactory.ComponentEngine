@@ -22,17 +22,14 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
-use PackageFactory\ComponentEngine\Parser\Ast\Reference\ValueReference;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class BinaryOperation implements \JsonSerializable
 {
     private function __construct(
-        public readonly Expression $left,
         public readonly BinaryOperator $operator,
-        public readonly Expression $right
+        public readonly Operands $operands
     ) {
     }
 
@@ -48,12 +45,11 @@ final class BinaryOperation implements \JsonSerializable
 
         Scanner::skipOne($tokens);
 
-        $right = Expression::fromTokens($tokens, $operator->toPrecedence());
+        $operands = Operands::fromTokens($left, $tokens, $operator);
 
         return new self(
-            left: $left,
             operator: $operator,
-            right: $right
+            operands: $operands
         );
     }
 
@@ -62,9 +58,8 @@ final class BinaryOperation implements \JsonSerializable
         return [
             'type' => 'BinaryOperation',
             'payload' => [
-                'left' => $this->left,
                 'operator' => $this->operator,
-                'right' => $this->right
+                'operands' => $this->operands
             ]
         ];
     }

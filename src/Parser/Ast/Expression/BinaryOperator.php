@@ -58,8 +58,28 @@ enum BinaryOperator: string
             TokenType::COMPARATOR_GREATER_THAN_OR_EQUAL => self::GREATER_THAN_OR_EQUAL,
             TokenType::COMPARATOR_LESS_THAN => self::LESS_THAN,
             TokenType::COMPARATOR_LESS_THAN_OR_EQUAL => self::LESS_THAN_OR_EQUAL,
-            
+
             default => throw new \Exception('@TODO: Unknown Binary Operator')
+        };
+    }
+
+    public function toTokenType(): TokenType
+    {
+        return match ($this) {
+            self::AND => TokenType::OPERATOR_BOOLEAN_AND,
+            self::OR => TokenType::OPERATOR_BOOLEAN_OR,
+
+            self::PLUS => TokenType::OPERATOR_ARITHMETIC_PLUS,
+            self::MINUS => TokenType::OPERATOR_ARITHMETIC_MINUS,
+            self::MULTIPLY_BY => TokenType::OPERATOR_ARITHMETIC_MULTIPLY_BY,
+            self::DIVIDE_BY => TokenType::OPERATOR_ARITHMETIC_DIVIDE_BY,
+            self::MODULO => TokenType::OPERATOR_ARITHMETIC_MODULO,
+
+            self::EQUAL => TokenType::COMPARATOR_EQUAL,
+            self::GREATER_THAN => TokenType::COMPARATOR_GREATER_THAN,
+            self::GREATER_THAN_OR_EQUAL => TokenType::COMPARATOR_GREATER_THAN_OR_EQUAL,
+            self::LESS_THAN => TokenType::COMPARATOR_LESS_THAN,
+            self::LESS_THAN_OR_EQUAL => TokenType::COMPARATOR_LESS_THAN_OR_EQUAL
         };
     }
 

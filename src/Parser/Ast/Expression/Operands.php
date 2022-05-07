@@ -26,30 +26,34 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class Expressions implements \JsonSerializable
+final class Operands implements \JsonSerializable
 {
     /**
      * @var array<int,Expression>
      */
-    private readonly array $expressions;
+    private readonly array $operands;
 
     private function __construct(
-        Expression ...$expressions
+        Expression ...$operands
     ) {
-        $this->expressions = $expressions;
+        $this->operands = $operands;
     }
 
     /**
+     * @param Expression $first
      * @param \Iterator<mixed,Token> $tokens
+     * @param BinaryOperator $operator
      * @return self
      */
-    public static function fromTokens(\Iterator $tokens): self
+    public static function fromTokens(Expression $first, \Iterator $tokens, BinaryOperator $operator): self
     {
-        $expressions = [];
+        $precedence = $operator->toPrecedence();
+        $operands = [$first];
+
         while (true) {
             Scanner::skipSpaceAndComments($tokens);
 
-            $expressions[] = Expression::fromTokens($tokens);
+            $operands[] = Expression::fromTokens($tokens, $precedence);
 
             Scanner::skipSpaceAndComments($tokens);
 
@@ -58,19 +62,26 @@ final class Expressions implements \JsonSerializable
                 case TokenType::BRACKET_CURLY_CLOSE:
                 case TokenType::BRACKET_SQUARE_CLOSE:
                 case TokenType::ARROW_SINGLE:
+                case TokenType::QUESTIONMARK:
                     break 2;
-                default:
-                    Scanner::assertType($tokens, TokenType::COMMA);
+                case $operator->toTokenType():
                     Scanner::skipOne($tokens);
+                    break;
+                default:
+                    if ($precedence->mustStopAt(Scanner::type($tokens))) {
+                        break 2;
+                    } else {
+                        Scanner::assertType($tokens, $operator->toTokenType());
+                    }
                     break;
             }
         }
 
-        return new self(...$expressions);
+        return new self(...$operands);
     }
 
     public function jsonSerialize(): mixed
     {
-        return $this->expressions;
+        return $this->operands;
     }
 }

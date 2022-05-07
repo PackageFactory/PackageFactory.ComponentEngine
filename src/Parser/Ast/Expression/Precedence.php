@@ -83,6 +83,6 @@ enum Precedence: int
 
     public function mustStopAt(TokenType $tokenType): bool
     {
-        return self::forTokenType($tokenType)->value < $this->value;
+        return self::forTokenType($tokenType)->value <= $this->value;
     }
 }
