@@ -47,9 +47,7 @@ final class Program implements \JsonSerializable
     {
         return [
             "type" => "Program",
-            "payload" => [
-                "root" => $this->root
-            ]
+            "payload" => $this->root
         ];
     }
 }

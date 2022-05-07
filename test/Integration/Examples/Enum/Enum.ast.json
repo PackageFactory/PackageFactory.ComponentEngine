@@ -1,37 +1,35 @@
 {
   "type": "Program",
   "payload": {
-    "root": {
-      "type": "Module",
-      "payload": {
-        "imports": {},
-        "exports": {
-          "DayOfWeek": {
-            "type": "Enum",
-            "payload": {
-              "name": "DayOfWeek",
-              "members": {
-                "MONDAY": {
-                  "name": "MONDAY"
-                },
-                "TUESDAY": {
-                  "name": "TUESDAY"
-                },
-                "WEDNESDAY": {
-                  "name": "WEDNESDAY"
-                },
-                "THURSDAY": {
-                  "name": "THURSDAY"
-                },
-                "FRIDAY": {
-                  "name": "FRIDAY"
-                },
-                "SATURDAY": {
-                  "name": "SATURDAY"
-                },
-                "SUNDAY": {
-                  "name": "SUNDAY"
-                }
+    "type": "Module",
+    "payload": {
+      "imports": {},
+      "exports": {
+        "DayOfWeek": {
+          "type": "Enum",
+          "payload": {
+            "name": "DayOfWeek",
+            "members": {
+              "MONDAY": {
+                "name": "MONDAY"
+              },
+              "TUESDAY": {
+                "name": "TUESDAY"
+              },
+              "WEDNESDAY": {
+                "name": "WEDNESDAY"
+              },
+              "THURSDAY": {
+                "name": "THURSDAY"
+              },
+              "FRIDAY": {
+                "name": "FRIDAY"
+              },
+              "SATURDAY": {
+                "name": "SATURDAY"
+              },
+              "SUNDAY": {
+                "name": "SUNDAY"
               }
             }
           }

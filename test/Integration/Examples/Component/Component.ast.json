@@ -1,76 +1,74 @@
 {
   "type": "Program",
   "payload": {
-    "root": {
-      "type": "Module",
-      "payload": {
-        "imports": {},
-        "exports": {
-          "Image": {
-            "type": "Component",
-            "payload": {
-              "name": "Image",
-              "interface": {
-                "src": {
-                  "name": "src",
-                  "type": {
-                    "type": "TypeReference",
-                    "payload": {
-                      "name": "string",
-                      "isArray": false
-                    }
-                  }
-                },
-                "alt": {
-                  "name": "alt",
-                  "type": {
-                    "type": "TypeReference",
-                    "payload": {
-                      "name": "string",
-                      "isArray": false
-                    }
-                  }
-                },
-                "title": {
-                  "name": "title",
-                  "type": {
-                    "type": "TypeReference",
-                    "payload": {
-                      "name": "string",
-                      "isArray": false
-                    }
+    "type": "Module",
+    "payload": {
+      "imports": {},
+      "exports": {
+        "Image": {
+          "type": "Component",
+          "payload": {
+            "name": "Image",
+            "interface": {
+              "src": {
+                "name": "src",
+                "type": {
+                  "type": "TypeReference",
+                  "payload": {
+                    "name": "string",
+                    "isArray": false
                   }
                 }
               },
-              "return": {
-                "type": "Tag",
-                "payload": {
-                  "tagName": "img",
-                  "attributes": [
-                    {
-                      "name": "src",
-                      "value": {
-                        "type": "ValueReference",
-                        "payload": { "name": "src", "tail": null }
-                      }
-                    },
-                    {
-                      "name": "alt",
-                      "value": {
-                        "type": "ValueReference",
-                        "payload": { "name": "alt", "tail": null }
-                      }
-                    },
-                    {
-                      "name": "title",
-                      "value": {
-                        "type": "ValueReference",
-                        "payload": { "name": "title", "tail": null }
-                      }
-                    }
-                  ],
-                  "children": []
+              "alt": {
+                "name": "alt",
+                "type": {
+                  "type": "TypeReference",
+                  "payload": {
+                    "name": "string",
+                    "isArray": false
+                  }
                 }
+              },
+              "title": {
+                "name": "title",
+                "type": {
+                  "type": "TypeReference",
+                  "payload": {
+                    "name": "string",
+                    "isArray": false
+                  }
+                }
+              }
+            },
+            "return": {
+              "type": "Tag",
+              "payload": {
+                "tagName": "img",
+                "attributes": [
+                  {
+                    "name": "src",
+                    "value": {
+                      "type": "ValueReference",
+                      "payload": { "name": "src", "tail": null }
+                    }
+                  },
+                  {
+                    "name": "alt",
+                    "value": {
+                      "type": "ValueReference",
+                      "payload": { "name": "alt", "tail": null }
+                    }
+                  },
+                  {
+                    "name": "title",
+                    "value": {
+                      "type": "ValueReference",
+                      "payload": { "name": "title", "tail": null }
+                    }
+                  }
+                ],
+                "children": []
               }
             }
           }

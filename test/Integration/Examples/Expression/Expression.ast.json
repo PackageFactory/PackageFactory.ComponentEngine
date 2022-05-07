@@ -1,174 +1,172 @@
 {
   "type": "Program",
   "payload": {
-    "root": {
-      "type": "Module",
-      "payload": {
-        "imports": {},
-        "exports": {
-          "Expression": {
-            "type": "Component",
-            "payload": {
-              "name": "Expression",
-              "interface": {
-                "nums": {
-                  "name": "nums",
-                  "type": {
-                    "type": "TypeReference",
-                    "payload": {
-                      "name": "number",
-                      "isArray": true
-                    }
+    "type": "Module",
+    "payload": {
+      "imports": {},
+      "exports": {
+        "Expression": {
+          "type": "Component",
+          "payload": {
+            "name": "Expression",
+            "interface": {
+              "nums": {
+                "name": "nums",
+                "type": {
+                  "type": "TypeReference",
+                  "payload": {
+                    "name": "number",
+                    "isArray": true
                   }
                 }
-              },
-              "return": {
-                "type": "FunctionCall",
-                "payload": {
-                  "function": {
-                    "type": "ValueReference",
-                    "payload": {
-                      "name": "nums",
-                      "tail": {
-                        "type": "ValueReference",
-                        "payload": {
-                          "name": "reduce",
-                          "tail": null
-                        }
+              }
+            },
+            "return": {
+              "type": "FunctionCall",
+              "payload": {
+                "function": {
+                  "type": "ValueReference",
+                  "payload": {
+                    "name": "nums",
+                    "tail": {
+                      "type": "ValueReference",
+                      "payload": {
+                        "name": "reduce",
+                        "tail": null
                       }
                     }
-                  },
-                  "parameters": [
-                    {
-                      "type": "ArrowFunction",
-                      "payload": {
-                        "parameters": [
-                          { "name": "acc", "type": null },
-                          { "name": "cur", "type": null }
-                        ],
-                        "body": {
-                          "type": "TernaryOperation",
-                          "payload": {
-                            "condition": {
-                              "type": "BinaryOperation",
-                              "payload": {
-                                "operator": "LESS_THAN_OR_EQUAL",
-                                "operands": [
-                                  {
-                                    "type": "ValueReference",
-                                    "payload": {
-                                      "name": "acc",
-                                      "tail": null
-                                    }
-                                  },
-                                  {
-                                    "type": "NumberLiteral",
-                                    "payload": {
-                                      "value": "120",
-                                      "format": "DECIMAL"
-                                    }
-                                  }
-                                ]
-                              }
-                            },
-                            "true": {
-                              "type": "BinaryOperation",
-                              "payload": {
-                                "operator": "PLUS",
-                                "operands": [
-                                  {
-                                    "type": "BinaryOperation",
-                                    "payload": {
-                                      "operator": "MULTIPLY_BY",
-                                      "operands": [
-                                        {
-                                          "type": "ValueReference",
-                                          "payload": {
-                                            "name": "cur",
-                                            "tail": null
-                                          }
-                                        },
-                                        {
-                                          "type": "ValueReference",
-                                          "payload": {
-                                            "name": "acc",
-                                            "tail": null
-                                          }
-                                        }
-                                      ]
-                                    }
-                                  },
-                                  {
-                                    "type": "BinaryOperation",
-                                    "payload": {
-                                      "operator": "MODULO",
-                                      "operands": [
-                                        {
-                                          "type": "NumberLiteral",
-                                          "payload": {
-                                            "value": "17",
-                                            "format": "DECIMAL"
-                                          }
-                                        },
-                                        {
-                                          "type": "ValueReference",
-                                          "payload": {
-                                            "name": "cur",
-                                            "tail": null
-                                          }
-                                        }
-                                      ]
-                                    }
-                                  }
-                                ]
-                              }
-                            },
-                            "false": {
-                              "type": "FunctionCall",
-                              "payload": {
-                                "function": {
+                  }
+                },
+                "parameters": [
+                  {
+                    "type": "ArrowFunction",
+                    "payload": {
+                      "parameters": [
+                        { "name": "acc", "type": null },
+                        { "name": "cur", "type": null }
+                      ],
+                      "body": {
+                        "type": "TernaryOperation",
+                        "payload": {
+                          "condition": {
+                            "type": "BinaryOperation",
+                            "payload": {
+                              "operator": "LESS_THAN_OR_EQUAL",
+                              "operands": [
+                                {
                                   "type": "ValueReference",
                                   "payload": {
-                                    "name": "round",
+                                    "name": "acc",
                                     "tail": null
                                   }
                                 },
-                                "parameters": [
-                                  {
-                                    "type": "BinaryOperation",
-                                    "payload": {
-                                      "operator": "DIVIDE_BY",
-                                      "operands": [
-                                        {
-                                          "type": "ValueReference",
-                                          "payload": {
-                                            "name": "cur",
-                                            "tail": null
-                                          }
-                                        },
-                                        {
-                                          "type": "ValueReference",
-                                          "payload": {
-                                            "name": "acc",
-                                            "tail": null
-                                          }
-                                        }
-                                      ]
-                                    }
+                                {
+                                  "type": "NumberLiteral",
+                                  "payload": {
+                                    "value": "120",
+                                    "format": "DECIMAL"
                                   }
-                                ]
-                              }
+                                }
+                              ]
+                            }
+                          },
+                          "true": {
+                            "type": "BinaryOperation",
+                            "payload": {
+                              "operator": "PLUS",
+                              "operands": [
+                                {
+                                  "type": "BinaryOperation",
+                                  "payload": {
+                                    "operator": "MULTIPLY_BY",
+                                    "operands": [
+                                      {
+                                        "type": "ValueReference",
+                                        "payload": {
+                                          "name": "cur",
+                                          "tail": null
+                                        }
+                                      },
+                                      {
+                                        "type": "ValueReference",
+                                        "payload": {
+                                          "name": "acc",
+                                          "tail": null
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "type": "BinaryOperation",
+                                  "payload": {
+                                    "operator": "MODULO",
+                                    "operands": [
+                                      {
+                                        "type": "NumberLiteral",
+                                        "payload": {
+                                          "value": "17",
+                                          "format": "DECIMAL"
+                                        }
+                                      },
+                                      {
+                                        "type": "ValueReference",
+                                        "payload": {
+                                          "name": "cur",
+                                          "tail": null
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "false": {
+                            "type": "FunctionCall",
+                            "payload": {
+                              "function": {
+                                "type": "ValueReference",
+                                "payload": {
+                                  "name": "round",
+                                  "tail": null
+                                }
+                              },
+                              "parameters": [
+                                {
+                                  "type": "BinaryOperation",
+                                  "payload": {
+                                    "operator": "DIVIDE_BY",
+                                    "operands": [
+                                      {
+                                        "type": "ValueReference",
+                                        "payload": {
+                                          "name": "cur",
+                                          "tail": null
+                                        }
+                                      },
+                                      {
+                                        "type": "ValueReference",
+                                        "payload": {
+                                          "name": "acc",
+                                          "tail": null
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
                             }
                           }
                         }
                       }
-                    },
-                    {
-                      "type": "NumberLiteral",
-                      "payload": { "value": "0", "format": "DECIMAL" }
                     }
-                  ]
-                }
+                  },
+                  {
+                    "type": "NumberLiteral",
+                    "payload": { "value": "0", "format": "DECIMAL" }
+                  }
+                ]
               }
             }
           }
