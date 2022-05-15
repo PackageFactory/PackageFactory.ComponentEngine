@@ -111,7 +111,7 @@ final class Expression implements \JsonSerializable
 
             switch (Scanner::type($tokens)) {
                 case TokenType::BRACKET_ROUND_OPEN:
-                    $root = FunctionCall::fromTokens($root, $tokens);
+                    $root = FunctionCall::fromTokens(new self(root: $root), $tokens);
                     break;
                 case TokenType::OPERATOR_ARITHMETIC_PLUS:
                 case TokenType::OPERATOR_ARITHMETIC_MULTIPLY_BY:
@@ -122,6 +122,7 @@ final class Expression implements \JsonSerializable
                 case TokenType::COMPARATOR_GREATER_THAN_OR_EQUAL:
                 case TokenType::COMPARATOR_LESS_THAN:
                 case TokenType::COMPARATOR_LESS_THAN_OR_EQUAL:
+                case TokenType::PERIOD:
                     $root = BinaryOperation::fromTokens(new self(root: $root), $tokens);
                     break;
                 case TokenType::QUESTIONMARK:

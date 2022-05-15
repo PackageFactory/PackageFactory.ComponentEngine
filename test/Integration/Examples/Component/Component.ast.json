@@ -50,21 +50,21 @@
                     "name": "src",
                     "value": {
                       "type": "ValueReference",
-                      "payload": { "name": "src", "tail": null }
+                      "payload": "src"
                     }
                   },
                   {
                     "name": "alt",
                     "value": {
                       "type": "ValueReference",
-                      "payload": { "name": "alt", "tail": null }
+                      "payload": "alt"
                     }
                   },
                   {
                     "name": "title",
                     "value": {
                       "type": "ValueReference",
-                      "payload": { "name": "title", "tail": null }
+                      "payload": "title"
                     }
                   }
                 ],

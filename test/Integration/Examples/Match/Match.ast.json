@@ -36,7 +36,7 @@
               "payload": {
                 "subject": {
                   "type": "ValueReference",
-                  "payload": { "name": "type", "tail": null }
+                  "payload": "type"
                 },
                 "arms": [
                   {
@@ -44,16 +44,19 @@
                     "payload": {
                       "left": [
                         {
-                          "type": "ValueReference",
+                          "type": "BinaryOperation",
                           "payload": {
-                            "name": "ButtonType",
-                            "tail": {
-                              "type": "ValueReference",
-                              "payload": {
-                                "name": "LINK",
-                                "tail": null
+                            "operator": "ACCESS",
+                            "operands": [
+                              {
+                                "type": "ValueReference",
+                                "payload": "ButtonType"
+                              },
+                              {
+                                "type": "ValueReference",
+                                "payload": "LINK"
                               }
-                            }
+                            ]
                           }
                         }
                       ],
@@ -80,10 +83,7 @@
                           "children": [
                             {
                               "type": "ValueReference",
-                              "payload": {
-                                "name": "content",
-                                "tail": null
-                              }
+                              "payload": "content"
                             }
                           ]
                         }
@@ -95,29 +95,35 @@
                     "payload": {
                       "left": [
                         {
-                          "type": "ValueReference",
+                          "type": "BinaryOperation",
                           "payload": {
-                            "name": "ButtonType",
-                            "tail": {
-                              "type": "ValueReference",
-                              "payload": {
-                                "name": "BUTTON",
-                                "tail": null
+                            "operator": "ACCESS",
+                            "operands": [
+                              {
+                                "type": "ValueReference",
+                                "payload": "ButtonType"
+                              },
+                              {
+                                "type": "ValueReference",
+                                "payload": "BUTTON"
                               }
-                            }
+                            ]
                           }
                         },
                         {
-                          "type": "ValueReference",
+                          "type": "BinaryOperation",
                           "payload": {
-                            "name": "ButtonType",
-                            "tail": {
-                              "type": "ValueReference",
-                              "payload": {
-                                "name": "SUBMIT",
-                                "tail": null
+                            "operator": "ACCESS",
+                            "operands": [
+                              {
+                                "type": "ValueReference",
+                                "payload": "ButtonType"
+                              },
+                              {
+                                "type": "ValueReference",
+                                "payload": "SUBMIT"
                               }
-                            }
+                            ]
                           }
                         }
                       ],
@@ -140,10 +146,7 @@
                                 "payload": {
                                   "subject": {
                                     "type": "ValueReference",
-                                    "payload": {
-                                      "name": "type",
-                                      "tail": null
-                                    }
+                                    "payload": "type"
                                   },
                                   "arms": [
                                     {
@@ -151,16 +154,19 @@
                                       "payload": {
                                         "left": [
                                           {
-                                            "type": "ValueReference",
+                                            "type": "BinaryOperation",
                                             "payload": {
-                                              "name": "ButtonType",
-                                              "tail": {
-                                                "type": "ValueReference",
-                                                "payload": {
-                                                  "name": "SUBMIT",
-                                                  "tail": null
+                                              "operator": "ACCESS",
+                                              "operands": [
+                                                {
+                                                  "type": "ValueReference",
+                                                  "payload": "ButtonType"
+                                                },
+                                                {
+                                                  "type": "ValueReference",
+                                                  "payload": "SUBMIT"
                                                 }
-                                              }
+                                              ]
                                             }
                                           }
                                         ],
@@ -188,10 +194,7 @@
                           "children": [
                             {
                               "type": "ValueReference",
-                              "payload": {
-                                "name": "content",
-                                "tail": null
-                              }
+                              "payload": "content"
                             }
                           ]
                         }
@@ -203,16 +206,19 @@
                     "payload": {
                       "left": [
                         {
-                          "type": "ValueReference",
+                          "type": "BinaryOperation",
                           "payload": {
-                            "name": "ButtonType",
-                            "tail": {
-                              "type": "ValueReference",
-                              "payload": {
-                                "name": "NONE",
-                                "tail": null
+                            "operator": "ACCESS",
+                            "operands": [
+                              {
+                                "type": "ValueReference",
+                                "payload": "ButtonType"
+                              },
+                              {
+                                "type": "ValueReference",
+                                "payload": "NONE"
                               }
-                            }
+                            ]
                           }
                         }
                       ],
@@ -232,10 +238,7 @@
                           "children": [
                             {
                               "type": "ValueReference",
-                              "payload": {
-                                "name": "content",
-                                "tail": null
-                              }
+                              "payload": "content"
                             }
                           ]
                         }

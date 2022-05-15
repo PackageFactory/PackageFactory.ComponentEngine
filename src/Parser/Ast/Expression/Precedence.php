@@ -32,7 +32,6 @@ enum Precedence: int
     // Precedence indices as per https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
     //
 
-    case GROUP = 19;
     case ACCESS = 18;
     case UNARY = 15;
     case POINT = 13;
@@ -48,8 +47,7 @@ enum Precedence: int
     {
         return match ($tokenType) {
             TokenType::BRACKET_ROUND_OPEN,
-            TokenType::BRACKET_ROUND_CLOSE => self::GROUP,
-
+            TokenType::BRACKET_ROUND_CLOSE,
             TokenType::BRACKET_SQUARE_OPEN,
             TokenType::BRACKET_SQUARE_CLOSE,
             TokenType::PERIOD => self::ACCESS,

@@ -41,6 +41,8 @@ enum BinaryOperator: string
     case LESS_THAN = 'LESS_THAN';
     case LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL';
 
+    case ACCESS = 'ACCESS';
+
     public static function fromTokenType(TokenType $tokenType): self
     {
         return match ($tokenType) {
@@ -58,6 +60,8 @@ enum BinaryOperator: string
             TokenType::COMPARATOR_GREATER_THAN_OR_EQUAL => self::GREATER_THAN_OR_EQUAL,
             TokenType::COMPARATOR_LESS_THAN => self::LESS_THAN,
             TokenType::COMPARATOR_LESS_THAN_OR_EQUAL => self::LESS_THAN_OR_EQUAL,
+
+            TokenType::PERIOD => self::ACCESS,
 
             default => throw new \Exception('@TODO: Unknown Binary Operator')
         };
@@ -79,7 +83,9 @@ enum BinaryOperator: string
             self::GREATER_THAN => TokenType::COMPARATOR_GREATER_THAN,
             self::GREATER_THAN_OR_EQUAL => TokenType::COMPARATOR_GREATER_THAN_OR_EQUAL,
             self::LESS_THAN => TokenType::COMPARATOR_LESS_THAN,
-            self::LESS_THAN_OR_EQUAL => TokenType::COMPARATOR_LESS_THAN_OR_EQUAL
+            self::LESS_THAN_OR_EQUAL => TokenType::COMPARATOR_LESS_THAN_OR_EQUAL,
+
+            self::ACCESS => TokenType::PERIOD
         };
     }
 
@@ -102,7 +108,9 @@ enum BinaryOperator: string
             self::GREATER_THAN,
             self::GREATER_THAN_OR_EQUAL,
             self::LESS_THAN,
-            self::LESS_THAN_OR_EQUAL => Precedence::COMPARISON
+            self::LESS_THAN_OR_EQUAL => Precedence::COMPARISON,
+
+            self::ACCESS => Precedence::ACCESS
         };
     }
 }

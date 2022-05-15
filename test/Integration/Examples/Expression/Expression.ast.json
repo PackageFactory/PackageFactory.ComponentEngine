@@ -25,16 +25,13 @@
               "type": "FunctionCall",
               "payload": {
                 "function": {
-                  "type": "ValueReference",
+                  "type": "BinaryOperation",
                   "payload": {
-                    "name": "nums",
-                    "tail": {
-                      "type": "ValueReference",
-                      "payload": {
-                        "name": "reduce",
-                        "tail": null
-                      }
-                    }
+                    "operator": "ACCESS",
+                    "operands": [
+                      { "type": "ValueReference", "payload": "nums" },
+                      { "type": "ValueReference", "payload": "reduce" }
+                    ]
                   }
                 },
                 "parameters": [
@@ -55,10 +52,7 @@
                               "operands": [
                                 {
                                   "type": "ValueReference",
-                                  "payload": {
-                                    "name": "acc",
-                                    "tail": null
-                                  }
+                                  "payload": "acc"
                                 },
                                 {
                                   "type": "NumberLiteral",
@@ -82,17 +76,11 @@
                                     "operands": [
                                       {
                                         "type": "ValueReference",
-                                        "payload": {
-                                          "name": "cur",
-                                          "tail": null
-                                        }
+                                        "payload": "cur"
                                       },
                                       {
                                         "type": "ValueReference",
-                                        "payload": {
-                                          "name": "acc",
-                                          "tail": null
-                                        }
+                                        "payload": "acc"
                                       }
                                     ]
                                   }
@@ -111,10 +99,7 @@
                                       },
                                       {
                                         "type": "ValueReference",
-                                        "payload": {
-                                          "name": "cur",
-                                          "tail": null
-                                        }
+                                        "payload": "cur"
                                       }
                                     ]
                                   }
@@ -127,10 +112,7 @@
                             "payload": {
                               "function": {
                                 "type": "ValueReference",
-                                "payload": {
-                                  "name": "round",
-                                  "tail": null
-                                }
+                                "payload": "round"
                               },
                               "parameters": [
                                 {
@@ -140,17 +122,11 @@
                                     "operands": [
                                       {
                                         "type": "ValueReference",
-                                        "payload": {
-                                          "name": "cur",
-                                          "tail": null
-                                        }
+                                        "payload": "cur"
                                       },
                                       {
                                         "type": "ValueReference",
-                                        "payload": {
-                                          "name": "acc",
-                                          "tail": null
-                                        }
+                                        "payload": "acc"
                                       }
                                     ]
                                   }

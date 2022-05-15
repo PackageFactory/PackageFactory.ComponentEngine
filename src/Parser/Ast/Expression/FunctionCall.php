@@ -30,17 +30,17 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class FunctionCall implements \JsonSerializable
 {
     private function __construct(
-        public readonly ValueReference $function,
+        public readonly Expression $function,
         public readonly Expressions $parameters
     ) {
     }
 
     /**
-     * @param ValueReference $function
+     * @param Expression $function
      * @param \Iterator<mixed,Token> $tokens
      * @return self
      */
-    public static function fromTokens(ValueReference $function, \Iterator $tokens): self
+    public static function fromTokens(Expression $function, \Iterator $tokens): self
     {
         Scanner::skipSpaceAndComments($tokens);
         Scanner::assertType($tokens, TokenType::BRACKET_ROUND_OPEN);

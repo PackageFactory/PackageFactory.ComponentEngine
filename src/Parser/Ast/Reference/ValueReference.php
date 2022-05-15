@@ -29,8 +29,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class ValueReference implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $name,
-        public readonly null | ValueReference $tail = null
+        public readonly string $name
     ) {
     }
 
@@ -47,15 +46,8 @@ final class ValueReference implements \JsonSerializable
 
         Scanner::skipOne($tokens);
 
-        $tail = null;
-        if (Scanner::type($tokens) === TokenType::PERIOD) {
-            Scanner::skipOne($tokens);
-            $tail = self::fromTokens($tokens);
-        }
-
         return new self(
-            name: $name,
-            tail: $tail
+            name: $name
         );
     }
 
@@ -63,10 +55,7 @@ final class ValueReference implements \JsonSerializable
     {
         return [
             'type' => 'ValueReference',
-            'payload' => [
-                'name' => $this->name,
-                'tail' => $this->tail
-            ]
+            'payload' => $this->name
         ];
     }
 }
