@@ -46,9 +46,19 @@ final class Expressions implements \JsonSerializable
     public static function fromTokens(\Iterator $tokens): self
     {
         $expressions = [];
-        while (true) {
-            Scanner::skipSpaceAndComments($tokens);
+        Scanner::skipSpaceAndComments($tokens);
 
+        switch (Scanner::type($tokens)) {
+            case TokenType::BRACKET_ROUND_CLOSE:
+            case TokenType::BRACKET_CURLY_CLOSE:
+            case TokenType::BRACKET_SQUARE_CLOSE:
+            case TokenType::ARROW_SINGLE:
+                return new self();
+            default:
+                break;
+        }
+
+        while (true) {
             $expressions[] = Expression::fromTokens($tokens);
 
             Scanner::skipSpaceAndComments($tokens);
@@ -64,6 +74,8 @@ final class Expressions implements \JsonSerializable
                     Scanner::skipOne($tokens);
                     break;
             }
+
+            Scanner::skipSpaceAndComments($tokens);
         }
 
         return new self(...$expressions);

@@ -42,6 +42,7 @@ final class IntegrationTest extends TestCase
             'Match' => ["Match"],
             'Numbers' => ["Numbers"],
             'TemplateLiteral' => ["TemplateLiteral"],
+            'TemplateLiteralWithFunctionCallPatterns' => ["TemplateLiteralWithFunctionCallPatterns"],
         ];
     }
 
@@ -85,6 +86,7 @@ final class IntegrationTest extends TestCase
             'Match' => ["Match"],
             'Numbers' => ["Numbers"],
             'TemplateLiteral' => ["TemplateLiteral"],
+            'TemplateLiteralWithFunctionCallPatterns' => ["TemplateLiteralWithFunctionCallPatterns"],
         ];
     }
 
