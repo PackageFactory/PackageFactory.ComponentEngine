@@ -40,7 +40,7 @@
                   "payload": "A template literal may contain "
                 },
                 {
-                  "type": "ValueReference",
+                  "type": "Identifier",
                   "payload": "expression"
                 },
                 {
@@ -51,7 +51,7 @@
                   "type": "TernaryOperation",
                   "payload": {
                     "condition": {
-                      "type": "ValueReference",
+                      "type": "Identifier",
                       "payload": "isActive"
                     },
                     "true": {
@@ -64,7 +64,7 @@
                             "payload": { "value": "27", "format": "DECIMAL" }
                           },
                           {
-                            "type": "ValueReference",
+                            "type": "Identifier",
                             "payload": "someNumber"
                           }
                         ]
@@ -76,7 +76,7 @@
                         "operator": "MODULO",
                         "operands": [
                           {
-                            "type": "ValueReference",
+                            "type": "Identifier",
                             "payload": "someNumber"
                           },
                           {
@@ -96,7 +96,7 @@
                   "type": "TernaryOperation",
                   "payload": {
                     "condition": {
-                      "type": "ValueReference",
+                      "type": "Identifier",
                       "payload": "isActive"
                     },
                     "true": {
@@ -112,7 +112,7 @@
                                 "operator": "EQUAL",
                                 "operands": [
                                   {
-                                    "type": "ValueReference",
+                                    "type": "Identifier",
                                     "payload": "someNumber"
                                   },
                                   {
@@ -170,7 +170,7 @@
                               "payload": { "value": "Number is" }
                             },
                             {
-                              "type": "ValueReference",
+                              "type": "Identifier",
                               "payload": "someNumber"
                             }
                           ]

@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\Hyperscript\Hyperscript;
-use PackageFactory\ComponentEngine\Parser\Ast\Reference\ValueReference;
+use PackageFactory\ComponentEngine\Parser\Ast\Reference\Identifier;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\LookAhead;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
@@ -32,7 +32,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class Expression implements \JsonSerializable
 {
     private function __construct(
-        public readonly ValueReference | ArrowFunction | NumberLiteral | BinaryOperation | FunctionCall | TernaryOperation | Hyperscript | StringLiteral | MatchBlock | TemplateLiteral $root
+        public readonly Identifier | ArrowFunction | NumberLiteral | BinaryOperation | FunctionCall | TernaryOperation | Hyperscript | StringLiteral | MatchBlock | TemplateLiteral $root
     ) {
     }
 
@@ -95,7 +95,7 @@ final class Expression implements \JsonSerializable
                 $root = TemplateLiteral::fromTokens($tokens);
                 break;
             default:
-                $root = ValueReference::fromTokens($tokens);
+                $root = Identifier::fromTokens($tokens);
                 break;
         }
 

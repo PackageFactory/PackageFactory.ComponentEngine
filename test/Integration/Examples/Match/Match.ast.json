@@ -35,7 +35,7 @@
               "type": "Match",
               "payload": {
                 "subject": {
-                  "type": "ValueReference",
+                  "type": "Identifier",
                   "payload": "type"
                 },
                 "arms": [
@@ -49,11 +49,11 @@
                             "operator": "ACCESS",
                             "operands": [
                               {
-                                "type": "ValueReference",
+                                "type": "Identifier",
                                 "payload": "ButtonType"
                               },
                               {
-                                "type": "ValueReference",
+                                "type": "Identifier",
                                 "payload": "LINK"
                               }
                             ]
@@ -82,7 +82,7 @@
                           ],
                           "children": [
                             {
-                              "type": "ValueReference",
+                              "type": "Identifier",
                               "payload": "content"
                             }
                           ]
@@ -100,11 +100,11 @@
                             "operator": "ACCESS",
                             "operands": [
                               {
-                                "type": "ValueReference",
+                                "type": "Identifier",
                                 "payload": "ButtonType"
                               },
                               {
-                                "type": "ValueReference",
+                                "type": "Identifier",
                                 "payload": "BUTTON"
                               }
                             ]
@@ -116,11 +116,11 @@
                             "operator": "ACCESS",
                             "operands": [
                               {
-                                "type": "ValueReference",
+                                "type": "Identifier",
                                 "payload": "ButtonType"
                               },
                               {
-                                "type": "ValueReference",
+                                "type": "Identifier",
                                 "payload": "SUBMIT"
                               }
                             ]
@@ -145,7 +145,7 @@
                                 "type": "Match",
                                 "payload": {
                                   "subject": {
-                                    "type": "ValueReference",
+                                    "type": "Identifier",
                                     "payload": "type"
                                   },
                                   "arms": [
@@ -159,11 +159,11 @@
                                               "operator": "ACCESS",
                                               "operands": [
                                                 {
-                                                  "type": "ValueReference",
+                                                  "type": "Identifier",
                                                   "payload": "ButtonType"
                                                 },
                                                 {
-                                                  "type": "ValueReference",
+                                                  "type": "Identifier",
                                                   "payload": "SUBMIT"
                                                 }
                                               ]
@@ -193,7 +193,7 @@
                           ],
                           "children": [
                             {
-                              "type": "ValueReference",
+                              "type": "Identifier",
                               "payload": "content"
                             }
                           ]
@@ -211,11 +211,11 @@
                             "operator": "ACCESS",
                             "operands": [
                               {
-                                "type": "ValueReference",
+                                "type": "Identifier",
                                 "payload": "ButtonType"
                               },
                               {
-                                "type": "ValueReference",
+                                "type": "Identifier",
                                 "payload": "NONE"
                               }
                             ]
@@ -237,7 +237,7 @@
                           ],
                           "children": [
                             {
-                              "type": "ValueReference",
+                              "type": "Identifier",
                               "payload": "content"
                             }
                           ]

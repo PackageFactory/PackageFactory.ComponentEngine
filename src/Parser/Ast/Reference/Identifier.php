@@ -26,7 +26,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class ValueReference implements \JsonSerializable
+final class Identifier implements \JsonSerializable
 {
     private function __construct(
         public readonly string $name
@@ -54,7 +54,7 @@ final class ValueReference implements \JsonSerializable
     public function jsonSerialize(): mixed
     {
         return [
-            'type' => 'ValueReference',
+            'type' => 'Identifier',
             'payload' => $this->name
         ];
     }

@@ -49,21 +49,21 @@
                   {
                     "name": "src",
                     "value": {
-                      "type": "ValueReference",
+                      "type": "Identifier",
                       "payload": "src"
                     }
                   },
                   {
                     "name": "alt",
                     "value": {
-                      "type": "ValueReference",
+                      "type": "Identifier",
                       "payload": "alt"
                     }
                   },
                   {
                     "name": "title",
                     "value": {
-                      "type": "ValueReference",
+                      "type": "Identifier",
                       "payload": "title"
                     }
                   }

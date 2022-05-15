@@ -29,8 +29,8 @@
                   "payload": {
                     "operator": "ACCESS",
                     "operands": [
-                      { "type": "ValueReference", "payload": "nums" },
-                      { "type": "ValueReference", "payload": "reduce" }
+                      { "type": "Identifier", "payload": "nums" },
+                      { "type": "Identifier", "payload": "reduce" }
                     ]
                   }
                 },
@@ -51,7 +51,7 @@
                               "operator": "LESS_THAN_OR_EQUAL",
                               "operands": [
                                 {
-                                  "type": "ValueReference",
+                                  "type": "Identifier",
                                   "payload": "acc"
                                 },
                                 {
@@ -75,11 +75,11 @@
                                     "operator": "MULTIPLY_BY",
                                     "operands": [
                                       {
-                                        "type": "ValueReference",
+                                        "type": "Identifier",
                                         "payload": "cur"
                                       },
                                       {
-                                        "type": "ValueReference",
+                                        "type": "Identifier",
                                         "payload": "acc"
                                       }
                                     ]
@@ -98,7 +98,7 @@
                                         }
                                       },
                                       {
-                                        "type": "ValueReference",
+                                        "type": "Identifier",
                                         "payload": "cur"
                                       }
                                     ]
@@ -111,7 +111,7 @@
                             "type": "FunctionCall",
                             "payload": {
                               "function": {
-                                "type": "ValueReference",
+                                "type": "Identifier",
                                 "payload": "round"
                               },
                               "parameters": [
@@ -121,11 +121,11 @@
                                     "operator": "DIVIDE_BY",
                                     "operands": [
                                       {
-                                        "type": "ValueReference",
+                                        "type": "Identifier",
                                         "payload": "cur"
                                       },
                                       {
-                                        "type": "ValueReference",
+                                        "type": "Identifier",
                                         "payload": "acc"
                                       }
                                     ]
