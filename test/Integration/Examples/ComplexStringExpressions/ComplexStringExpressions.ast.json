@@ -1,0 +1,126 @@
+{
+  "type": "Program",
+  "payload": {
+    "type": "Module",
+    "payload": {
+      "imports": {},
+      "exports": {
+        "FunctionCallOnStringLiteral": {
+          "type": "Component",
+          "payload": {
+            "name": "FunctionCallOnStringLiteral",
+            "interface": {},
+            "return": {
+              "type": "FunctionCall",
+              "payload": {
+                "function": {
+                  "type": "BinaryOperation",
+                  "payload": {
+                    "operator": "ACCESS",
+                    "operands": [
+                      { "type": "StringLiteral", "payload": "Hello World!" },
+                      { "type": "Identifier", "payload": "toUpperCase" }
+                    ]
+                  }
+                },
+                "parameters": []
+              }
+            }
+          }
+        },
+        "StringFunctionCallOnTernaryExpressionWithNumberReturn": {
+          "type": "Component",
+          "payload": {
+            "name": "StringFunctionCallOnTernaryExpressionWithNumberReturn",
+            "interface": {},
+            "return": {
+              "type": "FunctionCall",
+              "payload": {
+                "function": {
+                  "type": "BinaryOperation",
+                  "payload": {
+                    "operator": "ACCESS",
+                    "operands": [
+                      {
+                        "type": "TernaryOperation",
+                        "payload": {
+                          "condition": {
+                            "type": "FunctionCall",
+                            "payload": {
+                              "function": {
+                                "type": "BinaryOperation",
+                                "payload": {
+                                  "operator": "ACCESS",
+                                  "operands": [
+                                    {
+                                      "type": "FunctionCall",
+                                      "payload": {
+                                        "function": {
+                                          "type": "BinaryOperation",
+                                          "payload": {
+                                            "operator": "ACCESS",
+                                            "operands": [
+                                              {
+                                                "type": "StringLiteral",
+                                                "payload": "Hello World!"
+                                              },
+                                              {
+                                                "type": "Identifier",
+                                                "payload": "substr"
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        "parameters": [
+                                          {
+                                            "type": "NumberLiteral",
+                                            "payload": {
+                                              "value": "0",
+                                              "format": "DECIMAL"
+                                            }
+                                          },
+                                          {
+                                            "type": "NumberLiteral",
+                                            "payload": {
+                                              "value": "4",
+                                              "format": "DECIMAL"
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      "type": "Identifier",
+                                      "payload": "startsWith"
+                                    }
+                                  ]
+                                }
+                              },
+                              "parameters": [
+                                { "type": "StringLiteral", "payload": "He" }
+                              ]
+                            }
+                          },
+                          "true": {
+                            "type": "StringLiteral",
+                            "payload": "Hi World!"
+                          },
+                          "false": {
+                            "type": "StringLiteral",
+                            "payload": "Howdy World!"
+                          }
+                        }
+                      },
+                      { "type": "Identifier", "payload": "indexOf" }
+                    ]
+                  }
+                },
+                "parameters": [{ "type": "StringLiteral", "payload": "World" }]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

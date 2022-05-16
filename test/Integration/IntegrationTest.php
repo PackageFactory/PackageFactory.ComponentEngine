@@ -33,6 +33,7 @@ final class IntegrationTest extends TestCase
     {
         return [
             'Comment' => ["Comment"],
+            'ComplexStringExpressions' => ["ComplexStringExpressions"],
             'Component' => ["Component"],
             'ComponentWithKeywords' => ["ComponentWithKeywords"],
             'ComponentWithNesting' => ["ComponentWithNesting"],
@@ -77,6 +78,7 @@ final class IntegrationTest extends TestCase
     {
         return [
             'Comment' => ["Comment"],
+            'ComplexStringExpressions' => ["ComplexStringExpressions"],
             'Component' => ["Component"],
             'ComponentWithKeywords' => ["ComponentWithKeywords"],
             'ComponentWithNesting' => ["ComponentWithNesting"],
