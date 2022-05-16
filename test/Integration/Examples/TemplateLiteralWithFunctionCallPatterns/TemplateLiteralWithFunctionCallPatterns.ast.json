@@ -1,145 +1,142 @@
 {
-  "type": "Program",
+  "type": "Module",
   "payload": {
-    "type": "Module",
-    "payload": {
-      "imports": {},
-      "exports": {
-        "TemplateLiteralWithFunctionCallPatterns": {
-          "type": "Component",
-          "payload": {
-            "name": "TemplateLiteralWithFunctionCallPatterns",
-            "interface": {
-              "someString": {
-                "name": "someString",
-                "type": {
-                  "type": "TypeReference",
-                  "payload": {
-                    "name": "string",
-                    "isArray": false
-                  }
-                }
-              },
-              "someArrayOfStrings": {
-                "name": "someArrayOfStrings",
-                "type": {
-                  "type": "TypeReference",
-                  "payload": {
-                    "name": "string",
-                    "isArray": true
-                  }
+    "imports": {},
+    "exports": {
+      "TemplateLiteralWithFunctionCallPatterns": {
+        "type": "Component",
+        "payload": {
+          "name": "TemplateLiteralWithFunctionCallPatterns",
+          "interface": {
+            "someString": {
+              "name": "someString",
+              "type": {
+                "type": "TypeReference",
+                "payload": {
+                  "name": "string",
+                  "isArray": false
                 }
               }
             },
-            "return": {
-              "type": "TemplateLiteral",
-              "payload": [
-                { "type": "StringLiteral", "payload": "\n    " },
-                {
-                  "type": "FunctionCall",
-                  "payload": {
-                    "function": {
-                      "type": "BinaryOperation",
-                      "payload": {
-                        "operator": "ACCESS",
-                        "operands": [
-                          { "type": "Identifier", "payload": "someString" },
-                          { "type": "Identifier", "payload": "toUpperCase" }
-                        ]
-                      }
-                    },
-                    "parameters": []
-                  }
-                },
-                { "type": "StringLiteral", "payload": "\n    " },
-                {
-                  "type": "FunctionCall",
-                  "payload": {
-                    "function": {
-                      "type": "BinaryOperation",
-                      "payload": {
-                        "operator": "ACCESS",
-                        "operands": [
-                          {
-                            "type": "FunctionCall",
-                            "payload": {
-                              "function": {
-                                "type": "BinaryOperation",
-                                "payload": {
-                                  "operator": "ACCESS",
-                                  "operands": [
-                                    {
-                                      "type": "FunctionCall",
-                                      "payload": {
-                                        "function": {
-                                          "type": "BinaryOperation",
+            "someArrayOfStrings": {
+              "name": "someArrayOfStrings",
+              "type": {
+                "type": "TypeReference",
+                "payload": {
+                  "name": "string",
+                  "isArray": true
+                }
+              }
+            }
+          },
+          "return": {
+            "type": "TemplateLiteral",
+            "payload": [
+              { "type": "StringLiteral", "payload": "\n    " },
+              {
+                "type": "FunctionCall",
+                "payload": {
+                  "function": {
+                    "type": "BinaryOperation",
+                    "payload": {
+                      "operator": "ACCESS",
+                      "operands": [
+                        { "type": "Identifier", "payload": "someString" },
+                        { "type": "Identifier", "payload": "toUpperCase" }
+                      ]
+                    }
+                  },
+                  "parameters": []
+                }
+              },
+              { "type": "StringLiteral", "payload": "\n    " },
+              {
+                "type": "FunctionCall",
+                "payload": {
+                  "function": {
+                    "type": "BinaryOperation",
+                    "payload": {
+                      "operator": "ACCESS",
+                      "operands": [
+                        {
+                          "type": "FunctionCall",
+                          "payload": {
+                            "function": {
+                              "type": "BinaryOperation",
+                              "payload": {
+                                "operator": "ACCESS",
+                                "operands": [
+                                  {
+                                    "type": "FunctionCall",
+                                    "payload": {
+                                      "function": {
+                                        "type": "BinaryOperation",
+                                        "payload": {
+                                          "operator": "ACCESS",
+                                          "operands": [
+                                            {
+                                              "type": "Identifier",
+                                              "payload": "someArrayOfStrings"
+                                            },
+                                            {
+                                              "type": "Identifier",
+                                              "payload": "map"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "parameters": [
+                                        {
+                                          "type": "ArrowFunction",
                                           "payload": {
-                                            "operator": "ACCESS",
-                                            "operands": [
-                                              {
-                                                "type": "Identifier",
-                                                "payload": "someArrayOfStrings"
-                                              },
-                                              {
-                                                "type": "Identifier",
-                                                "payload": "map"
-                                              }
-                                            ]
-                                          }
-                                        },
-                                        "parameters": [
-                                          {
-                                            "type": "ArrowFunction",
-                                            "payload": {
-                                              "parameters": [
-                                                { "name": "s", "type": null }
-                                              ],
-                                              "body": {
-                                                "type": "FunctionCall",
-                                                "payload": {
-                                                  "function": {
-                                                    "type": "BinaryOperation",
-                                                    "payload": {
-                                                      "operator": "ACCESS",
-                                                      "operands": [
-                                                        {
-                                                          "type": "Identifier",
-                                                          "payload": "s"
-                                                        },
-                                                        {
-                                                          "type": "Identifier",
-                                                          "payload": "toUpperCase"
-                                                        }
-                                                      ]
-                                                    }
-                                                  },
-                                                  "parameters": []
-                                                }
+                                            "parameters": [
+                                              { "name": "s", "type": null }
+                                            ],
+                                            "body": {
+                                              "type": "FunctionCall",
+                                              "payload": {
+                                                "function": {
+                                                  "type": "BinaryOperation",
+                                                  "payload": {
+                                                    "operator": "ACCESS",
+                                                    "operands": [
+                                                      {
+                                                        "type": "Identifier",
+                                                        "payload": "s"
+                                                      },
+                                                      {
+                                                        "type": "Identifier",
+                                                        "payload": "toUpperCase"
+                                                      }
+                                                    ]
+                                                  }
+                                                },
+                                                "parameters": []
                                               }
                                             }
                                           }
-                                        ]
-                                      }
-                                    },
-                                    { "type": "Identifier", "payload": "join" }
-                                  ]
-                                }
-                              },
-                              "parameters": [
-                                { "type": "StringLiteral", "payload": "," }
-                              ]
-                            }
-                          },
-                          { "type": "Identifier", "payload": "toLowerCase" }
-                        ]
-                      }
-                    },
-                    "parameters": []
-                  }
-                },
-                { "type": "StringLiteral", "payload": "\n  " }
-              ]
-            }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  { "type": "Identifier", "payload": "join" }
+                                ]
+                              }
+                            },
+                            "parameters": [
+                              { "type": "StringLiteral", "payload": "," }
+                            ]
+                          }
+                        },
+                        { "type": "Identifier", "payload": "toLowerCase" }
+                      ]
+                    }
+                  },
+                  "parameters": []
+                }
+              },
+              { "type": "StringLiteral", "payload": "\n  " }
+            ]
           }
         }
       }

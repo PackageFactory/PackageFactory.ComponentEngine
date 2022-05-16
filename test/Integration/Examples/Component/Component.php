@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Vendor\Project\Component;
 
-use Vendor\Hyperscript;
+use Vendor\Project\BaseClass;
+use Vendor\Project\Hyperscript;
 
-final class Component
+final class Image extends BaseClass
 {
     public function __construct(
         private readonly string $src,
@@ -17,14 +18,15 @@ final class Component
 
     public function render(): string
     {
-        return Hyperscript::h(
-            "img",
+        return Hyperscript::tag(
+            'img',
             Hyperscript::attributes(
-                Hyperscript::attribute("src", $this->src),
-                Hyperscript::attribute("alt", $this->alt),
-                Hyperscript::attribute("title", $this->title)
+                Hyperscript::attribute('src', $this->src),
+                Hyperscript::attribute('alt', $this->alt),
+                Hyperscript::attribute('title', $this->title)
             ),
-            Hyperscript::children()
+            Hyperscript::children(
+            )
         );
     }
 }

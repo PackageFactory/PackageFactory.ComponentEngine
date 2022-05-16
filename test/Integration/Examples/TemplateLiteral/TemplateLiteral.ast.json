@@ -1,187 +1,184 @@
 {
-  "type": "Program",
+  "type": "Module",
   "payload": {
-    "type": "Module",
-    "payload": {
-      "imports": {},
-      "exports": {
-        "TemplateLiteral": {
-          "type": "Component",
-          "payload": {
-            "name": "TemplateLiteral",
-            "interface": {
-              "expression": {
-                "name": "expression",
-                "type": {
-                  "type": "TypeReference",
-                  "payload": { "name": "string", "isArray": false }
-                }
-              },
-              "isActive": {
-                "name": "isActive",
-                "type": {
-                  "type": "TypeReference",
-                  "payload": { "name": "boolean", "isArray": false }
-                }
-              },
-              "someNumber": {
-                "name": "someNumber",
-                "type": {
-                  "type": "TypeReference",
-                  "payload": { "name": "number", "isArray": false }
-                }
+    "imports": {},
+    "exports": {
+      "TemplateLiteral": {
+        "type": "Component",
+        "payload": {
+          "name": "TemplateLiteral",
+          "interface": {
+            "expression": {
+              "name": "expression",
+              "type": {
+                "type": "TypeReference",
+                "payload": { "name": "string", "isArray": false }
               }
             },
-            "return": {
-              "type": "TemplateLiteral",
-              "payload": [
-                {
-                  "type": "StringLiteral",
-                  "payload": "A template literal may contain "
-                },
-                {
-                  "type": "Identifier",
-                  "payload": "expression"
-                },
-                {
-                  "type": "StringLiteral",
-                  "payload": "s.\n\n  It can span multiple lines.\n\n  Interpolated Expressions can be arbitrarily complex:\n  "
-                },
-                {
-                  "type": "TernaryOperation",
-                  "payload": {
-                    "condition": {
-                      "type": "Identifier",
-                      "payload": "isActive"
-                    },
-                    "true": {
-                      "type": "BinaryOperation",
-                      "payload": {
-                        "operator": "MULTIPLY_BY",
-                        "operands": [
-                          {
-                            "type": "NumberLiteral",
-                            "payload": { "value": "27", "format": "DECIMAL" }
-                          },
-                          {
-                            "type": "Identifier",
-                            "payload": "someNumber"
-                          }
-                        ]
-                      }
-                    },
-                    "false": {
-                      "type": "BinaryOperation",
-                      "payload": {
-                        "operator": "MODULO",
-                        "operands": [
-                          {
-                            "type": "Identifier",
-                            "payload": "someNumber"
-                          },
-                          {
-                            "type": "NumberLiteral",
-                            "payload": { "value": "17", "format": "DECIMAL" }
-                          }
-                        ]
-                      }
-                    }
-                  }
-                },
-                {
-                  "type": "StringLiteral",
-                  "payload": "\n\n  They can also contain other template literals:\n  "
-                },
-                {
-                  "type": "TernaryOperation",
-                  "payload": {
-                    "condition": {
-                      "type": "Identifier",
-                      "payload": "isActive"
-                    },
-                    "true": {
-                      "type": "TemplateLiteral",
-                      "payload": [
-                        { "type": "StringLiteral", "payload": "Is 27? " },
-                        {
-                          "type": "TernaryOperation",
-                          "payload": {
-                            "condition": {
-                              "type": "BinaryOperation",
-                              "payload": {
-                                "operator": "EQUAL",
-                                "operands": [
-                                  {
-                                    "type": "Identifier",
-                                    "payload": "someNumber"
-                                  },
-                                  {
-                                    "type": "NumberLiteral",
-                                    "payload": {
-                                      "value": "27",
-                                      "format": "DECIMAL"
-                                    }
-                                  }
-                                ]
-                              }
-                            },
-                            "true": {
-                              "type": "StringLiteral",
-                              "payload": "yes"
-                            },
-                            "false": {
-                              "type": "StringLiteral",
-                              "payload": "no"
-                            }
-                          }
-                        }
-                      ]
-                    },
-                    "false": {
-                      "type": "TemplateLiteral",
-                      "payload": [
-                        { "type": "StringLiteral", "payload": "Number is " },
+            "isActive": {
+              "name": "isActive",
+              "type": {
+                "type": "TypeReference",
+                "payload": { "name": "boolean", "isArray": false }
+              }
+            },
+            "someNumber": {
+              "name": "someNumber",
+              "type": {
+                "type": "TypeReference",
+                "payload": { "name": "number", "isArray": false }
+              }
+            }
+          },
+          "return": {
+            "type": "TemplateLiteral",
+            "payload": [
+              {
+                "type": "StringLiteral",
+                "payload": "A template literal may contain "
+              },
+              {
+                "type": "Identifier",
+                "payload": "expression"
+              },
+              {
+                "type": "StringLiteral",
+                "payload": "s.\n\n  It can span multiple lines.\n\n  Interpolated Expressions can be arbitrarily complex:\n  "
+              },
+              {
+                "type": "TernaryOperation",
+                "payload": {
+                  "condition": {
+                    "type": "Identifier",
+                    "payload": "isActive"
+                  },
+                  "true": {
+                    "type": "BinaryOperation",
+                    "payload": {
+                      "operator": "MULTIPLY_BY",
+                      "operands": [
                         {
                           "type": "NumberLiteral",
                           "payload": { "value": "27", "format": "DECIMAL" }
+                        },
+                        {
+                          "type": "Identifier",
+                          "payload": "someNumber"
+                        }
+                      ]
+                    }
+                  },
+                  "false": {
+                    "type": "BinaryOperation",
+                    "payload": {
+                      "operator": "MODULO",
+                      "operands": [
+                        {
+                          "type": "Identifier",
+                          "payload": "someNumber"
+                        },
+                        {
+                          "type": "NumberLiteral",
+                          "payload": { "value": "17", "format": "DECIMAL" }
                         }
                       ]
                     }
                   }
-                },
-                {
-                  "type": "StringLiteral",
-                  "payload": "\n\n  Even markup:\n  "
-                },
-                {
-                  "type": "Tag",
-                  "payload": {
-                    "tagName": "header",
-                    "attributes": [],
-                    "children": [
+                }
+              },
+              {
+                "type": "StringLiteral",
+                "payload": "\n\n  They can also contain other template literals:\n  "
+              },
+              {
+                "type": "TernaryOperation",
+                "payload": {
+                  "condition": {
+                    "type": "Identifier",
+                    "payload": "isActive"
+                  },
+                  "true": {
+                    "type": "TemplateLiteral",
+                    "payload": [
+                      { "type": "StringLiteral", "payload": "Is 27? " },
                       {
-                        "type": "Tag",
+                        "type": "TernaryOperation",
                         "payload": {
-                          "tagName": "h1",
-                          "attributes": [],
-                          "children": [
-                            {
-                              "type": "Text",
-                              "payload": { "value": "Number is" }
-                            },
-                            {
-                              "type": "Identifier",
-                              "payload": "someNumber"
+                          "condition": {
+                            "type": "BinaryOperation",
+                            "payload": {
+                              "operator": "EQUAL",
+                              "operands": [
+                                {
+                                  "type": "Identifier",
+                                  "payload": "someNumber"
+                                },
+                                {
+                                  "type": "NumberLiteral",
+                                  "payload": {
+                                    "value": "27",
+                                    "format": "DECIMAL"
+                                  }
+                                }
+                              ]
                             }
-                          ]
+                          },
+                          "true": {
+                            "type": "StringLiteral",
+                            "payload": "yes"
+                          },
+                          "false": {
+                            "type": "StringLiteral",
+                            "payload": "no"
+                          }
                         }
                       }
                     ]
+                  },
+                  "false": {
+                    "type": "TemplateLiteral",
+                    "payload": [
+                      { "type": "StringLiteral", "payload": "Number is " },
+                      {
+                        "type": "NumberLiteral",
+                        "payload": { "value": "27", "format": "DECIMAL" }
+                      }
+                    ]
                   }
-                },
-                { "type": "StringLiteral", "payload": "\n  " }
-              ]
-            }
+                }
+              },
+              {
+                "type": "StringLiteral",
+                "payload": "\n\n  Even markup:\n  "
+              },
+              {
+                "type": "Tag",
+                "payload": {
+                  "tagName": "header",
+                  "attributes": [],
+                  "children": [
+                    {
+                      "type": "Tag",
+                      "payload": {
+                        "tagName": "h1",
+                        "attributes": [],
+                        "children": [
+                          {
+                            "type": "Text",
+                            "payload": { "value": "Number is" }
+                          },
+                          {
+                            "type": "Identifier",
+                            "payload": "someNumber"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              { "type": "StringLiteral", "payload": "\n  " }
+            ]
           }
         }
       }

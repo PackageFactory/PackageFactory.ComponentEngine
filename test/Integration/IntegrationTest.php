@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Integration;
 
-use PackageFactory\ComponentEngine\Parser\Ast\Program\Program;
+use PackageFactory\ComponentEngine\Parser\Ast\Module\Module;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PHPUnit\Framework\TestCase;
@@ -110,8 +110,8 @@ final class IntegrationTest extends TestCase
             true
         );
 
-        $program = Program::fromTokens($tokenizer->getIterator());
+        $module = Module::fromTokens($tokenizer->getIterator());
 
-        $this->assertEquals($expected, json_decode(json_encode($program), true));
+        $this->assertEquals($expected, json_decode(json_encode($module), true));
     }
 }

@@ -1,75 +1,72 @@
 {
-  "type": "Program",
+  "type": "Module",
   "payload": {
-    "type": "Module",
-    "payload": {
-      "imports": {},
-      "exports": {
-        "Image": {
-          "type": "Component",
-          "payload": {
-            "name": "Image",
-            "interface": {
-              "src": {
-                "name": "src",
-                "type": {
-                  "type": "TypeReference",
-                  "payload": {
-                    "name": "string",
-                    "isArray": false
-                  }
-                }
-              },
-              "alt": {
-                "name": "alt",
-                "type": {
-                  "type": "TypeReference",
-                  "payload": {
-                    "name": "string",
-                    "isArray": false
-                  }
-                }
-              },
-              "title": {
-                "name": "title",
-                "type": {
-                  "type": "TypeReference",
-                  "payload": {
-                    "name": "string",
-                    "isArray": false
-                  }
+    "imports": {},
+    "exports": {
+      "Image": {
+        "type": "Component",
+        "payload": {
+          "name": "Image",
+          "interface": {
+            "src": {
+              "name": "src",
+              "type": {
+                "type": "TypeReference",
+                "payload": {
+                  "name": "string",
+                  "isArray": false
                 }
               }
             },
-            "return": {
-              "type": "Tag",
-              "payload": {
-                "tagName": "img",
-                "attributes": [
-                  {
-                    "name": "src",
-                    "value": {
-                      "type": "Identifier",
-                      "payload": "src"
-                    }
-                  },
-                  {
-                    "name": "alt",
-                    "value": {
-                      "type": "Identifier",
-                      "payload": "alt"
-                    }
-                  },
-                  {
-                    "name": "title",
-                    "value": {
-                      "type": "Identifier",
-                      "payload": "title"
-                    }
-                  }
-                ],
-                "children": []
+            "alt": {
+              "name": "alt",
+              "type": {
+                "type": "TypeReference",
+                "payload": {
+                  "name": "string",
+                  "isArray": false
+                }
               }
+            },
+            "title": {
+              "name": "title",
+              "type": {
+                "type": "TypeReference",
+                "payload": {
+                  "name": "string",
+                  "isArray": false
+                }
+              }
+            }
+          },
+          "return": {
+            "type": "Tag",
+            "payload": {
+              "tagName": "img",
+              "attributes": [
+                {
+                  "name": "src",
+                  "value": {
+                    "type": "Identifier",
+                    "payload": "src"
+                  }
+                },
+                {
+                  "name": "alt",
+                  "value": {
+                    "type": "Identifier",
+                    "payload": "alt"
+                  }
+                },
+                {
+                  "name": "title",
+                  "value": {
+                    "type": "Identifier",
+                    "payload": "title"
+                  }
+                }
+              ],
+              "children": []
             }
           }
         }

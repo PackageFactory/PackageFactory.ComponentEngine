@@ -1,10 +1,7 @@
 {
-  "type": "Program",
+  "type": "Module",
   "payload": {
-    "type": "Module",
-    "payload": {
-      "imports": {},
-      "exports": {}
-    }
+    "imports": {},
+    "exports": {}
   }
 }

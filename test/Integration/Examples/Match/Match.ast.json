@@ -1,252 +1,249 @@
 {
-  "type": "Program",
+  "type": "Module",
   "payload": {
-    "type": "Module",
-    "payload": {
-      "imports": {},
-      "exports": {
-        "Button": {
-          "type": "Component",
-          "payload": {
-            "name": "Button",
-            "interface": {
+    "imports": {},
+    "exports": {
+      "Button": {
+        "type": "Component",
+        "payload": {
+          "name": "Button",
+          "interface": {
+            "type": {
+              "name": "type",
               "type": {
-                "name": "type",
-                "type": {
-                  "type": "TypeReference",
-                  "payload": {
-                    "name": "ButtonType",
-                    "isArray": false
-                  }
-                }
-              },
-              "content": {
-                "name": "content",
-                "type": {
-                  "type": "TypeReference",
-                  "payload": {
-                    "name": "Slot",
-                    "isArray": false
-                  }
+                "type": "TypeReference",
+                "payload": {
+                  "name": "ButtonType",
+                  "isArray": false
                 }
               }
             },
-            "return": {
-              "type": "Match",
-              "payload": {
-                "subject": {
-                  "type": "Identifier",
-                  "payload": "type"
-                },
-                "arms": [
-                  {
-                    "type": "MatchArm",
-                    "payload": {
-                      "left": [
-                        {
-                          "type": "BinaryOperation",
-                          "payload": {
-                            "operator": "ACCESS",
-                            "operands": [
-                              {
-                                "type": "Identifier",
-                                "payload": "ButtonType"
-                              },
-                              {
-                                "type": "Identifier",
-                                "payload": "LINK"
-                              }
-                            ]
-                          }
-                        }
-                      ],
-                      "right": {
-                        "type": "Tag",
+            "content": {
+              "name": "content",
+              "type": {
+                "type": "TypeReference",
+                "payload": {
+                  "name": "Slot",
+                  "isArray": false
+                }
+              }
+            }
+          },
+          "return": {
+            "type": "Match",
+            "payload": {
+              "subject": {
+                "type": "Identifier",
+                "payload": "type"
+              },
+              "arms": [
+                {
+                  "type": "MatchArm",
+                  "payload": {
+                    "left": [
+                      {
+                        "type": "BinaryOperation",
                         "payload": {
-                          "tagName": "a",
-                          "attributes": [
-                            {
-                              "name": "class",
-                              "value": {
-                                "type": "StringLiteral",
-                                "payload": "btn"
-                              }
-                            },
-                            {
-                              "name": "href",
-                              "value": {
-                                "type": "StringLiteral",
-                                "payload": "#"
-                              }
-                            }
-                          ],
-                          "children": [
+                          "operator": "ACCESS",
+                          "operands": [
                             {
                               "type": "Identifier",
-                              "payload": "content"
+                              "payload": "ButtonType"
+                            },
+                            {
+                              "type": "Identifier",
+                              "payload": "LINK"
                             }
                           ]
                         }
                       }
-                    }
-                  },
-                  {
-                    "type": "MatchArm",
-                    "payload": {
-                      "left": [
-                        {
-                          "type": "BinaryOperation",
-                          "payload": {
-                            "operator": "ACCESS",
-                            "operands": [
-                              {
-                                "type": "Identifier",
-                                "payload": "ButtonType"
-                              },
-                              {
-                                "type": "Identifier",
-                                "payload": "BUTTON"
-                              }
-                            ]
+                    ],
+                    "right": {
+                      "type": "Tag",
+                      "payload": {
+                        "tagName": "a",
+                        "attributes": [
+                          {
+                            "name": "class",
+                            "value": {
+                              "type": "StringLiteral",
+                              "payload": "btn"
+                            }
+                          },
+                          {
+                            "name": "href",
+                            "value": {
+                              "type": "StringLiteral",
+                              "payload": "#"
+                            }
                           }
-                        },
-                        {
-                          "type": "BinaryOperation",
-                          "payload": {
-                            "operator": "ACCESS",
-                            "operands": [
-                              {
-                                "type": "Identifier",
-                                "payload": "ButtonType"
-                              },
-                              {
-                                "type": "Identifier",
-                                "payload": "SUBMIT"
-                              }
-                            ]
+                        ],
+                        "children": [
+                          {
+                            "type": "Identifier",
+                            "payload": "content"
                           }
-                        }
-                      ],
-                      "right": {
-                        "type": "Tag",
-                        "payload": {
-                          "tagName": "button",
-                          "attributes": [
-                            {
-                              "name": "class",
-                              "value": {
-                                "type": "StringLiteral",
-                                "payload": "btn"
-                              }
-                            },
-                            {
-                              "name": "type",
-                              "value": {
-                                "type": "Match",
-                                "payload": {
-                                  "subject": {
-                                    "type": "Identifier",
-                                    "payload": "type"
-                                  },
-                                  "arms": [
-                                    {
-                                      "type": "MatchArm",
-                                      "payload": {
-                                        "left": [
-                                          {
-                                            "type": "BinaryOperation",
-                                            "payload": {
-                                              "operator": "ACCESS",
-                                              "operands": [
-                                                {
-                                                  "type": "Identifier",
-                                                  "payload": "ButtonType"
-                                                },
-                                                {
-                                                  "type": "Identifier",
-                                                  "payload": "SUBMIT"
-                                                }
-                                              ]
-                                            }
-                                          }
-                                        ],
-                                        "right": {
-                                          "type": "StringLiteral",
-                                          "payload": "submit"
-                                        }
-                                      }
-                                    },
-                                    {
-                                      "type": "MatchArm",
-                                      "payload": {
-                                        "left": null,
-                                        "right": {
-                                          "type": "StringLiteral",
-                                          "payload": "button"
-                                        }
-                                      }
-                                    }
-                                  ]
-                                }
-                              }
-                            }
-                          ],
-                          "children": [
-                            {
-                              "type": "Identifier",
-                              "payload": "content"
-                            }
-                          ]
-                        }
-                      }
-                    }
-                  },
-                  {
-                    "type": "MatchArm",
-                    "payload": {
-                      "left": [
-                        {
-                          "type": "BinaryOperation",
-                          "payload": {
-                            "operator": "ACCESS",
-                            "operands": [
-                              {
-                                "type": "Identifier",
-                                "payload": "ButtonType"
-                              },
-                              {
-                                "type": "Identifier",
-                                "payload": "NONE"
-                              }
-                            ]
-                          }
-                        }
-                      ],
-                      "right": {
-                        "type": "Tag",
-                        "payload": {
-                          "tagName": "div",
-                          "attributes": [
-                            {
-                              "name": "class",
-                              "value": {
-                                "type": "StringLiteral",
-                                "payload": "btn"
-                              }
-                            }
-                          ],
-                          "children": [
-                            {
-                              "type": "Identifier",
-                              "payload": "content"
-                            }
-                          ]
-                        }
+                        ]
                       }
                     }
                   }
-                ]
-              }
+                },
+                {
+                  "type": "MatchArm",
+                  "payload": {
+                    "left": [
+                      {
+                        "type": "BinaryOperation",
+                        "payload": {
+                          "operator": "ACCESS",
+                          "operands": [
+                            {
+                              "type": "Identifier",
+                              "payload": "ButtonType"
+                            },
+                            {
+                              "type": "Identifier",
+                              "payload": "BUTTON"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "type": "BinaryOperation",
+                        "payload": {
+                          "operator": "ACCESS",
+                          "operands": [
+                            {
+                              "type": "Identifier",
+                              "payload": "ButtonType"
+                            },
+                            {
+                              "type": "Identifier",
+                              "payload": "SUBMIT"
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "right": {
+                      "type": "Tag",
+                      "payload": {
+                        "tagName": "button",
+                        "attributes": [
+                          {
+                            "name": "class",
+                            "value": {
+                              "type": "StringLiteral",
+                              "payload": "btn"
+                            }
+                          },
+                          {
+                            "name": "type",
+                            "value": {
+                              "type": "Match",
+                              "payload": {
+                                "subject": {
+                                  "type": "Identifier",
+                                  "payload": "type"
+                                },
+                                "arms": [
+                                  {
+                                    "type": "MatchArm",
+                                    "payload": {
+                                      "left": [
+                                        {
+                                          "type": "BinaryOperation",
+                                          "payload": {
+                                            "operator": "ACCESS",
+                                            "operands": [
+                                              {
+                                                "type": "Identifier",
+                                                "payload": "ButtonType"
+                                              },
+                                              {
+                                                "type": "Identifier",
+                                                "payload": "SUBMIT"
+                                              }
+                                            ]
+                                          }
+                                        }
+                                      ],
+                                      "right": {
+                                        "type": "StringLiteral",
+                                        "payload": "submit"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "type": "MatchArm",
+                                    "payload": {
+                                      "left": null,
+                                      "right": {
+                                        "type": "StringLiteral",
+                                        "payload": "button"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ],
+                        "children": [
+                          {
+                            "type": "Identifier",
+                            "payload": "content"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "MatchArm",
+                  "payload": {
+                    "left": [
+                      {
+                        "type": "BinaryOperation",
+                        "payload": {
+                          "operator": "ACCESS",
+                          "operands": [
+                            {
+                              "type": "Identifier",
+                              "payload": "ButtonType"
+                            },
+                            {
+                              "type": "Identifier",
+                              "payload": "NONE"
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "right": {
+                      "type": "Tag",
+                      "payload": {
+                        "tagName": "div",
+                        "attributes": [
+                          {
+                            "name": "class",
+                            "value": {
+                              "type": "StringLiteral",
+                              "payload": "btn"
+                            }
+                          }
+                        ],
+                        "children": [
+                          {
+                            "type": "Identifier",
+                            "payload": "content"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              ]
             }
           }
         }

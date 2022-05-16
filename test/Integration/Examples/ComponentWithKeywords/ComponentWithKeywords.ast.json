@@ -1,29 +1,26 @@
 {
-  "type": "Program",
+  "type": "Module",
   "payload": {
-    "type": "Module",
-    "payload": {
-      "imports": {},
-      "exports": {
-        "ComponentWithKeywords": {
-          "type": "Component",
-          "payload": {
-            "name": "ComponentWithKeywords",
-            "interface": {},
-            "return": {
-              "type": "Tag",
-              "payload": {
-                "tagName": "div",
-                "attributes": [],
-                "children": [
-                  {
-                    "type": "Text",
-                    "payload": {
-                      "value": "Keywords like import or export or component are allowed in here."
-                    }
+    "imports": {},
+    "exports": {
+      "ComponentWithKeywords": {
+        "type": "Component",
+        "payload": {
+          "name": "ComponentWithKeywords",
+          "interface": {},
+          "return": {
+            "type": "Tag",
+            "payload": {
+              "tagName": "div",
+              "attributes": [],
+              "children": [
+                {
+                  "type": "Text",
+                  "payload": {
+                    "value": "Keywords like import or export or component are allowed in here."
                   }
-                ]
-              }
+                }
+              ]
             }
           }
         }

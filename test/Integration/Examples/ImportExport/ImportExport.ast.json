@@ -1,145 +1,142 @@
 {
-  "type": "Program",
+  "type": "Module",
   "payload": {
-    "type": "Module",
-    "payload": {
-      "imports": {
-        "Link": {
-          "source": "../Interface/Interface.afx",
-          "name": {
-            "type": "Identifier",
-            "payload": "Link"
-          }
-        },
-        "Button": {
-          "source": "./Button.afx",
-          "name": {
-            "type": "Identifier",
-            "payload": "Button"
-          }
-        },
-        "classHelper": {
-          "source": "ext:vendor/package",
-          "name": {
-            "type": "Identifier",
-            "payload": "classHelper"
-          }
-        },
-        "titleHelper": {
-          "source": "ext:vendor/package",
-          "name": {
-            "type": "Identifier",
-            "payload": "titleHelper"
-          }
+    "imports": {
+      "Link": {
+        "source": "../Interface/Interface.afx",
+        "name": {
+          "type": "Identifier",
+          "payload": "Link"
         }
       },
-      "exports": {
-        "Card": {
-          "type": "Component",
-          "payload": {
-            "name": "Card",
-            "interface": {
-              "title": {
-                "name": "title",
-                "type": {
-                  "type": "TypeReference",
-                  "payload": {
-                    "name": "string",
-                    "isArray": false
-                  }
-                }
-              },
-              "link": {
-                "name": "link",
-                "type": {
-                  "type": "TypeReference",
-                  "payload": {
-                    "name": "Link",
-                    "isArray": false
-                  }
-                }
-              },
-              "button": {
-                "name": "button",
-                "type": {
-                  "type": "TypeReference",
-                  "payload": { "name": "Button", "isArray": false }
+      "Button": {
+        "source": "./Button.afx",
+        "name": {
+          "type": "Identifier",
+          "payload": "Button"
+        }
+      },
+      "classHelper": {
+        "source": "ext:vendor/package",
+        "name": {
+          "type": "Identifier",
+          "payload": "classHelper"
+        }
+      },
+      "titleHelper": {
+        "source": "ext:vendor/package",
+        "name": {
+          "type": "Identifier",
+          "payload": "titleHelper"
+        }
+      }
+    },
+    "exports": {
+      "Card": {
+        "type": "Component",
+        "payload": {
+          "name": "Card",
+          "interface": {
+            "title": {
+              "name": "title",
+              "type": {
+                "type": "TypeReference",
+                "payload": {
+                  "name": "string",
+                  "isArray": false
                 }
               }
             },
-            "return": {
-              "type": "Tag",
-              "payload": {
-                "tagName": "div",
-                "attributes": [
-                  {
-                    "name": "class",
-                    "value": {
-                      "type": "FunctionCall",
-                      "payload": {
-                        "function": {
-                          "type": "Identifier",
-                          "payload": "classHelper"
-                        },
-                        "parameters": [
-                          { "type": "StringLiteral", "payload": "card" }
-                        ]
-                      }
+            "link": {
+              "name": "link",
+              "type": {
+                "type": "TypeReference",
+                "payload": {
+                  "name": "Link",
+                  "isArray": false
+                }
+              }
+            },
+            "button": {
+              "name": "button",
+              "type": {
+                "type": "TypeReference",
+                "payload": { "name": "Button", "isArray": false }
+              }
+            }
+          },
+          "return": {
+            "type": "Tag",
+            "payload": {
+              "tagName": "div",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": {
+                    "type": "FunctionCall",
+                    "payload": {
+                      "function": {
+                        "type": "Identifier",
+                        "payload": "classHelper"
+                      },
+                      "parameters": [
+                        { "type": "StringLiteral", "payload": "card" }
+                      ]
                     }
                   }
-                ],
-                "children": [
-                  {
-                    "type": "Tag",
-                    "payload": {
-                      "tagName": "a",
-                      "attributes": [
-                        {
-                          "name": "href",
-                          "value": {
-                            "type": "BinaryOperation",
-                            "payload": {
-                              "operator": "ACCESS",
-                              "operands": [
-                                { "type": "Identifier", "payload": "link" },
-                                { "type": "Identifier", "payload": "href" }
-                              ]
-                            }
-                          }
-                        },
-                        {
-                          "name": "target",
-                          "value": {
-                            "type": "BinaryOperation",
-                            "payload": {
-                              "operator": "ACCESS",
-                              "operands": [
-                                { "type": "Identifier", "payload": "link" },
-                                { "type": "Identifier", "payload": "target" }
-                              ]
-                            }
-                          }
-                        }
-                      ],
-                      "children": [
-                        {
-                          "type": "FunctionCall",
+                }
+              ],
+              "children": [
+                {
+                  "type": "Tag",
+                  "payload": {
+                    "tagName": "a",
+                    "attributes": [
+                      {
+                        "name": "href",
+                        "value": {
+                          "type": "BinaryOperation",
                           "payload": {
-                            "function": {
-                              "type": "Identifier",
-                              "payload": "titleHelper"
-                            },
-                            "parameters": [
-                              { "type": "Identifier", "payload": "title" }
+                            "operator": "ACCESS",
+                            "operands": [
+                              { "type": "Identifier", "payload": "link" },
+                              { "type": "Identifier", "payload": "href" }
                             ]
                           }
                         }
-                      ]
-                    }
-                  },
-                  { "type": "Identifier", "payload": "button" }
-                ]
-              }
+                      },
+                      {
+                        "name": "target",
+                        "value": {
+                          "type": "BinaryOperation",
+                          "payload": {
+                            "operator": "ACCESS",
+                            "operands": [
+                              { "type": "Identifier", "payload": "link" },
+                              { "type": "Identifier", "payload": "target" }
+                            ]
+                          }
+                        }
+                      }
+                    ],
+                    "children": [
+                      {
+                        "type": "FunctionCall",
+                        "payload": {
+                          "function": {
+                            "type": "Identifier",
+                            "payload": "titleHelper"
+                          },
+                          "parameters": [
+                            { "type": "Identifier", "payload": "title" }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                { "type": "Identifier", "payload": "button" }
+              ]
             }
           }
         }
