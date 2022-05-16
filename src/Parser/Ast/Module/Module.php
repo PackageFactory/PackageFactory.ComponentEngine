@@ -51,9 +51,9 @@ final class Module implements \JsonSerializable
             Scanner::skipSpaceAndComments($tokens);
             if ($tokens->valid()) {
                 $builder = match ($tokens->current()->type) {
-                    TokenType::KEYWORD_IMPORT => $importsBuilder,
+                    TokenType::KEYWORD_FROM => $importsBuilder,
                     TokenType::KEYWORD_EXPORT => $exportsBuilder,
-                    default => throw new \Exception('@TODO: Unexpected Token ' . $tokens->current()->type->value)
+                    default => Scanner::assertType($tokens, TokenType::KEYWORD_FROM, TokenType::KEYWORD_EXPORT)
                 };
 
                 $builder->addFromTokens($tokens);

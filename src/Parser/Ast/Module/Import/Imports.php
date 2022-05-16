@@ -27,15 +27,17 @@ final class Imports implements \JsonSerializable
     /**
      * @var array<string,Import>
      */
-    private readonly array $imports;
+    public readonly array $imports;
 
     private function __construct(
         Import ...$imports
     ) {
-        $this->imports = [];
+        $importsAsHashMap = [];
         foreach ($imports as $import) {
-            $this->imports[$import->name] = $import;
+            $importsAsHashMap[$import->name->name] = $import;
         }
+
+        $this->imports = $importsAsHashMap;
     }
 
     public static function from(Import ...$imports): self

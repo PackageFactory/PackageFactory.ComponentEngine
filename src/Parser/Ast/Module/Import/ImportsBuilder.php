@@ -31,7 +31,9 @@ final class ImportsBuilder
 
     public function addFromTokens(\Iterator $tokens): void
     {
-        throw new \Exception("@TODO: Not implemented yet");
+        foreach (Import::fromTokens($tokens) as $import) {
+            $this->imports[] = $import;
+        }
     }
 
     public function build(): Imports

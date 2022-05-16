@@ -1,0 +1,17 @@
+from "../Interface/Interface.afx" import { Link }
+from "./Button.afx" import { Button }
+from "ext:vendor/package" import { classHelper, titleHelper }
+
+export component Card {
+  title: string
+  link: Link
+  button: Button
+
+  return <div class={classHelper("card")}>
+    <a href={link.href} target={link.target}>
+      {titleHelper(title)}
+    </a>
+
+    {button}
+  </div>
+}

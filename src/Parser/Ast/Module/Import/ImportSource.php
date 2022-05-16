@@ -20,28 +20,36 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast\Module\Export;
+namespace PackageFactory\ComponentEngine\Parser\Ast\Module\Import;
 
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class ExportsBuilder
+final class ImportSource implements \JsonSerializable
 {
-    /**
-     * @var Export[]
-     */
-    private array $exports = [];
+    private function __construct(
+        public readonly string $value
+    ) {
+    }
 
     /**
      * @param \Iterator<mixed,Token> $tokens
-     * @return void
+     * @return self
      */
-    public function addFromTokens(\Iterator $tokens): void
+    public static function fromTokens(\Iterator $tokens): self
     {
-        $this->exports[] = Export::fromTokens($tokens);
+        Scanner::skipSpaceAndComments($tokens);
+        Scanner::assertType($tokens, TokenType::STRING_QUOTED);
+
+        $result = new self(Scanner::value($tokens));
+
+        Scanner::skipOne($tokens);
+
+        return $result;
     }
 
-    public function build(): Exports
+    public function jsonSerialize(): mixed
     {
-        return Exports::from(...$this->exports);
+        return $this->value;
     }
 }

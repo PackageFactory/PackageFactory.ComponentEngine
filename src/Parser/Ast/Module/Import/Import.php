@@ -22,15 +22,63 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast\Module\Import;
 
+use PackageFactory\ComponentEngine\Parser\Ast\Reference\Identifier;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+
 final class Import implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $name
+        public readonly ImportSource $source,
+        public readonly Identifier $name
     ) {
+    }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
+     * @return \Iterator<mixed,self>
+     */
+    public static function fromTokens(\Iterator $tokens): \Iterator
+    {
+        Scanner::skipSpaceAndComments($tokens);
+        Scanner::assertType($tokens, TokenType::KEYWORD_FROM);
+
+        Scanner::skipOne($tokens);
+        Scanner::skipSpaceAndComments($tokens);
+
+        $source = ImportSource::fromTokens($tokens);
+
+        Scanner::skipSpaceAndComments($tokens);
+        Scanner::assertType($tokens, TokenType::KEYWORD_IMPORT);
+        Scanner::skipOne($tokens);
+
+        Scanner::skipSpaceAndComments($tokens);
+        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_OPEN);
+        Scanner::skipOne($tokens);
+
+        while (true) {
+            $identifier = Identifier::fromTokens($tokens);
+            yield new self($source, $identifier);
+
+            Scanner::skipSpaceAndComments($tokens);
+            if (Scanner::type($tokens) === TokenType::COMMA) {
+                Scanner::skipOne($tokens);
+                continue;
+            }
+
+            break;
+        }
+
+        Scanner::skipSpaceAndComments($tokens);
+        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
+        Scanner::skipOne($tokens);
     }
 
     public function jsonSerialize(): mixed
     {
-        return [];
+        return [
+            'source' => $this->source,
+            'name' => $this->name
+        ];
     }
 }
