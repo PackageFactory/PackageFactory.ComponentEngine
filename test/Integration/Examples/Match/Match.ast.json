@@ -42,17 +42,19 @@
                   "payload": {
                     "left": [
                       {
-                        "type": "BinaryOperationNode",
+                        "type": "AccessNode",
                         "payload": {
-                          "operator": "ACCESS",
-                          "operands": [
+                          "root": {
+                            "type": "Identifier",
+                            "payload": "ButtonType"
+                          },
+                          "chain": [
                             {
-                              "type": "Identifier",
-                              "payload": "ButtonType"
-                            },
-                            {
-                              "type": "Identifier",
-                              "payload": "LINK"
+                              "accessType": "MANDATORY",
+                              "accessor": {
+                                "type": "Identifier",
+                                "payload": "LINK"
+                              }
                             }
                           ]
                         }
@@ -93,33 +95,37 @@
                   "payload": {
                     "left": [
                       {
-                        "type": "BinaryOperationNode",
+                        "type": "AccessNode",
                         "payload": {
-                          "operator": "ACCESS",
-                          "operands": [
+                          "root": {
+                            "type": "Identifier",
+                            "payload": "ButtonType"
+                          },
+                          "chain": [
                             {
-                              "type": "Identifier",
-                              "payload": "ButtonType"
-                            },
-                            {
-                              "type": "Identifier",
-                              "payload": "BUTTON"
+                              "accessType": "MANDATORY",
+                              "accessor": {
+                                "type": "Identifier",
+                                "payload": "BUTTON"
+                              }
                             }
                           ]
                         }
                       },
                       {
-                        "type": "BinaryOperationNode",
+                        "type": "AccessNode",
                         "payload": {
-                          "operator": "ACCESS",
-                          "operands": [
+                          "root": {
+                            "type": "Identifier",
+                            "payload": "ButtonType"
+                          },
+                          "chain": [
                             {
-                              "type": "Identifier",
-                              "payload": "ButtonType"
-                            },
-                            {
-                              "type": "Identifier",
-                              "payload": "SUBMIT"
+                              "accessType": "MANDATORY",
+                              "accessor": {
+                                "type": "Identifier",
+                                "payload": "SUBMIT"
+                              }
                             }
                           ]
                         }
@@ -152,17 +158,19 @@
                                     "payload": {
                                       "left": [
                                         {
-                                          "type": "BinaryOperationNode",
+                                          "type": "AccessNode",
                                           "payload": {
-                                            "operator": "ACCESS",
-                                            "operands": [
+                                            "root": {
+                                              "type": "Identifier",
+                                              "payload": "ButtonType"
+                                            },
+                                            "chain": [
                                               {
-                                                "type": "Identifier",
-                                                "payload": "ButtonType"
-                                              },
-                                              {
-                                                "type": "Identifier",
-                                                "payload": "SUBMIT"
+                                                "accessType": "MANDATORY",
+                                                "accessor": {
+                                                  "type": "Identifier",
+                                                  "payload": "SUBMIT"
+                                                }
                                               }
                                             ]
                                           }
@@ -204,17 +212,19 @@
                   "payload": {
                     "left": [
                       {
-                        "type": "BinaryOperationNode",
+                        "type": "AccessNode",
                         "payload": {
-                          "operator": "ACCESS",
-                          "operands": [
+                          "root": {
+                            "type": "Identifier",
+                            "payload": "ButtonType"
+                          },
+                          "chain": [
                             {
-                              "type": "Identifier",
-                              "payload": "ButtonType"
-                            },
-                            {
-                              "type": "Identifier",
-                              "payload": "NONE"
+                              "accessType": "MANDATORY",
+                              "accessor": {
+                                "type": "Identifier",
+                                "payload": "NONE"
+                              }
                             }
                           ]
                         }

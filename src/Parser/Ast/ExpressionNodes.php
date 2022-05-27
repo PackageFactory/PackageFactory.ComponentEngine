@@ -31,12 +31,12 @@ final class ExpressionNodes implements \JsonSerializable
     /**
      * @var array<int,ExpressionNode>
      */
-    public readonly array $expressions;
+    public readonly array $items;
 
     private function __construct(
-        ExpressionNode ...$expressions
+        ExpressionNode ...$items
     ) {
-        $this->expressions = $expressions;
+        $this->items = $items;
     }
 
     /**
@@ -45,7 +45,7 @@ final class ExpressionNodes implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        $expressions = [];
+        $items = [];
         Scanner::skipSpaceAndComments($tokens);
 
         switch (Scanner::type($tokens)) {
@@ -59,7 +59,7 @@ final class ExpressionNodes implements \JsonSerializable
         }
 
         while (true) {
-            $expressions[] = ExpressionNode::fromTokens($tokens);
+            $items[] = ExpressionNode::fromTokens($tokens);
 
             Scanner::skipSpaceAndComments($tokens);
 
@@ -78,11 +78,11 @@ final class ExpressionNodes implements \JsonSerializable
             Scanner::skipSpaceAndComments($tokens);
         }
 
-        return new self(...$expressions);
+        return new self(...$items);
     }
 
     public function jsonSerialize(): mixed
     {
-        return $this->expressions;
+        return $this->items;
     }
 }

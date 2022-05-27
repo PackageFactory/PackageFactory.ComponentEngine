@@ -22,15 +22,13 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class ParameterDeclarationNode implements \JsonSerializable
+final class AccessNode implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $name,
-        public readonly null | TypeReferenceNode $type
+        public readonly ExpressionNode $root,
+        public readonly AccessChainSegmentNodes $chain
     ) {
     }
 
@@ -38,34 +36,24 @@ final class ParameterDeclarationNode implements \JsonSerializable
      * @param \Iterator<mixed,Token> $tokens
      * @return self
      */
-    public static function fromTokens(\Iterator $tokens): self
+    public static function fromTokens(ExpressionNode $root, \Iterator $tokens): self
     {
-        Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::STRING);
-
-        $name = Scanner::value($tokens);
-
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
-
-        $type = null;
-        if (Scanner::type($tokens) === TokenType::COLON) {
-            Scanner::skipOne($tokens);
-            $type = TypeReferenceNode::fromTokens($tokens);
-        }
-
+        $chain = AccessChainSegmentNodes::fromTokens($tokens);
 
         return new self(
-            name: $name,
-            type: $type
+            root: $root,
+            chain: $chain
         );
     }
 
     public function jsonSerialize(): mixed
     {
         return [
-            'name' => $this->name,
-            'type' => $this->type
+            'type' => 'AccessNode',
+            'payload' => [
+                'root' => $this->root,
+                'chain' => $this->chain
+            ]
         ];
     }
 }

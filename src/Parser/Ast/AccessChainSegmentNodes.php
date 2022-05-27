@@ -22,16 +22,23 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
+use PackageFactory\ComponentEngine\Definition\AccessType;
+use PackageFactory\ComponentEngine\Definition\BinaryOperator;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class ParameterDeclarationNode implements \JsonSerializable
+final class AccessChainSegmentNodes implements \JsonSerializable
 {
+    /**
+     * @var array<int,ExpressionNode>
+     */
+    public readonly array $items;
+
     private function __construct(
-        public readonly string $name,
-        public readonly null | TypeReferenceNode $type
+        AccessChainSegmentNode ...$items
     ) {
+        $this->items = $items;
     }
 
     /**
@@ -40,32 +47,26 @@ final class ParameterDeclarationNode implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::STRING);
+        /** @var AccessChainSegmentNode[] $items */
+        $items = [];
+        while (true) {
+            Scanner::skipSpaceAndComments($tokens);
 
-        $name = Scanner::value($tokens);
-
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
-
-        $type = null;
-        if (Scanner::type($tokens) === TokenType::COLON) {
-            Scanner::skipOne($tokens);
-            $type = TypeReferenceNode::fromTokens($tokens);
+            switch (Scanner::type($tokens)) {
+                case TokenType::PERIOD:
+                case TokenType::OPTCHAIN:
+                    $items[] = AccessChainSegmentNode::fromTokens($tokens);
+                    break;
+                default:
+                    break 2;
+            }
         }
 
-
-        return new self(
-            name: $name,
-            type: $type
-        );
+        return new self(...$items);
     }
 
     public function jsonSerialize(): mixed
     {
-        return [
-            'name' => $this->name,
-            'type' => $this->type
-        ];
+        return $this->items;
     }
 }

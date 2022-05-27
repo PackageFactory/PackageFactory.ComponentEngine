@@ -37,12 +37,17 @@
                 "type": "FunctionCallNode",
                 "payload": {
                   "callerExpression": {
-                    "type": "BinaryOperationNode",
+                    "type": "AccessNode",
                     "payload": {
-                      "operator": "ACCESS",
-                      "operands": [
-                        { "type": "Identifier", "payload": "someString" },
-                        { "type": "Identifier", "payload": "toUpperCase" }
+                      "root": { "type": "Identifier", "payload": "someString" },
+                      "chain": [
+                        {
+                          "accessType": "MANDATORY",
+                          "accessor": {
+                            "type": "Identifier",
+                            "payload": "toUpperCase"
+                          }
+                        }
                       ]
                     }
                   },
@@ -54,81 +59,95 @@
                 "type": "FunctionCallNode",
                 "payload": {
                   "callerExpression": {
-                    "type": "BinaryOperationNode",
+                    "type": "AccessNode",
                     "payload": {
-                      "operator": "ACCESS",
-                      "operands": [
-                        {
-                          "type": "FunctionCallNode",
-                          "payload": {
-                            "callerExpression": {
-                              "type": "BinaryOperationNode",
-                              "payload": {
-                                "operator": "ACCESS",
-                                "operands": [
-                                  {
-                                    "type": "FunctionCallNode",
+                      "root": {
+                        "type": "FunctionCallNode",
+                        "payload": {
+                          "callerExpression": {
+                            "type": "AccessNode",
+                            "payload": {
+                              "root": {
+                                "type": "FunctionCallNode",
+                                "payload": {
+                                  "callerExpression": {
+                                    "type": "AccessNode",
                                     "payload": {
-                                      "callerExpression": {
-                                        "type": "BinaryOperationNode",
-                                        "payload": {
-                                          "operator": "ACCESS",
-                                          "operands": [
-                                            {
-                                              "type": "Identifier",
-                                              "payload": "someArrayOfStrings"
-                                            },
-                                            {
-                                              "type": "Identifier",
-                                              "payload": "map"
-                                            }
-                                          ]
-                                        }
+                                      "root": {
+                                        "type": "Identifier",
+                                        "payload": "someArrayOfStrings"
                                       },
-                                      "actualParameters": [
+                                      "chain": [
                                         {
-                                          "type": "ArrowFunctionNode",
-                                          "payload": {
-                                            "parameterDeclarations": [
-                                              { "name": "s", "type": null }
-                                            ],
-                                            "returnExpression": {
-                                              "type": "FunctionCallNode",
-                                              "payload": {
-                                                "callerExpression": {
-                                                  "type": "BinaryOperationNode",
-                                                  "payload": {
-                                                    "operator": "ACCESS",
-                                                    "operands": [
-                                                      {
-                                                        "type": "Identifier",
-                                                        "payload": "s"
-                                                      },
-                                                      {
-                                                        "type": "Identifier",
-                                                        "payload": "toUpperCase"
-                                                      }
-                                                    ]
-                                                  }
-                                                },
-                                                "actualParameters": []
-                                              }
-                                            }
+                                          "accessType": "MANDATORY",
+                                          "accessor": {
+                                            "type": "Identifier",
+                                            "payload": "map"
                                           }
                                         }
                                       ]
                                     }
                                   },
-                                  { "type": "Identifier", "payload": "join" }
-                                ]
-                              }
-                            },
-                            "actualParameters": [
-                              { "type": "StringLiteralNode", "payload": "," }
-                            ]
+                                  "actualParameters": [
+                                    {
+                                      "type": "ArrowFunctionNode",
+                                      "payload": {
+                                        "parameterDeclarations": [
+                                          { "name": "s", "type": null }
+                                        ],
+                                        "returnExpression": {
+                                          "type": "FunctionCallNode",
+                                          "payload": {
+                                            "callerExpression": {
+                                              "type": "AccessNode",
+                                              "payload": {
+                                                "root": {
+                                                  "type": "Identifier",
+                                                  "payload": "s"
+                                                },
+                                                "chain": [
+                                                  {
+                                                    "accessType": "MANDATORY",
+                                                    "accessor": {
+                                                      "type": "Identifier",
+                                                      "payload": "toUpperCase"
+                                                    }
+                                                  }
+                                                ]
+                                              }
+                                            },
+                                            "actualParameters": []
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              "chain": [
+                                {
+                                  "accessType": "MANDATORY",
+                                  "accessor": {
+                                    "type": "Identifier",
+                                    "payload": "join"
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "actualParameters": [
+                            { "type": "StringLiteralNode", "payload": "," }
+                          ]
+                        }
+                      },
+                      "chain": [
+                        {
+                          "accessType": "MANDATORY",
+                          "accessor": {
+                            "type": "Identifier",
+                            "payload": "toLowerCase"
                           }
-                        },
-                        { "type": "Identifier", "payload": "toLowerCase" }
+                        }
                       ]
                     }
                   },

@@ -95,12 +95,17 @@
                       {
                         "name": "href",
                         "value": {
-                          "type": "BinaryOperationNode",
+                          "type": "AccessNode",
                           "payload": {
-                            "operator": "ACCESS",
-                            "operands": [
-                              { "type": "Identifier", "payload": "link" },
-                              { "type": "Identifier", "payload": "href" }
+                            "root": { "type": "Identifier", "payload": "link" },
+                            "chain": [
+                              {
+                                "accessType": "MANDATORY",
+                                "accessor": {
+                                  "type": "Identifier",
+                                  "payload": "href"
+                                }
+                              }
                             ]
                           }
                         }
@@ -108,12 +113,17 @@
                       {
                         "name": "target",
                         "value": {
-                          "type": "BinaryOperationNode",
+                          "type": "AccessNode",
                           "payload": {
-                            "operator": "ACCESS",
-                            "operands": [
-                              { "type": "Identifier", "payload": "link" },
-                              { "type": "Identifier", "payload": "target" }
+                            "root": { "type": "Identifier", "payload": "link" },
+                            "chain": [
+                              {
+                                "accessType": "MANDATORY",
+                                "accessor": {
+                                  "type": "Identifier",
+                                  "payload": "target"
+                                }
+                              }
                             ]
                           }
                         }

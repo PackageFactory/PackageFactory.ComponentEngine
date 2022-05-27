@@ -22,15 +22,15 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
+use PackageFactory\ComponentEngine\Definition\AccessType;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class ParameterDeclarationNode implements \JsonSerializable
+final class AccessChainSegmentNode implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $name,
-        public readonly null | TypeReferenceNode $type
+        public readonly AccessType $accessType,
+        public readonly IdentifierNode $accessor
     ) {
     }
 
@@ -41,31 +41,28 @@ final class ParameterDeclarationNode implements \JsonSerializable
     public static function fromTokens(\Iterator $tokens): self
     {
         Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::STRING);
 
-        $name = Scanner::value($tokens);
-
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
-
-        $type = null;
-        if (Scanner::type($tokens) === TokenType::COLON) {
-            Scanner::skipOne($tokens);
-            $type = TypeReferenceNode::fromTokens($tokens);
+        switch (Scanner::type($tokens)) {
+            case TokenType::PERIOD:
+            case TokenType::OPTCHAIN:
+                $accessType = AccessType::fromTokenType(Scanner::type($tokens));
+                Scanner::skipOne($tokens);
+                $accessor = IdentifierNode::fromTokens($tokens);
+                return new self(
+                    accessType: $accessType,
+                    accessor: $accessor
+                );
+            default:
+                Scanner::assertType($tokens, TokenType::PERIOD, TokenType::OPTCHAIN);
+                break;
         }
-
-
-        return new self(
-            name: $name,
-            type: $type
-        );
     }
 
     public function jsonSerialize(): mixed
     {
         return [
-            'name' => $this->name,
-            'type' => $this->type
+            'accessType' => $this->accessType->value,
+            'accessor' => $this->accessor
         ];
     }
 }

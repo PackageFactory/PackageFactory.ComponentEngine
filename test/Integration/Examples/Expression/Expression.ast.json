@@ -23,12 +23,14 @@
             "type": "FunctionCallNode",
             "payload": {
               "callerExpression": {
-                "type": "BinaryOperationNode",
+                "type": "AccessNode",
                 "payload": {
-                  "operator": "ACCESS",
-                  "operands": [
-                    { "type": "Identifier", "payload": "nums" },
-                    { "type": "Identifier", "payload": "reduce" }
+                  "root": { "type": "Identifier", "payload": "nums" },
+                  "chain": [
+                    {
+                      "accessType": "MANDATORY",
+                      "accessor": { "type": "Identifier", "payload": "reduce" }
+                    }
                   ]
                 }
               },

@@ -12,12 +12,20 @@
             "type": "FunctionCallNode",
             "payload": {
               "callerExpression": {
-                "type": "BinaryOperationNode",
+                "type": "AccessNode",
                 "payload": {
-                  "operator": "ACCESS",
-                  "operands": [
-                    { "type": "StringLiteralNode", "payload": "Hello World!" },
-                    { "type": "Identifier", "payload": "toUpperCase" }
+                  "root": {
+                    "type": "StringLiteralNode",
+                    "payload": "Hello World!"
+                  },
+                  "chain": [
+                    {
+                      "accessType": "MANDATORY",
+                      "accessor": {
+                        "type": "Identifier",
+                        "payload": "toUpperCase"
+                      }
+                    }
                   ]
                 }
               },
@@ -35,85 +43,93 @@
             "type": "FunctionCallNode",
             "payload": {
               "callerExpression": {
-                "type": "BinaryOperationNode",
+                "type": "AccessNode",
                 "payload": {
-                  "operator": "ACCESS",
-                  "operands": [
-                    {
-                      "type": "TernaryOperationNode",
-                      "payload": {
-                        "condition": {
-                          "type": "FunctionCallNode",
-                          "payload": {
-                            "callerExpression": {
-                              "type": "BinaryOperationNode",
-                              "payload": {
-                                "operator": "ACCESS",
-                                "operands": [
-                                  {
-                                    "type": "FunctionCallNode",
+                  "root": {
+                    "type": "TernaryOperationNode",
+                    "payload": {
+                      "condition": {
+                        "type": "FunctionCallNode",
+                        "payload": {
+                          "callerExpression": {
+                            "type": "AccessNode",
+                            "payload": {
+                              "root": {
+                                "type": "FunctionCallNode",
+                                "payload": {
+                                  "callerExpression": {
+                                    "type": "AccessNode",
                                     "payload": {
-                                      "callerExpression": {
-                                        "type": "BinaryOperationNode",
-                                        "payload": {
-                                          "operator": "ACCESS",
-                                          "operands": [
-                                            {
-                                              "type": "StringLiteralNode",
-                                              "payload": "Hello World!"
-                                            },
-                                            {
-                                              "type": "Identifier",
-                                              "payload": "substr"
-                                            }
-                                          ]
-                                        }
+                                      "root": {
+                                        "type": "StringLiteralNode",
+                                        "payload": "Hello World!"
                                       },
-                                      "actualParameters": [
+                                      "chain": [
                                         {
-                                          "type": "NumberLiteralNode",
-                                          "payload": {
-                                            "value": "0",
-                                            "format": "DECIMAL"
-                                          }
-                                        },
-                                        {
-                                          "type": "NumberLiteralNode",
-                                          "payload": {
-                                            "value": "4",
-                                            "format": "DECIMAL"
+                                          "accessType": "MANDATORY",
+                                          "accessor": {
+                                            "type": "Identifier",
+                                            "payload": "substr"
                                           }
                                         }
                                       ]
                                     }
                                   },
-                                  {
+                                  "actualParameters": [
+                                    {
+                                      "type": "NumberLiteralNode",
+                                      "payload": {
+                                        "value": "0",
+                                        "format": "DECIMAL"
+                                      }
+                                    },
+                                    {
+                                      "type": "NumberLiteralNode",
+                                      "payload": {
+                                        "value": "4",
+                                        "format": "DECIMAL"
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              "chain": [
+                                {
+                                  "accessType": "MANDATORY",
+                                  "accessor": {
                                     "type": "Identifier",
                                     "payload": "startsWith"
                                   }
-                                ]
-                              }
-                            },
-                            "actualParameters": [
-                              { "type": "StringLiteralNode", "payload": "He" }
-                            ]
-                          }
-                        },
-                        "true": {
-                          "type": "StringLiteralNode",
-                          "payload": "Hi World!"
-                        },
-                        "false": {
-                          "type": "StringLiteralNode",
-                          "payload": "Howdy World!"
+                                }
+                              ]
+                            }
+                          },
+                          "actualParameters": [
+                            { "type": "StringLiteralNode", "payload": "He" }
+                          ]
                         }
+                      },
+                      "true": {
+                        "type": "StringLiteralNode",
+                        "payload": "Hi World!"
+                      },
+                      "false": {
+                        "type": "StringLiteralNode",
+                        "payload": "Howdy World!"
                       }
-                    },
-                    { "type": "Identifier", "payload": "indexOf" }
+                    }
+                  },
+                  "chain": [
+                    {
+                      "accessType": "MANDATORY",
+                      "accessor": { "type": "Identifier", "payload": "indexOf" }
+                    }
                   ]
                 }
               },
-              "actualParameters": [{ "type": "StringLiteralNode", "payload": "World" }]
+              "actualParameters": [
+                { "type": "StringLiteralNode", "payload": "World" }
+              ]
             }
           }
         }

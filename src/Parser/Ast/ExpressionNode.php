@@ -31,7 +31,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class ExpressionNode implements \JsonSerializable
 {
     private function __construct(
-        public readonly IdentifierNode | ArrowFunctionNode | NumberLiteralNode | BinaryOperationNode | FunctionCallNode | TernaryOperationNode | TagNode | StringLiteralNode | MatchNode | TemplateLiteralNode $root
+        public readonly IdentifierNode | ArrowFunctionNode | NumberLiteralNode | BinaryOperationNode | AccessNode | FunctionCallNode | TernaryOperationNode | TagNode | StringLiteralNode | MatchNode | TemplateLiteralNode $root
     ) {
     }
 
@@ -121,8 +121,10 @@ final class ExpressionNode implements \JsonSerializable
                 case TokenType::COMPARATOR_GREATER_THAN_OR_EQUAL:
                 case TokenType::COMPARATOR_LESS_THAN:
                 case TokenType::COMPARATOR_LESS_THAN_OR_EQUAL:
-                case TokenType::PERIOD:
                     $root = BinaryOperationNode::fromTokens(new self(root: $root), $tokens);
+                    break;
+                case TokenType::PERIOD:
+                    $root = AccessNode::fromTokens(new self(root: $root), $tokens);
                     break;
                 case TokenType::QUESTIONMARK:
                     $root = TernaryOperationNode::fromTokens(new self(root: $root), $tokens);
