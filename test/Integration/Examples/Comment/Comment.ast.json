@@ -1,5 +1,5 @@
 {
-  "type": "Module",
+  "type": "ModuleNode",
   "payload": {
     "imports": {},
     "exports": {}

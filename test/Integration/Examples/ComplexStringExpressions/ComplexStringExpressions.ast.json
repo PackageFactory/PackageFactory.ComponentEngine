@@ -1,65 +1,65 @@
 {
-  "type": "Module",
+  "type": "ModuleNode",
   "payload": {
     "imports": {},
-    "exports": {
-      "FunctionCallOnStringLiteral": {
-        "type": "Component",
+    "exports": [
+      {
+        "type": "ComponentDeclarationNode",
         "payload": {
-          "name": "FunctionCallOnStringLiteral",
-          "interface": {},
-          "return": {
-            "type": "FunctionCall",
+          "componentName": "FunctionCallOnStringLiteral",
+          "propertyDeclarations": [],
+          "returnExpression": {
+            "type": "FunctionCallNode",
             "payload": {
-              "function": {
-                "type": "BinaryOperation",
+              "callerExpression": {
+                "type": "BinaryOperationNode",
                 "payload": {
                   "operator": "ACCESS",
                   "operands": [
-                    { "type": "StringLiteral", "payload": "Hello World!" },
+                    { "type": "StringLiteralNode", "payload": "Hello World!" },
                     { "type": "Identifier", "payload": "toUpperCase" }
                   ]
                 }
               },
-              "parameters": []
+              "actualParameters": []
             }
           }
         }
       },
-      "StringFunctionCallOnTernaryExpressionWithNumberReturn": {
-        "type": "Component",
+      {
+        "type": "ComponentDeclarationNode",
         "payload": {
-          "name": "StringFunctionCallOnTernaryExpressionWithNumberReturn",
-          "interface": {},
-          "return": {
-            "type": "FunctionCall",
+          "componentName": "StringFunctionCallOnTernaryExpressionWithNumberReturn",
+          "propertyDeclarations": [],
+          "returnExpression": {
+            "type": "FunctionCallNode",
             "payload": {
-              "function": {
-                "type": "BinaryOperation",
+              "callerExpression": {
+                "type": "BinaryOperationNode",
                 "payload": {
                   "operator": "ACCESS",
                   "operands": [
                     {
-                      "type": "TernaryOperation",
+                      "type": "TernaryOperationNode",
                       "payload": {
                         "condition": {
-                          "type": "FunctionCall",
+                          "type": "FunctionCallNode",
                           "payload": {
-                            "function": {
-                              "type": "BinaryOperation",
+                            "callerExpression": {
+                              "type": "BinaryOperationNode",
                               "payload": {
                                 "operator": "ACCESS",
                                 "operands": [
                                   {
-                                    "type": "FunctionCall",
+                                    "type": "FunctionCallNode",
                                     "payload": {
-                                      "function": {
-                                        "type": "BinaryOperation",
+                                      "callerExpression": {
+                                        "type": "BinaryOperationNode",
                                         "payload": {
                                           "operator": "ACCESS",
                                           "operands": [
                                             {
-                                              "type": "StringLiteral",
+                                              "type": "StringLiteralNode",
                                               "payload": "Hello World!"
                                             },
                                             {
@@ -69,16 +69,16 @@
                                           ]
                                         }
                                       },
-                                      "parameters": [
+                                      "actualParameters": [
                                         {
-                                          "type": "NumberLiteral",
+                                          "type": "NumberLiteralNode",
                                           "payload": {
                                             "value": "0",
                                             "format": "DECIMAL"
                                           }
                                         },
                                         {
-                                          "type": "NumberLiteral",
+                                          "type": "NumberLiteralNode",
                                           "payload": {
                                             "value": "4",
                                             "format": "DECIMAL"
@@ -94,17 +94,17 @@
                                 ]
                               }
                             },
-                            "parameters": [
-                              { "type": "StringLiteral", "payload": "He" }
+                            "actualParameters": [
+                              { "type": "StringLiteralNode", "payload": "He" }
                             ]
                           }
                         },
                         "true": {
-                          "type": "StringLiteral",
+                          "type": "StringLiteralNode",
                           "payload": "Hi World!"
                         },
                         "false": {
-                          "type": "StringLiteral",
+                          "type": "StringLiteralNode",
                           "payload": "Howdy World!"
                         }
                       }
@@ -113,11 +113,11 @@
                   ]
                 }
               },
-              "parameters": [{ "type": "StringLiteral", "payload": "World" }]
+              "actualParameters": [{ "type": "StringLiteralNode", "payload": "World" }]
             }
           }
         }
       }
-    }
+    ]
   }
 }

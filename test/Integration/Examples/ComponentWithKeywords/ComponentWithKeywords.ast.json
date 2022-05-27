@@ -1,21 +1,21 @@
 {
-  "type": "Module",
+  "type": "ModuleNode",
   "payload": {
     "imports": {},
-    "exports": {
-      "ComponentWithKeywords": {
-        "type": "Component",
+    "exports": [
+      {
+        "type": "ComponentDeclarationNode",
         "payload": {
-          "name": "ComponentWithKeywords",
-          "interface": {},
-          "return": {
-            "type": "Tag",
+          "componentName": "ComponentWithKeywords",
+          "propertyDeclarations": [],
+          "returnExpression": {
+            "type": "TagNode",
             "payload": {
               "tagName": "div",
               "attributes": [],
               "children": [
                 {
-                  "type": "Text",
+                  "type": "TextNode",
                   "payload": {
                     "value": "Keywords like import or export or component are allowed in here."
                   }
@@ -25,6 +25,6 @@
           }
         }
       }
-    }
+    ]
   }
 }

@@ -1,77 +1,77 @@
 {
-  "type": "Module",
+  "type": "ModuleNode",
   "payload": {
     "imports": {},
-    "exports": {
-      "TextWithImage": {
-        "type": "Component",
+    "exports": [
+      {
+        "type": "ComponentDeclarationNode",
         "payload": {
-          "name": "TextWithImage",
-          "interface": {
-            "src": {
+          "componentName": "TextWithImage",
+          "propertyDeclarations": [
+            {
               "name": "src",
               "type": {
-                "type": "TypeReference",
+                "type": "TypeReferenceNode",
                 "payload": {
                   "name": "string",
                   "isArray": false
                 }
               }
             },
-            "alt": {
+            {
               "name": "alt",
               "type": {
-                "type": "TypeReference",
+                "type": "TypeReferenceNode",
                 "payload": {
                   "name": "string",
                   "isArray": false
                 }
               }
             },
-            "title": {
+            {
               "name": "title",
               "type": {
-                "type": "TypeReference",
+                "type": "TypeReferenceNode",
                 "payload": {
                   "name": "string",
                   "isArray": false
                 }
               }
             },
-            "text": {
+            {
               "name": "text",
               "type": {
-                "type": "TypeReference",
+                "type": "TypeReferenceNode",
                 "payload": {
                   "name": "string",
                   "isArray": false
                 }
               }
             }
-          },
-          "return": {
-            "type": "Tag",
+          ],
+          "returnExpression": {
+            "type": "TagNode",
             "payload": {
               "tagName": "div",
               "attributes": [
                 {
                   "name": "class",
                   "value": {
-                    "type": "StringLiteral",
+                    "type": "StringLiteralNode",
                     "payload": "text-with-image"
                   }
                 }
               ],
               "children": [
                 {
-                  "type": "Tag",
+                  "type": "TagNode",
                   "payload": {
                     "tagName": "img",
                     "attributes": [
                       {
                         "name": "class",
                         "value": {
-                          "type": "StringLiteral",
+                          "type": "StringLiteralNode",
                           "payload": "image"
                         }
                       },
@@ -101,14 +101,14 @@
                   }
                 },
                 {
-                  "type": "Tag",
+                  "type": "TagNode",
                   "payload": {
                     "tagName": "p",
                     "attributes": [
                       {
                         "name": "class",
                         "value": {
-                          "type": "StringLiteral",
+                          "type": "StringLiteralNode",
                           "payload": "text"
                         }
                       }
@@ -126,6 +126,6 @@
           }
         }
       }
-    }
+    ]
   }
 }

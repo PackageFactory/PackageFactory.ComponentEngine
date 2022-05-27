@@ -119,7 +119,7 @@ enum TokenType: string
                 '/^0o[0-7]+$/',
                 $value
             ) => self::NUMBER_OCTAL,
-            (bool) preg_match(
+            $value !== '' && preg_match(
                 '/^([-+]?[0-9]+)?(\.[0-9]+)?([eE][0-9]+)?$/',
                 $value
             ) => self::NUMBER_DECIMAL,

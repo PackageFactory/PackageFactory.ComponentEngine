@@ -1,40 +1,40 @@
 {
-  "type": "Module",
+  "type": "ModuleNode",
   "payload": {
     "imports": {},
-    "exports": {
-      "TemplateLiteral": {
-        "type": "Component",
+    "exports": [
+      {
+        "type": "ComponentDeclarationNode",
         "payload": {
-          "name": "TemplateLiteral",
-          "interface": {
-            "expression": {
+          "componentName": "TemplateLiteral",
+          "propertyDeclarations": [
+            {
               "name": "expression",
               "type": {
-                "type": "TypeReference",
+                "type": "TypeReferenceNode",
                 "payload": { "name": "string", "isArray": false }
               }
             },
-            "isActive": {
+            {
               "name": "isActive",
               "type": {
-                "type": "TypeReference",
+                "type": "TypeReferenceNode",
                 "payload": { "name": "boolean", "isArray": false }
               }
             },
-            "someNumber": {
+            {
               "name": "someNumber",
               "type": {
-                "type": "TypeReference",
+                "type": "TypeReferenceNode",
                 "payload": { "name": "number", "isArray": false }
               }
             }
-          },
-          "return": {
-            "type": "TemplateLiteral",
+          ],
+          "returnExpression": {
+            "type": "TemplateLiteralNode",
             "payload": [
               {
-                "type": "StringLiteral",
+                "type": "StringLiteralNode",
                 "payload": "A template literal may contain "
               },
               {
@@ -42,23 +42,23 @@
                 "payload": "expression"
               },
               {
-                "type": "StringLiteral",
+                "type": "StringLiteralNode",
                 "payload": "s.\n\n  It can span multiple lines.\n\n  Interpolated Expressions can be arbitrarily complex:\n  "
               },
               {
-                "type": "TernaryOperation",
+                "type": "TernaryOperationNode",
                 "payload": {
                   "condition": {
                     "type": "Identifier",
                     "payload": "isActive"
                   },
                   "true": {
-                    "type": "BinaryOperation",
+                    "type": "BinaryOperationNode",
                     "payload": {
                       "operator": "MULTIPLY_BY",
                       "operands": [
                         {
-                          "type": "NumberLiteral",
+                          "type": "NumberLiteralNode",
                           "payload": { "value": "27", "format": "DECIMAL" }
                         },
                         {
@@ -69,7 +69,7 @@
                     }
                   },
                   "false": {
-                    "type": "BinaryOperation",
+                    "type": "BinaryOperationNode",
                     "payload": {
                       "operator": "MODULO",
                       "operands": [
@@ -78,7 +78,7 @@
                           "payload": "someNumber"
                         },
                         {
-                          "type": "NumberLiteral",
+                          "type": "NumberLiteralNode",
                           "payload": { "value": "17", "format": "DECIMAL" }
                         }
                       ]
@@ -87,25 +87,25 @@
                 }
               },
               {
-                "type": "StringLiteral",
+                "type": "StringLiteralNode",
                 "payload": "\n\n  They can also contain other template literals:\n  "
               },
               {
-                "type": "TernaryOperation",
+                "type": "TernaryOperationNode",
                 "payload": {
                   "condition": {
                     "type": "Identifier",
                     "payload": "isActive"
                   },
                   "true": {
-                    "type": "TemplateLiteral",
+                    "type": "TemplateLiteralNode",
                     "payload": [
-                      { "type": "StringLiteral", "payload": "Is 27? " },
+                      { "type": "StringLiteralNode", "payload": "Is 27? " },
                       {
-                        "type": "TernaryOperation",
+                        "type": "TernaryOperationNode",
                         "payload": {
                           "condition": {
-                            "type": "BinaryOperation",
+                            "type": "BinaryOperationNode",
                             "payload": {
                               "operator": "EQUAL",
                               "operands": [
@@ -114,7 +114,7 @@
                                   "payload": "someNumber"
                                 },
                                 {
-                                  "type": "NumberLiteral",
+                                  "type": "NumberLiteralNode",
                                   "payload": {
                                     "value": "27",
                                     "format": "DECIMAL"
@@ -124,11 +124,11 @@
                             }
                           },
                           "true": {
-                            "type": "StringLiteral",
+                            "type": "StringLiteralNode",
                             "payload": "yes"
                           },
                           "false": {
-                            "type": "StringLiteral",
+                            "type": "StringLiteralNode",
                             "payload": "no"
                           }
                         }
@@ -136,11 +136,11 @@
                     ]
                   },
                   "false": {
-                    "type": "TemplateLiteral",
+                    "type": "TemplateLiteralNode",
                     "payload": [
-                      { "type": "StringLiteral", "payload": "Number is " },
+                      { "type": "StringLiteralNode", "payload": "Number is " },
                       {
-                        "type": "NumberLiteral",
+                        "type": "NumberLiteralNode",
                         "payload": { "value": "27", "format": "DECIMAL" }
                       }
                     ]
@@ -148,23 +148,23 @@
                 }
               },
               {
-                "type": "StringLiteral",
+                "type": "StringLiteralNode",
                 "payload": "\n\n  Even markup:\n  "
               },
               {
-                "type": "Tag",
+                "type": "TagNode",
                 "payload": {
                   "tagName": "header",
                   "attributes": [],
                   "children": [
                     {
-                      "type": "Tag",
+                      "type": "TagNode",
                       "payload": {
                         "tagName": "h1",
                         "attributes": [],
                         "children": [
                           {
-                            "type": "Text",
+                            "type": "TextNode",
                             "payload": { "value": "Number is" }
                           },
                           {
@@ -177,11 +177,11 @@
                   ]
                 }
               },
-              { "type": "StringLiteral", "payload": "\n  " }
+              { "type": "StringLiteralNode", "payload": "\n  " }
             ]
           }
         }
       }
-    }
+    ]
   }
 }

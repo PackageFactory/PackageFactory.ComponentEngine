@@ -1,86 +1,86 @@
 {
-  "type": "Module",
+  "type": "ModuleNode",
   "payload": {
-    "imports": {
-      "Link": {
+    "imports": [
+      {
         "source": "../Interface/Interface.afx",
         "name": {
           "type": "Identifier",
           "payload": "Link"
         }
       },
-      "Button": {
+      {
         "source": "./Button.afx",
         "name": {
           "type": "Identifier",
           "payload": "Button"
         }
       },
-      "classHelper": {
+      {
         "source": "ext:vendor/package",
         "name": {
           "type": "Identifier",
           "payload": "classHelper"
         }
       },
-      "titleHelper": {
+      {
         "source": "ext:vendor/package",
         "name": {
           "type": "Identifier",
           "payload": "titleHelper"
         }
       }
-    },
-    "exports": {
-      "Card": {
-        "type": "Component",
+    ],
+    "exports": [
+      {
+        "type": "ComponentDeclarationNode",
         "payload": {
-          "name": "Card",
-          "interface": {
-            "title": {
+          "componentName": "Card",
+          "propertyDeclarations": [
+            {
               "name": "title",
               "type": {
-                "type": "TypeReference",
+                "type": "TypeReferenceNode",
                 "payload": {
                   "name": "string",
                   "isArray": false
                 }
               }
             },
-            "link": {
+            {
               "name": "link",
               "type": {
-                "type": "TypeReference",
+                "type": "TypeReferenceNode",
                 "payload": {
                   "name": "Link",
                   "isArray": false
                 }
               }
             },
-            "button": {
+            {
               "name": "button",
               "type": {
-                "type": "TypeReference",
+                "type": "TypeReferenceNode",
                 "payload": { "name": "Button", "isArray": false }
               }
             }
-          },
-          "return": {
-            "type": "Tag",
+          ],
+          "returnExpression": {
+            "type": "TagNode",
             "payload": {
               "tagName": "div",
               "attributes": [
                 {
                   "name": "class",
                   "value": {
-                    "type": "FunctionCall",
+                    "type": "FunctionCallNode",
                     "payload": {
-                      "function": {
+                      "callerExpression": {
                         "type": "Identifier",
                         "payload": "classHelper"
                       },
-                      "parameters": [
-                        { "type": "StringLiteral", "payload": "card" }
+                      "actualParameters": [
+                        { "type": "StringLiteralNode", "payload": "card" }
                       ]
                     }
                   }
@@ -88,14 +88,14 @@
               ],
               "children": [
                 {
-                  "type": "Tag",
+                  "type": "TagNode",
                   "payload": {
                     "tagName": "a",
                     "attributes": [
                       {
                         "name": "href",
                         "value": {
-                          "type": "BinaryOperation",
+                          "type": "BinaryOperationNode",
                           "payload": {
                             "operator": "ACCESS",
                             "operands": [
@@ -108,7 +108,7 @@
                       {
                         "name": "target",
                         "value": {
-                          "type": "BinaryOperation",
+                          "type": "BinaryOperationNode",
                           "payload": {
                             "operator": "ACCESS",
                             "operands": [
@@ -121,13 +121,13 @@
                     ],
                     "children": [
                       {
-                        "type": "FunctionCall",
+                        "type": "FunctionCallNode",
                         "payload": {
-                          "function": {
+                          "callerExpression": {
                             "type": "Identifier",
                             "payload": "titleHelper"
                           },
-                          "parameters": [
+                          "actualParameters": [
                             { "type": "Identifier", "payload": "title" }
                           ]
                         }
@@ -141,6 +141,6 @@
           }
         }
       }
-    }
+    ]
   }
 }

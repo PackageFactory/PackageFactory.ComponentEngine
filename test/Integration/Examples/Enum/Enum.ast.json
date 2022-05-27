@@ -1,13 +1,13 @@
 {
-  "type": "Module",
+  "type": "ModuleNode",
   "payload": {
     "imports": {},
-    "exports": {
-      "DayOfWeek": {
-        "type": "Enum",
+    "exports": [
+      {
+        "type": "EnumDeclarationNode",
         "payload": {
-          "name": "DayOfWeek",
-          "members": {
+          "enumName": "DayOfWeek",
+          "memberDeclarations": {
             "MONDAY": {
               "name": "MONDAY"
             },
@@ -32,6 +32,6 @@
           }
         }
       }
-    }
+    ]
   }
 }

@@ -1,43 +1,43 @@
 {
-  "type": "Module",
+  "type": "ModuleNode",
   "payload": {
     "imports": {},
-    "exports": {
-      "TemplateLiteralWithFunctionCallPatterns": {
-        "type": "Component",
+    "exports": [
+      {
+        "type": "ComponentDeclarationNode",
         "payload": {
-          "name": "TemplateLiteralWithFunctionCallPatterns",
-          "interface": {
-            "someString": {
+          "componentName": "TemplateLiteralWithFunctionCallPatterns",
+          "propertyDeclarations": [
+            {
               "name": "someString",
               "type": {
-                "type": "TypeReference",
+                "type": "TypeReferenceNode",
                 "payload": {
                   "name": "string",
                   "isArray": false
                 }
               }
             },
-            "someArrayOfStrings": {
+            {
               "name": "someArrayOfStrings",
               "type": {
-                "type": "TypeReference",
+                "type": "TypeReferenceNode",
                 "payload": {
                   "name": "string",
                   "isArray": true
                 }
               }
             }
-          },
-          "return": {
-            "type": "TemplateLiteral",
+          ],
+          "returnExpression": {
+            "type": "TemplateLiteralNode",
             "payload": [
-              { "type": "StringLiteral", "payload": "\n    " },
+              { "type": "StringLiteralNode", "payload": "\n    " },
               {
-                "type": "FunctionCall",
+                "type": "FunctionCallNode",
                 "payload": {
-                  "function": {
-                    "type": "BinaryOperation",
+                  "callerExpression": {
+                    "type": "BinaryOperationNode",
                     "payload": {
                       "operator": "ACCESS",
                       "operands": [
@@ -46,31 +46,31 @@
                       ]
                     }
                   },
-                  "parameters": []
+                  "actualParameters": []
                 }
               },
-              { "type": "StringLiteral", "payload": "\n    " },
+              { "type": "StringLiteralNode", "payload": "\n    " },
               {
-                "type": "FunctionCall",
+                "type": "FunctionCallNode",
                 "payload": {
-                  "function": {
-                    "type": "BinaryOperation",
+                  "callerExpression": {
+                    "type": "BinaryOperationNode",
                     "payload": {
                       "operator": "ACCESS",
                       "operands": [
                         {
-                          "type": "FunctionCall",
+                          "type": "FunctionCallNode",
                           "payload": {
-                            "function": {
-                              "type": "BinaryOperation",
+                            "callerExpression": {
+                              "type": "BinaryOperationNode",
                               "payload": {
                                 "operator": "ACCESS",
                                 "operands": [
                                   {
-                                    "type": "FunctionCall",
+                                    "type": "FunctionCallNode",
                                     "payload": {
-                                      "function": {
-                                        "type": "BinaryOperation",
+                                      "callerExpression": {
+                                        "type": "BinaryOperationNode",
                                         "payload": {
                                           "operator": "ACCESS",
                                           "operands": [
@@ -85,18 +85,18 @@
                                           ]
                                         }
                                       },
-                                      "parameters": [
+                                      "actualParameters": [
                                         {
-                                          "type": "ArrowFunction",
+                                          "type": "ArrowFunctionNode",
                                           "payload": {
-                                            "parameters": [
+                                            "parameterDeclarations": [
                                               { "name": "s", "type": null }
                                             ],
-                                            "body": {
-                                              "type": "FunctionCall",
+                                            "returnExpression": {
+                                              "type": "FunctionCallNode",
                                               "payload": {
-                                                "function": {
-                                                  "type": "BinaryOperation",
+                                                "callerExpression": {
+                                                  "type": "BinaryOperationNode",
                                                   "payload": {
                                                     "operator": "ACCESS",
                                                     "operands": [
@@ -111,7 +111,7 @@
                                                     ]
                                                   }
                                                 },
-                                                "parameters": []
+                                                "actualParameters": []
                                               }
                                             }
                                           }
@@ -123,8 +123,8 @@
                                 ]
                               }
                             },
-                            "parameters": [
-                              { "type": "StringLiteral", "payload": "," }
+                            "actualParameters": [
+                              { "type": "StringLiteralNode", "payload": "," }
                             ]
                           }
                         },
@@ -132,14 +132,14 @@
                       ]
                     }
                   },
-                  "parameters": []
+                  "actualParameters": []
                 }
               },
-              { "type": "StringLiteral", "payload": "\n  " }
+              { "type": "StringLiteralNode", "payload": "\n  " }
             ]
           }
         }
       }
-    }
+    ]
   }
 }

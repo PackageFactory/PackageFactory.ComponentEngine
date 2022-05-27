@@ -1,29 +1,29 @@
 {
-  "type": "Module",
+  "type": "ModuleNode",
   "payload": {
     "imports": {},
-    "exports": {
-      "Expression": {
-        "type": "Component",
+    "exports": [
+      {
+        "type": "ComponentDeclarationNode",
         "payload": {
-          "name": "Expression",
-          "interface": {
-            "nums": {
+          "componentName": "Expression",
+          "propertyDeclarations": [
+            {
               "name": "nums",
               "type": {
-                "type": "TypeReference",
+                "type": "TypeReferenceNode",
                 "payload": {
                   "name": "number",
                   "isArray": true
                 }
               }
             }
-          },
-          "return": {
-            "type": "FunctionCall",
+          ],
+          "returnExpression": {
+            "type": "FunctionCallNode",
             "payload": {
-              "function": {
-                "type": "BinaryOperation",
+              "callerExpression": {
+                "type": "BinaryOperationNode",
                 "payload": {
                   "operator": "ACCESS",
                   "operands": [
@@ -32,19 +32,19 @@
                   ]
                 }
               },
-              "parameters": [
+              "actualParameters": [
                 {
-                  "type": "ArrowFunction",
+                  "type": "ArrowFunctionNode",
                   "payload": {
-                    "parameters": [
+                    "parameterDeclarations": [
                       { "name": "acc", "type": null },
                       { "name": "cur", "type": null }
                     ],
-                    "body": {
-                      "type": "TernaryOperation",
+                    "returnExpression": {
+                      "type": "TernaryOperationNode",
                       "payload": {
                         "condition": {
-                          "type": "BinaryOperation",
+                          "type": "BinaryOperationNode",
                           "payload": {
                             "operator": "LESS_THAN_OR_EQUAL",
                             "operands": [
@@ -53,7 +53,7 @@
                                 "payload": "acc"
                               },
                               {
-                                "type": "NumberLiteral",
+                                "type": "NumberLiteralNode",
                                 "payload": {
                                   "value": "120",
                                   "format": "DECIMAL"
@@ -63,12 +63,12 @@
                           }
                         },
                         "true": {
-                          "type": "BinaryOperation",
+                          "type": "BinaryOperationNode",
                           "payload": {
                             "operator": "PLUS",
                             "operands": [
                               {
-                                "type": "BinaryOperation",
+                                "type": "BinaryOperationNode",
                                 "payload": {
                                   "operator": "MULTIPLY_BY",
                                   "operands": [
@@ -84,12 +84,12 @@
                                 }
                               },
                               {
-                                "type": "BinaryOperation",
+                                "type": "BinaryOperationNode",
                                 "payload": {
                                   "operator": "MODULO",
                                   "operands": [
                                     {
-                                      "type": "NumberLiteral",
+                                      "type": "NumberLiteralNode",
                                       "payload": {
                                         "value": "17",
                                         "format": "DECIMAL"
@@ -106,15 +106,15 @@
                           }
                         },
                         "false": {
-                          "type": "FunctionCall",
+                          "type": "FunctionCallNode",
                           "payload": {
-                            "function": {
+                            "callerExpression": {
                               "type": "Identifier",
                               "payload": "round"
                             },
-                            "parameters": [
+                            "actualParameters": [
                               {
-                                "type": "BinaryOperation",
+                                "type": "BinaryOperationNode",
                                 "payload": {
                                   "operator": "DIVIDE_BY",
                                   "operands": [
@@ -137,7 +137,7 @@
                   }
                 },
                 {
-                  "type": "NumberLiteral",
+                  "type": "NumberLiteralNode",
                   "payload": { "value": "0", "format": "DECIMAL" }
                 }
               ]
@@ -145,6 +145,6 @@
           }
         }
       }
-    }
+    ]
   }
 }

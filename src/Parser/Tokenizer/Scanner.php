@@ -51,7 +51,14 @@ final class Scanner
             }
         }
 
-        throw new \Exception("@TODO: Unexpected token: " . $actualType->value);
+        throw new \Exception(
+            "@TODO: Unexpected token: "
+                . $actualType->value
+                . " at "
+                . ($tokens->current()->boundaries->start->rowIndex + 1)
+                . ":"
+                . ($tokens->current()->boundaries->start->columnIndex + 1)
+        );
     }
 
     /**

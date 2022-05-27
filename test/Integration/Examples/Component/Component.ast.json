@@ -1,46 +1,46 @@
 {
-  "type": "Module",
+  "type": "ModuleNode",
   "payload": {
     "imports": {},
-    "exports": {
-      "Image": {
-        "type": "Component",
+    "exports": [
+      {
+        "type": "ComponentDeclarationNode",
         "payload": {
-          "name": "Image",
-          "interface": {
-            "src": {
+          "componentName": "Image",
+          "propertyDeclarations": [
+            {
               "name": "src",
               "type": {
-                "type": "TypeReference",
+                "type": "TypeReferenceNode",
                 "payload": {
                   "name": "string",
                   "isArray": false
                 }
               }
             },
-            "alt": {
+            {
               "name": "alt",
               "type": {
-                "type": "TypeReference",
+                "type": "TypeReferenceNode",
                 "payload": {
                   "name": "string",
                   "isArray": false
                 }
               }
             },
-            "title": {
+            {
               "name": "title",
               "type": {
-                "type": "TypeReference",
+                "type": "TypeReferenceNode",
                 "payload": {
                   "name": "string",
                   "isArray": false
                 }
               }
             }
-          },
-          "return": {
-            "type": "Tag",
+          ],
+          "returnExpression": {
+            "type": "TagNode",
             "payload": {
               "tagName": "img",
               "attributes": [
@@ -71,6 +71,6 @@
           }
         }
       }
-    }
+    ]
   }
 }
