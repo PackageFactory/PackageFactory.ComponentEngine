@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
-use PackageFactory\ComponentEngine\Parser\Ast\Module\Module;
+use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
 use PackageFactory\ComponentEngine\Parser\Ast\Reference\Identifier;
 use PackageFactory\ComponentEngine\Type\Record\RecordType;
 use PackageFactory\ComponentEngine\Type\Type;
@@ -31,7 +31,7 @@ final class Scope
 {
     private function __construct(
         private readonly null | Scope $parent,
-        private readonly Module|RecordType $node
+        private readonly ModuleNode|RecordType $node
     ) {
     }
 
@@ -40,7 +40,7 @@ final class Scope
         return new self(null, $globals);
     }
 
-    public function push(Module|RecordType $node): self
+    public function push(ModuleNode|RecordType $node): self
     {
         return new self($this, $node);
     }

@@ -1,6 +1,6 @@
 export component Button {
   type: ButtonType
-  content: Slot
+  content: slot
 
   return match (type) {
     ButtonType.LINK -> (

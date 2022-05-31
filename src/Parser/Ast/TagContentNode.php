@@ -29,7 +29,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class TagContentNode implements \JsonSerializable
 {
     private function __construct(
-        private readonly TextNode|ExpressionNode|TagNode $root
+        public readonly TextNode|ExpressionNode|TagNode $root
     ) {
     }
 

@@ -1,0 +1,16 @@
+export component Map {
+  input: string[]
+
+  return input
+    .map((str) => `Hello, ${str}`)
+    .map((str) => `${str}!`)
+}
+
+export component NestedMap {
+  arr1: string[]
+  arr2: string[]
+
+  return arr1
+    .map((str1) => arr2.map((str2) => `${str1} & ${str2}`))
+    .map((arr) => arr.map((str) => `${str}!`))
+}

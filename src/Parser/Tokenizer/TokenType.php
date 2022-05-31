@@ -92,6 +92,9 @@ enum TokenType: string
     case SLASH_FORWARD = 'SLASH_FORWARD';
     case DOLLAR = 'DOLLAR';
 
+    case OPTCHAIN = 'OPTCHAIN';
+    case NULLISH_COALESCE = 'NULLISH_COALESCE';
+
     case SPACE = 'SPACE';
     case END_OF_LINE = 'END_OF_LINE';
 

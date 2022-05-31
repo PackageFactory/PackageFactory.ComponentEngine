@@ -23,7 +23,7 @@
               "type": {
                 "type": "TypeReferenceNode",
                 "payload": {
-                  "name": "Slot",
+                  "name": "slot",
                   "isArray": false
                 }
               }

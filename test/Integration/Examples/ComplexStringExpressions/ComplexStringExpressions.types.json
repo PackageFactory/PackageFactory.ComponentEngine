@@ -1,0 +1,105 @@
+{
+  "FunctionCallOnStringLiteral": {
+    "__nodeType": "ComponentDeclaration",
+    "componentName": "FunctionCallOnStringLiteral",
+    "properties": {},
+    "returnExpression": {
+      "__nodeType": "FunctionCall",
+      "caller": {
+        "__nodeType": "AccessChain",
+        "root": {
+          "__nodeType": "StringLiteral",
+          "value": "Hello World!",
+          "resolvesTo": "string"
+        },
+        "chain": [{ "accessType": "MANDATORY", "accessor": "toUpperCase" }],
+        "resolvesTo": "string.()=>string"
+      },
+      "actualParameters": [],
+      "resolvesTo": "string"
+    }
+  },
+  "StringFunctionCallOnTernaryExpressionWithNumberReturn": {
+    "__nodeType": "ComponentDeclaration",
+    "componentName": "StringFunctionCallOnTernaryExpressionWithNumberReturn",
+    "properties": {},
+    "returnExpression": {
+      "__nodeType": "FunctionCall",
+      "caller": {
+        "__nodeType": "AccessChain",
+        "root": {
+          "__nodeType": "TernaryOperation",
+          "condition": {
+            "__nodeType": "FunctionCall",
+            "caller": {
+              "__nodeType": "AccessChain",
+              "root": {
+                "__nodeType": "FunctionCall",
+                "caller": {
+                  "__nodeType": "AccessChain",
+                  "root": {
+                    "__nodeType": "StringLiteral",
+                    "value": "Hello World!",
+                    "resolvesTo": "string"
+                  },
+                  "chain": [
+                    { "accessType": "MANDATORY", "accessor": "substr" }
+                  ],
+                  "resolvesTo": "string.(number,number)=>string"
+                },
+                "actualParameters": [
+                  {
+                    "__nodeType": "NumberLiteral",
+                    "format": "DECIMAL",
+                    "value": "0",
+                    "resolvesTo": "number"
+                  },
+                  {
+                    "__nodeType": "NumberLiteral",
+                    "format": "DECIMAL",
+                    "value": "4",
+                    "resolvesTo": "number"
+                  }
+                ],
+                "resolvesTo": "string"
+              },
+              "chain": [
+                { "accessType": "MANDATORY", "accessor": "startsWith" }
+              ],
+              "resolvesTo": "string.(string)=>boolean"
+            },
+            "actualParameters": [
+              {
+                "__nodeType": "StringLiteral",
+                "value": "He",
+                "resolvesTo": "string"
+              }
+            ],
+            "resolvesTo": "boolean"
+          },
+          "true": {
+            "__nodeType": "StringLiteral",
+            "value": "Hi World!",
+            "resolvesTo": "string"
+          },
+          "false": {
+            "__nodeType": "StringLiteral",
+            "value": "Howdy World!",
+            "resolvesTo": "string"
+          },
+          "resolvesTo": "string"
+        },
+        "chain": [{ "accessType": "MANDATORY", "accessor": "indexOf" }],
+        "resolvesTo": "string.(string)=>number"
+      },
+      "actualParameters": [
+        {
+          "__nodeType": "StringLiteral",
+          "value": "World",
+          "resolvesTo": "string"
+        }
+      ],
+      "resolvesTo": "number"
+    }
+  }
+}

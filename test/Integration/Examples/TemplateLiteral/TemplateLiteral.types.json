@@ -1,0 +1,195 @@
+{
+  "TemplateLiteral": {
+    "__nodeType": "ComponentDeclaration",
+    "componentName": "TemplateLiteral",
+    "properties": [
+      {
+        "name": "expression",
+        "type": "string"
+      },
+      {
+        "name": "isActive",
+        "type": "boolean"
+      },
+      {
+        "name": "someNumber",
+        "type": "number"
+      }
+    ],
+    "returnExpression": {
+      "__nodeType": "TemplateLiteral",
+      "segments": [
+        {
+          "__nodeType": "StringLiteral",
+          "value": "A template literal may contain ",
+          "resolvesTo": "string"
+        },
+        {
+          "__nodeType": "Variable",
+          "name": "expression",
+          "resolvesTo": "string"
+        },
+        {
+          "__nodeType": "StringLiteral",
+          "value": "s.\n\n  It can span multiple lines.\n\n  Interpolated Expressions can be arbitrarily complex:\n  ",
+          "resolvesTo": "string"
+        },
+        {
+          "__nodeType": "TernaryOperation",
+          "condition": {
+            "__nodeType": "Variable",
+            "name": "isActive",
+            "resolvesTo": "boolean"
+          },
+          "true": {
+            "__nodeType": "BinaryOperation",
+            "operator": "MULTIPLY_BY",
+            "operands": [
+              {
+                "__nodeType": "NumberLiteral",
+                "format": "DECIMAL",
+                "value": "27",
+                "resolvesTo": "number"
+              },
+              {
+                "__nodeType": "Variable",
+                "name": "someNumber",
+                "resolvesTo": "number"
+              }
+            ],
+            "resolvesTo": "number"
+          },
+          "false": {
+            "__nodeType": "BinaryOperation",
+            "operator": "MODULO",
+            "operands": [
+              {
+                "__nodeType": "Variable",
+                "name": "someNumber",
+                "resolvesTo": "number"
+              },
+              {
+                "__nodeType": "NumberLiteral",
+                "format": "DECIMAL",
+                "value": "17",
+                "resolvesTo": "number"
+              }
+            ],
+            "resolvesTo": "number"
+          },
+          "resolvesTo": "number"
+        },
+        {
+          "__nodeType": "StringLiteral",
+          "value": "\n\n  They can also contain other template literals:\n  ",
+          "resolvesTo": "string"
+        },
+        {
+          "__nodeType": "TernaryOperation",
+          "condition": {
+            "__nodeType": "Variable",
+            "name": "isActive",
+            "resolvesTo": "boolean"
+          },
+          "true": {
+            "__nodeType": "TemplateLiteral",
+            "segments": [
+              {
+                "__nodeType": "StringLiteral",
+                "value": "Is 27? ",
+                "resolvesTo": "string"
+              },
+              {
+                "__nodeType": "TernaryOperation",
+                "condition": {
+                  "__nodeType": "BinaryOperation",
+                  "operator": "EQUAL",
+                  "operands": [
+                    {
+                      "__nodeType": "Variable",
+                      "name": "someNumber",
+                      "resolvesTo": "number"
+                    },
+                    {
+                      "__nodeType": "NumberLiteral",
+                      "format": "DECIMAL",
+                      "value": "27",
+                      "resolvesTo": "number"
+                    }
+                  ],
+                  "resolvesTo": "boolean"
+                },
+                "true": {
+                  "__nodeType": "StringLiteral",
+                  "value": "yes",
+                  "resolvesTo": "string"
+                },
+                "false": {
+                  "__nodeType": "StringLiteral",
+                  "value": "no",
+                  "resolvesTo": "string"
+                },
+                "resolvesTo": "string"
+              }
+            ],
+            "resolvesTo": "string"
+          },
+          "false": {
+            "__nodeType": "TemplateLiteral",
+            "segments": [
+              {
+                "__nodeType": "StringLiteral",
+                "value": "Number is ",
+                "resolvesTo": "string"
+              },
+              {
+                "__nodeType": "NumberLiteral",
+                "format": "DECIMAL",
+                "value": "27",
+                "resolvesTo": "number"
+              }
+            ],
+            "resolvesTo": "string"
+          },
+          "resolvesTo": "string"
+        },
+        {
+          "__nodeType": "StringLiteral",
+          "value": "\n\n  Even markup:\n  ",
+          "resolvesTo": "string"
+        },
+        {
+          "__nodeType": "Tag",
+          "tagName": "header",
+          "attributes": [],
+          "contents": [
+            {
+              "__nodeType": "Tag",
+              "tagName": "h1",
+              "attributes": [],
+              "contents": [
+                {
+                  "__nodeType": "Text",
+                  "value": "Number is"
+                },
+                {
+                  "__nodeType": "Variable",
+                  "name": "someNumber",
+                  "resolvesTo": "number"
+                }
+              ],
+              "resolvesTo": "element"
+            }
+          ],
+          "resolvesTo": "element"
+        },
+        {
+          "__nodeType": "StringLiteral",
+          "value": "\n  ",
+          "resolvesTo": "string"
+        }
+      ],
+      "resolvesTo": "string"
+    }
+  }
+}

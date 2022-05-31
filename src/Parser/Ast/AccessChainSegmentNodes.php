@@ -31,7 +31,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class AccessChainSegmentNodes implements \JsonSerializable
 {
     /**
-     * @var array<int,ExpressionNode>
+     * @var array<int,AccessChainSegmentNode>
      */
     public readonly array $items;
 

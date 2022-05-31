@@ -1,0 +1,145 @@
+{
+  "Expression": {
+    "__nodeType": "ComponentDeclaration",
+    "componentName": "Expression",
+    "properties": [
+      {
+        "name": "nums",
+        "type": "number[]"
+      }
+    ],
+    "returnExpression": {
+      "__nodeType": "FunctionCall",
+      "caller": {
+        "__nodeType": "AccessChain",
+        "root": {
+          "__nodeType": "Variable",
+          "name": "nums",
+          "resolvesTo": "number[]"
+        },
+        "chain": [
+          {
+            "accessType": "MANDATORY",
+            "accessor": "reduce"
+          }
+        ],
+        "resolvesTo": "number[].((T,number)=>T,T)=>T"
+      },
+      "actualParameters": [
+        {
+          "__nodeType": "ArrowFunction",
+          "parameterDeclarations": [
+            {
+              "name": "acc",
+              "type": "number"
+            },
+            {
+              "name": "cur",
+              "type": "number"
+            }
+          ],
+          "returnExpression": {
+            "__nodeType": "TernaryOperation",
+            "condition": {
+              "__nodeType": "BinaryOperation",
+              "operator": "LESS_THAN_OR_EQUAL",
+              "operands": [
+                {
+                  "__nodeType": "Variable",
+                  "name": "acc",
+                  "resolvesTo": "number"
+                },
+                {
+                  "__nodeType": "NumberLiteral",
+                  "format": "DECIMAL",
+                  "value": "120",
+                  "resolvesTo": "number"
+                }
+              ],
+              "resolvesTo": "boolean"
+            },
+            "true": {
+              "__nodeType": "BinaryOperation",
+              "operator": "PLUS",
+              "operands": [
+                {
+                  "__nodeType": "BinaryOperation",
+                  "operator": "MULTIPLY_BY",
+                  "operands": [
+                    {
+                      "__nodeType": "Variable",
+                      "name": "cur",
+                      "resolvesTo": "number"
+                    },
+                    {
+                      "__nodeType": "Variable",
+                      "name": "acc",
+                      "resolvesTo": "number"
+                    }
+                  ],
+                  "resolvesTo": "number"
+                },
+                {
+                  "__nodeType": "BinaryOperation",
+                  "operator": "MODULO",
+                  "operands": [
+                    {
+                      "__nodeType": "NumberLiteral",
+                      "format": "DECIMAL",
+                      "value": "17",
+                      "resolvesTo": "number"
+                    },
+                    {
+                      "__nodeType": "Variable",
+                      "name": "cur",
+                      "resolvesTo": "number"
+                    }
+                  ],
+                  "resolvesTo": "number"
+                }
+              ],
+              "resolvesTo": "number"
+            },
+            "false": {
+              "__nodeType": "FunctionCall",
+              "caller": {
+                "__nodeType": "Variable",
+                "name": "round",
+                "resolvesTo": "(number)=>number"
+              },
+              "actualParameters": [
+                {
+                  "__nodeType": "BinaryOperation",
+                  "operator": "DIVIDE_BY",
+                  "operands": [
+                    {
+                      "__nodeType": "Variable",
+                      "name": "cur",
+                      "resolvesTo": "number"
+                    },
+                    {
+                      "__nodeType": "Variable",
+                      "name": "acc",
+                      "resolvesTo": "number"
+                    }
+                  ],
+                  "resolvesTo": "number"
+                }
+              ],
+              "resolvesTo": "number"
+            },
+            "resolvesTo": "number"
+          },
+          "resolvesTo": "(number,number)=>number"
+        },
+        {
+          "__nodeType": "NumberLiteral",
+          "format": "DECIMAL",
+          "value": "0",
+          "resolvesTo": "number"
+        }
+      ],
+      "resolvesTo": "number"
+    }
+  }
+}

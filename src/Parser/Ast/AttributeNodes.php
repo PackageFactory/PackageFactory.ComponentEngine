@@ -29,19 +29,19 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class AttributeNodes implements \JsonSerializable
 {
     /**
-     * @var array<string,Attribute>
+     * @var array<string,AttributeNode>
      */
-    public readonly array $attributes;
+    public readonly array $items;
 
     private function __construct(
-        AttributeNode ...$attributes
+        AttributeNode ...$items
     ) {
-        $attributesAsHashMap = [];
-        foreach ($attributes as $attribute) {
-            $attributesAsHashMap[$attribute->name] = $attribute;
+        $itemsAsHashMap = [];
+        foreach ($items as $attribute) {
+            $itemsAsHashMap[$attribute->name] = $attribute;
         }
 
-        $this->attributes = $attributesAsHashMap;
+        $this->items = $itemsAsHashMap;
     }
 
     /**
@@ -50,8 +50,8 @@ final class AttributeNodes implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        /** @var array<string,Attribute> $attributes */
-        $attributes = [];
+        /** @var array<string,Attribute> $items */
+        $items = [];
 
         while (true) {
             Scanner::skipSpaceAndComments($tokens);
@@ -61,18 +61,18 @@ final class AttributeNodes implements \JsonSerializable
                 case TokenType::TAG_SELF_CLOSE:
                     break 2;
                 case TokenType::STRING:
-                    $attributes[] = AttributeNode::fromTokens($tokens);
+                    $items[] = AttributeNode::fromTokens($tokens);
                     break;
                 default:
                     Scanner::assertType($tokens, TokenType::TAG_END, TokenType::TAG_SELF_CLOSE, TokenType::STRING);
             }
         }
 
-        return new self(...$attributes);
+        return new self(...$items);
     }
 
     public function jsonSerialize(): mixed
     {
-        return array_values($this->attributes);
+        return array_values($this->items);
     }
 }

@@ -1,0 +1,213 @@
+{
+  "Button": {
+    "__nodeType": "ComponentDeclaration",
+    "componentName": "Button",
+    "properties": [
+      { "name": "type", "type": "ButtonType" },
+      { "name": "content", "type": "slot" }
+    ],
+    "returnExpression": {
+      "__nodeType": "MatchStatement",
+      "subject": {
+        "__nodeType": "Variable",
+        "name": "type",
+        "resolvesTo": "ButtonType"
+      },
+      "arms": [
+        {
+          "conditions": [
+            {
+              "__nodeType": "AccessChain",
+              "root": {
+                "__nodeType": "Variable",
+                "name": "ButtonType",
+                "resolvesTo": "ButtonType"
+              },
+              "chain": [
+                {
+                  "accessType": "MANDATORY",
+                  "accessor": "LINK"
+                }
+              ],
+              "resolvesTo": "ButtonType.LINK"
+            }
+          ],
+          "result": {
+            "__nodeType": "Tag",
+            "tagName": "a",
+            "attributes": [
+              {
+                "name": "class",
+                "value": {
+                  "__nodeType": "StringLiteral",
+                  "value": "btn",
+                  "resolvesTo": "string"
+                }
+              },
+              {
+                "name": "href",
+                "value": {
+                  "__nodeType": "StringLiteral",
+                  "value": "#",
+                  "resolvesTo": "string"
+                }
+              }
+            ],
+            "contents": [
+              {
+                "__nodeType": "Variable",
+                "name": "content",
+                "resolvesTo": "slot"
+              }
+            ],
+            "resolvesTo": "element"
+          }
+        },
+        {
+          "conditions": [
+            {
+              "__nodeType": "AccessChain",
+              "root": {
+                "__nodeType": "Variable",
+                "name": "ButtonType",
+                "resolvesTo": "ButtonType"
+              },
+              "chain": [
+                {
+                  "accessType": "MANDATORY",
+                  "accessor": "BUTTON"
+                }
+              ],
+              "resolvesTo": "ButtonType.BUTTON"
+            },
+            {
+              "__nodeType": "AccessChain",
+              "root": {
+                "__nodeType": "Variable",
+                "name": "ButtonType",
+                "resolvesTo": "ButtonType"
+              },
+              "chain": [
+                {
+                  "accessType": "MANDATORY",
+                  "accessor": "SUBMIT"
+                }
+              ],
+              "resolvesTo": "ButtonType.SUBMIT"
+            }
+          ],
+          "result": {
+            "__nodeType": "Tag",
+            "tagName": "button",
+            "attributes": [
+              {
+                "name": "class",
+                "value": {
+                  "__nodeType": "StringLiteral",
+                  "value": "btn",
+                  "resolvesTo": "string"
+                }
+              },
+              {
+                "name": "type",
+                "value": {
+                  "__nodeType": "MatchStatement",
+                  "subject": {
+                    "__nodeType": "Variable",
+                    "name": "type",
+                    "resolvesTo": "ButtonType"
+                  },
+                  "arms": [
+                    {
+                      "conditions": [
+                        {
+                          "__nodeType": "AccessChain",
+                          "root": {
+                            "__nodeType": "Variable",
+                            "name": "ButtonType",
+                            "resolvesTo": "ButtonType"
+                          },
+                          "chain": [
+                            {
+                              "accessType": "MANDATORY",
+                              "accessor": "SUBMIT"
+                            }
+                          ],
+                          "resolvesTo": "ButtonType.SUBMIT"
+                        }
+                      ],
+                      "result": {
+                        "__nodeType": "StringLiteral",
+                        "value": "submit",
+                        "resolvesTo": "string"
+                      }
+                    },
+                    {
+                      "conditions": null,
+                      "result": {
+                        "__nodeType": "StringLiteral",
+                        "value": "button",
+                        "resolvesTo": "string"
+                      }
+                    }
+                  ],
+                  "resolvesTo": "string"
+                }
+              }
+            ],
+            "contents": [
+              {
+                "__nodeType": "Variable",
+                "name": "content",
+                "resolvesTo": "slot"
+              }
+            ],
+            "resolvesTo": "element"
+          }
+        },
+        {
+          "conditions": [
+            {
+              "__nodeType": "AccessChain",
+              "root": {
+                "__nodeType": "Variable",
+                "name": "ButtonType",
+                "resolvesTo": "ButtonType"
+              },
+              "chain": [
+                {
+                  "accessType": "MANDATORY",
+                  "accessor": "NONE"
+                }
+              ],
+              "resolvesTo": "ButtonType.NONE"
+            }
+          ],
+          "result": {
+            "__nodeType": "Tag",
+            "tagName": "div",
+            "attributes": [
+              {
+                "name": "class",
+                "value": {
+                  "__nodeType": "StringLiteral",
+                  "value": "btn",
+                  "resolvesTo": "string"
+                }
+              }
+            ],
+            "contents": [
+              {
+                "__nodeType": "Variable",
+                "name": "content",
+                "resolvesTo": "slot"
+              }
+            ],
+            "resolvesTo": "element"
+          }
+        }
+      ],
+      "resolvesTo": "element"
+    }
+  }
+}

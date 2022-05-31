@@ -31,12 +31,12 @@ final class MatchArmNodes implements \JsonSerializable
     /**
      * @var array<int,MatchArmNode>
      */
-    public readonly array $arms;
+    public readonly array $items;
 
     private function __construct(
-        MatchArmNode ...$arms
+        MatchArmNode ...$items
     ) {
-        $this->arms = $arms;
+        $this->items = $items;
     }
 
     /**
@@ -45,19 +45,19 @@ final class MatchArmNodes implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        /** @var array<int,MatchArm> $arms */
-        $arms = [];
+        /** @var array<int,MatchArm> $items */
+        $items = [];
 
         while (Scanner::type($tokens) !== TokenType::BRACKET_CURLY_CLOSE) {
             Scanner::skipSpaceAndComments($tokens);
-            $arms[] = MatchArmNode::fromTokens($tokens);
+            $items[] = MatchArmNode::fromTokens($tokens);
         }
 
-        return new self(...$arms);
+        return new self(...$items);
     }
 
     public function jsonSerialize(): mixed
     {
-        return $this->arms;
+        return $this->items;
     }
 }

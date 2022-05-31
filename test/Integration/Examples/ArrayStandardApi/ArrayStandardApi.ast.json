@@ -1,0 +1,263 @@
+{
+  "type": "ModuleNode",
+  "payload": {
+    "imports": {},
+    "exports": [
+      {
+        "type": "ComponentDeclarationNode",
+        "payload": {
+          "componentName": "Map",
+          "propertyDeclarations": [
+            {
+              "name": "input",
+              "type": {
+                "type": "TypeReferenceNode",
+                "payload": {
+                  "name": "string",
+                  "isArray": true
+                }
+              }
+            }
+          ],
+          "returnExpression": {
+            "type": "FunctionCallNode",
+            "payload": {
+              "callerExpression": {
+                "type": "AccessNode",
+                "payload": {
+                  "root": {
+                    "type": "FunctionCallNode",
+                    "payload": {
+                      "callerExpression": {
+                        "type": "AccessNode",
+                        "payload": {
+                          "root": { "type": "Identifier", "payload": "input" },
+                          "chain": [
+                            {
+                              "accessType": "MANDATORY",
+                              "accessor": {
+                                "type": "Identifier",
+                                "payload": "map"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "actualParameters": [
+                        {
+                          "type": "ArrowFunctionNode",
+                          "payload": {
+                            "parameterDeclarations": [
+                              { "name": "str", "type": null }
+                            ],
+                            "returnExpression": {
+                              "type": "TemplateLiteralNode",
+                              "payload": [
+                                {
+                                  "type": "StringLiteralNode",
+                                  "payload": "Hello, "
+                                },
+                                { "type": "Identifier", "payload": "str" }
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "chain": [
+                    {
+                      "accessType": "MANDATORY",
+                      "accessor": { "type": "Identifier", "payload": "map" }
+                    }
+                  ]
+                }
+              },
+              "actualParameters": [
+                {
+                  "type": "ArrowFunctionNode",
+                  "payload": {
+                    "parameterDeclarations": [{ "name": "str", "type": null }],
+                    "returnExpression": {
+                      "type": "TemplateLiteralNode",
+                      "payload": [
+                        { "type": "Identifier", "payload": "str" },
+                        { "type": "StringLiteralNode", "payload": "!" }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "type": "ComponentDeclarationNode",
+        "payload": {
+          "componentName": "NestedMap",
+          "propertyDeclarations": [
+            {
+              "name": "arr1",
+              "type": {
+                "type": "TypeReferenceNode",
+                "payload": { "name": "string", "isArray": true }
+              }
+            },
+            {
+              "name": "arr2",
+              "type": {
+                "type": "TypeReferenceNode",
+                "payload": { "name": "string", "isArray": true }
+              }
+            }
+          ],
+          "returnExpression": {
+            "type": "FunctionCallNode",
+            "payload": {
+              "callerExpression": {
+                "type": "AccessNode",
+                "payload": {
+                  "root": {
+                    "type": "FunctionCallNode",
+                    "payload": {
+                      "callerExpression": {
+                        "type": "AccessNode",
+                        "payload": {
+                          "root": { "type": "Identifier", "payload": "arr1" },
+                          "chain": [
+                            {
+                              "accessType": "MANDATORY",
+                              "accessor": {
+                                "type": "Identifier",
+                                "payload": "map"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "actualParameters": [
+                        {
+                          "type": "ArrowFunctionNode",
+                          "payload": {
+                            "parameterDeclarations": [
+                              { "name": "str1", "type": null }
+                            ],
+                            "returnExpression": {
+                              "type": "FunctionCallNode",
+                              "payload": {
+                                "callerExpression": {
+                                  "type": "AccessNode",
+                                  "payload": {
+                                    "root": {
+                                      "type": "Identifier",
+                                      "payload": "arr2"
+                                    },
+                                    "chain": [
+                                      {
+                                        "accessType": "MANDATORY",
+                                        "accessor": {
+                                          "type": "Identifier",
+                                          "payload": "map"
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                "actualParameters": [
+                                  {
+                                    "type": "ArrowFunctionNode",
+                                    "payload": {
+                                      "parameterDeclarations": [
+                                        { "name": "str2", "type": null }
+                                      ],
+                                      "returnExpression": {
+                                        "type": "TemplateLiteralNode",
+                                        "payload": [
+                                          {
+                                            "type": "Identifier",
+                                            "payload": "str1"
+                                          },
+                                          {
+                                            "type": "StringLiteralNode",
+                                            "payload": " & "
+                                          },
+                                          {
+                                            "type": "Identifier",
+                                            "payload": "str2"
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "chain": [
+                    {
+                      "accessType": "MANDATORY",
+                      "accessor": { "type": "Identifier", "payload": "map" }
+                    }
+                  ]
+                }
+              },
+              "actualParameters": [
+                {
+                  "type": "ArrowFunctionNode",
+                  "payload": {
+                    "parameterDeclarations": [{ "name": "arr", "type": null }],
+                    "returnExpression": {
+                      "type": "FunctionCallNode",
+                      "payload": {
+                        "callerExpression": {
+                          "type": "AccessNode",
+                          "payload": {
+                            "root": { "type": "Identifier", "payload": "arr" },
+                            "chain": [
+                              {
+                                "accessType": "MANDATORY",
+                                "accessor": {
+                                  "type": "Identifier",
+                                  "payload": "map"
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        "actualParameters": [
+                          {
+                            "type": "ArrowFunctionNode",
+                            "payload": {
+                              "parameterDeclarations": [
+                                { "name": "str", "type": null }
+                              ],
+                              "returnExpression": {
+                                "type": "TemplateLiteralNode",
+                                "payload": [
+                                  { "type": "Identifier", "payload": "str" },
+                                  {
+                                    "type": "StringLiteralNode",
+                                    "payload": "!"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    ]
+  }
+}

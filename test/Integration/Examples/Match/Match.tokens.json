@@ -73,7 +73,7 @@
   },
   {
     "type": "STRING",
-    "value": "Slot"
+    "value": "slot"
   },
   {
     "type": "END_OF_LINE",

@@ -1,0 +1,15 @@
+{
+  "DayOfWeek": {
+    "__nodeType": "EnumDeclaration",
+    "name": "DayOfWeek",
+    "members": [
+      { "name": "MONDAY" },
+      { "name": "TUESDAY" },
+      { "name": "WEDNESDAY" },
+      { "name": "THURSDAY" },
+      { "name": "FRIDAY" },
+      { "name": "SATURDAY" },
+      { "name": "SUNDAY" }
+    ]
+  }
+}

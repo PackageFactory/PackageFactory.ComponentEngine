@@ -1,0 +1,110 @@
+{
+  "Numbers": {
+    "__nodeType": "ComponentDeclaration",
+    "componentName": "Numbers",
+    "properties": [],
+    "returnExpression": {
+      "__nodeType": "BinaryOperation",
+      "operator": "PLUS",
+      "operands": [
+        {
+          "__nodeType": "NumberLiteral",
+          "format": "DECIMAL",
+          "value": "0",
+          "resolvesTo": "number"
+        },
+        {
+          "__nodeType": "NumberLiteral",
+          "format": "DECIMAL",
+          "value": "1234567890",
+          "resolvesTo": "number"
+        },
+        {
+          "__nodeType": "NumberLiteral",
+          "format": "DECIMAL",
+          "value": "42",
+          "resolvesTo": "number"
+        },
+        {
+          "__nodeType": "NumberLiteral",
+          "format": "BINARY",
+          "value": "0b10000000000000000000000000000000",
+          "resolvesTo": "number"
+        },
+        {
+          "__nodeType": "NumberLiteral",
+          "format": "BINARY",
+          "value": "0b01111111100000000000000000000000",
+          "resolvesTo": "number"
+        },
+        {
+          "__nodeType": "NumberLiteral",
+          "format": "BINARY",
+          "value": "0B00000000011111111111111111111111",
+          "resolvesTo": "number"
+        },
+        {
+          "__nodeType": "NumberLiteral",
+          "format": "OCTAL",
+          "value": "0o755",
+          "resolvesTo": "number"
+        },
+        {
+          "__nodeType": "NumberLiteral",
+          "format": "OCTAL",
+          "value": "0o644",
+          "resolvesTo": "number"
+        },
+        {
+          "__nodeType": "NumberLiteral",
+          "format": "HEXADECIMAL",
+          "value": "0xFFFFFFFFFFFFFFFFF",
+          "resolvesTo": "number"
+        },
+        {
+          "__nodeType": "NumberLiteral",
+          "format": "HEXADECIMAL",
+          "value": "0x123456789ABCDEF",
+          "resolvesTo": "number"
+        },
+        {
+          "__nodeType": "NumberLiteral",
+          "format": "HEXADECIMAL",
+          "value": "0xA",
+          "resolvesTo": "number"
+        },
+        {
+          "__nodeType": "NumberLiteral",
+          "format": "DECIMAL",
+          "value": "1E3",
+          "resolvesTo": "number"
+        },
+        {
+          "__nodeType": "NumberLiteral",
+          "format": "DECIMAL",
+          "value": "2e6",
+          "resolvesTo": "number"
+        },
+        {
+          "__nodeType": "NumberLiteral",
+          "format": "DECIMAL",
+          "value": "123.456",
+          "resolvesTo": "number"
+        },
+        {
+          "__nodeType": "NumberLiteral",
+          "format": "DECIMAL",
+          "value": "0.1e2",
+          "resolvesTo": "number"
+        },
+        {
+          "__nodeType": "NumberLiteral",
+          "format": "DECIMAL",
+          "value": ".22",
+          "resolvesTo": "number"
+        }
+      ],
+      "resolvesTo": "number"
+    }
+  }
+}
