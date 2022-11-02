@@ -23,9 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Integration;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExportNode;
-use PackageFactory\ComponentEngine\Parser\Ast\Module\Module;
 use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
-use PackageFactory\ComponentEngine\Parser\Ast\Scope;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Transpiler\Php\Transpiler;
@@ -48,9 +46,7 @@ final class IntegrationTest extends TestCase
     public function tokenizationExamples(): array
     {
         return [
-            'ArrayStandardApi' => ["ArrayStandardApi"],
             'Comment' => ["Comment"],
-            'ComplexStringExpressions' => ["ComplexStringExpressions"],
             'Component' => ["Component"],
             'ComponentWithKeywords' => ["ComponentWithKeywords"],
             'ComponentWithNesting' => ["ComponentWithNesting"],
@@ -61,7 +57,6 @@ final class IntegrationTest extends TestCase
             'Match' => ["Match"],
             'Numbers' => ["Numbers"],
             'TemplateLiteral' => ["TemplateLiteral"],
-            'TemplateLiteralWithFunctionCallPatterns' => ["TemplateLiteralWithFunctionCallPatterns"],
         ];
     }
 
@@ -95,9 +90,7 @@ final class IntegrationTest extends TestCase
     public function astExamples(): array
     {
         return [
-            'ArrayStandardApi' => ["ArrayStandardApi"],
             'Comment' => ["Comment"],
-            'ComplexStringExpressions' => ["ComplexStringExpressions"],
             'Component' => ["Component"],
             'ComponentWithKeywords' => ["ComponentWithKeywords"],
             'ComponentWithNesting' => ["ComponentWithNesting"],
@@ -108,7 +101,6 @@ final class IntegrationTest extends TestCase
             'Match' => ["Match"],
             'Numbers' => ["Numbers"],
             'TemplateLiteral' => ["TemplateLiteral"],
-            'TemplateLiteralWithFunctionCallPatterns' => ["TemplateLiteralWithFunctionCallPatterns"],
         ];
     }
 
@@ -136,8 +128,6 @@ final class IntegrationTest extends TestCase
     public function typeResolverExamples(): array
     {
         return [
-            'ArrayStandardApi' => ["ArrayStandardApi"],
-            'ComplexStringExpressions' => ["ComplexStringExpressions"],
             'Enum' => ["Enum"],
             'Expression' => ["Expression"],
             'Match' => ["Match"],
@@ -200,7 +190,7 @@ final class IntegrationTest extends TestCase
     public function transpilerExamples(): array
     {
         return [
-            'Component' => ["Component"],
+            //'Component' => ["Component"],
         ];
     }
 
