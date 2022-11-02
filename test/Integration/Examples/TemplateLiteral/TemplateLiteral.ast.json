@@ -171,10 +171,12 @@
                             "type": "Identifier",
                             "payload": "someNumber"
                           }
-                        ]
+                        ],
+                        "isSelfClosing": false
                       }
                     }
-                  ]
+                  ],
+                  "isSelfClosing": false
                 }
               },
               { "type": "StringLiteralNode", "payload": "\n  " }

@@ -20,7 +20,8 @@
                     "value": "Keywords like import or export or component are allowed in here."
                   }
                 }
-              ]
+              ],
+              "isSelfClosing": false
             }
           }
         }

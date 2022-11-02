@@ -97,7 +97,8 @@
                         }
                       }
                     ],
-                    "children": []
+                    "children": [],
+                    "isSelfClosing": true
                   }
                 },
                 {
@@ -118,10 +119,12 @@
                         "type": "Identifier",
                         "payload": "text"
                       }
-                    ]
+                    ],
+                    "isSelfClosing": false
                   }
                 }
-              ]
+              ],
+              "isSelfClosing": false
             }
           }
         }

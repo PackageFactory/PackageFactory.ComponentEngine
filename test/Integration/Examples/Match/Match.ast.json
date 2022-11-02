@@ -85,7 +85,8 @@
                             "type": "Identifier",
                             "payload": "content"
                           }
-                        ]
+                        ],
+                        "isSelfClosing": false
                       }
                     }
                   }
@@ -202,7 +203,8 @@
                             "type": "Identifier",
                             "payload": "content"
                           }
-                        ]
+                        ],
+                        "isSelfClosing": false
                       }
                     }
                   }
@@ -248,7 +250,8 @@
                             "type": "Identifier",
                             "payload": "content"
                           }
-                        ]
+                        ],
+                        "isSelfClosing": false
                       }
                     }
                   }

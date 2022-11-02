@@ -31,7 +31,8 @@ final class TagNode implements \JsonSerializable
     private function __construct(
         public readonly string $tagName,
         public readonly AttributeNodes $attributes,
-        public readonly TagContentNodes $children
+        public readonly TagContentNodes $children,
+        public readonly bool $isSelfClosing
     ) {
     }
 
@@ -61,7 +62,8 @@ final class TagNode implements \JsonSerializable
             return new self(
                 tagName: $tagName,
                 attributes: $attributes,
-                children: TagContentNodes::empty()
+                children: TagContentNodes::empty(),
+                isSelfClosing: true
             );
         }
 
@@ -82,7 +84,8 @@ final class TagNode implements \JsonSerializable
         return new self(
             tagName: $tagName,
             attributes: $attributes,
-            children: $children
+            children: $children,
+            isSelfClosing: false
         );
     }
 
@@ -93,7 +96,8 @@ final class TagNode implements \JsonSerializable
             'payload' => [
                 'tagName' => $this->tagName,
                 'attributes' => $this->attributes,
-                'children' => $this->children
+                'children' => $this->children,
+                'isSelfClosing' => $this->isSelfClosing
             ]
         ];
     }

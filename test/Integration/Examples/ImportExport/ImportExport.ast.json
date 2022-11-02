@@ -104,11 +104,13 @@
                         }
                       }
                     ],
-                    "children": [{ "type": "Identifier", "payload": "title" }]
+                    "children": [{ "type": "Identifier", "payload": "title" }],
+                    "isSelfClosing": false
                   }
                 },
                 { "type": "Identifier", "payload": "button" }
-              ]
+              ],
+              "isSelfClosing": false
             }
           }
         }
