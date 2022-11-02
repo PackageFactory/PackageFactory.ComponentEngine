@@ -15,20 +15,6 @@
           "type": "Identifier",
           "payload": "Button"
         }
-      },
-      {
-        "source": "ext:vendor/package",
-        "name": {
-          "type": "Identifier",
-          "payload": "classHelper"
-        }
-      },
-      {
-        "source": "ext:vendor/package",
-        "name": {
-          "type": "Identifier",
-          "payload": "titleHelper"
-        }
       }
     ],
     "exports": [
@@ -72,18 +58,7 @@
               "attributes": [
                 {
                   "name": "class",
-                  "value": {
-                    "type": "FunctionCallNode",
-                    "payload": {
-                      "callerExpression": {
-                        "type": "Identifier",
-                        "payload": "classHelper"
-                      },
-                      "actualParameters": [
-                        { "type": "StringLiteralNode", "payload": "card" }
-                      ]
-                    }
-                  }
+                  "value": { "type": "StringLiteralNode", "payload": "card" }
                 }
               ],
               "children": [
@@ -129,20 +104,7 @@
                         }
                       }
                     ],
-                    "children": [
-                      {
-                        "type": "FunctionCallNode",
-                        "payload": {
-                          "callerExpression": {
-                            "type": "Identifier",
-                            "payload": "titleHelper"
-                          },
-                          "actualParameters": [
-                            { "type": "Identifier", "payload": "title" }
-                          ]
-                        }
-                      }
-                    ]
+                    "children": [{ "type": "Identifier", "payload": "title" }]
                   }
                 },
                 { "type": "Identifier", "payload": "button" }
