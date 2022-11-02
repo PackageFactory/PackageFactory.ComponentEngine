@@ -37,7 +37,7 @@
   },
   {
     "type": "STRING",
-    "value": "nums"
+    "value": "a"
   },
   {
     "type": "COLON",
@@ -52,12 +52,28 @@
     "value": "number"
   },
   {
-    "type": "BRACKET_SQUARE_OPEN",
-    "value": "["
+    "type": "END_OF_LINE",
+    "value": "\n"
   },
   {
-    "type": "BRACKET_SQUARE_CLOSE",
-    "value": "]"
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "STRING",
+    "value": "b"
+  },
+  {
+    "type": "COLON",
+    "value": ":"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "STRING",
+    "value": "number"
   },
   {
     "type": "END_OF_LINE",
@@ -81,71 +97,7 @@
   },
   {
     "type": "STRING",
-    "value": "nums"
-  },
-  {
-    "type": "PERIOD",
-    "value": "."
-  },
-  {
-    "type": "STRING",
-    "value": "reduce"
-  },
-  {
-    "type": "BRACKET_ROUND_OPEN",
-    "value": "("
-  },
-  {
-    "type": "END_OF_LINE",
-    "value": "\n"
-  },
-  {
-    "type": "SPACE",
-    "value": "    "
-  },
-  {
-    "type": "BRACKET_ROUND_OPEN",
-    "value": "("
-  },
-  {
-    "type": "STRING",
-    "value": "acc"
-  },
-  {
-    "type": "COMMA",
-    "value": ","
-  },
-  {
-    "type": "SPACE",
-    "value": " "
-  },
-  {
-    "type": "STRING",
-    "value": "cur"
-  },
-  {
-    "type": "BRACKET_ROUND_CLOSE",
-    "value": ")"
-  },
-  {
-    "type": "SPACE",
-    "value": " "
-  },
-  {
-    "type": "ARROW_DOUBLE",
-    "value": "=>"
-  },
-  {
-    "type": "END_OF_LINE",
-    "value": "\n"
-  },
-  {
-    "type": "SPACE",
-    "value": "      "
-  },
-  {
-    "type": "STRING",
-    "value": "acc"
+    "value": "a"
   },
   {
     "type": "SPACE",
@@ -169,7 +121,7 @@
   },
   {
     "type": "SPACE",
-    "value": "        "
+    "value": "    "
   },
   {
     "type": "QUESTIONMARK",
@@ -181,7 +133,7 @@
   },
   {
     "type": "STRING",
-    "value": "cur"
+    "value": "b"
   },
   {
     "type": "SPACE",
@@ -197,7 +149,7 @@
   },
   {
     "type": "STRING",
-    "value": "acc"
+    "value": "a"
   },
   {
     "type": "SPACE",
@@ -233,7 +185,7 @@
   },
   {
     "type": "STRING",
-    "value": "cur"
+    "value": "b"
   },
   {
     "type": "BRACKET_ROUND_CLOSE",
@@ -245,7 +197,7 @@
   },
   {
     "type": "SPACE",
-    "value": "        "
+    "value": "    "
   },
   {
     "type": "COLON",
@@ -257,15 +209,7 @@
   },
   {
     "type": "STRING",
-    "value": "round"
-  },
-  {
-    "type": "BRACKET_ROUND_OPEN",
-    "value": "("
-  },
-  {
-    "type": "STRING",
-    "value": "cur"
+    "value": "b"
   },
   {
     "type": "SPACE",
@@ -281,39 +225,7 @@
   },
   {
     "type": "STRING",
-    "value": "acc"
-  },
-  {
-    "type": "BRACKET_ROUND_CLOSE",
-    "value": ")"
-  },
-  {
-    "type": "COMMA",
-    "value": ","
-  },
-  {
-    "type": "END_OF_LINE",
-    "value": "\n"
-  },
-  {
-    "type": "SPACE",
-    "value": "    "
-  },
-  {
-    "type": "NUMBER_DECIMAL",
-    "value": "0"
-  },
-  {
-    "type": "END_OF_LINE",
-    "value": "\n"
-  },
-  {
-    "type": "SPACE",
-    "value": "  "
-  },
-  {
-    "type": "BRACKET_ROUND_CLOSE",
-    "value": ")"
+    "value": "a"
   },
   {
     "type": "END_OF_LINE",

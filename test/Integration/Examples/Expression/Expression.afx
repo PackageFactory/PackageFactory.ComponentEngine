@@ -1,11 +1,8 @@
 export component Expression {
-  nums: number[]
+  a: number
+  b: number
 
-  return nums.reduce(
-    (acc, cur) =>
-      acc <= 120
-        ? cur * acc + (17 % cur)
-        : round(cur / acc),
-    0
-  )
+  return a <= 120
+    ? b * a + (17 % b)
+    : b / a
 }

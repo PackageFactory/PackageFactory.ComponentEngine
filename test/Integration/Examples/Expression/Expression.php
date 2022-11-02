@@ -5,24 +5,19 @@ declare(strict_types=1);
 namespace Vendor\Project\Component;
 
 use Vendor\Project\BaseClass;
-use Vendor\Project\Std;
 
 final class Expression extends BaseClass
 {
     public function __construct(
-        private readonly array $nums
+        private readonly int|float $a,
+        private readonly int|float $b
     ) {
     }
 
-    public function render(): int|float
+    public function render(): string
     {
-        return Std::array($this->nums)->reduce(
-            function (int|float $acc, int|float $cur) {
-                return $acc <= 120
-                    ? $cur * $acc + (17 % $cur)
-                    : round($cur / $acc);
-            },
-            0
-        );
+        return (string) ($this->a <= 120
+            ? $this->b * $this->a + (17 % $this->b)
+            : $this->b / $this->a);
     }
 }
