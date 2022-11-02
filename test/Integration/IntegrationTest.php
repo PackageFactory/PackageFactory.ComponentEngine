@@ -28,6 +28,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
 use PackageFactory\ComponentEngine\Parser\Ast\Scope;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
+use PackageFactory\ComponentEngine\Transpiler\Php\Transpiler;
 use PackageFactory\ComponentEngine\Type\Enum\EnumMember;
 use PackageFactory\ComponentEngine\Type\Enum\EnumMembers;
 use PackageFactory\ComponentEngine\Type\Enum\EnumName;
@@ -194,5 +195,53 @@ final class IntegrationTest extends TestCase
                 }, $module->exports->items)
             ), true)
         );
+    }
+
+    public function transpilerExamples(): array
+    {
+        return [
+            'Component' => ["Component"],
+        ];
+    }
+
+    /**
+     * @dataProvider transpilerExamples
+     * @test
+     * @small
+     * @param string $input
+     * @return void
+     */
+    public function testTranspiler(string $example): void
+    {
+        $source = Source::fromFile(__DIR__ . '/Examples/' . $example . '/' . $example . '.afx');
+        $tokenizer = Tokenizer::fromSource($source);
+        $module = ModuleNode::fromTokens($tokenizer->getIterator());
+        $typeResolver = new TypeResolver(
+            scope: BlockScope::fromRecordType(
+                RecordType::of(
+                    RecordEntry::of('round', FunctionType::create(
+                        Tuple::of(NumberType::create()),
+                        NumberType::create()
+                    )),
+                    RecordEntry::of('ButtonType', EnumType::create(
+                        EnumName::fromString('ButtonType'),
+                        EnumMembers::of(
+                            EnumMember::create("LINK"),
+                            EnumMember::create("BUTTON"),
+                            EnumMember::create("SUBMIT"),
+                            EnumMember::create("NONE")
+                        )
+                    ))
+                )
+            )->push(
+                ModuleScope::fromModuleNode($module)
+            )
+        );
+
+        $expected = file_get_contents(__DIR__ . '/Examples/' . $example . '/' . $example . '.php');
+
+        $transpiler = new Transpiler($typeResolver);
+
+        $this->assertEquals($expected, $transpiler->transpile($module));
     }
 }

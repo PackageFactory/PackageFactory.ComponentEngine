@@ -35,11 +35,7 @@ final class StringType extends Type
 
     public static function create(): self
     {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
+        return self::$instance ??= new self();
     }
 
     public function access(string $key): Type

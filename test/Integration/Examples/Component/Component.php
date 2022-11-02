@@ -10,9 +10,9 @@ use Vendor\Project\Hyperscript;
 final class Image extends BaseClass
 {
     public function __construct(
-        private readonly string $src,
-        private readonly string $alt,
-        private readonly string $title
+        public readonly string $src,
+        public readonly string $alt,
+        public readonly string $title
     ) {
     }
 
