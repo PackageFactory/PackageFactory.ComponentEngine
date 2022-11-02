@@ -33,7 +33,7 @@ enum TokenType: string
     case KEYWORD_EXPORT = 'KEYWORD_EXPORT';
     case KEYWORD_META = 'KEYWORD_META';
     case KEYWORD_ENUM = 'KEYWORD_ENUM';
-    case KEYWORD_INTERFACE = 'KEYWORD_INTERFACE';
+    case KEYWORD_STRUCT = 'KEYWORD_STRUCT';
     case KEYWORD_COMPONENT = 'KEYWORD_COMPONENT';
     case KEYWORD_MATCH = 'KEYWORD_MATCH';
     case KEYWORD_DEFAULT = 'KEYWORD_DEFAULT';
@@ -108,7 +108,7 @@ enum TokenType: string
             $value === 'export' => self::KEYWORD_EXPORT,
             $value === 'meta' => self::KEYWORD_META,
             $value === 'enum' => self::KEYWORD_ENUM,
-            $value === 'interface' => self::KEYWORD_INTERFACE,
+            $value === 'struct' => self::KEYWORD_STRUCT,
             $value === 'component' => self::KEYWORD_COMPONENT,
             $value === 'match' => self::KEYWORD_MATCH,
             $value === 'default' => self::KEYWORD_DEFAULT,

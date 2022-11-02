@@ -48,7 +48,7 @@ final class ExportNodes implements \JsonSerializable
     {
         $name = match ($export->declaration::class) {
             ComponentDeclarationNode::class => $export->declaration->componentName,
-            InterfaceDeclarationNode::class => $export->declaration->interfaceName,
+            StructDeclarationNode::class => $export->declaration->structName,
             EnumDeclarationNode::class => $export->declaration->enumName
         };
 

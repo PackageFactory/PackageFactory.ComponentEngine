@@ -26,10 +26,10 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class InterfaceDeclarationNode implements \JsonSerializable
+final class StructDeclarationNode implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $interfaceName,
+        public readonly string $structName,
         public readonly PropertyDeclarationNodes $propertyDeclarations
     ) {
     }
@@ -41,13 +41,13 @@ final class InterfaceDeclarationNode implements \JsonSerializable
     public static function fromTokens(\Iterator $tokens): self
     {
         Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::KEYWORD_INTERFACE);
+        Scanner::assertType($tokens, TokenType::KEYWORD_STRUCT);
 
         Scanner::skipOne($tokens);
         Scanner::skipSpaceAndComments($tokens);
         Scanner::assertType($tokens, TokenType::STRING);
 
-        $interfaceName = Scanner::value($tokens);
+        $structName = Scanner::value($tokens);
 
         Scanner::skipOne($tokens);
         Scanner::skipSpaceAndComments($tokens);
@@ -63,7 +63,7 @@ final class InterfaceDeclarationNode implements \JsonSerializable
         Scanner::skipOne($tokens);
 
         return new self(
-            interfaceName: $interfaceName,
+            structName: $structName,
             propertyDeclarations: $propertyDeclarations
         );
     }
@@ -71,9 +71,9 @@ final class InterfaceDeclarationNode implements \JsonSerializable
     public function jsonSerialize(): mixed
     {
         return [
-            'type' => 'Interface',
+            'type' => 'Struct',
             'payload' => [
-                'interfaceName' => $this->interfaceName,
+                'structName' => $this->structName,
                 'propertyDeclarations' => $this->propertyDeclarations
             ]
         ];

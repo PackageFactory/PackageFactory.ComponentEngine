@@ -53,9 +53,9 @@ final class IntegrationTest extends TestCase
             'Enum' => ["Enum"],
             'Expression' => ["Expression"],
             'ImportExport' => ["ImportExport"],
-            'Interface' => ["Interface"],
             'Match' => ["Match"],
             'Numbers' => ["Numbers"],
+            'Struct' => ["Struct"],
             'TemplateLiteral' => ["TemplateLiteral"],
         ];
     }
@@ -97,9 +97,9 @@ final class IntegrationTest extends TestCase
             'Enum' => ["Enum"],
             'Expression' => ["Expression"],
             'ImportExport' => ["ImportExport"],
-            'Interface' => ["Interface"],
             'Match' => ["Match"],
             'Numbers' => ["Numbers"],
+            'Struct' => ["Struct"],
             'TemplateLiteral' => ["TemplateLiteral"],
         ];
     }

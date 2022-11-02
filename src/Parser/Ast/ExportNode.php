@@ -31,7 +31,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class ExportNode implements \JsonSerializable
 {
     private function __construct(
-        public readonly ComponentDeclarationNode | EnumDeclarationNode | InterfaceDeclarationNode $declaration,
+        public readonly ComponentDeclarationNode | EnumDeclarationNode | StructDeclarationNode $declaration,
     ) {
     }
 
@@ -51,13 +51,13 @@ final class ExportNode implements \JsonSerializable
             TokenType::KEYWORD_COMPONENT =>
             ComponentDeclarationNode::fromTokens($tokens),
 
-            TokenType::KEYWORD_INTERFACE =>
-            InterfaceDeclarationNode::fromTokens($tokens),
+            TokenType::KEYWORD_STRUCT =>
+            StructDeclarationNode::fromTokens($tokens),
 
             TokenType::KEYWORD_ENUM =>
             EnumDeclarationNode::fromTokens($tokens),
 
-            default => Scanner::assertType($tokens, TokenType::KEYWORD_COMPONENT, TokenType::KEYWORD_INTERFACE, TokenType::KEYWORD_ENUM)
+            default => Scanner::assertType($tokens, TokenType::KEYWORD_COMPONENT, TokenType::KEYWORD_STRUCT, TokenType::KEYWORD_ENUM)
         };
 
         return new self(

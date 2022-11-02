@@ -8,8 +8,8 @@
     "value": " "
   },
   {
-    "type": "KEYWORD_INTERFACE",
-    "value": "interface"
+    "type": "KEYWORD_STRUCT",
+    "value": "struct"
   },
   {
     "type": "SPACE",

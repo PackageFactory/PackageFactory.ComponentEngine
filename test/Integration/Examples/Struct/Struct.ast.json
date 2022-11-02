@@ -4,9 +4,9 @@
     "imports": {},
     "exports": [
       {
-        "type": "Interface",
+        "type": "Struct",
         "payload": {
-          "interfaceName": "Link",
+          "structName": "Link",
           "propertyDeclarations": [
             {
               "name": "href",
