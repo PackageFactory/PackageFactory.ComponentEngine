@@ -266,7 +266,6 @@ final class Tokenizer implements \IteratorAggregate
             '<=' => $buffer->flush(TokenType::COMPARATOR_LESS_THAN_OR_EQUAL),
             '===' => $buffer->flush(TokenType::COMPARATOR_EQUAL),
             '->' => $buffer->flush(TokenType::ARROW_SINGLE),
-            '=>' => $buffer->flush(TokenType::ARROW_DOUBLE),
             ':' => $buffer->flush(TokenType::COLON),
             '.' => $buffer->flush(TokenType::PERIOD),
             ',' => $buffer->flush(TokenType::COMMA),

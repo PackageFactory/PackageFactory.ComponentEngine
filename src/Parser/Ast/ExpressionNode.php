@@ -31,7 +31,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class ExpressionNode implements \JsonSerializable
 {
     private function __construct(
-        public readonly IdentifierNode | ArrowFunctionNode | NumberLiteralNode | BinaryOperationNode | AccessNode | FunctionCallNode | TernaryOperationNode | TagNode | StringLiteralNode | MatchNode | TemplateLiteralNode $root
+        public readonly IdentifierNode | NumberLiteralNode | BinaryOperationNode | AccessNode | TernaryOperationNode | TagNode | StringLiteralNode | MatchNode | TemplateLiteralNode $root
     ) {
     }
 
@@ -51,10 +51,6 @@ final class ExpressionNode implements \JsonSerializable
 
                 while (true) {
                     switch ($lookAhead->type()) {
-                        case TokenType::ARROW_DOUBLE:
-                            $tokens = $lookAhead->getIterator();
-                            $root = ArrowFunctionNode::fromTokens($tokens);
-                            break 2;
                         case TokenType::STRING:
                         case TokenType::COLON:
                         case TokenType::COMMA:
@@ -109,9 +105,6 @@ final class ExpressionNode implements \JsonSerializable
             Scanner::skipSpaceAndComments($tokens);
 
             switch (Scanner::type($tokens)) {
-                case TokenType::BRACKET_ROUND_OPEN:
-                    $root = FunctionCallNode::fromTokens(new self(root: $root), $tokens);
-                    break;
                 case TokenType::OPERATOR_ARITHMETIC_PLUS:
                 case TokenType::OPERATOR_ARITHMETIC_MULTIPLY_BY:
                 case TokenType::OPERATOR_ARITHMETIC_DIVIDE_BY:

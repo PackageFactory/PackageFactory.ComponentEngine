@@ -31,7 +31,6 @@ enum TokenType: string
     case KEYWORD_FROM = 'KEYWORD_FROM';
     case KEYWORD_IMPORT = 'KEYWORD_IMPORT';
     case KEYWORD_EXPORT = 'KEYWORD_EXPORT';
-    case KEYWORD_META = 'KEYWORD_META';
     case KEYWORD_ENUM = 'KEYWORD_ENUM';
     case KEYWORD_STRUCT = 'KEYWORD_STRUCT';
     case KEYWORD_COMPONENT = 'KEYWORD_COMPONENT';
@@ -68,9 +67,7 @@ enum TokenType: string
     case COMPARATOR_LESS_THAN = 'COMPARATOR_LESS_THAN';
     case COMPARATOR_LESS_THAN_OR_EQUAL = 'COMPARATOR_LESS_THAN_OR_EQUAL';
 
-    case SPREAD = 'SPREAD';
     case ARROW_SINGLE = 'ARROW_SINGLE';
-    case ARROW_DOUBLE = 'ARROW_DOUBLE';
 
     case BRACKET_CURLY_OPEN = 'BRACKET_CURLY_OPEN';
     case BRACKET_CURLY_CLOSE = 'BRACKET_CURLY_CLOSE';
@@ -106,7 +103,6 @@ enum TokenType: string
             $value === 'from' => self::KEYWORD_FROM,
             $value === 'import' => self::KEYWORD_IMPORT,
             $value === 'export' => self::KEYWORD_EXPORT,
-            $value === 'meta' => self::KEYWORD_META,
             $value === 'enum' => self::KEYWORD_ENUM,
             $value === 'struct' => self::KEYWORD_STRUCT,
             $value === 'component' => self::KEYWORD_COMPONENT,
