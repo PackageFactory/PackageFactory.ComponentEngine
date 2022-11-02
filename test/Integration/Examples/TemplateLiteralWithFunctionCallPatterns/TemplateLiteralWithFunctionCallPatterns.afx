@@ -1,9 +1,0 @@
-export component TemplateLiteralWithFunctionCallPatterns {
-  someString: string
-  someArrayOfStrings: string[]
-
-  return `
-    ${someString.toUpperCase()}
-    ${someArrayOfStrings.map((s) => s.toUpperCase()).join(',').toLowerCase()}
-  `
-}
