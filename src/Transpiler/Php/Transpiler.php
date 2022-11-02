@@ -29,7 +29,9 @@ use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
 use PackageFactory\ComponentEngine\Parser\Ast\PropertyDeclarationNodes;
 use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
+use PackageFactory\ComponentEngine\Parser\Ast\TagContentNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
+use PackageFactory\ComponentEngine\Parser\Ast\TextNode;
 
 final class Transpiler
 {
@@ -59,11 +61,15 @@ final class Transpiler
         $lines[] = '';
         $lines[] = 'final class ' . $componentDeclaration->componentName . ' extends BaseClass';
         $lines[] = '{';
-        $lines[] = '    public function __construct(';
-        $lines[] = $this->writeConstructorPropertyDeclarations($componentDeclaration->propertyDeclarations);
-        $lines[] = '    ) {';
-        $lines[] = '    }';
-        $lines[] = '';
+
+        if (!$componentDeclaration->propertyDeclarations->isEmpty()) {
+            $lines[] = '    public function __construct(';
+            $lines[] = $this->writeConstructorPropertyDeclarations($componentDeclaration->propertyDeclarations);
+            $lines[] = '    ) {';
+            $lines[] = '    }';
+            $lines[] = '';
+        }
+
         $lines[] = '    public function render(): string';
         $lines[] = '    {';
         $lines[] = $this->writeReturnExpression($componentDeclaration->returnExpression);
@@ -96,7 +102,7 @@ final class Transpiler
 
     public function transpileExpression(ExpressionNode $expression): string
     {
-        return match($expression->root::class) {
+        return match ($expression->root::class) {
             TagNode::class => $this->transpileTag($expression->root),
             IdentifierNode::class => $this->transpileIdentifier($expression->root),
             default => throw new \Exception('@TODO: Transpile ' . $expression->root::class)
@@ -111,7 +117,17 @@ final class Transpiler
             $result .= ' ' . $this->transpileAttribute($attribute);
         }
 
-        $result .= ' />\'';
+        if ($tag->isSelfClosing) {
+            $result .= ' />\'';
+        } else {
+            $result .= '>';
+
+            foreach ($tag->children->items as $child) {
+                $result .= $this->transpileTagContent($child);
+            }
+
+            $result .= sprintf('</%s>\'', $tag->tagName);
+        }
 
         return $result;
     }
@@ -119,8 +135,8 @@ final class Transpiler
     public function transpileAttribute(AttributeNode $attribute): string
     {
         return sprintf(
-            '%s="%s"', 
-            $attribute->name, 
+            '%s="%s"',
+            $attribute->name,
             match ($attribute->value::class) {
                 ExpressionNode::class => sprintf(
                     '\' . %s . \'',
@@ -139,5 +155,22 @@ final class Transpiler
     public function transpileIdentifier(IdentifierNode $identifier): string
     {
         return '$this->' . $identifier->value;
+    }
+
+    public function transpileTagContent(TagContentNode $tagContent): string
+    {
+        return match ($tagContent->root::class) {
+            TextNode::class => $this->transpileText($tagContent->root),
+            ExpressionNode::class => sprintf(
+                '\' . %s . \'',
+                $this->transpileExpression($tagContent->root)
+            ),
+            TagNode::class => $this->transpileTag($tagContent->root)
+        };
+    }
+
+    public function transpileText(TextNode $textNode): string
+    {
+        return $textNode->value;
     }
 }
