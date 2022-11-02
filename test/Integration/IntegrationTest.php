@@ -190,7 +190,7 @@ final class IntegrationTest extends TestCase
     public function transpilerExamples(): array
     {
         return [
-            //'Component' => ["Component"],
+            'Component' => ["Component"],
         ];
     }
 
@@ -206,31 +206,10 @@ final class IntegrationTest extends TestCase
         $source = Source::fromFile(__DIR__ . '/Examples/' . $example . '/' . $example . '.afx');
         $tokenizer = Tokenizer::fromSource($source);
         $module = ModuleNode::fromTokens($tokenizer->getIterator());
-        $typeResolver = new TypeResolver(
-            scope: BlockScope::fromRecordType(
-                RecordType::of(
-                    RecordEntry::of('round', FunctionType::create(
-                        Tuple::of(NumberType::create()),
-                        NumberType::create()
-                    )),
-                    RecordEntry::of('ButtonType', EnumType::create(
-                        EnumName::fromString('ButtonType'),
-                        EnumMembers::of(
-                            EnumMember::create("LINK"),
-                            EnumMember::create("BUTTON"),
-                            EnumMember::create("SUBMIT"),
-                            EnumMember::create("NONE")
-                        )
-                    ))
-                )
-            )->push(
-                ModuleScope::fromModuleNode($module)
-            )
-        );
 
         $expected = file_get_contents(__DIR__ . '/Examples/' . $example . '/' . $example . '.php');
 
-        $transpiler = new Transpiler($typeResolver);
+        $transpiler = new Transpiler();
 
         $this->assertEquals($expected, $transpiler->transpile($module));
     }

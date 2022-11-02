@@ -22,32 +22,30 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Transpiler\Php;
 
+use PackageFactory\ComponentEngine\Parser\Ast\AttributeNode;
+use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
+use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
-use PackageFactory\ComponentEngine\TypeResolver\TypedAst\ComponentDeclaration;
-use PackageFactory\ComponentEngine\TypeResolver\TypedAst\InterfaceDeclaration;
-use PackageFactory\ComponentEngine\TypeResolver\TypeResolver;
+use PackageFactory\ComponentEngine\Parser\Ast\PropertyDeclarationNodes;
+use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
+use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
 
 final class Transpiler
 {
-    public function __construct(
-        private readonly TypeResolver $typeResolver
-    ) {
-    }
-
     public function transpile(ModuleNode $moduleNode): string
     {
         foreach ($moduleNode->exports->items as $exportNode) {
-            $typedAst = $this->typeResolver->getTypedAstForExport($exportNode);
-            return match ($typedAst::class) {
-                ComponentDeclaration::class => $this->transpileComponentDeclaration($moduleNode, $typedAst),
-                default => throw new \Exception('@TODO: Transpile ' . $typedAst::class)
+            return match ($exportNode->declaration::class) {
+                ComponentDeclarationNode::class => $this->transpileComponentDeclaration($exportNode->declaration),
+                default => throw new \Exception('@TODO: Transpile ' . $exportNode::class)
             };
         }
 
         return '';
     }
 
-    public function transpileComponentDeclaration(ModuleNode $moduleNode, ComponentDeclaration $componentDeclaration): string
+    public function transpileComponentDeclaration(ComponentDeclarationNode $componentDeclaration): string
     {
         $lines = [];
 
@@ -58,17 +56,17 @@ final class Transpiler
         $lines[] = 'namespace Vendor\\Project\\Component;';
         $lines[] = '';
         $lines[] = 'use Vendor\\Project\\BaseClass;';
-        $lines[] = 'use Vendor\\Project\\Hyperscript;';
         $lines[] = '';
-        $lines[] = 'final class ' . $componentDeclaration->interface->name->value . ' extends BaseClass';
+        $lines[] = 'final class ' . $componentDeclaration->componentName . ' extends BaseClass';
         $lines[] = '{';
         $lines[] = '    public function __construct(';
-        $lines[] = $this->constructorPropertyDeclarations($componentDeclaration->interface);
+        $lines[] = $this->writeConstructorPropertyDeclarations($componentDeclaration->propertyDeclarations);
         $lines[] = '    ) {';
         $lines[] = '    }';
         $lines[] = '';
         $lines[] = '    public function render(): string';
         $lines[] = '    {';
+        $lines[] = $this->writeReturnExpression($componentDeclaration->returnExpression);
         $lines[] = '    }';
         $lines[] = '}';
         $lines[] = '';
@@ -76,12 +74,12 @@ final class Transpiler
         return join("\n", $lines);
     }
 
-    public function constructorPropertyDeclarations(InterfaceDeclaration $interfaceDeclaration): string
+    public function writeConstructorPropertyDeclarations(PropertyDeclarationNodes $propertyDeclarations): string
     {
         $lines = [];
 
-        foreach ($interfaceDeclaration->properties->items as $propertyDeclaration) {
-            $lines[] = '        public readonly ' . $propertyDeclaration->type . ' $' . $propertyDeclaration->name->value . ',';
+        foreach ($propertyDeclarations->items as $propertyDeclaration) {
+            $lines[] = '        public readonly ' . $propertyDeclaration->type->name . ' $' . $propertyDeclaration->name . ',';
         }
 
         if ($length = count($lines)) {
@@ -89,5 +87,57 @@ final class Transpiler
         }
 
         return join("\n", $lines);
+    }
+
+    public function writeReturnExpression(ExpressionNode $returnExpression): string
+    {
+        return '        return ' . $this->transpileExpression($returnExpression) . ';';
+    }
+
+    public function transpileExpression(ExpressionNode $expression): string
+    {
+        return match($expression->root::class) {
+            TagNode::class => $this->transpileTag($expression->root),
+            IdentifierNode::class => $this->transpileIdentifier($expression->root),
+            default => throw new \Exception('@TODO: Transpile ' . $expression->root::class)
+        };
+    }
+
+    public function transpileTag(TagNode $tag): string
+    {
+        $result = sprintf('\'<%s', $tag->tagName);
+
+        foreach ($tag->attributes->items as $attribute) {
+            $result .= ' ' . $this->transpileAttribute($attribute);
+        }
+
+        $result .= ' />\'';
+
+        return $result;
+    }
+
+    public function transpileAttribute(AttributeNode $attribute): string
+    {
+        return sprintf(
+            '%s="%s"', 
+            $attribute->name, 
+            match ($attribute->value::class) {
+                ExpressionNode::class => sprintf(
+                    '\' . %s . \'',
+                    $this->transpileExpression($attribute->value)
+                ),
+                StringLiteralNode::class => $this->transpileStringLiteral($attribute->value)
+            }
+        );
+    }
+
+    public function transpileStringLiteral(StringLiteralNode $stringLiteral): string
+    {
+        throw new \Exception('@TODO: Not implemented');
+    }
+
+    public function transpileIdentifier(IdentifierNode $identifier): string
+    {
+        return '$this->' . $identifier->value;
     }
 }
