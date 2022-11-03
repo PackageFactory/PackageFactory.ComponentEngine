@@ -9,20 +9,15 @@ use Vendor\Project\BaseClass;
 final class TextWithImage extends BaseClass
 {
     public function __construct(
-        private readonly string $src,
-        private readonly string $alt,
-        private readonly string $title,
-        private readonly string $text
+        public readonly string $src,
+        public readonly string $alt,
+        public readonly string $title,
+        public readonly string $text
     ) {
     }
 
     public function render(): string
     {
-        return '<div class="text-with-image">'
-            . '<img class="image" src={src} alt={alt} title={title} />'
-            . '<p class="text">'
-            . $this->text
-            . '</p>'
-            . '</div>';
+        return '<div class="text-with-image"><img class="image" src="' . $this->src . '" alt="' . $this->alt . '" title="' . $this->title . '" /><p class="text">' . $this->text . '</p></div>';
     }
 }

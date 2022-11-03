@@ -97,7 +97,16 @@ final class Transpiler
 
     public function writeReturnExpression(ExpressionNode $returnExpression): string
     {
-        return '        return ' . $this->transpileExpression($returnExpression) . ';';
+        $transpiledReturnExpression = match ($returnExpression->root::class) {
+            TagNode::class => sprintf(
+                '\'%s\'',
+                $this->transpileTag($returnExpression->root)
+            ),
+            IdentifierNode::class => $this->transpileIdentifier($returnExpression->root),
+            default => throw new \Exception('@TODO: Transpile ' . $returnExpression->root::class)
+        };
+
+        return '        return ' . $transpiledReturnExpression . ';';
     }
 
     public function transpileExpression(ExpressionNode $expression): string
@@ -111,14 +120,14 @@ final class Transpiler
 
     public function transpileTag(TagNode $tag): string
     {
-        $result = sprintf('\'<%s', $tag->tagName);
+        $result = sprintf('<%s', $tag->tagName);
 
         foreach ($tag->attributes->items as $attribute) {
             $result .= ' ' . $this->transpileAttribute($attribute);
         }
 
         if ($tag->isSelfClosing) {
-            $result .= ' />\'';
+            $result .= ' />';
         } else {
             $result .= '>';
 
@@ -126,7 +135,7 @@ final class Transpiler
                 $result .= $this->transpileTagContent($child);
             }
 
-            $result .= sprintf('</%s>\'', $tag->tagName);
+            $result .= sprintf('</%s>', $tag->tagName);
         }
 
         return $result;
@@ -149,7 +158,7 @@ final class Transpiler
 
     public function transpileStringLiteral(StringLiteralNode $stringLiteral): string
     {
-        throw new \Exception('@TODO: Not implemented');
+        return $stringLiteral->value;
     }
 
     public function transpileIdentifier(IdentifierNode $identifier): string
