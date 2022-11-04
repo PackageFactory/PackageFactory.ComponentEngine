@@ -24,6 +24,7 @@ namespace PackageFactory\ComponentEngine\Transpiler\Php;
 
 use PackageFactory\ComponentEngine\Parser\Ast\AttributeNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
+use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
@@ -40,7 +41,8 @@ final class Transpiler
         foreach ($moduleNode->exports->items as $exportNode) {
             return match ($exportNode->declaration::class) {
                 ComponentDeclarationNode::class => $this->transpileComponentDeclaration($exportNode->declaration),
-                default => throw new \Exception('@TODO: Transpile ' . $exportNode::class)
+                EnumDeclarationNode::class => $this->transpileEnumDeclaration($exportNode->declaration),
+                default => throw new \Exception('@TODO: Transpile ' . $exportNode->declaration::class)
             };
         }
 
@@ -74,6 +76,29 @@ final class Transpiler
         $lines[] = '    {';
         $lines[] = $this->writeReturnExpression($componentDeclaration->returnExpression);
         $lines[] = '    }';
+        $lines[] = '}';
+        $lines[] = '';
+
+        return join("\n", $lines);
+    }
+
+    public function transpileEnumDeclaration(EnumDeclarationNode $enumDeclaration): string
+    {
+        $lines = [];
+
+        $lines[] = '<?php';
+        $lines[] = '';
+        $lines[] = 'declare(strict_types=1);';
+        $lines[] = '';
+        $lines[] = 'namespace Vendor\\Project\\Component;';
+        $lines[] = '';
+        $lines[] = 'enum ' . $enumDeclaration->enumName;
+        $lines[] = '{';
+
+        foreach ($enumDeclaration->memberDeclarations->items as $memberDeclarationNode) {
+            $lines[] = '    case ' . $memberDeclarationNode->name . ';';
+        }
+
         $lines[] = '}';
         $lines[] = '';
 
