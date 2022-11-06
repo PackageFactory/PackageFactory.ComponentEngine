@@ -85,6 +85,11 @@ final class PropertyDeclarationNodes implements \JsonSerializable
         return new self(...$this->items, ...[$name => $propertyDeclarationNode]);
     }
 
+    public function getPropertyDeclarationNodeOfName(string $name): ?PropertyDeclarationNode
+    {
+        return $this->items[$name] ?? null;
+    }
+
     public function isEmpty(): bool
     {
         return count($this->items) === 0;

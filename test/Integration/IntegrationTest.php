@@ -22,23 +22,10 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Integration;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExportNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Transpiler\Php\Transpiler;
-use PackageFactory\ComponentEngine\Type\Enum\EnumMember;
-use PackageFactory\ComponentEngine\Type\Enum\EnumMembers;
-use PackageFactory\ComponentEngine\Type\Enum\EnumName;
-use PackageFactory\ComponentEngine\Type\Enum\EnumType;
-use PackageFactory\ComponentEngine\Type\FunctionType;
-use PackageFactory\ComponentEngine\Type\Primitive\NumberType;
-use PackageFactory\ComponentEngine\Type\Record\RecordEntry;
-use PackageFactory\ComponentEngine\Type\Record\RecordType;
-use PackageFactory\ComponentEngine\Type\Tuple;
-use PackageFactory\ComponentEngine\TypeResolver\Scope\BlockScope;
-use PackageFactory\ComponentEngine\TypeResolver\Scope\ModuleScope;
-use PackageFactory\ComponentEngine\TypeResolver\TypeResolver;
 use PHPUnit\Framework\TestCase;
 
 final class IntegrationTest extends TestCase
@@ -123,68 +110,6 @@ final class IntegrationTest extends TestCase
         $module = ModuleNode::fromTokens($tokenizer->getIterator());
 
         $this->assertEquals($expected, json_decode(json_encode($module), true));
-    }
-
-    public function typeResolverExamples(): array
-    {
-        return [
-            'Enum' => ["Enum"],
-            'Expression' => ["Expression"],
-            'Match' => ["Match"],
-            'Numbers' => ["Numbers"],
-            'TemplateLiteral' => ["TemplateLiteral"],
-        ];
-    }
-
-    /**
-     * @dataProvider typeResolverExamples
-     * @test
-     * @small
-     * @param string $input
-     * @return void
-     */
-    public function testTypeResolver(string $example): void
-    {
-        $source = Source::fromFile(__DIR__ . '/Examples/' . $example . '/' . $example . '.afx');
-        $tokenizer = Tokenizer::fromSource($source);
-        $module = ModuleNode::fromTokens($tokenizer->getIterator());
-        $typeResolver = new TypeResolver(
-            scope: BlockScope::fromRecordType(
-                RecordType::of(
-                    RecordEntry::of('round', FunctionType::create(
-                        Tuple::of(NumberType::create()),
-                        NumberType::create()
-                    )),
-                    RecordEntry::of('ButtonType', EnumType::create(
-                        EnumName::fromString('ButtonType'),
-                        EnumMembers::of(
-                            EnumMember::create("LINK"),
-                            EnumMember::create("BUTTON"),
-                            EnumMember::create("SUBMIT"),
-                            EnumMember::create("NONE")
-                        )
-                    ))
-                )
-            )->push(
-                ModuleScope::fromModuleNode($module)
-            )
-        );
-
-
-
-        $expected = json_decode(
-            file_get_contents(__DIR__ . '/Examples/' . $example . '/' . $example . '.types.json'),
-            true
-        );
-
-        $this->assertEquals(
-            $expected,
-            json_decode(json_encode(
-                array_map(function (ExportNode $export) use ($typeResolver) {
-                    return $typeResolver->getTypedAstForExport($export);
-                }, $module->exports->items)
-            ), true)
-        );
     }
 
     public function transpilerExamples(): array

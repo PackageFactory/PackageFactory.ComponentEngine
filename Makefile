@@ -9,6 +9,14 @@ test::
 		--coverage-html build/coverage-report \
 		--whitelist src
 
+test-unit::
+	./vendor/bin/phpunit \
+		--enforce-time-limit \
+		--bootstrap vendor/autoload.php \
+		--testdox test/Unit \
+		--coverage-html build/coverage-report \
+		--whitelist src
+
 test-filter::
 	./vendor/bin/phpunit \
 		--bootstrap vendor/autoload.php \
