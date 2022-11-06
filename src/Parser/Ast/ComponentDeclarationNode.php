@@ -22,8 +22,10 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
+use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class ComponentDeclarationNode implements \JsonSerializable
@@ -33,6 +35,15 @@ final class ComponentDeclarationNode implements \JsonSerializable
         public readonly PropertyDeclarationNodes $propertyDeclarations,
         public readonly ExpressionNode $returnExpression
     ) {
+    }
+
+    public static function fromString(string $componentDeclarationAsString): self
+    {
+        return self::fromTokens(
+            Tokenizer::fromSource(
+                Source::fromString($componentDeclarationAsString)
+            )->getIterator()
+        );
     }
 
     /**
