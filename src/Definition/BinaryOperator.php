@@ -36,6 +36,7 @@ enum BinaryOperator: string
     case MODULO = 'MODULO';
 
     case EQUAL = 'EQUAL';
+    case NOT_EQUAL = 'NOT_EQUAL';
     case GREATER_THAN = 'GREATER_THAN';
     case GREATER_THAN_OR_EQUAL = 'GREATER_THAN_OR_EQUAL';
     case LESS_THAN = 'LESS_THAN';
@@ -54,6 +55,7 @@ enum BinaryOperator: string
             TokenType::OPERATOR_ARITHMETIC_MODULO => self::MODULO,
 
             TokenType::COMPARATOR_EQUAL => self::EQUAL,
+            TokenType::COMPARATOR_NOT_EQUAL => self::NOT_EQUAL,
             TokenType::COMPARATOR_GREATER_THAN => self::GREATER_THAN,
             TokenType::COMPARATOR_GREATER_THAN_OR_EQUAL => self::GREATER_THAN_OR_EQUAL,
             TokenType::COMPARATOR_LESS_THAN => self::LESS_THAN,
@@ -76,6 +78,7 @@ enum BinaryOperator: string
             self::MODULO => TokenType::OPERATOR_ARITHMETIC_MODULO,
 
             self::EQUAL => TokenType::COMPARATOR_EQUAL,
+            self::NOT_EQUAL => TokenType::COMPARATOR_NOT_EQUAL,
             self::GREATER_THAN => TokenType::COMPARATOR_GREATER_THAN,
             self::GREATER_THAN_OR_EQUAL => TokenType::COMPARATOR_GREATER_THAN_OR_EQUAL,
             self::LESS_THAN => TokenType::COMPARATOR_LESS_THAN,
@@ -97,7 +100,8 @@ enum BinaryOperator: string
             self::DIVIDE_BY,
             self::MODULO => Precedence::POINT,
 
-            self::EQUAL => Precedence::EQUALITY,
+            self::EQUAL,
+            self::NOT_EQUAL => Precedence::EQUALITY,
 
             self::GREATER_THAN,
             self::GREATER_THAN_OR_EQUAL,
