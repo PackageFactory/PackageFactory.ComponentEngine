@@ -31,7 +31,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class ExpressionNode implements \JsonSerializable
 {
     private function __construct(
-        public readonly IdentifierNode | NumberLiteralNode | BinaryOperationNode | AccessNode | TernaryOperationNode | TagNode | StringLiteralNode | MatchNode | TemplateLiteralNode $root
+        public readonly IdentifierNode | NumberLiteralNode | BinaryOperationNode | AccessNode | TernaryOperationNode | TagNode | StringLiteralNode | MatchNode | TemplateLiteralNode | BooleanLiteralNode $root
     ) {
     }
 
@@ -76,6 +76,10 @@ final class ExpressionNode implements \JsonSerializable
             case TokenType::NUMBER_DECIMAL:
             case TokenType::NUMBER_HEXADECIMAL:
                 $root = NumberLiteralNode::fromTokens($tokens);
+                break;
+            case TokenType::KEYWORD_TRUE:
+            case TokenType::KEYWORD_FALSE:
+                $root = BooleanLiteralNode::fromTokens($tokens);
                 break;
             case TokenType::KEYWORD_MATCH:
                 $root = MatchNode::fromTokens($tokens);

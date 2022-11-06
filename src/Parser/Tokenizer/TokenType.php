@@ -37,6 +37,8 @@ enum TokenType: string
     case KEYWORD_MATCH = 'KEYWORD_MATCH';
     case KEYWORD_DEFAULT = 'KEYWORD_DEFAULT';
     case KEYWORD_RETURN = 'KEYWORD_RETURN';
+    case KEYWORD_TRUE = 'KEYWORD_TRUE';
+    case KEYWORD_FALSE = 'KEYWORD_FALSE';
 
     case CONSTANT = 'CONSTANT';
 
@@ -110,6 +112,8 @@ enum TokenType: string
             $value === 'match' => self::KEYWORD_MATCH,
             $value === 'default' => self::KEYWORD_DEFAULT,
             $value === 'return' => self::KEYWORD_RETURN,
+            $value === 'true' => self::KEYWORD_TRUE,
+            $value === 'false' => self::KEYWORD_FALSE,
 
             (bool) preg_match(
                 '/^0[bB][0-1]+$/',

@@ -66,7 +66,8 @@ enum Precedence: int
             TokenType::COMPARATOR_LESS_THAN,
             TokenType::COMPARATOR_LESS_THAN_OR_EQUAL => self::COMPARISON,
 
-            TokenType::COMPARATOR_EQUAL => self::EQUALITY,
+            TokenType::COMPARATOR_EQUAL,
+            TokenType::COMPARATOR_NOT_EQUAL => self::EQUALITY,
 
             TokenType::OPERATOR_BOOLEAN_AND => self::LOGICAL_AND,
 
