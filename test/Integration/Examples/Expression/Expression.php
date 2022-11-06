@@ -9,15 +9,13 @@ use Vendor\Project\BaseClass;
 final class Expression extends BaseClass
 {
     public function __construct(
-        private readonly int|float $a,
-        private readonly int|float $b
+        public readonly int|float $a,
+        public readonly int|float $b
     ) {
     }
 
     public function render(): string
     {
-        return (string) ($this->a <= 120
-            ? $this->b * $this->a + (17 % $this->b)
-            : $this->b / $this->a);
+        return (string) (($this->a <= 120) ? (($this->b * $this->a) + (17 % $this->b)) : ($this->b / $this->a));
     }
 }
