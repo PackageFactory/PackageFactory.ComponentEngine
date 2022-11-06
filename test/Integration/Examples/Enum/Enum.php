@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Vendor\Project\Component;
 
-enum DayOfWeek
+enum DayOfWeek: string
 {
-    case MONDAY;
-    case TUESDAY;
-    case WEDNESDAY;
-    case THURSDAY;
-    case FRIDAY;
-    case SATURDAY;
-    case SUNDAY;
+    case MONDAY = 'MONDAY';
+    case TUESDAY = 'TUESDAY';
+    case WEDNESDAY = 'WEDNESDAY';
+    case THURSDAY = 'THURSDAY';
+    case FRIDAY = 'FRIDAY';
+    case SATURDAY = 'SATURDAY';
+    case SUNDAY = 'SUNDAY';
 }

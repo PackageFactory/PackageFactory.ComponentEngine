@@ -100,11 +100,11 @@ final class Transpiler
         $lines[] = '';
         $lines[] = 'namespace Vendor\\Project\\Component;';
         $lines[] = '';
-        $lines[] = 'enum ' . $enumDeclaration->enumName;
+        $lines[] = 'enum ' . $enumDeclaration->enumName . ': string';
         $lines[] = '{';
 
         foreach ($enumDeclaration->memberDeclarations->items as $memberDeclarationNode) {
-            $lines[] = '    case ' . $memberDeclarationNode->name . ';';
+            $lines[] = '    case ' . $memberDeclarationNode->name . ' = \'' . $memberDeclarationNode->name . '\';';
         }
 
         $lines[] = '}';
