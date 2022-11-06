@@ -27,7 +27,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class BinaryOperandNodes implements \JsonSerializable
+final class BinaryOperandNodes implements \IteratorAggregate, \JsonSerializable
 {
     /**
      * @var array<int,ExpressionNode>
@@ -59,6 +59,10 @@ final class BinaryOperandNodes implements \JsonSerializable
 
             Scanner::skipSpaceAndComments($tokens);
 
+            if (Scanner::isEnd($tokens)) {
+                break;
+            }
+
             switch (Scanner::type($tokens)) {
                 case TokenType::BRACKET_ROUND_CLOSE:
                 case TokenType::BRACKET_CURLY_CLOSE:
@@ -70,7 +74,7 @@ final class BinaryOperandNodes implements \JsonSerializable
                     Scanner::skipOne($tokens);
                     break;
                 default:
-                    if ($precedence->mustStopAt(Scanner::type($tokens))) {
+                    if (Scanner::isEnd($tokens) || $precedence->mustStopAt(Scanner::type($tokens))) {
                         break 2;
                     } else {
                         Scanner::assertType($tokens, $operator->toTokenType());
@@ -80,6 +84,12 @@ final class BinaryOperandNodes implements \JsonSerializable
         }
 
         return new self(...$operands);
+    }
+
+    public function getIterator(): \Traversable
+    {
+        yield $this->first;
+        yield from $this->rest;
     }
 
     public function jsonSerialize(): mixed

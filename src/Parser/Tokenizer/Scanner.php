@@ -144,4 +144,13 @@ final class Scanner
         self::assertValid($tokens);
         return $tokens->current()->type;
     }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
+     * @return bool
+     */
+    public static function isEnd(\Iterator $tokens): bool
+    {
+        return !$tokens->valid();
+    }
 }
