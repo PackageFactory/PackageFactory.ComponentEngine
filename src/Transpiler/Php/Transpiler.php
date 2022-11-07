@@ -38,7 +38,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TextNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
-use PackageFactory\ComponentEngine\TypeSystem\Resolver\ExpressionTypeResolver\ExpressionTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Scope\ComponentScope\ComponentScope;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 
