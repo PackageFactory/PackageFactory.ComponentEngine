@@ -31,64 +31,71 @@ use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\BinaryOperationTypeResolver\BinaryOperationTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\BinaryOperationTypeResolver\BinaryOperationTypeResolverInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\BooleanLiteralTypeResolver\BooleanLiteralTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\BooleanLiteralTypeResolver\BooleanLiteralTypeResolverInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\IdentifierTypeResolver\IdentifierTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\IdentifierTypeResolver\IdentifierTypeResolverInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\NumberLiteralTypeResolver\NumberLiteralTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\NumberLiteralTypeResolver\NumberLiteralTypeResolverInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\StringLiteralTypeResolver\StringLiteralTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\StringLiteralTypeResolver\StringLiteralTypeResolverInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\TagTypeResolver\TagTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\TagTypeResolver\TagTypeResolverInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\TernaryOperationTypeResolver\TernaryOperationTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\TernaryOperationTypeResolver\TernaryOperationTypeResolverInterface;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class ExpressionTypeResolver
+final class ExpressionTypeResolver implements ExpressionTypeResolverInterface
 {
     public function __construct(
         private readonly ScopeInterface $scope,
-        private ?BinaryOperationTypeResolver $binaryOperationTypeResolver = null,
-        private ?BooleanLiteralTypeResolver $booleanLiteralTypeResolver = null,
-        private ?IdentifierTypeResolver $identifierTypeResolver = null,
-        private ?NumberLiteralTypeResolver $numberLiteralTypeResolver = null,
-        private ?StringLiteralTypeResolver $stringLiteralTypeResolver = null,
-        private ?TagTypeResolver $tagTypeResolver = null,
-        private ?TernaryOperationTypeResolver $ternaryOperationTypeResolver = null
+        private ?BinaryOperationTypeResolverInterface $binaryOperationTypeResolver = null,
+        private ?BooleanLiteralTypeResolverInterface $booleanLiteralTypeResolver = null,
+        private ?IdentifierTypeResolverInterface $identifierTypeResolver = null,
+        private ?NumberLiteralTypeResolverInterface $numberLiteralTypeResolver = null,
+        private ?StringLiteralTypeResolverInterface $stringLiteralTypeResolver = null,
+        private ?TagTypeResolverInterface $tagTypeResolver = null,
+        private ?TernaryOperationTypeResolverInterface $ternaryOperationTypeResolver = null
     ) {
     }
 
-    private function getBinaryOperationTypeResolver(): BinaryOperationTypeResolver
+    private function getBinaryOperationTypeResolver(): BinaryOperationTypeResolverInterface
     {
         return $this->binaryOperationTypeResolver ??= new BinaryOperationTypeResolver(
             expressionTypeResolver: $this
         );
     }
 
-    private function getBooleanLiteralTypeResolver(): BooleanLiteralTypeResolver
+    private function getBooleanLiteralTypeResolver(): BooleanLiteralTypeResolverInterface
     {
         return $this->booleanLiteralTypeResolver ??= new BooleanLiteralTypeResolver();
     }
 
-    private function getIdentifierTypeResolver(): IdentifierTypeResolver
+    private function getIdentifierTypeResolver(): IdentifierTypeResolverInterface
     {
         return $this->identifierTypeResolver ??= new IdentifierTypeResolver(
             scope: $this->scope
         );
     }
 
-    private function getNumberLiteralTypeResolver(): NumberLiteralTypeResolver
+    private function getNumberLiteralTypeResolver(): NumberLiteralTypeResolverInterface
     {
         return $this->numberLiteralTypeResolver ??= new NumberLiteralTypeResolver();
     }
 
-    private function getStringLiteralTypeResolver(): StringLiteralTypeResolver
+    private function getStringLiteralTypeResolver(): StringLiteralTypeResolverInterface
     {
         return $this->stringLiteralTypeResolver ??= new StringLiteralTypeResolver();
     }
 
-    private function getTagTypeResolver(): TagTypeResolver
+    private function getTagTypeResolver(): TagTypeResolverInterface
     {
         return $this->tagTypeResolver ??= new TagTypeResolver();
     }
 
-    private function getTernaryOperationTypeResolver(): TernaryOperationTypeResolver
+    private function getTernaryOperationTypeResolver(): TernaryOperationTypeResolverInterface
     {
         return $this->ternaryOperationTypeResolver ??= new TernaryOperationTypeResolver(
             expressionTypeResolver: $this

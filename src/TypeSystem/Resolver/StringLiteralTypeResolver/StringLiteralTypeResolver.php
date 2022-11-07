@@ -26,7 +26,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class StringLiteralTypeResolver
+final class StringLiteralTypeResolver implements StringLiteralTypeResolverInterface
 {
     public function resolveTypeOf(StringLiteralNode $stringLiteralNode): TypeInterface
     {

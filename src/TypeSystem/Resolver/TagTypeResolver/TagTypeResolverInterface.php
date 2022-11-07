@@ -23,13 +23,9 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\TagTypeResolver;
 
 use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
-use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class TagTypeResolver implements TagTypeResolverInterface
+interface TagTypeResolverInterface
 {
-    public function resolveTypeOf(TagNode $tagNode): TypeInterface
-    {
-        return StringType::get();
-    }
+    public function resolveTypeOf(TagNode $tagNode): TypeInterface;
 }

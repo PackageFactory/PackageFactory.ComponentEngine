@@ -25,16 +25,17 @@ namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\BinaryOperationType
 use PackageFactory\ComponentEngine\Definition\BinaryOperator;
 use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperandNodes;
 use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
-use PackageFactory\ComponentEngine\TypeSystem\Resolver\ExpressionTypeResolver\ExpressionTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\ExpressionTypeResolver\ExpressionTypeResolverInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class BinaryOperationTypeResolver
+final class BinaryOperationTypeResolver implements BinaryOperationTypeResolverInterface
 {
-    public function __construct(private readonly ExpressionTypeResolver $expressionTypeResolver)
-    {
+    public function __construct(
+        private readonly ExpressionTypeResolverInterface $expressionTypeResolver
+    ) {
     }
 
     public function resolveTypeOf(BinaryOperationNode $binaryOperationNode): TypeInterface

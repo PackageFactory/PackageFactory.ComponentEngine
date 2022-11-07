@@ -24,14 +24,15 @@ namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\TernaryOperationTyp
 
 use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
-use PackageFactory\ComponentEngine\TypeSystem\Resolver\ExpressionTypeResolver\ExpressionTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\ExpressionTypeResolver\ExpressionTypeResolverInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class TernaryOperationTypeResolver
+final class TernaryOperationTypeResolver implements TernaryOperationTypeResolverInterface
 {
-    public function __construct(private readonly ExpressionTypeResolver $expressionTypeResolver)
-    {
+    public function __construct(
+        private readonly ExpressionTypeResolverInterface $expressionTypeResolver
+    ) {
     }
 
     public function resolveTypeOf(TernaryOperationNode $ternaryOperationNode): TypeInterface

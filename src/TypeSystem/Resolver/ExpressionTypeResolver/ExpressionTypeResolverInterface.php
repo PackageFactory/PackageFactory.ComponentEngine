@@ -20,16 +20,12 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\TagTypeResolver;
+namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\ExpressionTypeResolver;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
-use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
+use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class TagTypeResolver implements TagTypeResolverInterface
+interface ExpressionTypeResolverInterface
 {
-    public function resolveTypeOf(TagNode $tagNode): TypeInterface
-    {
-        return StringType::get();
-    }
+    public function resolveTypeOf(ExpressionNode $expressionNode): TypeInterface;
 }

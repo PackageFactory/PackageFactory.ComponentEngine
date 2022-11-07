@@ -26,7 +26,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class IdentifierTypeResolver
+final class IdentifierTypeResolver implements IdentifierTypeResolverInterface
 {
     public function __construct(private readonly ScopeInterface $scope)
     {

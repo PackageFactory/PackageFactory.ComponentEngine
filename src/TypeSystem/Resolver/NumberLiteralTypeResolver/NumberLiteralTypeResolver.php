@@ -26,7 +26,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class NumberLiteralTypeResolver
+final class NumberLiteralTypeResolver implements NumberLiteralTypeResolverInterface
 {
     public function resolveTypeOf(NumberLiteralNode $numberLiteralNode): TypeInterface
     {
