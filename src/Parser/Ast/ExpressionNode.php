@@ -86,6 +86,7 @@ final class ExpressionNode implements \JsonSerializable
             case TokenType::NUMBER_OCTAL:
             case TokenType::NUMBER_DECIMAL:
             case TokenType::NUMBER_HEXADECIMAL:
+            case TokenType::PERIOD:
                 $root = NumberLiteralNode::fromTokens($tokens);
                 break;
             case TokenType::KEYWORD_TRUE:

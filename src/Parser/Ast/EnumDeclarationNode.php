@@ -22,8 +22,10 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
+use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class EnumDeclarationNode implements \JsonSerializable
@@ -32,6 +34,15 @@ final class EnumDeclarationNode implements \JsonSerializable
         public readonly string $enumName,
         public readonly EnumMemberDeclarationNodes $memberDeclarations
     ) {
+    }
+
+    public static function fromString(string $enumDeclarationAsString): self
+    {
+        return self::fromTokens(
+            Tokenizer::fromSource(
+                Source::fromString($enumDeclarationAsString)
+            )->getIterator()
+        );
     }
 
     /**

@@ -51,8 +51,6 @@ final class TagContentNodes implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        Scanner::skipSpaceAndComments($tokens);
-
         /** @var array<string,Text|Expression|Tag> $contents */
         $contents = [];
         while (true) {

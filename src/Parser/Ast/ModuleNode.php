@@ -22,9 +22,11 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
+use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 
 final class ModuleNode implements \JsonSerializable
 {
@@ -32,6 +34,15 @@ final class ModuleNode implements \JsonSerializable
         public readonly ImportNodes $imports,
         public readonly ExportNodes $exports,
     ) {
+    }
+
+    public static function fromString(string $moduleAsString): self
+    {
+        return self::fromTokens(
+            Tokenizer::fromSource(
+                Source::fromString($moduleAsString)
+            )->getIterator()
+        );
     }
 
     /**

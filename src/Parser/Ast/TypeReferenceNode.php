@@ -22,8 +22,10 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
+use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class TypeReferenceNode implements \JsonSerializable
@@ -32,6 +34,15 @@ final class TypeReferenceNode implements \JsonSerializable
         public readonly string $name,
         public readonly bool $isArray
     ) {
+    }
+
+    public static function fromString(string $typeReferenceAsString): self
+    {
+        return self::fromTokens(
+            Tokenizer::fromSource(
+                Source::fromString($typeReferenceAsString)
+            )->getIterator()
+        );
     }
 
     /**
@@ -47,7 +58,7 @@ final class TypeReferenceNode implements \JsonSerializable
 
         Scanner::skipOne($tokens);
 
-        $isArray = Scanner::type($tokens) === TokenType::BRACKET_SQUARE_OPEN;
+        $isArray = !Scanner::isEnd($tokens) && Scanner::type($tokens) === TokenType::BRACKET_SQUARE_OPEN;
         if ($isArray) {
             Scanner::skipOne($tokens);
             Scanner::skipSpace($tokens);

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Vendor\Project\Component;
 
-enum DayOfWeek: string
+enum DayOfWeek : string
 {
     case MONDAY = 'MONDAY';
     case TUESDAY = 'TUESDAY';

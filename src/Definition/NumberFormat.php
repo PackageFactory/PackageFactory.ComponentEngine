@@ -36,7 +36,8 @@ enum NumberFormat: string
         return match ($tokenType) {
             TokenType::NUMBER_BINARY => self::BINARY,
             TokenType::NUMBER_OCTAL => self::OCTAL,
-            TokenType::NUMBER_DECIMAL => self::DECIMAL,
+            TokenType::NUMBER_DECIMAL,
+            TokenType::PERIOD => self::DECIMAL,
             TokenType::NUMBER_HEXADECIMAL => self::HEXADECIMAL,
 
             default => throw new \Exception('@TODO: Unknown Number Format: ' . $tokenType->value)

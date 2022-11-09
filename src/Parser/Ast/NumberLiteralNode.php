@@ -25,7 +25,6 @@ namespace PackageFactory\ComponentEngine\Parser\Ast;
 use PackageFactory\ComponentEngine\Definition\NumberFormat;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Type\Primitive\NumberType;
 
 final class NumberLiteralNode implements \JsonSerializable
 {
@@ -50,11 +49,6 @@ final class NumberLiteralNode implements \JsonSerializable
             value: $value,
             format: $format
         );
-    }
-
-    public function toType(): NumberType
-    {
-        return NumberType::create();
     }
 
     public function jsonSerialize(): mixed

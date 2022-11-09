@@ -22,8 +22,10 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
+use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class TextNode implements \JsonSerializable
@@ -33,25 +35,34 @@ final class TextNode implements \JsonSerializable
     ) {
     }
 
+    public static function fromString(string $textAsString): self
+    {
+        return self::fromTokens(
+            Tokenizer::fromSource(
+                Source::fromString($textAsString)
+            )->getIterator()
+        );
+    }
+
     /**
      * @param \Iterator<mixed,Token> $tokens
      * @return null|self
      */
     public static function fromTokens(\Iterator $tokens): ?self
     {
-        Scanner::skipSpace($tokens);
-
         $value = '';
-        while (true) {
+        while (!Scanner::isEnd($tokens)) {
             switch (Scanner::type($tokens)) {
                 case TokenType::BRACKET_CURLY_OPEN:
                 case TokenType::TAG_START_OPENING:
+                    break 2;
                 case TokenType::TAG_START_CLOSING:
+                    $value = rtrim($value);
                     break 2;
                 case TokenType::SPACE:
                 case TokenType::END_OF_LINE:
                     $value .= ' ';
-                    Scanner::skipSpaceAndComments($tokens);
+                    Scanner::skipSpace($tokens);
                     break;
                 default:
                     $value .= Scanner::value($tokens);
@@ -60,7 +71,7 @@ final class TextNode implements \JsonSerializable
             }
         }
 
-        return $value ? new self(rtrim($value)) : null;
+        return $value && !ctype_space($value) ? new self($value) : null;
     }
 
     public function jsonSerialize(): mixed

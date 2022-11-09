@@ -69,6 +69,7 @@ final class TagNode implements \JsonSerializable
 
         Scanner::assertType($tokens, TokenType::TAG_END);
         Scanner::skipOne($tokens);
+        Scanner::skipSpace($tokens);
 
         $children = TagContentNodes::fromTokens($tokens);
 

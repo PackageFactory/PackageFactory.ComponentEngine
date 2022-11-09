@@ -25,7 +25,7 @@ namespace PackageFactory\ComponentEngine\Test\Integration;
 use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Transpiler\Php\Transpiler;
+use PackageFactory\ComponentEngine\Transpiler\Php\Module\ModuleTranspiler;
 use PHPUnit\Framework\TestCase;
 
 final class IntegrationTest extends TestCase
@@ -138,7 +138,7 @@ final class IntegrationTest extends TestCase
 
         $expected = file_get_contents(__DIR__ . '/Examples/' . $example . '/' . $example . '.php');
 
-        $transpiler = new Transpiler();
+        $transpiler = new ModuleTranspiler();
 
         $this->assertEquals($expected, $transpiler->transpile($module));
     }

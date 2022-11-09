@@ -165,7 +165,7 @@
                         "children": [
                           {
                             "type": "TextNode",
-                            "payload": { "value": "Number is" }
+                            "payload": { "value": "Number is " }
                           },
                           {
                             "type": "Identifier",

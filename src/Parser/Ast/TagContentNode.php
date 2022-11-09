@@ -39,8 +39,6 @@ final class TagContentNode implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): ?self
     {
-        Scanner::skipSpaceAndComments($tokens);
-
         switch (Scanner::type($tokens)) {
             case TokenType::TAG_START_OPENING:
                 $result = TagNode::fromTokens($tokens);
