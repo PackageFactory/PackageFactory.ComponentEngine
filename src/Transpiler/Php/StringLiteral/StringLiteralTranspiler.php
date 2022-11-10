@@ -33,8 +33,42 @@ final class StringLiteralTranspiler
 
     public function transpile(StringLiteralNode $stringLiteralNode): string
     {
-        return $this->shouldAddQuotes
-            ? sprintf('\'%s\'', $stringLiteralNode->value)
-            : $stringLiteralNode->value;
+        $result = $stringLiteralNode->value;
+        $shouldAddLeadingQuote = $this->shouldAddQuotes;
+        $shouldAddTrailingQuote = $this->shouldAddQuotes;
+
+        if (strpos($result, "\n") !== false) {
+            $lines = explode("\n", $result);
+            $result = array_shift($lines);
+            $additionalLineBreaks = '';
+            $shouldAddLeadingQuote = $shouldAddLeadingQuote && $result !== '';
+            foreach ($lines as $line) {
+                if ($line === '') {
+                    $additionalLineBreaks .= '\n';
+                } else {
+                    $result .= $result 
+                        ?  '\' . "\n' . $additionalLineBreaks . '" . \'' . $line
+                        :  '"\n' . $additionalLineBreaks . '" . \'' . $line;
+                    $additionalLineBreaks = '';
+                }
+            }
+
+            if ($additionalLineBreaks) {
+                $result .= $result 
+                    ? '\' . "' . $additionalLineBreaks . '"'
+                    : '"' . $additionalLineBreaks . '"';
+                $shouldAddTrailingQuote = $shouldAddTrailingQuote && false;
+            }
+        }
+
+        if ($shouldAddLeadingQuote) {
+            $result = '\'' . $result;
+        }
+
+        if ($shouldAddTrailingQuote) {
+            $result .= '\'';
+        }
+
+        return $result;
     }
 }

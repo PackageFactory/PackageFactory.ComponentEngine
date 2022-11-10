@@ -218,6 +218,37 @@ final class ExpressionTypeResolverTest extends TestCase
         );
     }
 
+    public function templateLiteralExamples(): array
+    {
+        return [
+            '`Hello World`' => ['`Hello World`'],
+            '`Hello ${name}`' => ['`Hello ${name}`'],
+            '`${greeting} World`' => ['`${greeting} World`'],
+            '`Hello ${name}! How are you?`' => ['`Hello ${name}! How are you?`'],
+        ];
+    }
+
+    /**
+     * @dataProvider templateLiteralExamples
+     * @test
+     * @param string $templateLiteralAsString
+     * @return void
+     */
+    public function resolvesTemplateLiteralToStringType(string $templateLiteralAsString): void
+    {
+        $scope = new DummyScope();
+        $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
+        $expressionNode = ExpressionNode::fromString($templateLiteralAsString);
+
+        $expectedType = StringType::get();
+        $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
+
+        $this->assertTrue(
+            $expectedType->is($actualType),
+            sprintf('Expected %s, got %s', $expectedType::class, $actualType::class)
+        );
+    }
+
     public function ternaryOperationExamples(): array
     {
         return [

@@ -22,8 +22,10 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
+use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class TemplateLiteralNode implements \JsonSerializable
@@ -37,6 +39,15 @@ final class TemplateLiteralNode implements \JsonSerializable
         StringLiteralNode|ExpressionNode ...$segments
     ) {
         $this->segments = $segments;
+    }
+
+    public static function fromString(string $stringLiteralAsString): self
+    {
+        return self::fromTokens(
+            Tokenizer::fromSource(
+                Source::fromString($stringLiteralAsString)
+            )->getIterator()
+        );
     }
 
     /**

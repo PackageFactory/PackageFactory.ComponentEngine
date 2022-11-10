@@ -28,16 +28,94 @@ use PHPUnit\Framework\TestCase;
 
 final class StringLiteralTranspilerTest extends TestCase
 {
+    public function stringExamples(): array
+    {
+        return [
+            '"Hello World!"' => [
+                '"Hello World!"',
+                'Hello World!'
+            ],
+            "\"Two\nLines\"" => [
+                "\"Two\nLines\"",
+                'Two\' . "\n" . \'Lines'
+            ],
+            "\"Three\n\nLines\"" => [
+                "\"Three\n\nLines\"",
+                'Three\' . "\n\n" . \'Lines'
+            ],
+            "\"\n\nLeading Line Breaks\"" => [
+                "\"\n\nLeading Line Breaks\"",
+                '"\n\n" . \'Leading Line Breaks'
+            ],
+            "\"Trailing Line Breaks\n\n\"" => [
+                "\"Trailing Line Breaks\n\n\"",
+                'Trailing Line Breaks\' . "\n\n"'
+            ]
+        ];
+    }
+
     /**
+     * @dataProvider stringExamples
      * @test
+     * @param string $stringLiteralAsString
+     * @param string $expectedTranspilationResult
      * @return void
      */
-    public function transpilesStringLiteralNodes(): void
+    public function transpilesStringLiteralNodes(string $stringLiteralAsString, string $expectedTranspilationResult): void
     {
         $stringLiteralTranspiler = new StringLiteralTranspiler();
-        $stringLiteralNode = StringLiteralNode::fromString('"Hello World!"');
+        $stringLiteralNode = StringLiteralNode::fromString($stringLiteralAsString);
 
-        $expectedTranspilationResult = 'Hello World!';
+        $actualTranspilationResult = $stringLiteralTranspiler->transpile(
+            $stringLiteralNode
+        );
+
+        $this->assertEquals(
+            $expectedTranspilationResult,
+            $actualTranspilationResult
+        );
+    }
+
+    public function stringExamplesWithAddedQuotes(): array
+    {
+        return [
+            '"Hello World!"' => [
+                '"Hello World!"',
+                '\'Hello World!\''
+            ],
+            "\"Two\nLines\"" => [
+                "\"Two\nLines\"",
+                '\'Two\' . "\n" . \'Lines\''
+            ],
+            "\"Three\n\nLines\"" => [
+                "\"Three\n\nLines\"",
+                '\'Three\' . "\n\n" . \'Lines\''
+            ],
+            "\"\n\nLeading Line Breaks\"" => [
+                "\"\n\nLeading Line Breaks\"",
+                '"\n\n" . \'Leading Line Breaks\''
+            ],
+            "\"Trailing Line Breaks\n\n\"" => [
+                "\"Trailing Line Breaks\n\n\"",
+                '\'Trailing Line Breaks\' . "\n\n"'
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider stringExamplesWithAddedQuotes
+     * @test
+     * @param string $stringLiteralAsString
+     * @param string $expectedTranspilationResult
+     * @return void
+     */
+    public function addsQuotesIfNecessary(string $stringLiteralAsString, string $expectedTranspilationResult): void
+    {
+        $stringLiteralTranspiler = new StringLiteralTranspiler(
+            shouldAddQuotes: true
+        );
+        $stringLiteralNode = StringLiteralNode::fromString($stringLiteralAsString);
+
         $actualTranspilationResult = $stringLiteralTranspiler->transpile(
             $stringLiteralNode
         );

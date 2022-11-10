@@ -48,6 +48,7 @@ final class PhpTranspilerIntegrationTest extends TestCase
             'Match' => ["Match"],
             'Numbers' => ["Numbers"],
             'Struct' => ["Struct"],
+            'TemplateLiteral' => ["TemplateLiteral"],
         ];
     }
 

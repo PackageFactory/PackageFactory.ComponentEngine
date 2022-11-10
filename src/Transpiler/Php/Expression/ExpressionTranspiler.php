@@ -31,6 +31,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
 use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
+use PackageFactory\ComponentEngine\Parser\Ast\TemplateLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
 use PackageFactory\ComponentEngine\Transpiler\Php\Access\AccessTranspiler;
 use PackageFactory\ComponentEngine\Transpiler\Php\BinaryOperation\BinaryOperationTranspiler;
@@ -40,6 +41,7 @@ use PackageFactory\ComponentEngine\Transpiler\Php\Match\MatchTranspiler;
 use PackageFactory\ComponentEngine\Transpiler\Php\NumberLiteral\NumberLiteralTranspiler;
 use PackageFactory\ComponentEngine\Transpiler\Php\StringLiteral\StringLiteralTranspiler;
 use PackageFactory\ComponentEngine\Transpiler\Php\Tag\TagTranspiler;
+use PackageFactory\ComponentEngine\Transpiler\Php\TemplateLiteral\TemplateLiteralTranspiler;
 use PackageFactory\ComponentEngine\Transpiler\Php\TernaryOperation\TernaryOperationTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 
@@ -77,6 +79,9 @@ final class ExpressionTranspiler
             TagNode::class => new TagTranspiler(
                 scope: $this->scope,
                 shouldAddQuotes: $this->shouldAddQuotesIfNecessary
+            ),
+            TemplateLiteralNode::class => new TemplateLiteralTranspiler(
+                scope: $this->scope
             ),
             default => throw new \Exception('@TODO: Transpile ' . $expressionNode->root::class)
         };
