@@ -139,6 +139,10 @@ final class Tokenizer implements \IteratorAggregate
                     $buffer->append($fragments->current());
                     $fragments->next();
 
+                    if (!$fragments->valid()) {
+                        throw new \Exception("@TODO: Unexpected end of input");
+                    }
+
                     $buffer->append($fragments->current());
                     $fragments->next();
                     break;
@@ -146,6 +150,7 @@ final class Tokenizer implements \IteratorAggregate
                 default:
                     $buffer->append($fragments->current());
                     $fragments->next();
+                    break;
             }
         }
     }
@@ -176,6 +181,11 @@ final class Tokenizer implements \IteratorAggregate
                 case '$':
                     $dollarSignBuffer = Buffer::empty()->append($fragments->current());
                     $fragments->next();
+
+                    if (!$fragments->valid()) {
+                        throw new \Exception("@TODO: Unexpected end of input");
+                    }
+                    
                     $nextFragment = $fragments->current();
 
                     if ($nextFragment->value === '{') {
@@ -189,6 +199,10 @@ final class Tokenizer implements \IteratorAggregate
                     $buffer->append($fragments->current());
                     $fragments->next();
 
+                    if (!$fragments->valid()) {
+                        throw new \Exception("@TODO: Unexpected end of input");
+                    }
+
                     $buffer->append($fragments->current());
                     $fragments->next();
                     break;
@@ -196,6 +210,7 @@ final class Tokenizer implements \IteratorAggregate
                 default:
                     $buffer->append($fragments->current());
                     $fragments->next();
+                    break;
             }
         }
     }
