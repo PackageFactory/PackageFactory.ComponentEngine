@@ -24,6 +24,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Transpiler\Php\ComponentDecla
 
 use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Transpiler\Php\ComponentDeclaration\ComponentDeclarationTranspiler;
+use PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope\GlobalScope;
 use PHPUnit\Framework\TestCase;
 
 final class ComponentDeclarationTranspilerTest extends TestCase
@@ -41,7 +42,9 @@ final class ComponentDeclarationTranspilerTest extends TestCase
             return <h1>Hello, {name}</h1>
         }
         EOT;
-        $componentDeclarationTranspiler = new ComponentDeclarationTranspiler();
+        $componentDeclarationTranspiler = new ComponentDeclarationTranspiler(
+            scope: GlobalScope::get()
+        );
         $componentDeclarationNode = ComponentDeclarationNode::fromString($componentDeclarationAsString);
 
         $expectedTranspilationResult = <<<PHP

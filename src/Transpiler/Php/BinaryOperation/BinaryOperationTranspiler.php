@@ -25,9 +25,14 @@ namespace PackageFactory\ComponentEngine\Transpiler\Php\BinaryOperation;
 use PackageFactory\ComponentEngine\Definition\BinaryOperator;
 use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
 use PackageFactory\ComponentEngine\Transpiler\Php\Expression\ExpressionTranspiler;
+use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 
 final class BinaryOperationTranspiler
 {
+    public function __construct(private readonly ScopeInterface $scope)
+    {
+    }
+
     private function transpileBinaryOperator(BinaryOperator $binaryOperator): string
     {
         return match ($binaryOperator) {
@@ -50,6 +55,7 @@ final class BinaryOperationTranspiler
     public function transpile(BinaryOperationNode $binaryOperationNode): string
     {
         $expressionTranspiler = new ExpressionTranspiler(
+            scope: $this->scope,
             shouldAddQuotesIfNecessary: true
         );
 

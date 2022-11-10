@@ -20,12 +20,20 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\BooleanLiteral;
+namespace PackageFactory\ComponentEngine\TypeSystem\Type\EnumType;
 
-use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
+use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-interface BooleanLiteralTypeResolverInterface
+final class EnumType implements TypeInterface
 {
-    public function resolveTypeOf(BooleanLiteralNode $numberLiteralNode): TypeInterface;
+    public static function fromEnumDeclarationNode(EnumDeclarationNode $enumDeclarationNode): self
+    {
+        return new self();
+    }
+
+    public function is(TypeInterface $other): bool
+    {
+        return false;
+    }
 }

@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Transpiler\Php\TernaryOperation;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Transpiler\Php\TernaryOperation\TernaryOperationTranspiler;
 use PHPUnit\Framework\TestCase;
 
@@ -50,7 +51,9 @@ final class TernaryOperationTranspilerTest extends TestCase
      */
     public function transpilesTernaryOperationNodes(string $ternaryOperationAsString, string $expectedTranspilationResult): void
     {
-        $ternaryOperationTranspiler = new TernaryOperationTranspiler();
+        $ternaryOperationTranspiler = new TernaryOperationTranspiler(
+            scope: new DummyScope()
+        );
         $ternaryOperationNode = ExpressionNode::fromString($ternaryOperationAsString)->root;
 
         $actualTranspilationResult = $ternaryOperationTranspiler->transpile(

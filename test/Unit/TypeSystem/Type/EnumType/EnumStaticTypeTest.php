@@ -20,12 +20,25 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\StringLiteral;
+namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\EnumStaticType;
 
-use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
-use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
+use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
+use PHPUnit\Framework\TestCase;
 
-interface StringLiteralTypeResolverInterface
+final class EnumStaticTypeTest extends TestCase
 {
-    public function resolveTypeOf(StringLiteralNode $stringLiteralNode): TypeInterface;
+    /**
+     * @test
+     * @return void
+     */
+    public function canBeCreatedFromEnumDeclarationNode(): void
+    {
+        $enumDeclarationNode = EnumDeclarationNode::fromString(
+            'enum Foo { BAR BAZ }'
+        );
+        $enumType = EnumStaticType::fromEnumDeclarationNode($enumDeclarationNode);
+
+        $this->assertInstanceOf(EnumStaticType::class, $enumType);
+    }
 }

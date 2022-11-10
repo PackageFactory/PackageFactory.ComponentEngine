@@ -27,9 +27,14 @@ use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
 use PackageFactory\ComponentEngine\Transpiler\Php\Expression\ExpressionTranspiler;
 use PackageFactory\ComponentEngine\Transpiler\Php\StringLiteral\StringLiteralTranspiler;
+use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 
 final class AttributeTranspiler
 {
+    public function __construct(private readonly ScopeInterface $scope)
+    {
+    }
+
     public function transpile(AttributeNode $attributeNode): string
     {
         return sprintf(
@@ -38,7 +43,9 @@ final class AttributeTranspiler
             match ($attributeNode->value::class) {
                 ExpressionNode::class => sprintf(
                     '\' . %s . \'',
-                    (new ExpressionTranspiler())->transpile($attributeNode->value)
+                    (new ExpressionTranspiler(
+                        scope: $this->scope
+                    ))->transpile($attributeNode->value)
                 ),
                 StringLiteralNode::class => (new StringLiteralTranspiler())->transpile($attributeNode->value)
             }

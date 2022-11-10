@@ -23,8 +23,8 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\Expression;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
-use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
@@ -68,13 +68,7 @@ final class ExpressionTypeResolverTest extends TestCase
      */
     public function resolvesBinaryOperationToResultingType(string $binaryExpressionAsString, TypeInterface $expectedType): void
     {
-        $scope = new class implements ScopeInterface
-        {
-            public function lookupTypeFor(string $name): ?TypeInterface
-            {
-                return null;
-            }
-        };
+        $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
         $expressionNode = ExpressionNode::fromString($binaryExpressionAsString);
 
@@ -91,13 +85,7 @@ final class ExpressionTypeResolverTest extends TestCase
      */
     public function resolvesBooleanLiteralToBooleanType(): void
     {
-        $scope = new class implements ScopeInterface
-        {
-            public function lookupTypeFor(string $name): ?TypeInterface
-            {
-                return null;
-            }
-        };
+        $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
         $expressionNode = ExpressionNode::fromString('true');
 
@@ -116,17 +104,58 @@ final class ExpressionTypeResolverTest extends TestCase
      */
     public function resolvesKnownIdentifierToItsType(): void
     {
-        $scope = new class implements ScopeInterface
-        {
-            public function lookupTypeFor(string $name): ?TypeInterface
-            {
-                return StringType::get();
-            }
-        };
+        $scope = new DummyScope(['foo' => StringType::get()]);
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
         $expressionNode = ExpressionNode::fromString('foo');
 
         $expectedType = StringType::get();
+        $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
+
+        $this->assertTrue(
+            $expectedType->is($actualType),
+            sprintf('Expected %s, got %s', $expectedType::class, $actualType::class)
+        );
+    }
+
+    public function matchExamples(): array
+    {
+        return [
+            'match (true) { true -> 42 false -> "foo" }' => [
+                'match (true) { true -> 42 false -> "foo" }',
+                NumberType::get()
+            ],
+            'match (false) { true -> 42 false -> "foo" }' => [
+                'match (false) { true -> 42 false -> "foo" }',
+                StringType::get()
+            ],
+            'match (variableOfTypeBoolean) { true -> 42 false -> "foo" }' => [
+                'match (variableOfTypeBoolean) { true -> 42 false -> "foo" }',
+                UnionType::of(NumberType::get(), StringType::get())
+            ],
+            'match (variableOfTypeBoolean) { true -> variableOfTypeNumber false -> variableOfTypeString }' => [
+                'match (variableOfTypeBoolean) { true -> variableOfTypeNumber false -> variableOfTypeString }',
+                UnionType::of(NumberType::get(), StringType::get())
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider matchExamples
+     * @test
+     * @param string $matchAsString
+     * @param TypeInterface $expectedType
+     * @return void
+     */
+    public function resolvesMatchToResultingType(string $matchAsString, TypeInterface $expectedType): void
+    {
+        $scope = new DummyScope([
+            'variableOfTypeBoolean' => BooleanType::get(),
+            'variableOfTypeString' => StringType::get(),
+            'variableOfTypeNumber' => NumberType::get(),
+        ]);
+        $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
+        $expressionNode = ExpressionNode::fromString($matchAsString);
+
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
 
         $this->assertTrue(
@@ -140,13 +169,7 @@ final class ExpressionTypeResolverTest extends TestCase
      */
     public function resolvesNumberLiteralToNumberType(): void
     {
-        $scope = new class implements ScopeInterface
-        {
-            public function lookupTypeFor(string $name): ?TypeInterface
-            {
-                return null;
-            }
-        };
+        $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
         $expressionNode = ExpressionNode::fromString('42');
 
@@ -164,13 +187,7 @@ final class ExpressionTypeResolverTest extends TestCase
      */
     public function resolvesStringLiteralToStringType(): void
     {
-        $scope = new class implements ScopeInterface
-        {
-            public function lookupTypeFor(string $name): ?TypeInterface
-            {
-                return null;
-            }
-        };
+        $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
         $expressionNode = ExpressionNode::fromString('"foo"');
 
@@ -188,13 +205,7 @@ final class ExpressionTypeResolverTest extends TestCase
      */
     public function resolvesTagToStringType(): void
     {
-        $scope = new class implements ScopeInterface
-        {
-            public function lookupTypeFor(string $name): ?TypeInterface
-            {
-                return null;
-            }
-        };
+        $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
         $expressionNode = ExpressionNode::fromString('<div></div>');
 
@@ -225,13 +236,7 @@ final class ExpressionTypeResolverTest extends TestCase
      */
     public function resolvesTernaryOperationToResultingType(string $ternaryOperationAsString, TypeInterface $expectedType): void
     {
-        $scope = new class implements ScopeInterface
-        {
-            public function lookupTypeFor(string $name): ?TypeInterface
-            {
-                return null;
-            }
-        };
+        $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
         $expressionNode = ExpressionNode::fromString($ternaryOperationAsString);
 

@@ -20,28 +20,48 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\Identifier;
+namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\GlobalScope;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
-use PackageFactory\ComponentEngine\TypeSystem\Resolver\Identifier\IdentifierTypeResolver;
+use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
+use PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope\GlobalScope;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
+use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 use PHPUnit\Framework\TestCase;
 
-final class IdentifierTypeResolverTest extends TestCase
+final class GlobalScopeTest extends TestCase
 {
     /**
      * @test
      * @return void
      */
-    public function resolvesKnownIdentifierToItsType(): void
+    public function isSingleton(): void
     {
-        $scope = new DummyScope(['foo' => StringType::get()]);
-        $identifierTypeResolver = new IdentifierTypeResolver(scope: $scope);
-        $identifierNode = ExpressionNode::fromString('foo')->root;
+        $globalScope1 = GlobalScope::get();
+        $globalScope2 = GlobalScope::get();
 
-        $expectedType = StringType::get();
-        $actualType = $identifierTypeResolver->resolveTypeOf($identifierNode);
+        $this->assertSame($globalScope1, $globalScope2);
+    }
+
+    public function primitiveTypeExamples(): array
+    {
+        return [
+            'string' => ['string', StringType::get()]
+        ];
+    }
+
+    /**
+     * @dataProvider primitiveTypeExamples
+     * @test
+     * @param string $typeReferenceAsString
+     * @param TypeInterface $expectedType
+     * @return void
+     */
+    public function resolvesPrimitiveTypes(string $typeReferenceAsString, TypeInterface $expectedType): void
+    {
+        $globalScope = GlobalScope::get();
+        $typeReferenceNode = TypeReferenceNode::fromString($typeReferenceAsString);
+
+        $actualType = $globalScope->resolveTypeReference($typeReferenceNode);
 
         $this->assertTrue(
             $expectedType->is($actualType),

@@ -20,27 +20,43 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\Identifier;
+namespace PackageFactory\ComponentEngine\Module;
 
-use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
-use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
-use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
+use PackageFactory\ComponentEngine\Parser\Source\Source;
 
-final class IdentifierTypeResolver
+final class ModuleId
 {
-    public function __construct(private readonly ScopeInterface $scope)
+    /**
+     * @var array<string,ModuleId>
+     */
+    private static array $instances;
+
+    private function __construct(private readonly string $value)
     {
     }
 
-    public function resolveTypeOf(IdentifierNode $identifierNode): TypeInterface
+    public static function fromString(string $moduleIdAsString): self
     {
-        $name = $identifierNode->value;
-        $foundType = $this->scope->lookupTypeFor($name);
+        return self::$instances[$moduleIdAsString] ??= new self($moduleIdAsString);
+    }
 
-        if ($foundType === null) {
-            throw new \Exception('@TODO: Unknown identifier ' . $name);
+    public static function fromSource(Source $source): self
+    {
+        if ($source->path->isMemory()) {
+            return self::fromString(
+                sprintf(
+                    '%s#%s',
+                    $source->path,
+                    hash('sha256', $source->contents)
+                )
+            );
         } else {
-            return $foundType;
+            return self::fromString((string) $source->path);
         }
+    }
+
+    public function __toString(): string
+    {
+        return $this->value;
     }
 }

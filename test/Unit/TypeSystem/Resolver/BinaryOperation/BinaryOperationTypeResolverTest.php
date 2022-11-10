@@ -23,9 +23,8 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\BinaryOperation;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\BinaryOperation\BinaryOperationTypeResolver;
-use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
-use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
@@ -69,15 +68,9 @@ final class BinaryOperationTypeResolverTest extends TestCase
      */
     public function resolvesBinaryOperationToResultingType(string $binaryOperationAsString, TypeInterface $expectedType): void
     {
-        $scope = new class implements ScopeInterface
-        {
-            public function lookupTypeFor(string $name): ?TypeInterface
-            {
-                return null;
-            }
-        };
+        $scope = new DummyScope();
         $binaryOperationTypeResolver = new BinaryOperationTypeResolver(
-            expressionTypeResolver: new ExpressionTypeResolver(scope: $scope)
+            scope: $scope
         );
         $binaryOperationNode = ExpressionNode::fromString($binaryOperationAsString)->root;
 

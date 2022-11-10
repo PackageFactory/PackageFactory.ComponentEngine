@@ -28,10 +28,15 @@ use PackageFactory\ComponentEngine\Transpiler\Php\Expression\ExpressionTranspile
 use PackageFactory\ComponentEngine\Transpiler\Php\TypeReference\TypeReferenceTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Scope\ComponentScope\ComponentScope;
+use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 
 final class ComponentDeclarationTranspiler
 {
+    public function __construct(private readonly ScopeInterface $scope)
+    {
+    }
+
     public function transpile(ComponentDeclarationNode $componentDeclarationNode): string
     {
         $lines = [];
@@ -83,10 +88,15 @@ final class ComponentDeclarationTranspiler
 
     public function writeReturnExpression(ComponentDeclarationNode $componentDeclarationNode): string
     {
+        $componentScope = new ComponentScope(
+            componentDeclarationNode: $componentDeclarationNode,
+            parentScope: $this->scope
+        );
         $expressionTypeResolver = new ExpressionTypeResolver(
-            scope: new ComponentScope($componentDeclarationNode)
+            scope: $componentScope
         );
         $expressionTranspiler = new ExpressionTranspiler(
+            scope: $componentScope,
             shouldAddQuotesIfNecessary: true
         );
 

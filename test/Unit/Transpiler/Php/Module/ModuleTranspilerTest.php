@@ -24,6 +24,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Transpiler\Php\Module;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
 use PackageFactory\ComponentEngine\Transpiler\Php\Module\ModuleTranspiler;
+use PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope\GlobalScope;
 use PHPUnit\Framework\TestCase;
 
 final class ModuleTranspilerTest extends TestCase
@@ -39,7 +40,9 @@ final class ModuleTranspilerTest extends TestCase
             return <p>Hello World</p>
         }
         EOT;
-        $moduleTranspiler = new ModuleTranspiler();
+        $moduleTranspiler = new ModuleTranspiler(
+            globalScope: GlobalScope::get()
+        );
         $moduleNode = ModuleNode::fromString($moduleNodeAsString);
 
         $expectedTranspilationResult = <<<PHP
@@ -83,7 +86,9 @@ final class ModuleTranspilerTest extends TestCase
             C
         }
         EOT;
-        $moduleTranspiler = new ModuleTranspiler();
+        $moduleTranspiler = new ModuleTranspiler(
+            globalScope: GlobalScope::get()
+        );
         $moduleNode = ModuleNode::fromString($moduleNodeAsString);
 
         $expectedTranspilationResult = <<<PHP
@@ -124,7 +129,9 @@ final class ModuleTranspilerTest extends TestCase
             baz: boolean
         }
         EOT;
-        $moduleTranspiler = new ModuleTranspiler();
+        $moduleTranspiler = new ModuleTranspiler(
+            globalScope: GlobalScope::get()
+        );
         $moduleNode = ModuleNode::fromString($moduleNodeAsString);
 
         $expectedTranspilationResult = <<<PHP

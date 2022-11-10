@@ -20,34 +20,48 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Transpiler\Php\TernaryOperation;
+namespace PackageFactory\ComponentEngine\Transpiler\Php\Match;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
+use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
 use PackageFactory\ComponentEngine\Transpiler\Php\Expression\ExpressionTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 
-final class TernaryOperationTranspiler
+final class MatchTranspiler
 {
-    public function __construct(private readonly ScopeInterface $scope) 
+    public function __construct(private readonly ScopeInterface $scope)
     {
     }
 
-    public function transpile(TernaryOperationNode $ternaryOperationNode): string
+    public function transpile(MatchNode $matchNode): string
     {
-        $conditionTranspiler = new ExpressionTranspiler(
-            scope: $this->scope,
-            shouldAddQuotesIfNecessary: true
-        );
-        $branchTranspiler = new ExpressionTranspiler(
+        $expressionTranspiler = new ExpressionTranspiler(
             scope: $this->scope,
             shouldAddQuotesIfNecessary: true
         );
 
+        $transpiledSubject = $expressionTranspiler->transpile($matchNode->subject);
+        $transpiledArms = [];
+
+        foreach ($matchNode->arms->items as $matchArmNode) {
+            $left = [];
+            if ($matchArmNode->left === null) {
+                $left = ['default'];
+            } else {
+                foreach ($matchArmNode->left->items as $leftNode) {
+                    $left[] = $expressionTranspiler->transpile($leftNode);
+                }
+            }
+            $transpiledArms[] = sprintf(
+                '%s => %s',
+                join(', ', $left),
+                $expressionTranspiler->transpile($matchArmNode->right)
+            );
+        }
+
         return sprintf(
-            '(%s ? %s : %s)',
-            $conditionTranspiler->transpile($ternaryOperationNode->condition),
-            $branchTranspiler->transpile($ternaryOperationNode->true),
-            $branchTranspiler->transpile($ternaryOperationNode->false)
+            'match (%s) { %s }',
+            $transpiledSubject,
+            join(', ', $transpiledArms)
         );
     }
 }

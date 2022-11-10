@@ -25,11 +25,13 @@ namespace PackageFactory\ComponentEngine\Transpiler\Php\Tag;
 use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
 use PackageFactory\ComponentEngine\Transpiler\Php\Attribute\AttributeTranspiler;
 use PackageFactory\ComponentEngine\Transpiler\Php\TagContent\TagContentTranspiler;
+use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 
 final class TagTranspiler
 {
     public function __construct(
-        private bool $shouldAddQuotes = false
+        private readonly ScopeInterface $scope,
+        private readonly bool $shouldAddQuotes = false
     ) {
     }
 
@@ -39,14 +41,18 @@ final class TagTranspiler
 
         $attributeTranspiler = null;
         foreach ($tagNode->attributes->items as $attribute) {
-            $attributeTranspiler ??= new AttributeTranspiler();
+            $attributeTranspiler ??= new AttributeTranspiler(
+                scope: $this->scope
+            );
             $result .= ' ' . $attributeTranspiler->transpile($attribute);
         }
 
         if ($tagNode->isSelfClosing) {
             $result .= ' />';
         } else {
-            $tagContentTranspiler = new TagContentTranspiler();
+            $tagContentTranspiler = new TagContentTranspiler(
+                scope: $this->scope
+            );
 
             $result .= '>';
 

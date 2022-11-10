@@ -20,12 +20,20 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\Tag;
+namespace PackageFactory\ComponentEngine\TypeSystem\Type\EnumType;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
+use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-interface TagTypeResolverInterface
+final class EnumStaticType implements TypeInterface
 {
-    public function resolveTypeOf(TagNode $tagNode): TypeInterface;
+    public static function fromEnumDeclarationNode(EnumDeclarationNode $enumDeclarationNode): self
+    {
+        return new self();
+    }
+
+    public function is(TypeInterface $other): bool
+    {
+        return false;
+    }
 }

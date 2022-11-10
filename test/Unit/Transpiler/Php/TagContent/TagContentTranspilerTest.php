@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Transpiler\Php\TagContent;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Transpiler\Php\TagContent\TagContentTranspiler;
 use PHPUnit\Framework\TestCase;
 
@@ -55,7 +56,9 @@ final class TagContentTranspilerTest extends TestCase
      */
     public function transpilesTagContentNodes(string $tagContentAsString, string $expectedTranspilationResult): void
     {
-        $tagContentTranspiler = new TagContentTranspiler();
+        $tagContentTranspiler = new TagContentTranspiler(
+            scope: new DummyScope()
+        );
         $tagContentNode = ExpressionNode::fromString(
             sprintf('<div>%s</div>', $tagContentAsString)
         )->root->children->items[0];

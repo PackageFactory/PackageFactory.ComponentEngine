@@ -20,41 +20,34 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Scope\ComponentScope;
+namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
-use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class ComponentScope implements ScopeInterface
+final class DummyScope implements ScopeInterface
 {
+    /**
+     * @param array<string,TypeInterface> $identifierToTypeMap
+     */
     public function __construct(
-        private readonly ComponentDeclarationNode $componentDeclarationNode,
-        private readonly ?ScopeInterface $parentScope
+        private readonly array $identifierToTypeMap = [],
+        private readonly array $typeNameToTypeMap = []
     ) {
     }
 
     public function lookupTypeFor(string $name): ?TypeInterface
     {
-        $propertyDeclarationNode = $this->componentDeclarationNode->propertyDeclarations->getPropertyDeclarationNodeOfName($name);
-        if ($propertyDeclarationNode) {
-            $typeReferenceNode = $propertyDeclarationNode->type;
-            return $this->resolveTypeReference($typeReferenceNode);
-        }
-
-        return $this->parentScope?->lookupTypeFor($name) ?? null;
+        return $this->identifierToTypeMap[$name] ?? null;
     }
 
     public function resolveTypeReference(TypeReferenceNode $typeReferenceNode): TypeInterface
     {
-        if ($this->parentScope) {
-            return $this->parentScope->resolveTypeReference($typeReferenceNode);
+        if ($type = $this->typeNameToTypeMap[$typeReferenceNode->name]) {
+            return $type;
         }
 
-        throw new \Exception('@TODO: Unknown Type ' . $typeReferenceNode->name);
+        throw new \Exception('DummyScope: Unknown type ' . $typeReferenceNode->name);
     }
 }

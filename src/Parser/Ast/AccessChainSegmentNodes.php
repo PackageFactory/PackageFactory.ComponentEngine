@@ -22,8 +22,6 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
-use PackageFactory\ComponentEngine\Definition\AccessType;
-use PackageFactory\ComponentEngine\Definition\BinaryOperator;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
@@ -51,6 +49,10 @@ final class AccessChainSegmentNodes implements \JsonSerializable
         $items = [];
         while (true) {
             Scanner::skipSpaceAndComments($tokens);
+
+            if (Scanner::isEnd($tokens)) {
+                break;
+            }
 
             switch (Scanner::type($tokens)) {
                 case TokenType::PERIOD:

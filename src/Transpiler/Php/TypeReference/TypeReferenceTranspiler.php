@@ -32,7 +32,7 @@ final class TypeReferenceTranspiler
             'number' => 'int|float',
             'string' => 'string',
             'boolean' => 'bool',
-            default => throw new \Exception('@TODO: Unknown type ' . $typeReferenceNode->name)
+            default => $typeReferenceNode->name
         };
     }
 }

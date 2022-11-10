@@ -22,10 +22,17 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Integration;
 
+use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
+use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Transpiler\Php\Module\ModuleTranspiler;
+use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
 
 final class IntegrationTest extends TestCase
@@ -120,6 +127,7 @@ final class IntegrationTest extends TestCase
             'ComponentWithNesting' => ["ComponentWithNesting"],
             'Enum' => ["Enum"],
             'Expression' => ["Expression"],
+            'Match' => ["Match"],
         ];
     }
 
@@ -138,7 +146,26 @@ final class IntegrationTest extends TestCase
 
         $expected = file_get_contents(__DIR__ . '/Examples/' . $example . '/' . $example . '.php');
 
-        $transpiler = new ModuleTranspiler();
+        $transpiler = new ModuleTranspiler(
+            // Add some assumed types to the global scope
+            globalScope: new DummyScope([
+                'ButtonType' => EnumStaticType::fromEnumDeclarationNode(
+                    EnumDeclarationNode::fromString(
+                        'enum ButtonType { LINK BUTTON SUBMIT NONE }'
+                    )
+                )
+            ], [
+                'string' => StringType::get(),
+                'slot' => StringType::get(),
+                'number' => NumberType::get(),
+                'boolean' => BooleanType::get(),
+                'ButtonType' => EnumType::fromEnumDeclarationNode(
+                    EnumDeclarationNode::fromString(
+                        'enum ButtonType { LINK BUTTON SUBMIT NONE }'
+                    )
+                )
+            ])
+        );
 
         $this->assertEquals($expected, $transpiler->transpile($module));
     }

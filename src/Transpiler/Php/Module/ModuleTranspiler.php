@@ -29,14 +29,21 @@ use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Transpiler\Php\ComponentDeclaration\ComponentDeclarationTranspiler;
 use PackageFactory\ComponentEngine\Transpiler\Php\EnumDeclaration\EnumDeclarationTranspiler;
 use PackageFactory\ComponentEngine\Transpiler\Php\StructDeclaration\StructDeclarationTranspiler;
+use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 
 final class ModuleTranspiler
 {
+    public function __construct(private readonly ScopeInterface $globalScope)
+    {
+    }
+
     public function transpile(ModuleNode $moduleNode): string
     {
         foreach ($moduleNode->exports->items as $exportNode) {
             return match ($exportNode->declaration::class) {
-                ComponentDeclarationNode::class => (new ComponentDeclarationTranspiler())->transpile($exportNode->declaration),
+                ComponentDeclarationNode::class => (new ComponentDeclarationTranspiler(
+                    scope: $this->globalScope
+                ))->transpile($exportNode->declaration),
                 EnumDeclarationNode::class => (new EnumDeclarationTranspiler())->transpile($exportNode->declaration),
                 StructDeclarationNode::class => (new StructDeclarationTranspiler())->transpile($exportNode->declaration)
             };

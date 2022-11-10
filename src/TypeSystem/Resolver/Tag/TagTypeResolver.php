@@ -26,7 +26,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class TagTypeResolver implements TagTypeResolverInterface
+final class TagTypeResolver
 {
     public function resolveTypeOf(TagNode $tagNode): TypeInterface
     {

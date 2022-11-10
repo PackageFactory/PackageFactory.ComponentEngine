@@ -26,7 +26,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class BooleanLiteralTypeResolver implements BooleanLiteralTypeResolverInterface
+final class BooleanLiteralTypeResolver
 {
     public function resolveTypeOf(BooleanLiteralNode $numberLiteralNode): TypeInterface
     {

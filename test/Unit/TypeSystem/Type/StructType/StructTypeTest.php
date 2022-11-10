@@ -20,12 +20,25 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression;
+namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\StructType;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
+use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
+use PHPUnit\Framework\TestCase;
 
-interface ExpressionTypeResolverInterface
+final class StructTypeTest extends TestCase
 {
-    public function resolveTypeOf(ExpressionNode $expressionNode): TypeInterface;
+    /**
+     * @test
+     * @return void
+     */
+    public function canBeCreatedFromStructDeclarationNode(): void
+    {
+        $enumDeclarationNode = StructDeclarationNode::fromString(
+            'struct Foo { a : string b : number }'
+        );
+        $enumType = StructType::fromStructDeclarationNode($enumDeclarationNode);
+
+        $this->assertInstanceOf(StructType::class, $enumType);
+    }
 }

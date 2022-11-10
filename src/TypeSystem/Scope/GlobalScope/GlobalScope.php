@@ -20,7 +20,7 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Scope\ComponentScope;
+namespace PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
@@ -30,31 +30,31 @@ use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class ComponentScope implements ScopeInterface
+final class GlobalScope implements ScopeInterface
 {
-    public function __construct(
-        private readonly ComponentDeclarationNode $componentDeclarationNode,
-        private readonly ?ScopeInterface $parentScope
-    ) {
+    private static null|self $instance = null;
+
+    private function __construct()
+    {
+    }
+
+    public static function get(): self
+    {
+        return self::$instance ??= new self();
     }
 
     public function lookupTypeFor(string $name): ?TypeInterface
     {
-        $propertyDeclarationNode = $this->componentDeclarationNode->propertyDeclarations->getPropertyDeclarationNodeOfName($name);
-        if ($propertyDeclarationNode) {
-            $typeReferenceNode = $propertyDeclarationNode->type;
-            return $this->resolveTypeReference($typeReferenceNode);
-        }
-
-        return $this->parentScope?->lookupTypeFor($name) ?? null;
+        return null;
     }
 
     public function resolveTypeReference(TypeReferenceNode $typeReferenceNode): TypeInterface
     {
-        if ($this->parentScope) {
-            return $this->parentScope->resolveTypeReference($typeReferenceNode);
-        }
-
-        throw new \Exception('@TODO: Unknown Type ' . $typeReferenceNode->name);
+        return match ($typeReferenceNode->name) {
+            'string' => StringType::get(),
+            'number' => NumberType::get(),
+            'boolean' => BooleanType::get(),
+            default => throw new \Exception('@TODO: Unknown Type ' . $typeReferenceNode->name)
+        };
     }
 }

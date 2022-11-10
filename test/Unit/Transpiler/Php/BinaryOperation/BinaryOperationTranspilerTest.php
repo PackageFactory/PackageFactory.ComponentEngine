@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Transpiler\Php\BinaryOperation;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Transpiler\Php\BinaryOperation\BinaryOperationTranspiler;
 use PHPUnit\Framework\TestCase;
 
@@ -107,7 +108,9 @@ final class BinaryOperationTranspilerTest extends TestCase
      */
     public function transpilesBinaryOperationNodes(string $binaryOperationAsString, string $expectedTranspilationResult): void
     {
-        $binaryOperationTranspiler = new BinaryOperationTranspiler();
+        $binaryOperationTranspiler = new BinaryOperationTranspiler(
+            scope: new DummyScope()
+        );
         $binaryOperationNode = ExpressionNode::fromString($binaryOperationAsString)->root;
 
         $actualTranspilationResult = $binaryOperationTranspiler->transpile(

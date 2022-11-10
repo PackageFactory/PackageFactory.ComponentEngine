@@ -20,47 +20,44 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Test\Unit\Transpiler\Php\Identifier;
+namespace PackageFactory\ComponentEngine\Test\Unit\Transpiler\Php\Access;
 
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
+use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
-use PackageFactory\ComponentEngine\Transpiler\Php\Identifier\IdentifierTranspiler;
+use PackageFactory\ComponentEngine\Transpiler\Php\Access\AccessTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
 use PHPUnit\Framework\TestCase;
 
-final class IdentifierTranspilerTest extends TestCase
+final class AccessTranspilerTest extends TestCase
 {
-    /**
-     * @test
-     * @return void
-     */
-    public function transpilesIdentifierNodes(): void
+    public function accessExamples(): array
     {
-        $identifierTranspiler = new IdentifierTranspiler(
-            scope: new DummyScope()
-        );
-        $identifierNode = IdentifierNode::fromString('foo');
-
-        $expectedTranspilationResult = '$this->foo';
-        $actualTranspilationResult = $identifierTranspiler->transpile(
-            $identifierNode
-        );
-
-        $this->assertEquals(
-            $expectedTranspilationResult,
-            $actualTranspilationResult
-        );
+        return [
+            'a.b' => ['a.b', '$this->a->b'],
+            'a.b.c' => ['a.b.c', '$this->a->b->c'],
+            'SomeEnum.A' => ['SomeEnum.A', 'SomeEnum::A'],
+        ];
     }
 
     /**
+     * @dataProvider accessExamples
      * @test
+     * @param string $accessAsString
+     * @param string $expectedTranspilationResult
      * @return void
      */
-    public function transpilesIdentifierNodesReferringToEnums(): void
+    public function transpilesAccessNodes(string $accessAsString, string $expectedTranspilationResult): void
     {
-        $identifierTranspiler = new IdentifierTranspiler(
+        $accessTranspiler = new AccessTranspiler(
             scope: new DummyScope([
+                'a' => StructType::fromStructDeclarationNode(
+                    StructDeclarationNode::fromString(
+                        'struct A { b: B }'
+                    )
+                ),
                 'SomeEnum' => EnumStaticType::fromEnumDeclarationNode(
                     EnumDeclarationNode::fromString(
                         'enum SomeEnum { A B C }'
@@ -68,11 +65,10 @@ final class IdentifierTranspilerTest extends TestCase
                 )
             ])
         );
-        $identifierNode = IdentifierNode::fromString('SomeEnum');
+        $accessNode = ExpressionNode::fromString($accessAsString)->root;
 
-        $expectedTranspilationResult = 'SomeEnum';
-        $actualTranspilationResult = $identifierTranspiler->transpile(
-            $identifierNode
+        $actualTranspilationResult = $accessTranspiler->transpile(
+            $accessNode
         );
 
         $this->assertEquals(

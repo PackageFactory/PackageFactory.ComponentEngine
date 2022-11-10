@@ -23,11 +23,22 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Transpiler\Php\Identifier;
 
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
+use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 
 final class IdentifierTranspiler
 {
+    public function __construct(private readonly ScopeInterface $scope)
+    {
+    }
+
     public function transpile(IdentifierNode $identifierNode): string
     {
-        return '$this->' . $identifierNode->value;
+        $typeOfIdentifiedValue = $this->scope->lookupTypeFor($identifierNode->value);
+
+        return match (true) {
+            $typeOfIdentifiedValue instanceof EnumStaticType => $identifierNode->value,
+            default => '$this->' . $identifierNode->value
+        };
     }
 }

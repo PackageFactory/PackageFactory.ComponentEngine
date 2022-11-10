@@ -23,9 +23,8 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\TernaryOperation;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
+use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\TernaryOperation\TernaryOperationTypeResolver;
-use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
@@ -39,7 +38,11 @@ final class TernaryOperationTypeResolverTest extends TestCase
         return [
             'true ? 42 : "foo"' => ['true ? 42 : "foo"', NumberType::get()],
             'false ? 42 : "foo"' => ['false ? 42 : "foo"', StringType::get()],
-            '1 < 2 ? 42 : "foo"' => ['1 < 2 ? 42 : "foo"', UnionType::of(NumberType::get(), StringType::get())]
+            '1 < 2 ? 42 : "foo"' => ['1 < 2 ? 42 : "foo"', UnionType::of(NumberType::get(), StringType::get())],
+            '1 < 2 ? variableOfTypeString : variableOfTypeNumber' => [
+                '1 < 2 ? variableOfTypeString : variableOfTypeNumber', 
+                UnionType::of(NumberType::get(), StringType::get())
+            ]
         ];
     }
 
@@ -52,15 +55,12 @@ final class TernaryOperationTypeResolverTest extends TestCase
      */
     public function resolvesTernaryOperationToResultingType(string $ternaryExpressionAsString, TypeInterface $expectedType): void
     {
-        $scope = new class implements ScopeInterface 
-        {
-            public function lookupTypeFor(string $name): ?TypeInterface
-            {
-                return null;
-            }
-        };
+        $scope = new DummyScope([
+            'variableOfTypeString' => StringType::get(),
+            'variableOfTypeNumber' => NumberType::get(),
+        ]);
         $ternaryOperationTypeResolver = new TernaryOperationTypeResolver(
-            expressionTypeResolver: new ExpressionTypeResolver(scope: $scope)
+            scope: $scope
         );
         $ternaryOperationNode = ExpressionNode::fromString($ternaryExpressionAsString)->root;
 

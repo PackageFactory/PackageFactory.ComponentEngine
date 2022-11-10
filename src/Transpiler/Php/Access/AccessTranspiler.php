@@ -20,38 +20,42 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\TernaryOperation;
+namespace PackageFactory\ComponentEngine\Transpiler\Php\Access;
 
-use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
+use PackageFactory\ComponentEngine\Parser\Ast\AccessNode;
+use PackageFactory\ComponentEngine\Transpiler\Php\Expression\ExpressionTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
-use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
-use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 
-final class TernaryOperationTypeResolver
+final class AccessTranspiler
 {
-    public function __construct(
-        private readonly ScopeInterface $scope
-    ) {
+    public function __construct(private readonly ScopeInterface $scope)
+    {
     }
 
-    public function resolveTypeOf(TernaryOperationNode $ternaryOperationNode): TypeInterface
+    public function transpile(AccessNode $accessNode): string
     {
+        $expressionTranspiler = new ExpressionTranspiler(
+            scope: $this->scope
+        );
         $expressionTypeResolver = new ExpressionTypeResolver(
             scope: $this->scope
         );
-        $conditionNode = $ternaryOperationNode->condition->root;
-
-        if ($conditionNode instanceof BooleanLiteralNode) {
-            return $conditionNode->value
-                ? $expressionTypeResolver->resolveTypeOf($ternaryOperationNode->true)
-                : $expressionTypeResolver->resolveTypeOf($ternaryOperationNode->false);
+        $typeOfRoot = $expressionTypeResolver->resolveTypeOf($accessNode->root);
+        $result = $expressionTranspiler->transpile($accessNode->root);
+        
+        $isFirstElement = true;
+        foreach ($accessNode->chain->items as $accessChainNode) {
+            if ($typeOfRoot instanceof EnumStaticType && $isFirstElement) {
+                $result .= '::';
+            } else {
+                $result .= '->';
+            }
+            $result .= $accessChainNode->accessor->value;
+            $isFirstElement = false;
         }
 
-        return UnionType::of(
-            $expressionTypeResolver->resolveTypeOf($ternaryOperationNode->true),
-            $expressionTypeResolver->resolveTypeOf($ternaryOperationNode->false)
-        );
+        return $result;
     }
 }

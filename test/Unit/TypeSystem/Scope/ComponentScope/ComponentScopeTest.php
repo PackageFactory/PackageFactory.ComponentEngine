@@ -23,7 +23,11 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\ComponentScope;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
+use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
+use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Scope\ComponentScope\ComponentScope;
+use PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope\GlobalScope;
+use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
 
@@ -43,12 +47,75 @@ final class ComponentScopeTest extends TestCase
         }
         EOT;
         $componentDeclarationNode = ComponentDeclarationNode::fromString($componentDeclarationAsString);
-        $blockScope = new ComponentScope($componentDeclarationNode);
+        $componentScope = new ComponentScope(
+            componentDeclarationNode: $componentDeclarationNode,
+            parentScope: GlobalScope::get()
+        );
 
         $expectedType = StringType::get();
-        $actualType = $blockScope->lookupTypeFor('foo');
+        $actualType = $componentScope->lookupTypeFor('foo');
 
         $this->assertNotNull($actualType);
+
+        $this->assertTrue(
+            $expectedType->is($actualType),
+            sprintf('Expected %s, got %s', $expectedType::class, $actualType::class)
+        );
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function fallsBackToParentScope(): void
+    {
+        $componentDeclarationAsString = <<<EOT
+        component Foo {
+            foo: string
+
+            return <div>{foo}</div>
+        }
+        EOT;
+        $componentDeclarationNode = ComponentDeclarationNode::fromString($componentDeclarationAsString);
+        $componentScope = new ComponentScope(
+            componentDeclarationNode: $componentDeclarationNode,
+            parentScope: new DummyScope(['bar' => NumberType::get()], [])
+        );
+
+        $expectedType = NumberType::get();
+        $actualType = $componentScope->lookupTypeFor('bar');
+
+        $this->assertNotNull($actualType);
+
+        $this->assertTrue(
+            $expectedType->is($actualType),
+            sprintf('Expected %s, got %s', $expectedType::class, $actualType::class)
+        );
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function resolvesTypeReferencesUsingParentScope(): void
+    {
+        $componentDeclarationAsString = <<<EOT
+        component Foo {
+            foo: string
+
+            return <div>{foo}</div>
+        }
+        EOT;
+        $componentDeclarationNode = ComponentDeclarationNode::fromString($componentDeclarationAsString);
+        $componentScope = new ComponentScope(
+            componentDeclarationNode: $componentDeclarationNode,
+            parentScope: new DummyScope([], ['StringAlias' => StringType::get()])
+        );
+
+        $expectedType = StringType::get();
+        $actualType = $componentScope->resolveTypeReference(
+            TypeReferenceNode::fromString('StringAlias')
+        );
 
         $this->assertTrue(
             $expectedType->is($actualType),

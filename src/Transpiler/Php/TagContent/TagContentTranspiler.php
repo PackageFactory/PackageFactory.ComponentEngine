@@ -29,18 +29,27 @@ use PackageFactory\ComponentEngine\Parser\Ast\TextNode;
 use PackageFactory\ComponentEngine\Transpiler\Php\Expression\ExpressionTranspiler;
 use PackageFactory\ComponentEngine\Transpiler\Php\Tag\TagTranspiler;
 use PackageFactory\ComponentEngine\Transpiler\Php\Text\TextTranspiler;
+use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 
 final class TagContentTranspiler
 {
+    public function __construct(private readonly ScopeInterface $scope)
+    {
+    }
+
     public function transpile(TagContentNode $tagContentNode): string
     {
         return match ($tagContentNode->root::class) {
             TextNode::class => (new TextTranspiler())->transpile($tagContentNode->root),
             ExpressionNode::class => sprintf(
                 '\' . %s . \'',
-                (new ExpressionTranspiler())->transpile($tagContentNode->root)
+                (new ExpressionTranspiler(
+                    scope: $this->scope
+                ))->transpile($tagContentNode->root)
             ),
-            TagNode::class => (new TagTranspiler())->transpile($tagContentNode->root)
+            TagNode::class => (new TagTranspiler(
+                scope: $this->scope
+            ))->transpile($tagContentNode->root)
         };
     }
 }

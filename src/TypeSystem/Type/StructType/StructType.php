@@ -20,12 +20,20 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\TernaryOperation;
+namespace PackageFactory\ComponentEngine\TypeSystem\Type\StructType;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
+use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-interface TernaryOperationTypeResolverInterface
+final class StructType implements TypeInterface
 {
-    public function resolveTypeOf(TernaryOperationNode $ternaryOperationNode): TypeInterface;
+    public static function fromStructDeclarationNode(StructDeclarationNode $structDeclarationNode): self
+    {
+        return new self();
+    }
+
+    public function is(TypeInterface $other): bool
+    {
+        return false;
+    }
 }

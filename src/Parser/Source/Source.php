@@ -27,7 +27,7 @@ namespace PackageFactory\ComponentEngine\Parser\Source;
  */
 final class Source implements \IteratorAggregate
 {
-    private function __construct(
+    public function __construct(
         public readonly Path $path,
         public readonly string $contents
     ) {

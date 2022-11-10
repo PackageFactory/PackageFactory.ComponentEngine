@@ -20,12 +20,25 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\BinaryOperation;
+namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\EnumType;
 
-use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
-use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
+use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
+use PHPUnit\Framework\TestCase;
 
-interface BinaryOperationTypeResolverInterface
+final class EnumTypeTest extends TestCase
 {
-    public function resolveTypeOf(BinaryOperationNode $binaryOperationNode): TypeInterface;
+    /**
+     * @test
+     * @return void
+     */
+    public function canBeCreatedFromEnumDeclarationNode(): void
+    {
+        $enumDeclarationNode = EnumDeclarationNode::fromString(
+            'enum Foo { BAR BAZ }'
+        );
+        $enumType = EnumType::fromEnumDeclarationNode($enumDeclarationNode);
+
+        $this->assertInstanceOf(EnumType::class, $enumType);
+    }
 }

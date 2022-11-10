@@ -25,16 +25,17 @@ namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\BinaryOperation;
 use PackageFactory\ComponentEngine\Definition\BinaryOperator;
 use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperandNodes;
 use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
-use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolverInterface;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class BinaryOperationTypeResolver implements BinaryOperationTypeResolverInterface
+final class BinaryOperationTypeResolver
 {
     public function __construct(
-        private readonly ExpressionTypeResolverInterface $expressionTypeResolver
+        private readonly ScopeInterface $scope
     ) {
     }
 
@@ -61,10 +62,13 @@ final class BinaryOperationTypeResolver implements BinaryOperationTypeResolverIn
 
     private function resolveTypeOfBooleanOperation(BinaryOperandNodes $operandNodes): TypeInterface
     {
+        $expressionTypeResolver = new ExpressionTypeResolver(
+            scope: $this->scope
+        );
         $operandTypes = [];
 
         foreach ($operandNodes as $operandNode) {
-            $operandTypes[] = $this->expressionTypeResolver->resolveTypeOf($operandNode);
+            $operandTypes[] = $expressionTypeResolver->resolveTypeOf($operandNode);
         }
 
         return UnionType::of(...$operandTypes);
@@ -72,10 +76,13 @@ final class BinaryOperationTypeResolver implements BinaryOperationTypeResolverIn
 
     private function resolveTypeOfArithmeticOperation(BinaryOperandNodes $operandNodes): TypeInterface
     {
+        $expressionTypeResolver = new ExpressionTypeResolver(
+            scope: $this->scope
+        );
         $numberType = NumberType::get();
 
         foreach ($operandNodes as $operandNode) {
-            $typeOfOperandNode = $this->expressionTypeResolver->resolveTypeOf($operandNode);
+            $typeOfOperandNode = $expressionTypeResolver->resolveTypeOf($operandNode);
             $typeOfOperandNodeIsNumberType = $typeOfOperandNode->is($numberType);
 
             if (!$typeOfOperandNodeIsNumberType) {
