@@ -250,7 +250,7 @@ final class Tokenizer implements \IteratorAggregate
 
     public static function symbol(\Iterator $fragments, ?Buffer $buffer = null): \Iterator
     {
-        $buffer = $buffer ?? Buffer::empty();
+        $buffer ??= Buffer::empty();
         $capture = true;
 
         while ($capture && $fragments->valid()) {
@@ -324,7 +324,7 @@ final class Tokenizer implements \IteratorAggregate
      */
     public static function tag(\Iterator $fragments, ?Buffer $buffer = null): \Iterator
     {
-        $buffer = $buffer ?? Buffer::empty();
+        $buffer ??= Buffer::empty();
         $isClosing = false;
 
         while ($fragments->valid()) {
@@ -410,16 +410,19 @@ final class Tokenizer implements \IteratorAggregate
                     yield from $buffer->flush(TokenType::STRING);
                     yield from self::block($fragments);
                     break;
+                case $fragment->value === '>':
+                    throw new \Exception(sprintf('@TODO: Illegal Character "%s"', $fragment->value));
                 case $fragment->value === '<':
                     $fragments->next();
-                    if ($fragments->current()?->value === '/') {
+                    if (!$fragments->valid()) {
+                        throw new \Exception("@TODO: Unexpected end of input");
+                    }
+                    if ($fragments->current()->value === '/') {
                         yield from $buffer->flush(TokenType::STRING);
                         return Buffer::empty()->append($fragment);
-                    } else if (!ctype_space($fragments->current()?->value)) {
-                        yield from self::tag($fragments, Buffer::empty()->append($fragment));
-                    } else {
-                        $buffer->append($fragment);
                     }
+                    yield from self::tag($fragments, Buffer::empty()->append($fragment));
+                    break;
                 case ctype_space($fragment->value):
                     yield from $buffer->flush(TokenType::STRING);
                     yield from self::space($fragments);
