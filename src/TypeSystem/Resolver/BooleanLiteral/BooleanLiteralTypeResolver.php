@@ -28,7 +28,7 @@ use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class BooleanLiteralTypeResolver
 {
-    public function resolveTypeOf(BooleanLiteralNode $numberLiteralNode): TypeInterface
+    public function resolveTypeOf(BooleanLiteralNode $booleanLiteralNode): TypeInterface
     {
         return BooleanType::get();
     }
