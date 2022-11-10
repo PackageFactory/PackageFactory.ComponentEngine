@@ -22,12 +22,16 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Transpiler\Php\NumberLiteral;
 
+use PackageFactory\ComponentEngine\Definition\NumberFormat;
 use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
 
 final class NumberLiteralTranspiler
 {
     public function transpile(NumberLiteralNode $numberLiteralNode): string
     {
-        return $numberLiteralNode->value;
+        return match ($numberLiteralNode->format) {
+            NumberFormat::BINARY => strtolower($numberLiteralNode->value),
+            default => $numberLiteralNode->value
+        };
     }
 }
