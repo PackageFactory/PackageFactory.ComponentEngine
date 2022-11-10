@@ -127,25 +127,26 @@ final class Tokenizer implements \IteratorAggregate
         $fragments->next();
 
         $buffer = Buffer::empty();
-        $escape = false;
 
         while ($fragments->valid()) {
-            /** @var Fragment $fragment */
-            $fragment = $fragments->current();
+            switch ($fragments->current()->value) {
+                case $delimiter:
+                    yield from $buffer->flush(TokenType::STRING_QUOTED);
+                    $fragments->next();
+                    return;
 
-            if (!$escape && $fragment->value === $delimiter) {
-                yield from $buffer->flush(TokenType::STRING_QUOTED);
-                $fragments->next();
-                return;
+                case '\\':
+                    $buffer->append($fragments->current());
+                    $fragments->next();
+
+                    $buffer->append($fragments->current());
+                    $fragments->next();
+                    break;
+
+                default:
+                    $buffer->append($fragments->current());
+                    $fragments->next();
             }
-
-            $escape = $fragment->value === '\\';
-
-            if (!$escape) {
-                $buffer->append($fragment);
-            }
-
-            $fragments->next();
         }
     }
 
@@ -162,40 +163,40 @@ final class Tokenizer implements \IteratorAggregate
 
         $fragments->next();
 
-        $escape = false;
-
         while ($fragments->valid()) {
-            /** @var Fragment $fragment */
-            $fragment = $fragments->current();
 
-            if (!$escape && $fragment->value === '`') {
-                yield from $buffer->flush(TokenType::STRING_QUOTED);
-                $buffer->append($fragments->current());
-                yield from $buffer->flush(TokenType::TEMPLATE_LITERAL_END);
-                $fragments->next();
-                return;
-            }
-
-            if (!$escape && $fragment->value === '$') {
-                $dollarSignBuffer = Buffer::empty()->append($fragments->current());
-                $fragments->next();
-                $nextFragment = $fragments->current();
-
-                if ($nextFragment->value === '{') {
+            switch ($fragments->current()->value) {
+                case '`':
                     yield from $buffer->flush(TokenType::STRING_QUOTED);
-                    yield from $dollarSignBuffer->flush(TokenType::DOLLAR);
-                    yield from self::block($fragments);
-                    continue;
-                }
+                    $buffer->append($fragments->current());
+                    yield from $buffer->flush(TokenType::TEMPLATE_LITERAL_END);
+                    $fragments->next();
+                    return;
+
+                case '$':
+                    $dollarSignBuffer = Buffer::empty()->append($fragments->current());
+                    $fragments->next();
+                    $nextFragment = $fragments->current();
+
+                    if ($nextFragment->value === '{') {
+                        yield from $buffer->flush(TokenType::STRING_QUOTED);
+                        yield from $dollarSignBuffer->flush(TokenType::DOLLAR);
+                        yield from self::block($fragments);
+                    }
+                    break;
+
+                case '\\':
+                    $buffer->append($fragments->current());
+                    $fragments->next();
+
+                    $buffer->append($fragments->current());
+                    $fragments->next();
+                    break;
+
+                default:
+                    $buffer->append($fragments->current());
+                    $fragments->next();
             }
-
-            $escape = $fragment->value === '\\';
-
-            if (!$escape) {
-                $buffer->append($fragment);
-            }
-
-            $fragments->next();
         }
     }
 
