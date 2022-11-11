@@ -20,34 +20,38 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures;
+namespace PackageFactory\ComponentEngine\TypeSystem\Scope\ModuleScope;
 
+use PackageFactory\ComponentEngine\Module\LoaderInterface;
+use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class DummyScope implements ScopeInterface
+final class ModuleScope implements ScopeInterface
 {
-    /**
-     * @param array<string,TypeInterface> $identifierToTypeMap
-     */
     public function __construct(
-        private readonly array $identifierToTypeMap = [],
-        private readonly array $typeNameToTypeMap = []
+        private readonly LoaderInterface $loader,
+        private readonly ModuleNode $moduleNode,
+        private readonly ?ScopeInterface $parentScope
     ) {
     }
 
     public function lookupTypeFor(string $name): ?TypeInterface
     {
-        return $this->identifierToTypeMap[$name] ?? null;
+        return $this->parentScope?->lookupTypeFor($name) ?? null;
     }
 
     public function resolveTypeReference(TypeReferenceNode $typeReferenceNode): TypeInterface
     {
-        if ($type = $this->typeNameToTypeMap[$typeReferenceNode->name] ?? null) {
-            return $type;
+        if ($importNode = $this->moduleNode->imports->get($typeReferenceNode->name)) {
+            return $this->loader->resolveTypeOfImport($importNode);
         }
 
-        throw new \Exception('DummyScope: Unknown type ' . $typeReferenceNode->name);
+        if ($this->parentScope) {
+            return $this->parentScope->resolveTypeReference($typeReferenceNode);
+        }
+
+        throw new \Exception('@TODO: Unknown Type ' . $typeReferenceNode->name);
     }
 }

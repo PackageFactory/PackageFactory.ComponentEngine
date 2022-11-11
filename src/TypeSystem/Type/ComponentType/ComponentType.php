@@ -20,44 +20,20 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast;
+namespace PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType;
 
-final class ImportNodes implements \JsonSerializable
+use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
+use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
+
+final class ComponentType implements TypeInterface
 {
-    /**
-     * @var array<string,ImportNode>
-     */
-    public readonly array $items;
-
-    private function __construct(
-        ImportNode ...$items
-    ) {
-        $this->items = $items;
-    }
-
-    public static function empty(): self
+    public static function fromComponentDeclarationNode(ComponentDeclarationNode $componentDeclarationNode): self
     {
         return new self();
     }
 
-    public function withAddedImport(ImportNode $import): self
+    public function is(TypeInterface $other): bool
     {
-        $name = $import->name->value;
-
-        if (array_key_exists($name, $this->items)) {
-            throw new \Exception('@TODO: Duplicate Import ' . $name);
-        }
-
-        return new self(...$this->items, ...[$name => $import]);
-    }
-
-    public function get(string $name): ?ImportNode
-    {
-        return $this->items[$name] ?? null;
-    }
-
-    public function jsonSerialize(): mixed
-    {
-        return array_values($this->items);
+        return false;
     }
 }

@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Transpiler\Php\Module;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
+use PackageFactory\ComponentEngine\Test\Unit\Module\Loader\Fixtures\DummyLoader;
 use PackageFactory\ComponentEngine\Transpiler\Php\Module\ModuleTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope\GlobalScope;
 use PHPUnit\Framework\TestCase;
@@ -41,6 +42,7 @@ final class ModuleTranspilerTest extends TestCase
         }
         EOT;
         $moduleTranspiler = new ModuleTranspiler(
+            loader: new DummyLoader(),
             globalScope: GlobalScope::get()
         );
         $moduleNode = ModuleNode::fromString($moduleNodeAsString);
@@ -87,6 +89,7 @@ final class ModuleTranspilerTest extends TestCase
         }
         EOT;
         $moduleTranspiler = new ModuleTranspiler(
+            loader: new DummyLoader(),
             globalScope: GlobalScope::get()
         );
         $moduleNode = ModuleNode::fromString($moduleNodeAsString);
@@ -130,6 +133,7 @@ final class ModuleTranspilerTest extends TestCase
         }
         EOT;
         $moduleTranspiler = new ModuleTranspiler(
+            loader: new DummyLoader(),
             globalScope: GlobalScope::get()
         );
         $moduleNode = ModuleNode::fromString($moduleNodeAsString);

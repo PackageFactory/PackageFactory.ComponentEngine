@@ -24,12 +24,32 @@ namespace PackageFactory\ComponentEngine\Parser\Source;
 
 final class Path implements \JsonSerializable
 {
+    public readonly string $value;
+    private readonly ?string $driveLetter;
+    private readonly string $pathWithoutDriveLetter;
 
-    private function __construct(public readonly string $value)
+    private function __construct(string $value)
     {
         if (empty(trim($value))) {
             throw new \Exception('@TODO: Invalid path');
         }
+
+        $this->value = ($value[0] === DIRECTORY_SEPARATOR ? DIRECTORY_SEPARATOR : '') . join(
+            DIRECTORY_SEPARATOR,
+            array_filter(
+                explode(
+                    DIRECTORY_SEPARATOR,
+                    mb_ereg_replace('\\\\|/', DIRECTORY_SEPARATOR, $value, 'msr')
+                ),
+                'mb_strlen'
+            )
+        );
+
+        preg_match('/^[a-zA-Z]:/', $this->value, $matches);
+        $this->driveLetter = isset($matches[0]) ? $matches[0] : null;
+        $this->pathWithoutDriveLetter = $this->driveLetter
+            ? mb_substr($this->value, mb_strlen($this->driveLetter))
+            : $this->value;
     }
 
     public static function createMemory(): self
@@ -54,43 +74,42 @@ final class Path implements \JsonSerializable
 
     public function isAbsolute(): bool
     {
-        return $this->value[0] === '/';
+        return $this->pathWithoutDriveLetter[0] === DIRECTORY_SEPARATOR;
     }
 
-    public function getRelativePathTo(Path $target): self
+    public function resolveRelationTo(Path $other): self
     {
-        if ($this->isMemory()) {
-            throw new \Exception('@TODO: Cannot create relative path for :memory:');
-        } elseif ($this->isRelative() && $target->isAbsolute()) {
-            throw new \Exception('@TODO: Cannot create relative path from realtive source to asbolute target.');
-        } elseif ($this->isAbsolute() && $target->isAbsolute()) {
-            $dirname = dirname($this->value);
-            if (substr($target->value, 0, strlen($dirname)) === $dirname) {
-                return new self('.' . substr($target->value, strlen($dirname)));
-            } else {
-                throw new \Exception('@TODO: Cannot create relative path due to incompatible absolute paths.');
-            }
-        } else {
-            $dirname = dirname($this->value);
-            $resultSegments = explode('/', $dirname);
-            $overflowSegments = [];
-            $targetSegments = explode('/', $target->value);
+        if ($this->isAbsolute() && $other->isRelative()) {
+            $pathSegments = array_merge(
+                explode(DIRECTORY_SEPARATOR, dirname($this->pathWithoutDriveLetter)),
+                explode(DIRECTORY_SEPARATOR, $other->value)
+            );
 
-            foreach ($targetSegments as $segment) {
-                if ($segment === '.' || $segment === '') {
-                    // ignore
-                } elseif ($segment === '..') {
-                    if (count($resultSegments)) {
-                        array_pop($resultSegments);
-                    } else {
-                        $overflowSegments[] = $segment;
-                    }
-                } else {
-                    $resultSegments[] = $segment;
+            $absolutePathSegments = [];
+            foreach ($pathSegments as $pathSegment) {
+                switch ($pathSegment) {
+                    case '.':
+                        continue 2;
+                    case '..':
+                        if ($absolutePathSegments) {
+                            array_pop($absolutePathSegments);
+                        } else {
+                            throw new \Exception('@TODO: Unable to resolve path ' . $other->value);
+                        }
+                        break;
+                    default:
+                        $absolutePathSegments[] = $pathSegment;
+                        break;
                 }
             }
 
-            return new self(implode('/', [...$overflowSegments, ...$resultSegments]));
+            return new self(
+                ($this->driveLetter ? $this->driveLetter : '')
+                . DIRECTORY_SEPARATOR
+                . join(DIRECTORY_SEPARATOR, $absolutePathSegments)
+            );
+        } else {
+            return $other;
         }
     }
 

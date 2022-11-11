@@ -22,6 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Tokenizer;
 
+use PackageFactory\ComponentEngine\Parser\Source\Source;
+
 final class Scanner
 {
     /**
@@ -143,6 +145,16 @@ final class Scanner
     {
         self::assertValid($tokens);
         return $tokens->current()->type;
+    }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
+     * @return Source
+     */
+    public static function source(\Iterator $tokens): Source
+    {
+        self::assertValid($tokens);
+        return $tokens->current()->source;
     }
 
     /**

@@ -3,14 +3,14 @@
   "payload": {
     "imports": [
       {
-        "source": "../Interface/Interface.afx",
+        "path": "../Struct/Struct.afx",
         "name": {
           "type": "Identifier",
           "payload": "Link"
         }
       },
       {
-        "source": "./Button.afx",
+        "path": "./Button.afx",
         "name": {
           "type": "Identifier",
           "payload": "Button"

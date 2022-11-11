@@ -1,0 +1,5 @@
+export component Button {
+  label: string
+
+  return <button>{button}</button>
+}

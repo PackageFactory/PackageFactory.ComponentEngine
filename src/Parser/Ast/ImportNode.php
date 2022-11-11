@@ -23,13 +23,15 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
+use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class ImportNode implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $source,
+        public readonly Source $source,
+        public readonly string $path,
         public readonly IdentifierNode $name
     ) {
     }
@@ -43,10 +45,12 @@ final class ImportNode implements \JsonSerializable
         Scanner::skipSpaceAndComments($tokens);
         Scanner::assertType($tokens, TokenType::KEYWORD_FROM);
 
+        $source = Scanner::source($tokens);
+
         Scanner::skipOne($tokens);
         Scanner::skipSpaceAndComments($tokens);
 
-        $source = Scanner::value($tokens);
+        $path = Scanner::value($tokens);
 
         Scanner::skipOne($tokens);
         Scanner::skipSpaceAndComments($tokens);
@@ -59,7 +63,7 @@ final class ImportNode implements \JsonSerializable
 
         while (true) {
             $identifier = IdentifierNode::fromTokens($tokens);
-            yield new self($source, $identifier);
+            yield new self($source, $path, $identifier);
 
             Scanner::skipSpaceAndComments($tokens);
             if (Scanner::type($tokens) === TokenType::COMMA) {
@@ -78,7 +82,7 @@ final class ImportNode implements \JsonSerializable
     public function jsonSerialize(): mixed
     {
         return [
-            'source' => $this->source,
+            'path' => $this->path,
             'name' => $this->name
         ];
     }

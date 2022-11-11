@@ -29,7 +29,9 @@ use PackageFactory\ComponentEngine\Parser\Ast\TextNode;
 use PackageFactory\ComponentEngine\Transpiler\Php\Expression\ExpressionTranspiler;
 use PackageFactory\ComponentEngine\Transpiler\Php\Tag\TagTranspiler;
 use PackageFactory\ComponentEngine\Transpiler\Php\Text\TextTranspiler;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
+use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
 
 final class TagContentTranspiler
 {
@@ -37,16 +39,35 @@ final class TagContentTranspiler
     {
     }
 
+    private function transpileExpression(ExpressionNode $expressionNode): string
+    {
+        $expressionTypeResolver = new ExpressionTypeResolver(
+            scope: $this->scope
+        );
+        $expressionTranspiler = new ExpressionTranspiler(
+            scope: $this->scope
+        );
+
+        $typeOfResult = $expressionTypeResolver->resolveTypeOf($expressionNode);
+
+        $result = $expressionTranspiler->transpile($expressionNode);
+        $result = match ($typeOfResult::class) {
+            ComponentType::class => $result . '->render()',
+            default => $result
+        };
+        $result = sprintf(
+            '\' . %s . \'',
+            $result
+        );
+
+        return $result;
+    }
+
     public function transpile(TagContentNode $tagContentNode): string
     {
         return match ($tagContentNode->root::class) {
             TextNode::class => (new TextTranspiler())->transpile($tagContentNode->root),
-            ExpressionNode::class => sprintf(
-                '\' . %s . \'',
-                (new ExpressionTranspiler(
-                    scope: $this->scope
-                ))->transpile($tagContentNode->root)
-            ),
+            ExpressionNode::class => $this->transpileExpression($tagContentNode->root),
             TagNode::class => (new TagTranspiler(
                 scope: $this->scope
             ))->transpile($tagContentNode->root)

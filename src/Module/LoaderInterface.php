@@ -20,25 +20,12 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\StructType;
+namespace PackageFactory\ComponentEngine\Module;
 
-use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
-use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
-use PHPUnit\Framework\TestCase;
+use PackageFactory\ComponentEngine\Parser\Ast\ImportNode;
+use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class StructTypeTest extends TestCase
+interface LoaderInterface
 {
-    /**
-     * @test
-     * @return void
-     */
-    public function canBeCreatedFromStructDeclarationNode(): void
-    {
-        $structDeclarationNode = StructDeclarationNode::fromString(
-            'struct Foo { a : string b : number }'
-        );
-        $structType = StructType::fromStructDeclarationNode($structDeclarationNode);
-
-        $this->assertInstanceOf(StructType::class, $structType);
-    }
+    public function resolveTypeOfImport(ImportNode $importNode): TypeInterface;
 }

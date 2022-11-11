@@ -1,7 +1,7 @@
 [
   { "type": "KEYWORD_FROM", "value": "from" },
   { "type": "SPACE", "value": " " },
-  { "type": "STRING_QUOTED", "value": "../Interface/Interface.afx" },
+  { "type": "STRING_QUOTED", "value": "../Struct/Struct.afx" },
   { "type": "SPACE", "value": " " },
   { "type": "KEYWORD_IMPORT", "value": "import" },
   { "type": "SPACE", "value": " " },

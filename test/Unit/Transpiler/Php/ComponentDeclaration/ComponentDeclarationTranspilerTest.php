@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Transpiler\Php\ComponentDeclaration;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
+use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
 use PackageFactory\ComponentEngine\Transpiler\Php\ComponentDeclaration\ComponentDeclarationTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope\GlobalScope;
 use PHPUnit\Framework\TestCase;
@@ -35,17 +36,20 @@ final class ComponentDeclarationTranspilerTest extends TestCase
      */
     public function transpilesComponentDeclarationNodes(): void
     {
-        $componentDeclarationAsString = <<<EOT
-        component Greeter {
+        $componentModuleAsString = <<<EOT
+        export component Greeter {
             name: string
 
             return <h1>Hello, {name}</h1>
         }
         EOT;
+        $moduleNode = ModuleNode::fromString($componentModuleAsString);
         $componentDeclarationTranspiler = new ComponentDeclarationTranspiler(
-            scope: GlobalScope::get()
+            scope: GlobalScope::get(),
+            module: $moduleNode
         );
-        $componentDeclarationNode = ComponentDeclarationNode::fromString($componentDeclarationAsString);
+        $componentDeclarationNode = $moduleNode->exports->get('Greeter')?->declaration;
+        assert($componentDeclarationNode instanceof ComponentDeclarationNode);
 
         $expectedTranspilationResult = <<<PHP
         <?php

@@ -20,34 +20,35 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures;
+namespace PackageFactory\ComponentEngine\Test\Unit\Module\Loader\Fixtures;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
-use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
+use PackageFactory\ComponentEngine\Module\LoaderInterface;
+use PackageFactory\ComponentEngine\Parser\Ast\ImportNode;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class DummyScope implements ScopeInterface
+final class DummyLoader implements LoaderInterface
 {
     /**
-     * @param array<string,TypeInterface> $identifierToTypeMap
+     * @param array<string,array<string,TypeInterface>> $data
      */
-    public function __construct(
-        private readonly array $identifierToTypeMap = [],
-        private readonly array $typeNameToTypeMap = []
-    ) {
+    public function __construct(private readonly array $data = [])
+    {
     }
 
-    public function lookupTypeFor(string $name): ?TypeInterface
+    public function resolveTypeOfImport(ImportNode $importNode): TypeInterface
     {
-        return $this->identifierToTypeMap[$name] ?? null;
-    }
+        if ($moduleData = $this->data[$importNode->path] ?? null) {
+            if ($type = $moduleData[$importNode->name->value] ?? null) {
+                return $type;
+            }
 
-    public function resolveTypeReference(TypeReferenceNode $typeReferenceNode): TypeInterface
-    {
-        if ($type = $this->typeNameToTypeMap[$typeReferenceNode->name] ?? null) {
-            return $type;
+            throw new \Exception(
+                '[DummyLoader] Cannot import "' . $importNode->name->value . '" from "' . $importNode->source . '"'
+            );
         }
 
-        throw new \Exception('DummyScope: Unknown type ' . $typeReferenceNode->name);
+        throw new \Exception(
+            '[DummyLoader] Unknown Import: ' . json_encode($importNode, JSON_PRETTY_PRINT)
+        );
     }
 }

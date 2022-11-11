@@ -1,4 +1,4 @@
-from "../Interface/Interface.afx" import { Link }
+from "../Struct/Struct.afx" import { Link }
 from "./Button.afx" import { Button }
 
 export component Card {

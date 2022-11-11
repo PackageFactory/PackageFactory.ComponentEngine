@@ -30,6 +30,7 @@ final class EnumDeclarationTranspiler
     {
         $lines = [];
 
+        // @TODO: Generate Namespaces Dynamically
         $lines[] = '<?php';
         $lines[] = '';
         $lines[] = 'declare(strict_types=1);';

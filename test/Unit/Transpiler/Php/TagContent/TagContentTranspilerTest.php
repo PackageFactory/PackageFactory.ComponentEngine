@@ -22,9 +22,12 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Transpiler\Php\TagContent;
 
+use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Transpiler\Php\TagContent\TagContentTranspiler;
+use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
 
 final class TagContentTranspilerTest extends TestCase
@@ -57,12 +60,44 @@ final class TagContentTranspilerTest extends TestCase
     public function transpilesTagContentNodes(string $tagContentAsString, string $expectedTranspilationResult): void
     {
         $tagContentTranspiler = new TagContentTranspiler(
-            scope: new DummyScope()
+            scope: new DummyScope([
+                'someValue' => StringType::get()
+            ])
         );
         $tagContentNode = ExpressionNode::fromString(
             sprintf('<div>%s</div>', $tagContentAsString)
         )->root->children->items[0];
 
+        $actualTranspilationResult = $tagContentTranspiler->transpile(
+            $tagContentNode
+        );
+
+        $this->assertEquals(
+            $expectedTranspilationResult,
+            $actualTranspilationResult
+        );
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function addsCallToRenderFunctionIfInterpolatedValueIsOfTypeComponent(): void
+    {
+        $tagContentTranspiler = new TagContentTranspiler(
+            scope: new DummyScope([
+                'button' => ComponentType::fromComponentDeclarationNode(
+                    ComponentDeclarationNode::fromString(
+                        'component Button { return <button></button> }'
+                    )
+                )
+            ])
+        );
+        $tagContentNode = ExpressionNode::fromString(
+            '<div>{button}</div>'
+        )->root->children->items[0];
+
+        $expectedTranspilationResult = '\' . $this->button->render() . \'';
         $actualTranspilationResult = $tagContentTranspiler->transpile(
             $tagContentNode
         );

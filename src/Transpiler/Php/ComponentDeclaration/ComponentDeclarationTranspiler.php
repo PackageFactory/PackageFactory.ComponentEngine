@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Transpiler\Php\ComponentDeclaration;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
+use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
 use PackageFactory\ComponentEngine\Parser\Ast\PropertyDeclarationNodes;
 use PackageFactory\ComponentEngine\Transpiler\Php\Expression\ExpressionTranspiler;
 use PackageFactory\ComponentEngine\Transpiler\Php\TypeReference\TypeReferenceTranspiler;
@@ -33,14 +34,17 @@ use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 
 final class ComponentDeclarationTranspiler
 {
-    public function __construct(private readonly ScopeInterface $scope)
-    {
+    public function __construct(
+        private readonly ScopeInterface $scope,
+        private readonly ModuleNode $module
+    ) {
     }
 
     public function transpile(ComponentDeclarationNode $componentDeclarationNode): string
     {
         $lines = [];
 
+        // @TODO: Generate Namespaces Dynamically
         $lines[] = '<?php';
         $lines[] = '';
         $lines[] = 'declare(strict_types=1);';
@@ -48,6 +52,11 @@ final class ComponentDeclarationTranspiler
         $lines[] = 'namespace Vendor\\Project\\Component;';
         $lines[] = '';
         $lines[] = 'use Vendor\\Project\\BaseClass;';
+        
+        foreach ($this->module->imports->items as $importNode) {
+            $lines[] = 'use Vendor\\Project\\Component\\' . $importNode->name->value . ';';
+        }
+
         $lines[] = '';
         $lines[] = 'final class ' . $componentDeclarationNode->componentName . ' extends BaseClass';
         $lines[] = '{';

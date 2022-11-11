@@ -20,25 +20,27 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\StructType;
+namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\ComponentType;
 
-use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
-use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
+use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
+use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
 use PHPUnit\Framework\TestCase;
 
-final class StructTypeTest extends TestCase
+final class ComponentTypeTest extends TestCase
 {
     /**
      * @test
      * @return void
      */
-    public function canBeCreatedFromStructDeclarationNode(): void
+    public function canBeCreatedFromComponentDeclarationNode(): void
     {
-        $structDeclarationNode = StructDeclarationNode::fromString(
-            'struct Foo { a : string b : number }'
+        $componentDeclarationNode = ComponentDeclarationNode::fromString(
+            'component Foo { a : string b : number return <div>{a} and {b}</div> }'
         );
-        $structType = StructType::fromStructDeclarationNode($structDeclarationNode);
+        $componentType = ComponentType::fromComponentDeclarationNode(
+            $componentDeclarationNode
+        );
 
-        $this->assertInstanceOf(StructType::class, $structType);
+        $this->assertInstanceOf(ComponentType::class, $componentType);
     }
 }

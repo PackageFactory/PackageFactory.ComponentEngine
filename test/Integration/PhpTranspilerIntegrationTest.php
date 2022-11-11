@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Integration;
 
+use PackageFactory\ComponentEngine\Module\Loader\ModuleFile\ModuleFileLoader;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
@@ -45,6 +46,7 @@ final class PhpTranspilerIntegrationTest extends TestCase
             'ComponentWithNesting' => ["ComponentWithNesting"],
             'Enum' => ["Enum"],
             'Expression' => ["Expression"],
+            'ImportExport' => ["ImportExport"],
             'Match' => ["Match"],
             'Numbers' => ["Numbers"],
             'Struct' => ["Struct"],
@@ -68,6 +70,7 @@ final class PhpTranspilerIntegrationTest extends TestCase
         $expected = file_get_contents(__DIR__ . '/Examples/' . $example . '/' . $example . '.php');
 
         $transpiler = new ModuleTranspiler(
+            loader: new ModuleFileLoader(),
             // Add some assumed types to the global scope
             globalScope: new DummyScope([
                 'ButtonType' => EnumStaticType::fromEnumDeclarationNode(

@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Transpiler\Php\Module;
 
+use PackageFactory\ComponentEngine\Module\LoaderInterface;
 use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
@@ -29,12 +30,15 @@ use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Transpiler\Php\ComponentDeclaration\ComponentDeclarationTranspiler;
 use PackageFactory\ComponentEngine\Transpiler\Php\EnumDeclaration\EnumDeclarationTranspiler;
 use PackageFactory\ComponentEngine\Transpiler\Php\StructDeclaration\StructDeclarationTranspiler;
+use PackageFactory\ComponentEngine\TypeSystem\Scope\ModuleScope\ModuleScope;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 
 final class ModuleTranspiler
 {
-    public function __construct(private readonly ScopeInterface $globalScope)
-    {
+    public function __construct(
+        private readonly LoaderInterface $loader,
+        private readonly ScopeInterface $globalScope
+    ) {
     }
 
     public function transpile(ModuleNode $moduleNode): string
@@ -42,7 +46,12 @@ final class ModuleTranspiler
         foreach ($moduleNode->exports->items as $exportNode) {
             return match ($exportNode->declaration::class) {
                 ComponentDeclarationNode::class => (new ComponentDeclarationTranspiler(
-                    scope: $this->globalScope
+                    scope: new ModuleScope(
+                        loader: $this->loader,
+                        moduleNode: $moduleNode,
+                        parentScope: $this->globalScope
+                    ),
+                    module: $moduleNode
                 ))->transpile($exportNode->declaration),
                 EnumDeclarationNode::class => (new EnumDeclarationTranspiler())->transpile($exportNode->declaration),
                 StructDeclarationNode::class => (new StructDeclarationTranspiler())->transpile($exportNode->declaration)
