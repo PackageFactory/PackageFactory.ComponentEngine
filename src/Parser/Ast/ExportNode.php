@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class ExportNode implements \JsonSerializable
@@ -54,7 +55,7 @@ final class ExportNode implements \JsonSerializable
             TokenType::KEYWORD_ENUM =>
             EnumDeclarationNode::fromTokens($tokens),
 
-            default => Scanner::assertType($tokens, TokenType::KEYWORD_COMPONENT, TokenType::KEYWORD_STRUCT, TokenType::KEYWORD_ENUM)
+            default => throw new \Exception('@TODO: Unexpected Token (outside of Scanner class)')
         };
 
         return new self(

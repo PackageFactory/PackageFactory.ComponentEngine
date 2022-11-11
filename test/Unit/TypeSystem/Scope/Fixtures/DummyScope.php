@@ -30,6 +30,7 @@ final class DummyScope implements ScopeInterface
 {
     /**
      * @param array<string,TypeInterface> $identifierToTypeMap
+     * @param array<string,TypeInterface> $typeNameToTypeMap
      */
     public function __construct(
         private readonly array $identifierToTypeMap = [],

@@ -1,5 +1,5 @@
 analyse::
-	./vendor/bin/phpstan analyse --level 8 src test 
+	./vendor/bin/phpstan analyse -c phpstan.neon
 
 test::
 	./vendor/bin/phpunit \

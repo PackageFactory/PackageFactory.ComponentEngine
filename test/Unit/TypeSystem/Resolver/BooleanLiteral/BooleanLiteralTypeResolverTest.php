@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\BooleanLiteral;
 
+use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\BooleanLiteral\BooleanLiteralTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
@@ -36,6 +37,7 @@ final class BooleanLiteralTypeResolverTest extends TestCase
     {
         $booleanLiteralTypeResolver = new BooleanLiteralTypeResolver();
         $booleanLiteralNode = ExpressionNode::fromString('true')->root;
+        assert($booleanLiteralNode instanceof BooleanLiteralNode);
 
         $expectedType = BooleanType::get();
         $actualType = $booleanLiteralTypeResolver->resolveTypeOf($booleanLiteralNode);

@@ -260,7 +260,7 @@ final class Tokenizer implements \IteratorAggregate
                 CharacterType::ANGLE_CLOSE,
                 CharacterType::FORWARD_SLASH,
                 CharacterType::PERIOD,
-                CharacterType::SYMBOL => $buffer->append($fragment) && true,
+                CharacterType::SYMBOL => (bool) $buffer->append($fragment),
                 default => false
             };
 
@@ -359,13 +359,15 @@ final class Tokenizer implements \IteratorAggregate
                     yield from $buffer->flush(TokenType::STRING);
                     $buffer->append($fragment);
                     $fragments->next();
-                    if ($nextFragment = $fragments->current()) {
-                        if ($nextFragment->value === '>') {
-                            yield from $buffer->append($nextFragment)->flush(TokenType::TAG_SELF_CLOSE);
-                            $fragments->next();
-                        } else {
-                            throw new \Exception("@TODO: Illegal Character");
-                        }
+                    if (!$fragments->valid()) {
+                        throw new \Exception("@TODO: Unexpected end of input");
+                    }
+                    $nextFragment = $fragments->current();
+                    if ($nextFragment->value === '>') {
+                        yield from $buffer->append($nextFragment)->flush(TokenType::TAG_SELF_CLOSE);
+                        $fragments->next();
+                    } else {
+                        throw new \Exception("@TODO: Illegal Character");
                     }
 
 
@@ -412,10 +414,13 @@ final class Tokenizer implements \IteratorAggregate
                     break;
                 case $fragment->value === '<':
                     $fragments->next();
-                    if ($fragments->current()?->value === '/') {
+                    if (!$fragments->valid()) {
+                        throw new \Exception("@TODO: Unexpected end of input");
+                    }
+                    if ($fragments->current()->value === '/') {
                         yield from $buffer->flush(TokenType::STRING);
                         return Buffer::empty()->append($fragment);
-                    } else if (!ctype_space($fragments->current()?->value)) {
+                    } else if (!ctype_space($fragments->current()->value)) {
                         yield from self::tag($fragments, Buffer::empty()->append($fragment));
                     } else {
                         $buffer->append($fragment);

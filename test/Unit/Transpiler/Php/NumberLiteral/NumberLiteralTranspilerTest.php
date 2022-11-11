@@ -23,11 +23,15 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Transpiler\Php\NumberLiteral;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
 use PackageFactory\ComponentEngine\Transpiler\Php\NumberLiteral\NumberLiteralTranspiler;
 use PHPUnit\Framework\TestCase;
 
 final class NumberLiteralTranspilerTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function numberLiteralExamples(): array
     {
         return [
@@ -72,6 +76,7 @@ final class NumberLiteralTranspilerTest extends TestCase
     {
         $numberLiteralTranspiler = new NumberLiteralTranspiler();
         $numberLiteralNode = ExpressionNode::fromString($numberLiteralAsString)->root;
+        assert($numberLiteralNode instanceof NumberLiteralNode);
 
         $actualTranspilationResult = $numberLiteralTranspiler->transpile(
             $numberLiteralNode

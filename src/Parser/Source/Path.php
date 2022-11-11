@@ -30,20 +30,20 @@ final class Path implements \JsonSerializable
 
     private function __construct(string $value)
     {
-        if (empty(trim($value))) {
-            throw new \Exception('@TODO: Invalid path');
-        }
-
         $this->value = ($value[0] === DIRECTORY_SEPARATOR ? DIRECTORY_SEPARATOR : '') . join(
             DIRECTORY_SEPARATOR,
             array_filter(
                 explode(
                     DIRECTORY_SEPARATOR,
-                    mb_ereg_replace('\\\\|/', DIRECTORY_SEPARATOR, $value, 'msr')
+                    mb_ereg_replace('\\\\|/', DIRECTORY_SEPARATOR, $value, 'msr') ?: ''
                 ),
                 'mb_strlen'
             )
         );
+
+        if (empty(trim($this->value))) {
+            throw new \Exception('@TODO: Invalid path');
+        }
 
         preg_match('/^[a-zA-Z]:/', $this->value, $matches);
         $this->driveLetter = isset($matches[0]) ? $matches[0] : null;

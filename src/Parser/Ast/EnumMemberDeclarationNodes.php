@@ -50,7 +50,6 @@ final class EnumMemberDeclarationNodes implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        /** @var array<string,Member> $items */
         $items = [];
         while (true) {
             Scanner::skipSpaceAndComments($tokens);

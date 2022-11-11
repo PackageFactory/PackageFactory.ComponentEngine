@@ -50,7 +50,6 @@ final class AttributeNodes implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        /** @var array<string,Attribute> $items */
         $items = [];
 
         while (true) {

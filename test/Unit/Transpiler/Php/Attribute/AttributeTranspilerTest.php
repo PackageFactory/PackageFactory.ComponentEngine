@@ -29,6 +29,9 @@ use PHPUnit\Framework\TestCase;
 
 final class AttributeTranspilerTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function attributeExamples(): array
     {
         return [

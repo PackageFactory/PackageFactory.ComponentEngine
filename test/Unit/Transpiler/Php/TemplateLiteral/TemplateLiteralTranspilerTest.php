@@ -29,6 +29,9 @@ use PHPUnit\Framework\TestCase;
 
 final class TemplateLiteralTranspilerTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function templateLiteralExamples(): array
     {
         return [

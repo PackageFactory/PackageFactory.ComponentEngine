@@ -42,6 +42,9 @@ final class GlobalScopeTest extends TestCase
         $this->assertSame($globalScope1, $globalScope2);
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function primitiveTypeExamples(): array
     {
         return [

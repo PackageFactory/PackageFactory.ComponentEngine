@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\BinaryOperation;
 
+use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\BinaryOperation\BinaryOperationTypeResolver;
@@ -34,6 +35,9 @@ use PHPUnit\Framework\TestCase;
 
 final class BinaryOperationTypeResolverTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function binaryOperationExamples(): array
     {
         return [
@@ -73,6 +77,7 @@ final class BinaryOperationTypeResolverTest extends TestCase
             scope: $scope
         );
         $binaryOperationNode = ExpressionNode::fromString($binaryOperationAsString)->root;
+        assert($binaryOperationNode instanceof BinaryOperationNode);
 
         $actualType = $binaryOperationTypeResolver->resolveTypeOf($binaryOperationNode);
 

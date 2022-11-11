@@ -29,7 +29,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class ExpressionNodes implements \JsonSerializable
 {
     /**
-     * @var array<int,ExpressionNode>
+     * @var ExpressionNode[]
      */
     public readonly array $items;
 

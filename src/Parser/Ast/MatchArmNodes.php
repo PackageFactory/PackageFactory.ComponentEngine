@@ -29,7 +29,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class MatchArmNodes implements \JsonSerializable
 {
     /**
-     * @var array<int,MatchArmNode>
+     * @var MatchArmNode[]
      */
     public readonly array $items;
 
@@ -45,7 +45,6 @@ final class MatchArmNodes implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        /** @var array<int,MatchArm> $items */
         $items = [];
 
         while (Scanner::type($tokens) !== TokenType::BRACKET_CURLY_CLOSE) {

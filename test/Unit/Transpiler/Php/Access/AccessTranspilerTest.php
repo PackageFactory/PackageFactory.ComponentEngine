@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Transpiler\Php\Access;
 
+use PackageFactory\ComponentEngine\Parser\Ast\AccessNode;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
@@ -33,6 +34,9 @@ use PHPUnit\Framework\TestCase;
 
 final class AccessTranspilerTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function accessExamples(): array
     {
         return [
@@ -66,6 +70,7 @@ final class AccessTranspilerTest extends TestCase
             ])
         );
         $accessNode = ExpressionNode::fromString($accessAsString)->root;
+        assert($accessNode instanceof AccessNode);
 
         $actualTranspilationResult = $accessTranspiler->transpile(
             $accessNode

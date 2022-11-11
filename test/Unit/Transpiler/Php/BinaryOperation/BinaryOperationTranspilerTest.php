@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Transpiler\Php\BinaryOperation;
 
+use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Transpiler\Php\BinaryOperation\BinaryOperationTranspiler;
@@ -29,6 +30,9 @@ use PHPUnit\Framework\TestCase;
 
 final class BinaryOperationTranspilerTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function binaryOperationExamples(): array
     {
         return [
@@ -40,7 +44,6 @@ final class BinaryOperationTranspilerTest extends TestCase
             'a || false' => ['a || false', '($this->a || false)'],
             'true || b' => ['true || b', '(true || $this->b)'],
             'a || b' => ['a || b', '($this->a || $this->b)'],
-            'true && "foo"' => ['true && "foo"', '(true && \'foo\')'],
             'true && "foo"' => ['true && "foo"', '(true && \'foo\')'],
             'true || "foo"' => ['true || "foo"', '(true || \'foo\')'],
             'true && 42' => ['true && 42', '(true && 42)'],
@@ -112,6 +115,7 @@ final class BinaryOperationTranspilerTest extends TestCase
             scope: new DummyScope()
         );
         $binaryOperationNode = ExpressionNode::fromString($binaryOperationAsString)->root;
+        assert($binaryOperationNode instanceof BinaryOperationNode);
 
         $actualTranspilationResult = $binaryOperationTranspiler->transpile(
             $binaryOperationNode

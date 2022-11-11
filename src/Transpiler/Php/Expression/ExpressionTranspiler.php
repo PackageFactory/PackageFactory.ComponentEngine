@@ -82,8 +82,7 @@ final class ExpressionTranspiler
             ),
             TemplateLiteralNode::class => new TemplateLiteralTranspiler(
                 scope: $this->scope
-            ),
-            default => throw new \Exception('@TODO: Transpile ' . $expressionNode->root::class)
+            )
         };
 
         return $rootTranspiler->transpile($expressionNode->root);

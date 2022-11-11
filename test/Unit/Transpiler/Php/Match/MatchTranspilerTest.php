@@ -24,6 +24,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Transpiler\Php\Match;
 
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Transpiler\Php\Match\MatchTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
@@ -31,6 +32,9 @@ use PHPUnit\Framework\TestCase;
 
 final class MatchTranspilerTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function matchExamples(): array
     {
         return [
@@ -76,6 +80,7 @@ final class MatchTranspilerTest extends TestCase
             ])
         );
         $matchNode = ExpressionNode::fromString($matchAsString)->root;
+        assert($matchNode instanceof MatchNode);
 
         $actualTranspilationResult = $matchTranspiler->transpile(
             $matchNode

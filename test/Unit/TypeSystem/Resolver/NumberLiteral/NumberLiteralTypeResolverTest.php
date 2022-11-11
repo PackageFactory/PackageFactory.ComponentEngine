@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\NumberLiteral;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\NumberLiteral\NumberLiteralTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PHPUnit\Framework\TestCase;
@@ -36,6 +37,7 @@ final class NumberLiteralTypeResolverTest extends TestCase
     {
         $numberLiteralTypeResolver = new NumberLiteralTypeResolver();
         $numberLiteralNode = ExpressionNode::fromString('42')->root;
+        assert($numberLiteralNode instanceof NumberLiteralNode);
 
         $expectedType = NumberType::get();
         $actualType = $numberLiteralTypeResolver->resolveTypeOf($numberLiteralNode);

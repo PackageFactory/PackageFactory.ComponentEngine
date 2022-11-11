@@ -35,7 +35,7 @@ final class TextNode implements \JsonSerializable
     ) {
     }
 
-    public static function fromString(string $textAsString): self
+    public static function fromString(string $textAsString): ?self
     {
         return self::fromTokens(
             Tokenizer::fromSource(

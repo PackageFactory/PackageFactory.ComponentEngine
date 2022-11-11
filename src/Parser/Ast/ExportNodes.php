@@ -33,15 +33,18 @@ final class ExportNodes implements \JsonSerializable
      */
     public readonly array $items;
 
+    /**
+     * @param array<string,ExportNode> $items
+     */
     private function __construct(
-        ExportNode ...$items
+        array $items
     ) {
         $this->items = $items;
     }
 
     public static function empty(): self
     {
-        return new self();
+        return new self([]);
     }
 
     public function withAddedExport(ExportNode $export): self
@@ -56,7 +59,7 @@ final class ExportNodes implements \JsonSerializable
             throw new \Exception('@TODO: Duplicate Export ' . $name);
         }
 
-        return new self(...$this->items, ...[$name => $export]);
+        return new self([...$this->items, ...[$name => $export]]);
     }
 
     public function get(string $name): ?ExportNode

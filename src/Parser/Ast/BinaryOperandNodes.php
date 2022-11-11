@@ -27,10 +27,13 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
+/**
+ * @implements \IteratorAggregate<ExpressionNode>
+ */
 final class BinaryOperandNodes implements \IteratorAggregate, \JsonSerializable
 {
     /**
-     * @var array<int,ExpressionNode>
+     * @var ExpressionNode[]
      */
     public readonly array $rest;
 
@@ -74,7 +77,7 @@ final class BinaryOperandNodes implements \IteratorAggregate, \JsonSerializable
                     Scanner::skipOne($tokens);
                     break;
                 default:
-                    if (Scanner::isEnd($tokens) || $precedence->mustStopAt(Scanner::type($tokens))) {
+                    if ($precedence->mustStopAt(Scanner::type($tokens))) {
                         break 2;
                     } else {
                         Scanner::assertType($tokens, $operator->toTokenType());

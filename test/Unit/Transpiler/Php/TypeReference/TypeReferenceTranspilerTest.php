@@ -28,6 +28,9 @@ use PHPUnit\Framework\TestCase;
 
 final class TypeReferenceTranspilerTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function primitiveTypeReferenceExamples(): array
     {
         return [

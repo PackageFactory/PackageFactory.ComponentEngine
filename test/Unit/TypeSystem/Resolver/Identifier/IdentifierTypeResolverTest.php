@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\Identifier;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Identifier\IdentifierTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
@@ -39,6 +40,7 @@ final class IdentifierTypeResolverTest extends TestCase
         $scope = new DummyScope(['foo' => StringType::get()]);
         $identifierTypeResolver = new IdentifierTypeResolver(scope: $scope);
         $identifierNode = ExpressionNode::fromString('foo')->root;
+        assert($identifierNode instanceof IdentifierNode);
 
         $expectedType = StringType::get();
         $actualType = $identifierTypeResolver->resolveTypeOf($identifierNode);

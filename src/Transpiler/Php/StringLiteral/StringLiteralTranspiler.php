@@ -57,7 +57,7 @@ final class StringLiteralTranspiler
                 $result .= $result 
                     ? '\' . "' . $additionalLineBreaks . '"'
                     : '"' . $additionalLineBreaks . '"';
-                $shouldAddTrailingQuote = $shouldAddTrailingQuote && false;
+                $shouldAddTrailingQuote = false;
             }
         }
 

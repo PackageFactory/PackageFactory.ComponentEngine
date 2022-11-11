@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\StringLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\StringLiteral\StringLiteralTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
@@ -31,11 +31,12 @@ final class StringLiteralTypeResolverTest extends TestCase
 {
     /**
      * @test
+     * @return void
      */
     public function resolvesStringLiteralToStringType(): void
     {
         $stringLiteralTypeResolver = new StringLiteralTypeResolver();
-        $stringLiteralNode = ExpressionNode::fromString('"foo"')->root;
+        $stringLiteralNode = StringLiteralNode::fromString('"foo"');
 
         $expectedType = StringType::get();
         $actualType = $stringLiteralTypeResolver->resolveTypeOf($stringLiteralNode);

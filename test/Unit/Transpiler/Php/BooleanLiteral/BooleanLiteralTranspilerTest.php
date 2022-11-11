@@ -22,12 +22,16 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Transpiler\Php\BooleanLiteral;
 
+use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Transpiler\Php\BooleanLiteral\BooleanLiteralTranspiler;
 use PHPUnit\Framework\TestCase;
 
 final class BooleanLiteralTranspilerTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function booleanLiteralExamples(): array
     {
         return [
@@ -47,6 +51,7 @@ final class BooleanLiteralTranspilerTest extends TestCase
     {
         $booleanLiteralTranspiler = new BooleanLiteralTranspiler();
         $booleanLiteralNode = ExpressionNode::fromString($booleanLiteralAsString)->root;
+        assert($booleanLiteralNode instanceof BooleanLiteralNode);
 
         $actualTranspilationResult = $booleanLiteralTranspiler->transpile(
             $booleanLiteralNode

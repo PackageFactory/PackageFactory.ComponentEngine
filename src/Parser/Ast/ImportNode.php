@@ -25,6 +25,7 @@ namespace PackageFactory\ComponentEngine\Parser\Ast;
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class ImportNode implements \JsonSerializable

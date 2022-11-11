@@ -29,7 +29,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class AccessChainSegmentNodes implements \JsonSerializable
 {
     /**
-     * @var array<int,AccessChainSegmentNode>
+     * @var AccessChainSegmentNode[]
      */
     public readonly array $items;
 
@@ -45,7 +45,6 @@ final class AccessChainSegmentNodes implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        /** @var AccessChainSegmentNode[] $items */
         $items = [];
         while (true) {
             Scanner::skipSpaceAndComments($tokens);

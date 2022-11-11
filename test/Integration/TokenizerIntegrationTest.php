@@ -28,6 +28,9 @@ use PHPUnit\Framework\TestCase;
 
 final class TokenizerIntegrationTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function tokenizationExamples(): array
     {
         return [
@@ -49,16 +52,17 @@ final class TokenizerIntegrationTest extends TestCase
      * @dataProvider tokenizationExamples
      * @test
      * @small
-     * @param string $input
+     * @param string $example
      * @return void
      */
     public function testTokenizer(string $example): void
     {
         $source = Source::fromFile(__DIR__ . '/Examples/' . $example . '/' . $example . '.afx');
+        $tokenStreamAsJsonString = file_get_contents(__DIR__ . '/Examples/' . $example . '/' . $example . '.tokens.json');
+        assert($tokenStreamAsJsonString !== false);
+
         $tokenizer = Tokenizer::fromSource($source);
-        $expected = json_decode(
-            file_get_contents(__DIR__ . '/Examples/' . $example . '/' . $example . '.tokens.json')
-        );
+        $expected = json_decode($tokenStreamAsJsonString);
 
         $index = 0;
         foreach ($tokenizer as $token) {

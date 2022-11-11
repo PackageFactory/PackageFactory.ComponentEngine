@@ -24,6 +24,8 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Transpiler\Php\TagContent;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Parser\Ast\TagContentNode;
+use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Transpiler\Php\TagContent\TagContentTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
@@ -32,6 +34,23 @@ use PHPUnit\Framework\TestCase;
 
 final class TagContentTranspilerTest extends TestCase
 {
+    private static function tagContentNodeFromString(string $tagContentAsString): TagContentNode
+    {
+        $expressionNode = ExpressionNode::fromString(
+            sprintf('<div>%s</div>', $tagContentAsString)
+        );
+        $tagNode = $expressionNode->root;
+        assert($tagNode instanceof TagNode);
+
+        $tagContentNode = $tagNode->children->items[0];
+        assert($tagContentNode instanceof TagContentNode);
+
+        return $tagContentNode;
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
     public function tagContentExamples(): array
     {
         return [
@@ -64,9 +83,7 @@ final class TagContentTranspilerTest extends TestCase
                 'someValue' => StringType::get()
             ])
         );
-        $tagContentNode = ExpressionNode::fromString(
-            sprintf('<div>%s</div>', $tagContentAsString)
-        )->root->children->items[0];
+        $tagContentNode = self::tagContentNodeFromString($tagContentAsString);
 
         $actualTranspilationResult = $tagContentTranspiler->transpile(
             $tagContentNode
@@ -93,9 +110,7 @@ final class TagContentTranspilerTest extends TestCase
                 )
             ])
         );
-        $tagContentNode = ExpressionNode::fromString(
-            '<div>{button}</div>'
-        )->root->children->items[0];
+        $tagContentNode = self::tagContentNodeFromString('{button}');
 
         $expectedTranspilationResult = '\' . $this->button->render() . \'';
         $actualTranspilationResult = $tagContentTranspiler->transpile(

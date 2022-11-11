@@ -22,7 +22,6 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
-use PackageFactory\ComponentEngine\Parser\Ast\Expression\Expression;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
@@ -40,7 +39,7 @@ final class TagContentNodes implements \JsonSerializable
         $this->items = $items;
     }
 
-    public static function empty()
+    public static function empty(): self
     {
         return new self();
     }
@@ -51,7 +50,6 @@ final class TagContentNodes implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        /** @var array<string,Text|Expression|Tag> $contents */
         $contents = [];
         while (true) {
             if (Scanner::type($tokens) === TokenType::TAG_START_CLOSING) {

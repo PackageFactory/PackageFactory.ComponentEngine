@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\TernaryOperation;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\TernaryOperation\TernaryOperationTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
@@ -33,6 +34,9 @@ use PHPUnit\Framework\TestCase;
 
 final class TernaryOperationTypeResolverTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function ternaryOperationExamples(): array
     {
         return [
@@ -63,6 +67,7 @@ final class TernaryOperationTypeResolverTest extends TestCase
             scope: $scope
         );
         $ternaryOperationNode = ExpressionNode::fromString($ternaryExpressionAsString)->root;
+        assert($ternaryOperationNode instanceof TernaryOperationNode);
 
         $actualType = $ternaryOperationTypeResolver->resolveTypeOf($ternaryOperationNode);
 

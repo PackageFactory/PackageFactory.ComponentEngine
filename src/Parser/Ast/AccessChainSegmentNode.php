@@ -24,6 +24,7 @@ namespace PackageFactory\ComponentEngine\Parser\Ast;
 
 use PackageFactory\ComponentEngine\Definition\AccessType;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class AccessChainSegmentNode implements \JsonSerializable
@@ -41,21 +42,18 @@ final class AccessChainSegmentNode implements \JsonSerializable
     public static function fromTokens(\Iterator $tokens): self
     {
         Scanner::skipSpaceAndComments($tokens);
+        Scanner::assertType($tokens, TokenType::PERIOD, TokenType::OPTCHAIN);
 
-        switch (Scanner::type($tokens)) {
-            case TokenType::PERIOD:
-            case TokenType::OPTCHAIN:
-                $accessType = AccessType::fromTokenType(Scanner::type($tokens));
-                Scanner::skipOne($tokens);
-                $accessor = IdentifierNode::fromTokens($tokens);
-                return new self(
-                    accessType: $accessType,
-                    accessor: $accessor
-                );
-            default:
-                Scanner::assertType($tokens, TokenType::PERIOD, TokenType::OPTCHAIN);
-                break;
-        }
+        $accessType = AccessType::fromTokenType(Scanner::type($tokens));
+        
+        Scanner::skipOne($tokens);
+
+        $accessor = IdentifierNode::fromTokens($tokens);
+
+        return new self(
+            accessType: $accessType,
+            accessor: $accessor
+        );
     }
 
     public function jsonSerialize(): mixed

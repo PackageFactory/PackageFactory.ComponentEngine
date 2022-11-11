@@ -29,15 +29,18 @@ final class ImportNodes implements \JsonSerializable
      */
     public readonly array $items;
 
+    /**
+     * @param array<string,ImportNode> $items
+     */
     private function __construct(
-        ImportNode ...$items
+        array $items
     ) {
         $this->items = $items;
     }
 
     public static function empty(): self
     {
-        return new self();
+        return new self([]);
     }
 
     public function withAddedImport(ImportNode $import): self
@@ -48,7 +51,7 @@ final class ImportNodes implements \JsonSerializable
             throw new \Exception('@TODO: Duplicate Import ' . $name);
         }
 
-        return new self(...$this->items, ...[$name => $import]);
+        return new self([...$this->items, ...[$name => $import]]);
     }
 
     public function get(string $name): ?ImportNode

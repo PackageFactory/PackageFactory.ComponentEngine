@@ -31,7 +31,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class TemplateLiteralNode implements \JsonSerializable
 {
     /**
-     * @var array<int,StringLiteralNode|ExpressionNode>
+     * @var (StringLiteralNode|ExpressionNode)[]
      */
     public readonly array $segments;
 

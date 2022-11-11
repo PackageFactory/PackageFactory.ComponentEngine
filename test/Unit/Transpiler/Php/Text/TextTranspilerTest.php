@@ -36,6 +36,7 @@ final class TextTranspilerTest extends TestCase
     {
         $textTranspiler = new TextTranspiler();
         $textNode = TextNode::fromString('Hello World!');
+        assert($textNode !== null);
 
         $expectedTranspilationResult = 'Hello World!';
         $actualTranspilationResult = $textTranspiler->transpile(

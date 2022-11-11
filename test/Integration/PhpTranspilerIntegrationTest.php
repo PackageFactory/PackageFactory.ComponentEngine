@@ -38,6 +38,9 @@ use PHPUnit\Framework\TestCase;
 
 final class PhpTranspilerIntegrationTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function transpilerExamples(): array
     {
         return [
@@ -58,7 +61,7 @@ final class PhpTranspilerIntegrationTest extends TestCase
      * @dataProvider transpilerExamples
      * @test
      * @small
-     * @param string $input
+     * @param string $example
      * @return void
      */
     public function testTranspiler(string $example): void

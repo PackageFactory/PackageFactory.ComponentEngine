@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Transpiler\Php\Tag;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Transpiler\Php\Tag\TagTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
@@ -30,6 +31,9 @@ use PHPUnit\Framework\TestCase;
 
 final class TagTranspilerTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function tagExamples(): array
     {
         return [
@@ -63,6 +67,7 @@ final class TagTranspilerTest extends TestCase
             ])
         );
         $tagNode = ExpressionNode::fromString($tagAsString)->root;
+        assert($tagNode instanceof TagNode);
 
         $actualTranspilationResult = $tagTranspiler->transpile($tagNode);
 

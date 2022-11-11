@@ -29,6 +29,9 @@ use PHPUnit\Framework\TestCase;
 
 final class ParserIntegrationTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function astExamples(): array
     {
         return [
@@ -50,20 +53,22 @@ final class ParserIntegrationTest extends TestCase
      * @dataProvider astExamples
      * @test
      * @small
-     * @param string $input
+     * @param string $example
      * @return void
      */
     public function testParser(string $example): void
     {
         $source = Source::fromFile(__DIR__ . '/Examples/' . $example . '/' . $example . '.afx');
         $tokenizer = Tokenizer::fromSource($source);
-        $expected = json_decode(
-            file_get_contents(__DIR__ . '/Examples/' . $example . '/' . $example . '.ast.json'),
-            true
-        );
+        $astAsJsonString = file_get_contents(__DIR__ . '/Examples/' . $example . '/' . $example . '.ast.json');
+        assert($astAsJsonString !== false);
+
+        $expected = json_decode($astAsJsonString, true);
 
         $module = ModuleNode::fromTokens($tokenizer->getIterator());
+        $moduleAsJson = json_encode($module);
+        assert($moduleAsJson !== false);
 
-        $this->assertEquals($expected, json_decode(json_encode($module), true));
+        $this->assertEquals($expected, json_decode($moduleAsJson, true));
     }
 }

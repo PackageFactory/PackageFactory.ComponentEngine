@@ -28,6 +28,9 @@ use PHPUnit\Framework\TestCase;
 
 final class StringLiteralTranspilerTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function stringExamples(): array
     {
         return [
@@ -76,6 +79,9 @@ final class StringLiteralTranspilerTest extends TestCase
         );
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function stringExamplesWithAddedQuotes(): array
     {
         return [

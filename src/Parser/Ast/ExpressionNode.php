@@ -55,6 +55,7 @@ final class ExpressionNode implements \JsonSerializable
     {
         Scanner::skipSpaceAndComments($tokens);
 
+        $root = null;
         switch (Scanner::type($tokens)) {
             case TokenType::BRACKET_ROUND_OPEN:
                 $lookAhead = LookAhead::fromTokens($tokens);
@@ -108,6 +109,10 @@ final class ExpressionNode implements \JsonSerializable
             default:
                 $root = IdentifierNode::fromTokens($tokens);
                 break;
+        }
+
+        if ($root === null) {
+            throw new \Exception('@TODO: What on earth went wrong here?');
         }
 
         Scanner::skipSpaceAndComments($tokens);

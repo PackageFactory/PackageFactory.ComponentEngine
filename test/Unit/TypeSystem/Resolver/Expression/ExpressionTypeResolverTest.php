@@ -34,6 +34,9 @@ use PHPUnit\Framework\TestCase;
 
 final class ExpressionTypeResolverTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function binaryOperationExamples(): array
     {
         return [
@@ -82,6 +85,7 @@ final class ExpressionTypeResolverTest extends TestCase
 
     /**
      * @test
+     * @return void
      */
     public function resolvesBooleanLiteralToBooleanType(): void
     {
@@ -117,6 +121,9 @@ final class ExpressionTypeResolverTest extends TestCase
         );
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function matchExamples(): array
     {
         return [
@@ -166,6 +173,7 @@ final class ExpressionTypeResolverTest extends TestCase
 
     /**
      * @test
+     * @return void
      */
     public function resolvesNumberLiteralToNumberType(): void
     {
@@ -184,6 +192,7 @@ final class ExpressionTypeResolverTest extends TestCase
 
     /**
      * @test
+     * @return void
      */
     public function resolvesStringLiteralToStringType(): void
     {
@@ -202,6 +211,7 @@ final class ExpressionTypeResolverTest extends TestCase
 
     /**
      * @test
+     * @return void
      */
     public function resolvesTagToStringType(): void
     {
@@ -218,6 +228,9 @@ final class ExpressionTypeResolverTest extends TestCase
         );
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function templateLiteralExamples(): array
     {
         return [
@@ -249,6 +262,9 @@ final class ExpressionTypeResolverTest extends TestCase
         );
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function ternaryOperationExamples(): array
     {
         return [

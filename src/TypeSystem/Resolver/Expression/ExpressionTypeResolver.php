@@ -53,27 +53,31 @@ final class ExpressionTypeResolver
 
     public function resolveTypeOf(ExpressionNode $expressionNode): TypeInterface
     {
-        $rootTypeResolver = match ($expressionNode->root::class) {
-            BinaryOperationNode::class => new BinaryOperationTypeResolver(
+        $rootNode = $expressionNode->root;
+        return match ($rootNode::class) {
+            BinaryOperationNode::class => (new BinaryOperationTypeResolver(
                 scope: $this->scope
-            ),
-            BooleanLiteralNode::class => new BooleanLiteralTypeResolver(),
-            IdentifierNode::class => new IdentifierTypeResolver(
+            ))->resolveTypeOf($rootNode),
+            BooleanLiteralNode::class => (new BooleanLiteralTypeResolver())
+                ->resolveTypeOf($rootNode),
+            IdentifierNode::class => (new IdentifierTypeResolver(
                 scope: $this->scope
-            ),
-            MatchNode::class => new MatchTypeResolver(
+            ))->resolveTypeOf($rootNode),
+            MatchNode::class => (new MatchTypeResolver(
                 scope: $this->scope
-            ),
-            NumberLiteralNode::class => new NumberLiteralTypeResolver(),
-            StringLiteralNode::class => new StringLiteralTypeResolver(),
-            TagNode::class => new TagTypeResolver(),
-            TemplateLiteralNode::class => new TemplateLiteralTypeResolver(),
-            TernaryOperationNode::class => new TernaryOperationTypeResolver(
+            ))->resolveTypeOf($rootNode),
+            NumberLiteralNode::class => (new NumberLiteralTypeResolver())
+                ->resolveTypeOf($rootNode),
+            StringLiteralNode::class => (new StringLiteralTypeResolver())
+                ->resolveTypeOf($rootNode),
+            TagNode::class => (new TagTypeResolver())
+                ->resolveTypeOf($rootNode),
+            TemplateLiteralNode::class => (new TemplateLiteralTypeResolver())
+                ->resolveTypeOf($rootNode),
+            TernaryOperationNode::class => (new TernaryOperationTypeResolver(
                 scope: $this->scope
-            ),
+            ))->resolveTypeOf($rootNode),
             default => throw new \Exception('@TODO: Resolve type of ' . $expressionNode->root::class)
         };
-
-        return $rootTypeResolver->resolveTypeOf($expressionNode->root);
     }
 }

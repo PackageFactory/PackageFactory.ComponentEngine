@@ -24,6 +24,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\Match;
 
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Match\MatchTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
@@ -36,6 +37,9 @@ use PHPUnit\Framework\TestCase;
 
 final class MatchTypeResolverTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function matchExamples(): array
     {
         return [
@@ -86,6 +90,7 @@ final class MatchTypeResolverTest extends TestCase
             scope: $scope
         );
         $matchNode = ExpressionNode::fromString($matchAsString)->root;
+        assert($matchNode instanceof MatchNode);
 
         $actualType = $matchTypeResolver->resolveTypeOf($matchNode);
 

@@ -27,6 +27,9 @@ use PHPUnit\Framework\TestCase;
 
 final class PathTest extends TestCase
 {
+    /**
+     * @return array<string,mixed>
+     */
     public function relatedPathExamples(): array
     {
         return [

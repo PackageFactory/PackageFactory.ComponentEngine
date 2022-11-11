@@ -79,7 +79,7 @@ final class Scanner
             }
         }
 
-        throw new \Exception("@TODO: Unexpected value: " . $actualValue->value);
+        throw new \Exception("@TODO: Unexpected value: " . $actualValue);
     }
 
     /**
