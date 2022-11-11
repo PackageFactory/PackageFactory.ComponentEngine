@@ -36,29 +36,38 @@ final class ComponentDeclarationTranspiler
 {
     public function __construct(
         private readonly ScopeInterface $scope,
-        private readonly ModuleNode $module
+        private readonly ModuleNode $module,
+        private readonly ComponentDeclarationStrategyInterface $strategy
     ) {
     }
 
     public function transpile(ComponentDeclarationNode $componentDeclarationNode): string
     {
+        $className = $this->strategy->getClassNameFor($componentDeclarationNode);
+        $baseClassName = $this->strategy->getBaseClassNameFor($componentDeclarationNode);
+
         $lines = [];
 
-        // @TODO: Generate Namespaces Dynamically
         $lines[] = '<?php';
         $lines[] = '';
         $lines[] = 'declare(strict_types=1);';
         $lines[] = '';
-        $lines[] = 'namespace Vendor\\Project\\Component;';
+        $lines[] = 'namespace ' . $className->getNamespace() . ';';
         $lines[] = '';
-        $lines[] = 'use Vendor\\Project\\BaseClass;';
+
+        if ($baseClassName) {
+            $lines[] = 'use ' . $baseClassName->getFullyQualifiedClassName() . ';';
+        }
         
         foreach ($this->module->imports->items as $importNode) {
+            // @TODO: Generate Namespaces Dynamically
             $lines[] = 'use Vendor\\Project\\Component\\' . $importNode->name->value . ';';
         }
 
         $lines[] = '';
-        $lines[] = 'final class ' . $componentDeclarationNode->componentName . ' extends BaseClass';
+        $lines[] = $baseClassName
+            ? 'final class ' . $className->getShortClassName() . ' extends ' . $baseClassName->getShortClassName()
+            : 'final class ' . $className->getShortClassName();
         $lines[] = '{';
 
         if (!$componentDeclarationNode->propertyDeclarations->isEmpty()) {

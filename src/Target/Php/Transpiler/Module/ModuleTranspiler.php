@@ -37,7 +37,8 @@ final class ModuleTranspiler
 {
     public function __construct(
         private readonly LoaderInterface $loader,
-        private readonly ScopeInterface $globalScope
+        private readonly ScopeInterface $globalScope,
+        private readonly ModuleStrategyInterface $strategy
     ) {
     }
 
@@ -51,10 +52,15 @@ final class ModuleTranspiler
                         moduleNode: $moduleNode,
                         parentScope: $this->globalScope
                     ),
-                    module: $moduleNode
+                    module: $moduleNode,
+                    strategy: $this->strategy->getComponentDeclarationStrategyFor($moduleNode)
                 ))->transpile($exportNode->declaration),
-                EnumDeclarationNode::class => (new EnumDeclarationTranspiler())->transpile($exportNode->declaration),
-                StructDeclarationNode::class => (new StructDeclarationTranspiler())->transpile($exportNode->declaration)
+                EnumDeclarationNode::class => (new EnumDeclarationTranspiler(
+                    strategy: $this->strategy->getEnumDeclarationStrategyFor($moduleNode)
+                ))->transpile($exportNode->declaration),
+                StructDeclarationNode::class => (new StructDeclarationTranspiler(
+                    strategy: $this->strategy->getStructDeclarationStrategyFor($moduleNode)
+                ))->transpile($exportNode->declaration)
             };
         }
 

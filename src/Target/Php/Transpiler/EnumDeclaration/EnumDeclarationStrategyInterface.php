@@ -23,36 +23,9 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\EnumDeclaration;
 
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
+use PackageFactory\ComponentEngine\Target\Php\TargetSpecific\ClassName;
 
-final class EnumDeclarationTranspiler
+interface EnumDeclarationStrategyInterface
 {
-    public function __construct(
-        private readonly EnumDeclarationStrategyInterface $strategy
-    ) {
-    }
-
-    public function transpile(EnumDeclarationNode $enumDeclarationNode): string
-    {
-        $className = $this->strategy->getClassNameFor($enumDeclarationNode);
-
-        $lines = [];
-
-        $lines[] = '<?php';
-        $lines[] = '';
-        $lines[] = 'declare(strict_types=1);';
-        $lines[] = '';
-        $lines[] = 'namespace ' . $className->getNamespace() . ';';
-        $lines[] = '';
-        $lines[] = 'enum ' . $className->getShortClassName() . ' : string';
-        $lines[] = '{';
-
-        foreach ($enumDeclarationNode->memberDeclarations->items as $memberDeclarationNode) {
-            $lines[] = '    case ' . $memberDeclarationNode->name . ' = \'' . $memberDeclarationNode->name . '\';';
-        }
-
-        $lines[] = '}';
-        $lines[] = '';
-
-        return join("\n", $lines);
-    }
+    public function getClassNameFor(EnumDeclarationNode $enumDeclarationNode): ClassName;
 }

@@ -28,20 +28,33 @@ use PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference\TypeRefer
 
 final class StructDeclarationTranspiler
 {
+    public function __construct(
+        private readonly StructDeclarationStrategyInterface $strategy
+    ) {
+    }
+
     public function transpile(StructDeclarationNode $structDeclarationNode): string
     {
+        $className = $this->strategy->getClassNameFor($structDeclarationNode);
+        $baseClassName = $this->strategy->getBaseClassNameFor($structDeclarationNode);
+
         $lines = [];
 
-        // @TODO: Generate Namespaces Dynamically
         $lines[] = '<?php';
         $lines[] = '';
         $lines[] = 'declare(strict_types=1);';
         $lines[] = '';
-        $lines[] = 'namespace Vendor\\Project\\Component;';
+        $lines[] = 'namespace ' . $className->getNamespace() . ';';
         $lines[] = '';
-        $lines[] = 'use Vendor\\Project\\BaseClass;';
+
+        if ($baseClassName) {
+            $lines[] = 'use ' . $baseClassName->getFullyQualifiedClassName() . ';';
+        }
+
         $lines[] = '';
-        $lines[] = 'final class ' . $structDeclarationNode->structName . ' extends BaseClass';
+        $lines[] = $baseClassName
+            ? 'final class ' . $className->getShortClassName() . ' extends ' . $baseClassName->getShortClassName()
+            : 'final class ' . $className->getShortClassName();
         $lines[] = '{';
 
         if (!$structDeclarationNode->propertyDeclarations->isEmpty()) {

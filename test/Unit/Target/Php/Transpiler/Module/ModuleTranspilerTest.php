@@ -43,7 +43,8 @@ final class ModuleTranspilerTest extends TestCase
         EOT;
         $moduleTranspiler = new ModuleTranspiler(
             loader: new DummyLoader(),
-            globalScope: GlobalScope::get()
+            globalScope: GlobalScope::get(),
+            strategy: new ModuleTestStrategy()
         );
         $moduleNode = ModuleNode::fromString($moduleNodeAsString);
 
@@ -90,7 +91,8 @@ final class ModuleTranspilerTest extends TestCase
         EOT;
         $moduleTranspiler = new ModuleTranspiler(
             loader: new DummyLoader(),
-            globalScope: GlobalScope::get()
+            globalScope: GlobalScope::get(),
+            strategy: new ModuleTestStrategy()
         );
         $moduleNode = ModuleNode::fromString($moduleNodeAsString);
 
@@ -134,7 +136,8 @@ final class ModuleTranspilerTest extends TestCase
         EOT;
         $moduleTranspiler = new ModuleTranspiler(
             loader: new DummyLoader(),
-            globalScope: GlobalScope::get()
+            globalScope: GlobalScope::get(),
+            strategy: new ModuleTestStrategy()
         );
         $moduleNode = ModuleNode::fromString($moduleNodeAsString);
 

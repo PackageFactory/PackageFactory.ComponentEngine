@@ -29,6 +29,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Module\ModuleTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Module\ModuleTestStrategy;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
@@ -91,7 +92,8 @@ final class PhpTranspilerIntegrationTest extends TestCase
                         'enum ButtonType { LINK BUTTON SUBMIT NONE }'
                     )
                 )
-            ])
+            ]),
+            strategy: new ModuleTestStrategy()
         );
 
         $this->assertEquals($expected, $transpiler->transpile($module));

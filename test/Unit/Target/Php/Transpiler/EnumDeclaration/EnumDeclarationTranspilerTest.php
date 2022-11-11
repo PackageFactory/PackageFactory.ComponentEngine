@@ -40,7 +40,9 @@ final class EnumDeclarationTranspilerTest extends TestCase
             SUBMIT
         }
         EOT;
-        $enumDeclarationTranspiler = new EnumDeclarationTranspiler();
+        $enumDeclarationTranspiler = new EnumDeclarationTranspiler(
+            strategy: new EnumDeclarationTestStrategy()
+        );
         $enumDeclarationNode = EnumDeclarationNode::fromString($enumDeclarationAsString);
 
         $expectedTranspilationResult = <<<EOT

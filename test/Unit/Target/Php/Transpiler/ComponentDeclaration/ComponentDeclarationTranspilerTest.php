@@ -46,7 +46,8 @@ final class ComponentDeclarationTranspilerTest extends TestCase
         $moduleNode = ModuleNode::fromString($componentModuleAsString);
         $componentDeclarationTranspiler = new ComponentDeclarationTranspiler(
             scope: GlobalScope::get(),
-            module: $moduleNode
+            module: $moduleNode,
+            strategy: new ComponentDeclarationTestStrategy()
         );
         $componentDeclarationNode = $moduleNode->exports->get('Greeter')?->declaration;
         assert($componentDeclarationNode instanceof ComponentDeclarationNode);

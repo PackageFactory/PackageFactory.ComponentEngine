@@ -40,7 +40,9 @@ final class StructDeclarationTranspilerTest extends TestCase
             target: string
         }
         EOT;
-        $structDeclarationTranspiler = new StructDeclarationTranspiler();
+        $structDeclarationTranspiler = new StructDeclarationTranspiler(
+            strategy: new StructDeclarationTestStrategy()
+        );
         $structDeclarationNode = StructDeclarationNode::fromString($structDeclarationAsString);
 
         $expectedTranspilationResult = <<<PHP
