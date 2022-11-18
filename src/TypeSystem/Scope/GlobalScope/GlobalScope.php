@@ -27,6 +27,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
@@ -54,6 +55,7 @@ final class GlobalScope implements ScopeInterface
             'string' => StringType::get(),
             'number' => NumberType::get(),
             'boolean' => BooleanType::get(),
+            'slot' => SlotType::get(),
             default => throw new \Exception('@TODO: Unknown Type ' . $typeReferenceNode->name)
         };
     }

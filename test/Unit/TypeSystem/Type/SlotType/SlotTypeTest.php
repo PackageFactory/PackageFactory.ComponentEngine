@@ -20,15 +20,35 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\StructDeclaration;
+namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\SlotType;
 
-use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
-use PackageFactory\ComponentEngine\Target\Php\TargetSpecific\ClassName;
-use PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference\TypeReferenceStrategyInterface;
+use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
+use PHPUnit\Framework\TestCase;
 
-interface StructDeclarationStrategyInterface
+final class SlotTypeTest extends TestCase
 {
-    public function getClassNameFor(StructDeclarationNode $structDeclarationNode): ClassName;
-    public function getBaseClassNameFor(StructDeclarationNode $structDeclarationNode): ?ClassName;
-    public function getTypeReferenceStrategyFor(StructDeclarationNode $structDeclarationNode): TypeReferenceStrategyInterface;
+    /**
+     * @test
+     */
+    public function stringTypeIsSingleton(): void
+    {
+        $this->assertSame(SlotType::get(), SlotType::get());
+    }
+
+    /**
+     * @test
+     */
+    public function isReturnsTrueIfGivenTypeIsSlotType(): void
+    {
+        $this->assertTrue(SlotType::get()->is(SlotType::get()));
+    }
+
+    /**
+     * @test
+     */
+    public function isReturnsFalseIfGivenTypeIsNotSlotType(): void
+    {
+        $this->assertFalse(SlotType::get()->is(NumberType::get()));
+    }
 }

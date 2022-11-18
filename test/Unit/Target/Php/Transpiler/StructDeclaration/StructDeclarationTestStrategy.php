@@ -25,6 +25,8 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\StructD
 use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Target\Php\TargetSpecific\ClassName;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\StructDeclaration\StructDeclarationStrategyInterface;
+use PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference\TypeReferenceStrategyInterface;
+use PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\TypeReference\TypeReferenceTestStrategy;
 
 final class StructDeclarationTestStrategy implements StructDeclarationStrategyInterface
 {
@@ -36,5 +38,10 @@ final class StructDeclarationTestStrategy implements StructDeclarationStrategyIn
     public function getBaseClassNameFor(StructDeclarationNode $structDeclarationNode): ?ClassName
     {
         return ClassName::fromString('Vendor\\Project\\BaseClass');
+    }
+
+    public function getTypeReferenceStrategyFor(StructDeclarationNode $structDeclarationNode): TypeReferenceStrategyInterface
+    {
+        return new TypeReferenceTestStrategy();
     }
 }

@@ -23,12 +23,13 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\StructDeclaration;
 
 use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\PropertyDeclarationNodes;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference\TypeReferenceTranspiler;
+use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 
 final class StructDeclarationTranspiler
 {
     public function __construct(
+        private readonly ScopeInterface $scope,
         private readonly StructDeclarationStrategyInterface $strategy
     ) {
     }
@@ -59,7 +60,7 @@ final class StructDeclarationTranspiler
 
         if (!$structDeclarationNode->propertyDeclarations->isEmpty()) {
             $lines[] = '    public function __construct(';
-            $lines[] = $this->writeConstructorPropertyDeclarations($structDeclarationNode->propertyDeclarations);
+            $lines[] = $this->writeConstructorPropertyDeclarations($structDeclarationNode);
             $lines[] = '    ) {';
             $lines[] = '    }';
         }
@@ -70,9 +71,13 @@ final class StructDeclarationTranspiler
         return join("\n", $lines);
     }
 
-    public function writeConstructorPropertyDeclarations(PropertyDeclarationNodes $propertyDeclarations): string
+    public function writeConstructorPropertyDeclarations(StructDeclarationNode $structDeclarationNode): string
     {
-        $typeReferenceTranspiler = new TypeReferenceTranspiler();
+        $typeReferenceTranspiler = new TypeReferenceTranspiler(
+            scope: $this->scope,
+            strategy: $this->strategy->getTypeReferenceStrategyFor($structDeclarationNode)
+        );
+        $propertyDeclarations = $structDeclarationNode->propertyDeclarations;
         $lines = [];
 
         foreach ($propertyDeclarations->items as $propertyDeclaration) {

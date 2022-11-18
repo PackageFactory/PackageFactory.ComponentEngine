@@ -59,6 +59,11 @@ final class ModuleTranspiler
                     strategy: $this->strategy->getEnumDeclarationStrategyFor($moduleNode)
                 ))->transpile($exportNode->declaration),
                 StructDeclarationNode::class => (new StructDeclarationTranspiler(
+                    scope: new ModuleScope(
+                        loader: $this->loader,
+                        moduleNode: $moduleNode,
+                        parentScope: $this->globalScope
+                    ),
                     strategy: $this->strategy->getStructDeclarationStrategyFor($moduleNode)
                 ))->transpile($exportNode->declaration)
             };

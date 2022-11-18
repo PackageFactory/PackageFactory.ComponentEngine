@@ -24,6 +24,8 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\StructD
 
 use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\StructDeclaration\StructDeclarationTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
 
 final class StructDeclarationTranspilerTest extends TestCase
@@ -41,6 +43,7 @@ final class StructDeclarationTranspilerTest extends TestCase
         }
         EOT;
         $structDeclarationTranspiler = new StructDeclarationTranspiler(
+            scope: new DummyScope([], ['string' => StringType::get()]),
             strategy: new StructDeclarationTestStrategy()
         );
         $structDeclarationNode = StructDeclarationNode::fromString($structDeclarationAsString);

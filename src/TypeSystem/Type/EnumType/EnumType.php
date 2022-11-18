@@ -27,9 +27,15 @@ use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class EnumType implements TypeInterface
 {
+    private function __construct(public readonly string $enumName)
+    {
+    }
+
     public static function fromEnumDeclarationNode(EnumDeclarationNode $enumDeclarationNode): self
     {
-        return new self();
+        return new self(
+            enumName: $enumDeclarationNode->enumName
+        );
     }
 
     public function is(TypeInterface $other): bool

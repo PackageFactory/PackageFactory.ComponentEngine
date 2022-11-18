@@ -34,6 +34,7 @@ use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
 
@@ -84,7 +85,7 @@ final class PhpTranspilerIntegrationTest extends TestCase
                 )
             ], [
                 'string' => StringType::get(),
-                'slot' => StringType::get(),
+                'slot' => SlotType::get(),
                 'number' => NumberType::get(),
                 'boolean' => BooleanType::get(),
                 'ButtonType' => EnumType::fromEnumDeclarationNode(

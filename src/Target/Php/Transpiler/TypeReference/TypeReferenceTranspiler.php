@@ -23,16 +23,36 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference;
 
 use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
+use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
+use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
 
 final class TypeReferenceTranspiler
 {
+    public function __construct(
+        private readonly ScopeInterface $scope,
+        private readonly TypeReferenceStrategyInterface $strategy
+    ) {
+    }
+
     public function transpile(TypeReferenceNode $typeReferenceNode): string
     {
-        return match ($typeReferenceNode->name) {
-            'number' => 'int|float',
-            'string' => 'string',
-            'boolean' => 'bool',
-            default => $typeReferenceNode->name
+        $type = $this->scope->resolveTypeReference($typeReferenceNode);
+
+        return match ($type::class) {
+            NumberType::class => 'int|float',
+            StringType::class => 'string',
+            BooleanType::class => 'bool',
+            SlotType::class => $this->strategy->getPhpTypeReferenceForSlotType($type, $typeReferenceNode),
+            ComponentType::class => $this->strategy->getPhpTypeReferenceForComponentType($type, $typeReferenceNode),
+            EnumType::class => $this->strategy->getPhpTypeReferenceForEnumType($type, $typeReferenceNode),
+            StructType::class => $this->strategy->getPhpTypeReferenceForStructType($type, $typeReferenceNode),
+            default => $this->strategy->getPhpTypeReferenceForCustomType($type, $typeReferenceNode)
         };
     }
 }

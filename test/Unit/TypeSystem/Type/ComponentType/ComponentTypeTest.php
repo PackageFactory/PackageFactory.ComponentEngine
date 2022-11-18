@@ -43,4 +43,20 @@ final class ComponentTypeTest extends TestCase
 
         $this->assertInstanceOf(ComponentType::class, $componentType);
     }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function providesNameOfTheComponent(): void
+    {
+        $componentDeclarationNode = ComponentDeclarationNode::fromString(
+            'component SomeComponent { return "" }'
+        );
+        $componentType = ComponentType::fromComponentDeclarationNode(
+            $componentDeclarationNode
+        );
+
+        $this->assertEquals('SomeComponent', $componentType->componentName);
+    }
 }

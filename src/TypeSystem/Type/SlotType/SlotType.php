@@ -20,15 +20,25 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\StructDeclaration;
+namespace PackageFactory\ComponentEngine\TypeSystem\Type\SlotType;
 
-use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
-use PackageFactory\ComponentEngine\Target\Php\TargetSpecific\ClassName;
-use PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference\TypeReferenceStrategyInterface;
+use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-interface StructDeclarationStrategyInterface
+final class SlotType implements TypeInterface
 {
-    public function getClassNameFor(StructDeclarationNode $structDeclarationNode): ClassName;
-    public function getBaseClassNameFor(StructDeclarationNode $structDeclarationNode): ?ClassName;
-    public function getTypeReferenceStrategyFor(StructDeclarationNode $structDeclarationNode): TypeReferenceStrategyInterface;
+    private static null|self $instance = null;
+
+    private function __construct()
+    {
+    }
+
+    public static function get(): self
+    {
+        return self::$instance ??= new self();
+    }
+
+    public function is(TypeInterface $other): bool
+    {
+        return $other === self::$instance;
+    }
 }

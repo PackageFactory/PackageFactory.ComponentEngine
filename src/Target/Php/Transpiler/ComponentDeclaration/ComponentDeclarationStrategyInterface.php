@@ -24,9 +24,11 @@ namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\ComponentDeclarat
 
 use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Target\Php\TargetSpecific\ClassName;
+use PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference\TypeReferenceStrategyInterface;
 
 interface ComponentDeclarationStrategyInterface
 {
     public function getClassNameFor(ComponentDeclarationNode $componentDeclarationNode): ClassName;
     public function getBaseClassNameFor(ComponentDeclarationNode $componentDeclarationNode): ?ClassName;
+    public function getTypeReferenceStrategyFor(ComponentDeclarationNode $componentDeclarationNode): TypeReferenceStrategyInterface;
 }

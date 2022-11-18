@@ -41,4 +41,20 @@ final class EnumTypeTest extends TestCase
 
         $this->assertInstanceOf(EnumType::class, $enumType);
     }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function providesNameOfTheEnum(): void
+    {
+        $enumDeclarationNode = EnumDeclarationNode::fromString(
+            'enum SomeEnum {}'
+        );
+        $enumType = EnumType::fromEnumDeclarationNode(
+            $enumDeclarationNode
+        );
+
+        $this->assertEquals('SomeEnum', $enumType->enumName);
+    }
 }

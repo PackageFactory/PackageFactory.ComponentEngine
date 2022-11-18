@@ -27,9 +27,15 @@ use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class StructType implements TypeInterface
 {
+    private function __construct(public readonly string $structName)
+    {
+    }
+
     public static function fromStructDeclarationNode(StructDeclarationNode $structDeclarationNode): self
     {
-        return new self();
+        return new self(
+            structName: $structDeclarationNode->structName
+        );
     }
 
     public function is(TypeInterface $other): bool

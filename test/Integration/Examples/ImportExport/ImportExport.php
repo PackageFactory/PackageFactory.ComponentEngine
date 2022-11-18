@@ -12,8 +12,8 @@ final class Card extends BaseClass
 {
     public function __construct(
         public readonly string $title,
-        public readonly Link $link,
-        public readonly Button $button
+        public readonly LinkStruct $link,
+        public readonly ButtonComponent $button
     ) {
     }
 

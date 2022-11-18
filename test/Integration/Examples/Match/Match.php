@@ -9,8 +9,8 @@ use Vendor\Project\BaseClass;
 final class Button extends BaseClass
 {
     public function __construct(
-        public readonly ButtonType $type,
-        public readonly slot $content
+        public readonly ButtonTypeEnum $type,
+        public readonly SlotInterface $content
     ) {
     }
 

@@ -72,7 +72,7 @@ final class ComponentDeclarationTranspiler
 
         if (!$componentDeclarationNode->propertyDeclarations->isEmpty()) {
             $lines[] = '    public function __construct(';
-            $lines[] = $this->writeConstructorPropertyDeclarations($componentDeclarationNode->propertyDeclarations);
+            $lines[] = $this->writeConstructorPropertyDeclarations($componentDeclarationNode);
             $lines[] = '    ) {';
             $lines[] = '    }';
             $lines[] = '';
@@ -88,9 +88,13 @@ final class ComponentDeclarationTranspiler
         return join("\n", $lines);
     }
 
-    public function writeConstructorPropertyDeclarations(PropertyDeclarationNodes $propertyDeclarations): string
+    public function writeConstructorPropertyDeclarations(ComponentDeclarationNode $componentDeclarationNode): string
     {
-        $typeReferenceTranspiler = new TypeReferenceTranspiler();
+        $typeReferenceTranspiler = new TypeReferenceTranspiler(
+            scope: $this->scope,
+            strategy: $this->strategy->getTypeReferenceStrategyFor($componentDeclarationNode)
+        );
+        $propertyDeclarations = $componentDeclarationNode->propertyDeclarations;
         $lines = [];
 
         foreach ($propertyDeclarations->items as $propertyDeclaration) {

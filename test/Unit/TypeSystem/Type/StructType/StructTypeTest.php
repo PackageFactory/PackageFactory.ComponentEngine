@@ -41,4 +41,20 @@ final class StructTypeTest extends TestCase
 
         $this->assertInstanceOf(StructType::class, $structType);
     }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function providesNameOfTheStruct(): void
+    {
+        $structDeclarationNode = StructDeclarationNode::fromString(
+            'struct SomeStruct {}'
+        );
+        $structStaticType = StructType::fromStructDeclarationNode(
+            $structDeclarationNode
+        );
+
+        $this->assertEquals('SomeStruct', $structStaticType->structName);
+    }
 }

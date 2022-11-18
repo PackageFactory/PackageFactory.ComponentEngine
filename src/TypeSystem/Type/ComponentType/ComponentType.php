@@ -27,9 +27,15 @@ use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class ComponentType implements TypeInterface
 {
+    private function __construct(public readonly string $componentName)
+    {
+    }
+
     public static function fromComponentDeclarationNode(ComponentDeclarationNode $componentDeclarationNode): self
     {
-        return new self();
+        return new self(
+            componentName: $componentDeclarationNode->componentName
+        );
     }
 
     public function is(TypeInterface $other): bool

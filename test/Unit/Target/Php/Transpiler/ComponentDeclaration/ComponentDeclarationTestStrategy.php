@@ -25,6 +25,8 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Compone
 use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Target\Php\TargetSpecific\ClassName;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\ComponentDeclaration\ComponentDeclarationStrategyInterface;
+use PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference\TypeReferenceStrategyInterface;
+use PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\TypeReference\TypeReferenceTestStrategy;
 
 final class ComponentDeclarationTestStrategy implements ComponentDeclarationStrategyInterface
 {
@@ -36,5 +38,10 @@ final class ComponentDeclarationTestStrategy implements ComponentDeclarationStra
     public function getBaseClassNameFor(ComponentDeclarationNode $componentDeclarationNode): ?ClassName
     {
         return ClassName::fromString('Vendor\\Project\\BaseClass');
+    }
+
+    public function getTypeReferenceStrategyFor(ComponentDeclarationNode $componentDeclarationNode): TypeReferenceStrategyInterface
+    {
+        return new TypeReferenceTestStrategy();
     }
 }

@@ -37,8 +37,24 @@ final class EnumStaticTypeTest extends TestCase
         $enumDeclarationNode = EnumDeclarationNode::fromString(
             'enum Foo { BAR BAZ }'
         );
-        $enumType = EnumStaticType::fromEnumDeclarationNode($enumDeclarationNode);
+        $enumStaticType = EnumStaticType::fromEnumDeclarationNode($enumDeclarationNode);
 
-        $this->assertInstanceOf(EnumStaticType::class, $enumType);
+        $this->assertInstanceOf(EnumStaticType::class, $enumStaticType);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function providesNameOfTheEnum(): void
+    {
+        $enumDeclarationNode = EnumDeclarationNode::fromString(
+            'enum SomeEnum {}'
+        );
+        $enumStaticType = EnumStaticType::fromEnumDeclarationNode(
+            $enumDeclarationNode
+        );
+
+        $this->assertEquals('SomeEnum', $enumStaticType->enumName);
     }
 }
