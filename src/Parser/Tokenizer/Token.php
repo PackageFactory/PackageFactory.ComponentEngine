@@ -48,6 +48,19 @@ final class Token
         );
     }
 
+    public static function emptyFromDelimitingFragments(
+        TokenType $type,
+        Fragment $startFragment,
+        Fragment $endFragment
+    ): Token {
+        return new Token(
+            $type,
+            '',
+            Boundaries::fromPositions($startFragment->start, $endFragment->end),
+            $startFragment->source
+        );
+    }
+
     public function equals(Token $other): bool
     {
         return ($this->type === $other->type

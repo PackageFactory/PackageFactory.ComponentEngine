@@ -1,0 +1,58 @@
+[
+  {
+    "type": "KEYWORD_EXPORT",
+    "value": "export"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "KEYWORD_COMPONENT",
+    "value": "component"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "STRING",
+    "value": "Empty"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "BRACKET_CURLY_OPEN",
+    "value": "{"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "KEYWORD_RETURN",
+    "value": "return"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "STRING_QUOTED",
+    "value": ""
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "BRACKET_CURLY_CLOSE",
+    "value": "}"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  }
+]

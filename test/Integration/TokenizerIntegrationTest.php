@@ -36,6 +36,7 @@ final class TokenizerIntegrationTest extends TestCase
         return [
             'Comment' => ["Comment"],
             'Component' => ["Component"],
+            'ComponentEmpty' => ["ComponentEmpty"],
             'ComponentWithKeywords' => ["ComponentWithKeywords"],
             'ComponentWithNesting' => ["ComponentWithNesting"],
             'Enum' => ["Enum"],

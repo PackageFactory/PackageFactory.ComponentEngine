@@ -123,15 +123,23 @@ final class Tokenizer implements \IteratorAggregate
      */
     private static function string(\Iterator $fragments): \Iterator
     {
-        $delimiter = $fragments->current()->value;
+        $delimiter = $fragments->current();
         $fragments->next();
 
         $buffer = Buffer::empty();
 
         while ($fragments->valid()) {
             switch ($fragments->current()->value) {
-                case $delimiter:
-                    yield from $buffer->flush(TokenType::STRING_QUOTED);
+                case $delimiter->value:
+                    if ($buffer->isEmpty()) {
+                        yield Token::emptyFromDelimitingFragments(
+                            TokenType::STRING_QUOTED,
+                            $delimiter,
+                            $fragments->current()
+                        );
+                    } else {
+                        yield from $buffer->flush(TokenType::STRING_QUOTED);
+                    }
                     $fragments->next();
                     return;
 

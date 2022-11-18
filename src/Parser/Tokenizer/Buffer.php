@@ -47,6 +47,11 @@ final class Buffer
         return $this->fragment?->value ?? '';
     }
 
+    public function isEmpty(): bool
+    {
+        return $this->fragment === null;
+    }
+
     public function flush(TokenType $tokenType): \Iterator
     {
         if ($this->fragment !== null) {
