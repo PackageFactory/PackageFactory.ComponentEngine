@@ -39,6 +39,7 @@ enum TokenType: string
     case KEYWORD_RETURN = 'KEYWORD_RETURN';
     case KEYWORD_TRUE = 'KEYWORD_TRUE';
     case KEYWORD_FALSE = 'KEYWORD_FALSE';
+    case KEYWORD_NULL = 'KEYWORD_NULL';
 
     case CONSTANT = 'CONSTANT';
 
@@ -114,6 +115,7 @@ enum TokenType: string
             $value === 'return' => self::KEYWORD_RETURN,
             $value === 'true' => self::KEYWORD_TRUE,
             $value === 'false' => self::KEYWORD_FALSE,
+            $value === 'null' => self::KEYWORD_NULL,
 
             (bool) preg_match(
                 '/^0[bB][0-1]+$/',

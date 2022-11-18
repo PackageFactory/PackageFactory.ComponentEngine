@@ -27,6 +27,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
 use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
+use PackageFactory\ComponentEngine\Parser\Ast\NullLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
@@ -36,6 +37,7 @@ use PackageFactory\ComponentEngine\TypeSystem\Resolver\BinaryOperation\BinaryOpe
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\BooleanLiteral\BooleanLiteralTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Identifier\IdentifierTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Match\MatchTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\NullLiteral\NullLiteralTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\NumberLiteral\NumberLiteralTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\StringLiteral\StringLiteralTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Tag\TagTypeResolver;
@@ -66,6 +68,8 @@ final class ExpressionTypeResolver
             MatchNode::class => (new MatchTypeResolver(
                 scope: $this->scope
             ))->resolveTypeOf($rootNode),
+            NullLiteralNode::class => (new NullLiteralTypeResolver())
+                ->resolveTypeOf($rootNode),
             NumberLiteralNode::class => (new NumberLiteralTypeResolver())
                 ->resolveTypeOf($rootNode),
             StringLiteralNode::class => (new StringLiteralTypeResolver())

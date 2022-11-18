@@ -26,6 +26,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
@@ -163,6 +164,25 @@ final class ExpressionTypeResolverTest extends TestCase
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
         $expressionNode = ExpressionNode::fromString($matchAsString);
 
+        $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
+
+        $this->assertTrue(
+            $expectedType->is($actualType),
+            sprintf('Expected %s, got %s', $expectedType::class, $actualType::class)
+        );
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function resolvesNullLiteralToNullType(): void
+    {
+        $scope = new DummyScope();
+        $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
+        $expressionNode = ExpressionNode::fromString('null');
+
+        $expectedType = NullType::get();
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
 
         $this->assertTrue(
