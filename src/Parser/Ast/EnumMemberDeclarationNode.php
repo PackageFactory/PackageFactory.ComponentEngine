@@ -29,7 +29,8 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class EnumMemberDeclarationNode implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $name
+        public readonly string $name,
+        public readonly null|StringLiteralNode|NumberLiteralNode $value
     ) {
     }
 
@@ -46,8 +47,21 @@ final class EnumMemberDeclarationNode implements \JsonSerializable
 
         Scanner::skipOne($tokens);
 
+        $value = null;
+        if (Scanner::type($tokens) === TokenType::BRACKET_ROUND_OPEN) {
+            Scanner::skipOne($tokens);
+            $value = match (Scanner::type($tokens)) {
+                TokenType::STRING_QUOTED => StringLiteralNode::fromTokens($tokens),
+                TokenType::NUMBER_DECIMAL => NumberLiteralNode::fromTokens($tokens),
+                default => throw new \Exception('@TODO: Unexpected Token ' . Scanner::type($tokens)->value)
+            };
+            Scanner::assertType($tokens, TokenType::BRACKET_ROUND_CLOSE);
+            Scanner::skipOne($tokens);
+        }
+
         return new self(
-            name: $name
+            name: $name,
+            value: $value
         );
     }
 
@@ -55,6 +69,7 @@ final class EnumMemberDeclarationNode implements \JsonSerializable
     {
         return [
             'name' => $this->name,
+            'value' => $this->value,
         ];
     }
 }

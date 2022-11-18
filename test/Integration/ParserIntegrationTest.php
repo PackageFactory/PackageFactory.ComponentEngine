@@ -40,6 +40,8 @@ final class ParserIntegrationTest extends TestCase
             'ComponentWithKeywords' => ["ComponentWithKeywords"],
             'ComponentWithNesting' => ["ComponentWithNesting"],
             'Enum' => ["Enum"],
+            'EnumWithStringValue' => ["EnumWithStringValue"],
+            'EnumWithNumberValue' => ["EnumWithNumberValue"],
             'Expression' => ["Expression"],
             'ImportExport' => ["ImportExport"],
             'Match' => ["Match"],

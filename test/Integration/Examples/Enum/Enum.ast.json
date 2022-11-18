@@ -9,25 +9,32 @@
           "enumName": "DayOfWeek",
           "memberDeclarations": {
             "MONDAY": {
-              "name": "MONDAY"
+              "name": "MONDAY",
+              "value": null
             },
             "TUESDAY": {
-              "name": "TUESDAY"
+              "name": "TUESDAY",
+              "value": null
             },
             "WEDNESDAY": {
-              "name": "WEDNESDAY"
+              "name": "WEDNESDAY",
+              "value": null
             },
             "THURSDAY": {
-              "name": "THURSDAY"
+              "name": "THURSDAY",
+              "value": null
             },
             "FRIDAY": {
-              "name": "FRIDAY"
+              "name": "FRIDAY",
+              "value": null
             },
             "SATURDAY": {
-              "name": "SATURDAY"
+              "name": "SATURDAY",
+              "value": null
             },
             "SUNDAY": {
-              "name": "SUNDAY"
+              "name": "SUNDAY",
+              "value": null
             }
           }
         }

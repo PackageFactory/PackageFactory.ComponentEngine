@@ -1,0 +1,46 @@
+{
+  "type": "ModuleNode",
+  "payload": {
+    "imports": {},
+    "exports": [
+      {
+        "type": "EnumDeclarationNode",
+        "payload": {
+          "enumName": "TrafficLight",
+          "memberDeclarations": {
+            "RED": {
+              "name": "RED",
+              "value": {
+                "type": "NumberLiteralNode",
+                "payload": {
+                  "value": "1",
+                  "format": "DECIMAL"
+                }
+              }
+            },
+            "YELLOW": {
+              "name": "YELLOW",
+              "value": {
+                "type": "NumberLiteralNode",
+                "payload": {
+                  "value": "2",
+                  "format": "DECIMAL"
+                }
+              }
+            },
+            "GREEN": {
+              "name": "GREEN",
+              "value": {
+                "type": "NumberLiteralNode",
+                "payload": {
+                  "value": "3",
+                  "format": "DECIMAL"
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

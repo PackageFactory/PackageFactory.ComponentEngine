@@ -1,0 +1,4 @@
+export enum ImageLoadingMethod {
+  EAGER("eager")
+  LAZY("lazy")
+}

@@ -23,6 +23,9 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\EnumDeclaration;
 
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
+use PackageFactory\ComponentEngine\Parser\Ast\EnumMemberDeclarationNode;
+use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
+use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
 
 final class EnumDeclarationTranspiler
 {
@@ -43,16 +46,40 @@ final class EnumDeclarationTranspiler
         $lines[] = '';
         $lines[] = 'namespace ' . $className->getNamespace() . ';';
         $lines[] = '';
-        $lines[] = 'enum ' . $className->getShortClassName() . ' : string';
+        $lines[] = 'enum ' . $className->getShortClassName() . ' : ' . $this->transpileBackingType($enumDeclarationNode);
         $lines[] = '{';
 
         foreach ($enumDeclarationNode->memberDeclarations->items as $memberDeclarationNode) {
-            $lines[] = '    case ' . $memberDeclarationNode->name . ' = \'' . $memberDeclarationNode->name . '\';';
+            $lines[] = '    case ' . $memberDeclarationNode->name . ' = ' . $this->transpileMemberValue($memberDeclarationNode) . ';';
         }
 
         $lines[] = '}';
         $lines[] = '';
 
         return join("\n", $lines);
+    }
+
+    private function transpileBackingType(EnumDeclarationNode $enumDeclarationNode): string
+    {
+        foreach ($enumDeclarationNode->memberDeclarations->items as $memberDeclarationNode) {
+            if ($memberDeclarationNode->value instanceof NumberLiteralNode) {
+                return 'int';
+            } else {
+                return 'string';
+            }
+        }
+
+        return 'string';
+    }
+
+    private function transpileMemberValue(EnumMemberDeclarationNode $enumMemberDeclarationNode): string
+    {
+        if ($enumMemberDeclarationNode->value instanceof NumberLiteralNode) {
+            return $enumMemberDeclarationNode->value->value;
+        } else if ($enumMemberDeclarationNode->value instanceof StringLiteralNode) {
+            return '\'' . $enumMemberDeclarationNode->value->value . '\'';
+        } else {
+            return '\'' . $enumMemberDeclarationNode->name . '\'';
+        }
     }
 }

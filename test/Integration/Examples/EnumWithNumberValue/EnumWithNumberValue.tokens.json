@@ -1,0 +1,114 @@
+[
+  {
+    "type": "KEYWORD_EXPORT",
+    "value": "export"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "KEYWORD_ENUM",
+    "value": "enum"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "STRING",
+    "value": "TrafficLight"
+  },
+  {
+    "type": "SPACE",
+    "value": " "
+  },
+  {
+    "type": "BRACKET_CURLY_OPEN",
+    "value": "{"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "STRING",
+    "value": "RED"
+  },
+  {
+    "type": "BRACKET_ROUND_OPEN",
+    "value": "("
+  },
+  {
+    "type": "NUMBER_DECIMAL",
+    "value": "1"
+  },
+  {
+    "type": "BRACKET_ROUND_CLOSE",
+    "value": ")"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "STRING",
+    "value": "YELLOW"
+  },
+  {
+    "type": "BRACKET_ROUND_OPEN",
+    "value": "("
+  },
+  {
+    "type": "NUMBER_DECIMAL",
+    "value": "2"
+  },
+  {
+    "type": "BRACKET_ROUND_CLOSE",
+    "value": ")"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "SPACE",
+    "value": "  "
+  },
+  {
+    "type": "STRING",
+    "value": "GREEN"
+  },
+  {
+    "type": "BRACKET_ROUND_OPEN",
+    "value": "("
+  },
+  {
+    "type": "NUMBER_DECIMAL",
+    "value": "3"
+  },
+  {
+    "type": "BRACKET_ROUND_CLOSE",
+    "value": ")"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  },
+  {
+    "type": "BRACKET_CURLY_CLOSE",
+    "value": "}"
+  },
+  {
+    "type": "END_OF_LINE",
+    "value": "\n"
+  }
+]

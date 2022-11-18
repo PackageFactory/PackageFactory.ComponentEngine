@@ -1,0 +1,30 @@
+{
+  "type": "ModuleNode",
+  "payload": {
+    "imports": {},
+    "exports": [
+      {
+        "type": "EnumDeclarationNode",
+        "payload": {
+          "enumName": "ImageLoadingMethod",
+          "memberDeclarations": {
+            "EAGER": {
+              "name": "EAGER",
+              "value": {
+                "type": "StringLiteralNode",
+                "payload": "eager"
+              }
+            },
+            "LAZY": {
+              "name": "LAZY",
+              "value": {
+                "type": "StringLiteralNode",
+                "payload": "lazy"
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}
