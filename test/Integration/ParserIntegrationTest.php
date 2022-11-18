@@ -45,6 +45,7 @@ final class ParserIntegrationTest extends TestCase
             'Match' => ["Match"],
             'Numbers' => ["Numbers"],
             'Struct' => ["Struct"],
+            'StructWithOptionals' => ["StructWithOptionals"],
             'TemplateLiteral' => ["TemplateLiteral"],
         ];
     }

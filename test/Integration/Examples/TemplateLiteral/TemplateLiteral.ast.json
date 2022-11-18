@@ -12,21 +12,21 @@
               "name": "expression",
               "type": {
                 "type": "TypeReferenceNode",
-                "payload": { "name": "string", "isArray": false }
+                "payload": { "name": "string", "isArray": false, "isOptional": false }
               }
             },
             {
               "name": "isActive",
               "type": {
                 "type": "TypeReferenceNode",
-                "payload": { "name": "boolean", "isArray": false }
+                "payload": { "name": "boolean", "isArray": false, "isOptional": false }
               }
             },
             {
               "name": "someNumber",
               "type": {
                 "type": "TypeReferenceNode",
-                "payload": { "name": "number", "isArray": false }
+                "payload": { "name": "number", "isArray": false, "isOptional": false }
               }
             }
           ],

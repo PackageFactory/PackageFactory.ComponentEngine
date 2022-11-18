@@ -43,8 +43,7 @@ final class TypeReferenceTranspiler
     public function transpile(TypeReferenceNode $typeReferenceNode): string
     {
         $type = $this->scope->resolveTypeReference($typeReferenceNode);
-
-        return match ($type::class) {
+        $phpTypeReference = match ($type::class) {
             NumberType::class => 'int|float',
             StringType::class => 'string',
             BooleanType::class => 'bool',
@@ -54,5 +53,12 @@ final class TypeReferenceTranspiler
             StructType::class => $this->strategy->getPhpTypeReferenceForStructType($type, $typeReferenceNode),
             default => $this->strategy->getPhpTypeReferenceForCustomType($type, $typeReferenceNode)
         };
+
+        return $typeReferenceNode->isOptional
+            ? match ($phpTypeReference) {
+                'int|float' => 'null|int|float',
+                default => '?' . $phpTypeReference
+            }
+            : $phpTypeReference;
     }
 }

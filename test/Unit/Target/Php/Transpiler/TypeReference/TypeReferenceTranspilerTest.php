@@ -30,7 +30,6 @@ use PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference\TypeRefer
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
@@ -40,6 +39,28 @@ use PHPUnit\Framework\TestCase;
 
 final class TypeReferenceTranspilerTest extends TestCase
 {
+    protected function getTypeReferenceTranspiler(): TypeReferenceTranspiler
+    {
+        return new TypeReferenceTranspiler(
+            scope: new DummyScope([], [
+                'string' => StringType::get(),
+                'boolean' => BooleanType::get(),
+                'number' => NumberType::get(),
+                'Button' => ComponentType::fromComponentDeclarationNode(
+                    ComponentDeclarationNode::fromString('component Button { return "" }')
+                ),
+                'DayOfWeek' => EnumType::fromEnumDeclarationNode(
+                    EnumDeclarationNode::fromString('enum DayOfWeek {}')
+                ),
+                'Link' => StructType::fromStructDeclarationNode(
+                    StructDeclarationNode::fromString('struct Link {}')
+                ),
+                'SomeType' => $this->createMock(TypeInterface::class)
+            ]),
+            strategy: new TypeReferenceTestStrategy()
+        );
+    }
+
     /**
      * @return array<string,mixed>
      */
@@ -65,24 +86,45 @@ final class TypeReferenceTranspilerTest extends TestCase
      */
     public function transpilesReferencesToPrimitiveTypes(string $typeReferenceAsString, string $expectedTranspilationResult): void
     {
-        $typeReferenceTranspiler = new TypeReferenceTranspiler(
-            scope: new DummyScope([], [
-                'string' => StringType::get(),
-                'boolean' => BooleanType::get(),
-                'number' => NumberType::get(),
-                'Button' => ComponentType::fromComponentDeclarationNode(
-                    ComponentDeclarationNode::fromString('component Button { return "" }')
-                ),
-                'DayOfWeek' => EnumType::fromEnumDeclarationNode(
-                    EnumDeclarationNode::fromString('enum DayOfWeek {}')
-                ),
-                'Link' => StructType::fromStructDeclarationNode(
-                    StructDeclarationNode::fromString('struct Link {}')
-                ),
-                'SomeType' => $this->createMock(TypeInterface::class)
-            ]),
-            strategy: new TypeReferenceTestStrategy()
+        $typeReferenceTranspiler = $this->getTypeReferenceTranspiler();
+        $typeReferenceNode = TypeReferenceNode::fromString($typeReferenceAsString);
+
+        $actualTranspilationResult = $typeReferenceTranspiler->transpile(
+            $typeReferenceNode
         );
+
+        $this->assertEquals(
+            $expectedTranspilationResult,
+            $actualTranspilationResult
+        );
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    public function optionalTypeReferenceExamples(): array
+    {
+        return [
+            'string' => ['?string', '?string'],
+            'boolean' => ['?boolean', '?bool'],
+            'number' => ['?number', 'null|int|float'],
+            'Component' => ['?Button', '?ButtonComponent'],
+            'Enum' => ['?DayOfWeek', '?DayOfWeekEnum'],
+            'Struct' => ['?Link', '?LinkStruct'],
+            'Custom' => ['?SomeType', '?SomeTypeCustom'],
+        ];
+    }
+
+    /**
+     * @dataProvider optionalTypeReferenceExamples
+     * @test
+     * @param string $typeReferenceAsString
+     * @param string $expectedTranspilationResult
+     * @return void
+     */
+    public function transpilesReferencesToOptionalTypes(string $typeReferenceAsString, string $expectedTranspilationResult): void
+    {
+        $typeReferenceTranspiler = $this->getTypeReferenceTranspiler();
         $typeReferenceNode = TypeReferenceNode::fromString($typeReferenceAsString);
 
         $actualTranspilationResult = $typeReferenceTranspiler->transpile(

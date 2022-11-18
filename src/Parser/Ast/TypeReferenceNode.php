@@ -32,7 +32,8 @@ final class TypeReferenceNode implements \JsonSerializable
 {
     private function __construct(
         public readonly string $name,
-        public readonly bool $isArray
+        public readonly bool $isArray,
+        public readonly bool $isOptional
     ) {
     }
 
@@ -52,6 +53,14 @@ final class TypeReferenceNode implements \JsonSerializable
     public static function fromTokens(\Iterator $tokens): self
     {
         Scanner::skipSpaceAndComments($tokens);
+
+        if (Scanner::type($tokens) === TokenType::QUESTIONMARK) {
+            $isOptional = true;
+            Scanner::skipOne($tokens);
+        } else {
+            $isOptional = false;
+        }
+
         Scanner::assertType($tokens, TokenType::STRING);
 
         $name = Scanner::value($tokens);
@@ -68,7 +77,8 @@ final class TypeReferenceNode implements \JsonSerializable
 
         return new self(
             name: $name,
-            isArray: $isArray
+            isArray: $isArray,
+            isOptional: $isOptional
         );
     }
 
@@ -78,7 +88,8 @@ final class TypeReferenceNode implements \JsonSerializable
             'type' => 'TypeReferenceNode',
             'payload' => [
                 'name' => $this->name,
-                'isArray' => $this->isArray
+                'isArray' => $this->isArray,
+                'isOptional' => $this->isOptional
             ]
         ];
     }

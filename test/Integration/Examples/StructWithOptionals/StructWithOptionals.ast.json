@@ -6,20 +6,27 @@
       {
         "type": "Struct",
         "payload": {
-          "structName": "Link",
+          "structName": "Image",
           "propertyDeclarations": [
             {
-              "name": "href",
+              "name": "src",
               "type": {
                 "type": "TypeReferenceNode",
                 "payload": { "name": "string", "isArray": false, "isOptional": false }
               }
             },
             {
-              "name": "target",
+              "name": "alt",
               "type": {
                 "type": "TypeReferenceNode",
                 "payload": { "name": "string", "isArray": false, "isOptional": false }
+              }
+            },
+            {
+              "name": "title",
+              "type": {
+                "type": "TypeReferenceNode",
+                "payload": { "name": "string", "isArray": false, "isOptional": true }
               }
             }
           ]

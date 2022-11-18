@@ -45,6 +45,7 @@ final class TokenizerIntegrationTest extends TestCase
             'Match' => ["Match"],
             'Numbers' => ["Numbers"],
             'Struct' => ["Struct"],
+            'StructWithOptionals' => ["StructWithOptionals"],
             'TemplateLiteral' => ["TemplateLiteral"],
         ];
     }

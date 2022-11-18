@@ -14,7 +14,8 @@
                 "type": "TypeReferenceNode",
                 "payload": {
                   "name": "string",
-                  "isArray": false
+                  "isArray": false,
+                  "isOptional": false
                 }
               }
             },
@@ -24,7 +25,8 @@
                 "type": "TypeReferenceNode",
                 "payload": {
                   "name": "string",
-                  "isArray": false
+                  "isArray": false,
+                  "isOptional": false
                 }
               }
             },
@@ -34,7 +36,8 @@
                 "type": "TypeReferenceNode",
                 "payload": {
                   "name": "string",
-                  "isArray": false
+                  "isArray": false,
+                  "isOptional": false
                 }
               }
             }
