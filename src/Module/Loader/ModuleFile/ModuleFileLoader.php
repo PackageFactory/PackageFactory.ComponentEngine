@@ -24,6 +24,7 @@ namespace PackageFactory\ComponentEngine\Module\Loader\ModuleFile;
 
 use PackageFactory\ComponentEngine\Module\LoaderInterface;
 use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
+use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ImportNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
 use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
@@ -31,6 +32,7 @@ use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
@@ -54,8 +56,8 @@ final class ModuleFileLoader implements LoaderInterface
 
         return match ($export->declaration::class) {
             ComponentDeclarationNode::class => ComponentType::fromComponentDeclarationNode($export->declaration),
-            StructDeclarationNode::class => StructType::fromStructDeclarationNode($export->declaration),
-            default => throw new \Exception('@TODO: Get type of ' . $export->declaration::class)
+            EnumDeclarationNode::class => EnumType::fromEnumDeclarationNode($export->declaration),
+            StructDeclarationNode::class => StructType::fromStructDeclarationNode($export->declaration)
         };
     }
 }
