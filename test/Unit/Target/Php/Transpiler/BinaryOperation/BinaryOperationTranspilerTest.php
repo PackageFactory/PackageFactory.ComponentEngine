@@ -26,6 +26,8 @@ use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\BinaryOperation\BinaryOperationTranspiler;
+use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
 
 final class BinaryOperationTranspilerTest extends TestCase
@@ -102,8 +104,19 @@ final class BinaryOperationTranspilerTest extends TestCase
         ];
     }
 
+    public function stringConcatenationExamples(): array
+    {
+        return [
+            '"foo" + "bar"' => ['"foo" + "bar"', '(\'foo\' . \'bar\')'],
+            'someString + "bar"' => ['someString + "bar"', '($this->someString . \'bar\')'],
+            '8 + 15 + 42 + someString' => ['8 + 15 + 42 + someString', '(8 . 15 . 42 . $this->someString)'],
+            'someNumber + someString' => ['someNumber + someString', '($this->someNumber . $this->someString)']
+        ];
+    }
+
     /**
      * @dataProvider binaryOperationExamples
+     * @dataProvider stringConcatenationExamples
      * @test
      * @param string $binaryOperationAsString
      * @param string $expectedTranspilationResult
@@ -112,7 +125,12 @@ final class BinaryOperationTranspilerTest extends TestCase
     public function transpilesBinaryOperationNodes(string $binaryOperationAsString, string $expectedTranspilationResult): void
     {
         $binaryOperationTranspiler = new BinaryOperationTranspiler(
-            scope: new DummyScope()
+            scope: new DummyScope(identifierToTypeMap: [
+                "a" => NumberType::get(),
+                "b" => NumberType::get(),
+                "someString" => StringType::get(),
+                "someNumber" => NumberType::get(),
+            ])
         );
         $binaryOperationNode = ExpressionNode::fromString($binaryOperationAsString)->root;
         assert($binaryOperationNode instanceof BinaryOperationNode);

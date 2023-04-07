@@ -23,9 +23,12 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\BinaryOperation;
 
 use PackageFactory\ComponentEngine\Definition\BinaryOperator;
+use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperandNodes;
 use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Expression\ExpressionTranspiler;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\BinaryOperation\BinaryOperationTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 
 final class BinaryOperationTranspiler
 {
@@ -51,7 +54,7 @@ final class BinaryOperationTranspiler
             BinaryOperator::LESS_THAN_OR_EQUAL => '<='
         };
     }
-
+    
     public function transpile(BinaryOperationNode $binaryOperationNode): string
     {
         $expressionTranspiler = new ExpressionTranspiler(
@@ -60,7 +63,16 @@ final class BinaryOperationTranspiler
         );
 
         $result = $expressionTranspiler->transpile($binaryOperationNode->operands->first);
-        $operator = sprintf(' %s ', $this->transpileBinaryOperator($binaryOperationNode->operator));
+
+        $binaryOperationTypeResolver = new BinaryOperationTypeResolver(scope: $this->scope);
+
+        if ($binaryOperationNode->operator === BinaryOperator::PLUS
+            && $binaryOperationTypeResolver->resolveTypeOf($binaryOperationNode)->is(StringType::get())
+        ) {
+            $operator = ' . ';
+        } else {
+            $operator = sprintf(' %s ', $this->transpileBinaryOperator($binaryOperationNode->operator));
+        }
 
         foreach ($binaryOperationNode->operands->rest as $operandNode) {
             $result .= $operator;

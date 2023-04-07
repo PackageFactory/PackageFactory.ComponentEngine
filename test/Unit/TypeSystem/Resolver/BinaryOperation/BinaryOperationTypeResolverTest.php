@@ -63,8 +63,19 @@ final class BinaryOperationTypeResolverTest extends TestCase
         ];
     }
 
+    public function stringConcatenationExamples(): array
+    {
+        return [
+            '"foo" + "bar"' => ['"foo" + "mhs"', StringType::get()],
+            'someString + "bar"' => ['someString + "bar"', StringType::get()],
+            '8 + 15 + 42 + someString' => ['8 + 15 + 42 + someString', StringType::get()],
+            'someNumber + someString' => ['someNumber + someString', StringType::get()]
+        ];
+    }
+
     /**
      * @dataProvider binaryOperationExamples
+     * @dataProvider stringConcatenationExamples
      * @test
      * @param string $binaryOperationAsString
      * @param TypeInterface $expectedType
@@ -72,7 +83,10 @@ final class BinaryOperationTypeResolverTest extends TestCase
      */
     public function resolvesBinaryOperationToResultingType(string $binaryOperationAsString, TypeInterface $expectedType): void
     {
-        $scope = new DummyScope();
+        $scope = new DummyScope(identifierToTypeMap: [
+            "someString" => StringType::get(),
+            "someNumber" => NumberType::get()
+        ]);
         $binaryOperationTypeResolver = new BinaryOperationTypeResolver(
             scope: $scope
         );

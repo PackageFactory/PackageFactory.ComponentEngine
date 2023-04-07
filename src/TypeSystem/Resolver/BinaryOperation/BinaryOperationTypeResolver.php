@@ -29,6 +29,7 @@ use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionType
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
@@ -41,6 +42,11 @@ final class BinaryOperationTypeResolver
 
     public function resolveTypeOf(BinaryOperationNode $binaryOperationNode): TypeInterface
     {
+        if ($binaryOperationNode->operator === BinaryOperator::PLUS
+            && $this->checkIfAnyOfBinaryOperandNodesIsOfTypeString($binaryOperationNode->operands)) {
+            return StringType::get();
+        }
+        
         return match ($binaryOperationNode->operator) {
             BinaryOperator::AND,
             BinaryOperator::OR => $this->resolveTypeOfBooleanOperation($binaryOperationNode->operands),
@@ -91,5 +97,19 @@ final class BinaryOperationTypeResolver
         }
 
         return $numberType;
+    }
+
+    private function checkIfAnyOfBinaryOperandNodesIsOfTypeString(BinaryOperandNodes $operands): bool
+    {
+        $expressionTypeResolver = new ExpressionTypeResolver(
+            scope: $this->scope
+        );
+        foreach ($operands as $operand) {
+            $operandResolvesToTypeString = $expressionTypeResolver->resolveTypeOf($operand)->is(StringType::get());
+            if ($operandResolvesToTypeString) {
+                return true;
+            }
+        }
+        return false;
     }
 }
