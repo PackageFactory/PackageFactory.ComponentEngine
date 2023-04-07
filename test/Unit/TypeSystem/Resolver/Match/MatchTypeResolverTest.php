@@ -28,6 +28,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Match\MatchTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
@@ -59,8 +60,24 @@ final class MatchTypeResolverTest extends TestCase
                 'match (variableOfTypeBoolean) { true -> variableOfTypeNumber false -> variableOfTypeString }',
                 UnionType::of(NumberType::get(), StringType::get())
             ],
-            'match (someEnumValue) { SomeEnum.A -> variableOfTypeNumber SomeEnum.B -> variableOfTypeString SomeEnum.C -> variableOfTypeBoolean }' => [
-                'match (someEnumValue) { SomeEnum.A -> variableOfTypeNumber SomeEnum.B -> variableOfTypeString SomeEnum.C -> variableOfTypeBoolean }',
+            'match enum with all declared members' => [
+                <<<'EOF'
+                    match (someEnumValue) {
+                        SomeEnum.A -> variableOfTypeNumber
+                        SomeEnum.B -> variableOfTypeString
+                        SomeEnum.C -> variableOfTypeBoolean
+                    }
+                EOF,
+                UnionType::of(NumberType::get(), StringType::get(), BooleanType::get())
+            ],
+            'match enum with some declared members and default' => [
+                <<<'EOF'
+                    match (someEnumValue) {
+                        SomeEnum.A -> variableOfTypeNumber
+                        SomeEnum.B -> variableOfTypeString
+                        default -> variableOfTypeBoolean
+                    }
+                EOF,
                 UnionType::of(NumberType::get(), StringType::get(), BooleanType::get())
             ],
         ];
@@ -75,16 +92,21 @@ final class MatchTypeResolverTest extends TestCase
      */
     public function resolvesMatchToResultingType(string $matchAsString, TypeInterface $expectedType): void
     {
+        $someEnumDeclaration = EnumDeclarationNode::fromString(
+            'enum SomeEnum { A B C }'
+        );
         $someEnumType = EnumType::fromEnumDeclarationNode(
-            EnumDeclarationNode::fromString(
-                'enum SomeEnum { A B C }'
-            )
+            $someEnumDeclaration
+        );
+        $someStaticEnumType = EnumStaticType::fromEnumDeclarationNode(
+            $someEnumDeclaration
         );
         $scope = new DummyScope([
             'variableOfTypeBoolean' => BooleanType::get(),
             'variableOfTypeString' => StringType::get(),
             'variableOfTypeNumber' => NumberType::get(),
-            'someEnumValue' => $someEnumType
+            'someEnumValue' => $someEnumType,
+            'SomeEnum' => $someStaticEnumType
         ]);
         $matchTypeResolver = new MatchTypeResolver(
             scope: $scope
@@ -98,5 +120,124 @@ final class MatchTypeResolverTest extends TestCase
             $expectedType->is($actualType),
             sprintf('Expected %s, got %s', $expectedType::class, $actualType::class)
         );
+    }
+    
+
+    public function malformedEnumExamples(): iterable
+    {
+        yield "Multiple default keys" => [
+            <<<'EOF'
+            match (someEnumValue) {
+                SomeEnum.A -> "a"
+                default -> "b"
+                default -> "c"
+            }
+            EOF,
+            "@TODO Error: Multiple illegal default arms"
+        ];
+
+        yield "Missing match" => [
+            <<<'EOF'
+            match (someEnumValue) {
+                SomeEnum.A -> "a"
+                SomeEnum.B -> "a"
+            }
+            EOF,
+            "@TODO Error: member C not checked"
+        ];
+
+        // @todo fails as not implemented (could be done hackish wrong
+        // - but this should be validated at all places where enums are used)
+        yield "Non existent enum member access" => [
+            <<<'EOF'
+            match (someEnumValue) {
+                SomeEnum.A -> "a"
+                SomeEnum.B -> "a"
+                SomeEnum.C -> "a"
+                SomeEnum.NonExistent -> "a"
+            }
+            EOF,
+            "@TODO Error: `SomeEnum.NonExistent` is not a valid member."
+        ];
+        
+        yield "Duplicate match 1" => [
+            <<<'EOF'
+            match (someEnumValue) {
+                SomeEnum.A -> "a"
+                SomeEnum.A -> "a"
+            }
+            EOF,
+            "@TODO Error: Enum path A was already defined once in this match and cannot be used twice"
+        ];
+
+        yield "Duplicate match 2" => [
+            <<<'EOF'
+            match (someEnumValue) {
+                SomeEnum.A, SomeEnum.A -> "a"
+            }
+            EOF,
+            "@TODO Error: Enum path A was already defined once in this match and cannot be used twice"
+        ];
+
+        yield "Incompatible enum types" => [
+            <<<'EOF'
+            match (someEnumValue) {
+                OtherEnum.A -> "a"
+            }
+            EOF,
+            "@TODO Error: incompatible enum match: got OtherEnum expected SomeEnum"
+        ];
+
+        yield "Cant match enum and string" => [
+            <<<'EOF'
+            match (someEnumValue) {
+                "foo" -> "a"
+            }
+            EOF,
+            "@TODO Error: To be matched enum value should be referenced like: `Enum.B`"
+        ];
+
+        yield "Cant match enum and non static enum" => [
+            <<<'EOF'
+            match (someEnumValue) {
+                someEnumValue.a -> "a"
+            }
+            EOF,
+            "@TODO Error: To be matched enum must be referenced static"
+        ];
+    }
+
+    /**
+     * @dataProvider malformedEnumExamples
+     * @test
+     */
+    public function malformedMatchCannotBeResolved(string $matchAsString, string $expectedErrorMessage)
+    {
+        $this->expectExceptionMessage($expectedErrorMessage);
+        $someEnumDeclaration = EnumDeclarationNode::fromString(
+            'enum SomeEnum { A B C }'
+        );
+        $someEnumType = EnumType::fromEnumDeclarationNode(
+            $someEnumDeclaration
+        );
+        $someStaticEnumType = EnumStaticType::fromEnumDeclarationNode(
+            $someEnumDeclaration
+        );
+        $scope = new DummyScope([
+            'someEnumValue' => $someEnumType,
+            'SomeEnum' => $someStaticEnumType,
+            'OtherEnum' => EnumStaticType::fromEnumDeclarationNode(
+                EnumDeclarationNode::fromString('enum OtherEnum { A }')
+            )
+
+        ]);
+
+        $matchTypeResolver = new MatchTypeResolver(
+            scope: $scope
+        );
+        $matchNode = ExpressionNode::fromString($matchAsString)->root;
+        assert($matchNode instanceof MatchNode);
+
+        $matchTypeResolver->resolveTypeOf($matchNode);
     }
 }

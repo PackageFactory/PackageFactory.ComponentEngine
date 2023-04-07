@@ -22,11 +22,18 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\Match;
 
+use PackageFactory\ComponentEngine\Definition\AccessType;
+use PackageFactory\ComponentEngine\Parser\Ast\AccessNode;
 use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
+use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNodes;
+use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
 use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\Identifier\IdentifierTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
@@ -67,7 +74,14 @@ final class MatchTypeResolver
         } else {
             $types = [];
 
+            $defaultArmPresent = false;
             foreach ($matchNode->arms->items as $matchArmNode) {
+                if ($defaultArmPresent) {
+                    throw new \Exception('@TODO: Multiple illegal default arms');
+                }
+                if ($matchArmNode->left === null) {
+                    $defaultArmPresent = true;
+                }
                 $types[] = $expressionTypeResolver->resolveTypeOf(
                     $matchArmNode->right
                 );
@@ -79,22 +93,81 @@ final class MatchTypeResolver
         }
     }
 
-    private function resolveTypeOfEnumMatch(MatchNode $matchNode): TypeInterface
+    private function resolveTypeOfEnumMatch(MatchNode $matchNode, EnumType $subjectEnumType): TypeInterface
     {
         $expressionTypeResolver = new ExpressionTypeResolver(
             scope: $this->scope
         );
         $types = [];
 
+        $defaultArmPresent = false;
+        $matchedEnumMembers = [];
+        
         foreach ($matchNode->arms->items as $matchArmNode) {
+            if ($defaultArmPresent) {
+                throw new \Exception('@TODO Error: Multiple illegal default arms');
+            }
+            if ($matchArmNode->left === null) {
+                $defaultArmPresent = true;
+            } else {
+                foreach ($this->extractEnumTypeIdentifierAndEnumMemberIdentifier($matchArmNode->left) as [$enumIdentifier, $enumPath]) {
+                    $enumType = (new IdentifierTypeResolver(scope: $this->scope))->resolveTypeOf($enumIdentifier);
+                    
+                    if (!$enumType instanceof EnumStaticType) {
+                        throw new \Exception('@TODO Error: To be matched enum must be referenced static');
+                    }
+
+                    if (!$enumType->is($subjectEnumType)) {
+                        throw new \Error('@TODO Error: incompatible enum match: got ' . $enumType->enumName . ' expected ' . $subjectEnumType->enumName);
+                    }
+
+                    if (isset($matchedEnumMembers[$enumPath->value])) {
+                        throw new \Error('@TODO Error: Enum path ' . $enumPath->value . ' was already defined once in this match and cannot be used twice');
+                    }
+
+                    $matchedEnumMembers[$enumPath->value] = true;
+                }
+            }
+
             $types[] = $expressionTypeResolver->resolveTypeOf(
                 $matchArmNode->right
             );
         }
 
-        // @TODO: Ensure that match is complete
+        if (!$defaultArmPresent) {
+            foreach ($subjectEnumType->members as $member) {
+                if (!isset($matchedEnumMembers[$member])) {
+                    throw new \Error('@TODO Error: member ' . $member . ' not checked');
+                }
+            }
+        }
 
         return UnionType::of(...$types);
+    }
+
+    /**
+     * @return \Iterator<array{0:IdentifierNode, 1:IdentifierNode}>
+     */
+    private function extractEnumTypeIdentifierAndEnumMemberIdentifier(ExpressionNodes $left)
+    {
+        foreach ($left->items as $expressionNode) {
+            $accessNode = $expressionNode->root;
+            if (
+                !($accessNode instanceof AccessNode
+                    && $accessNode->root instanceof ExpressionNode
+                    && $accessNode->root->root instanceof IdentifierNode
+                    && count($accessNode->chain->items) === 1
+                    && $accessNode->chain->items[0]->accessType === AccessType::MANDATORY
+                )
+            ) {
+                throw new \Error('@TODO Error: To be matched enum value should be referenced like: `Enum.B`');
+            }
+
+            yield [
+                $accessNode->root->root,
+                $accessNode->chain->items[0]->accessor
+            ];
+        }
     }
 
     public function resolveTypeOf(MatchNode $matchNode): TypeInterface
@@ -108,7 +181,7 @@ final class MatchTypeResolver
 
         return match (true) {
             BooleanType::get()->is($typeOfSubject) => $this->resolveTypeOfBooleanMatch($matchNode),
-            $typeOfSubject instanceof EnumType => $this->resolveTypeOfEnumMatch($matchNode),
+            $typeOfSubject instanceof EnumType => $this->resolveTypeOfEnumMatch($matchNode, $typeOfSubject),
             default => throw new \Exception('@TODO: Not handled ' . $typeOfSubject::class)
         };
     }

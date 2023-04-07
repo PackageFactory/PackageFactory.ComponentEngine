@@ -40,6 +40,9 @@ final class EnumStaticType implements TypeInterface
 
     public function is(TypeInterface $other): bool
     {
+        if ($other instanceof EnumType) {
+            return $other->is($this);
+        }
         return false;
     }
 }

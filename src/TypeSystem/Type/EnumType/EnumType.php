@@ -23,23 +23,35 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\TypeSystem\Type\EnumType;
 
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
+use PackageFactory\ComponentEngine\Parser\Ast\EnumMemberDeclarationNode;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class EnumType implements TypeInterface
 {
-    private function __construct(public readonly string $enumName)
-    {
+    private function __construct(
+        public readonly string $enumName,
+        public readonly array $members,
+    ) {
     }
 
     public static function fromEnumDeclarationNode(EnumDeclarationNode $enumDeclarationNode): self
     {
         return new self(
-            enumName: $enumDeclarationNode->enumName
+            enumName: $enumDeclarationNode->enumName,
+            members: array_map(
+                fn (EnumMemberDeclarationNode $memberDeclarationNode) => $memberDeclarationNode->name,
+                $enumDeclarationNode->memberDeclarations->items
+            )
         );
     }
 
     public function is(TypeInterface $other): bool
     {
-        return false;
+        // todo more satisfied check with namespace taken into account
+        return match ($other::class) {
+            EnumType::class => $this->enumName === $other->enumName,
+            EnumStaticType::class => $this->enumName === $other->enumName,
+            default => false
+        };
     }
 }
