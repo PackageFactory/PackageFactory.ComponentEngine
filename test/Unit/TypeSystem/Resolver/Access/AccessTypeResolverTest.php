@@ -47,6 +47,11 @@ final class AccessTypeResolverTest extends TestCase
             'SomeEnum.NonExistent',
             '@TODO cannot access member NonExistent of enum SomeEnum'
         ];
+
+        yield "access enum member on non static enum instance" => [
+            'someEnumValue.A',
+            "@TODO Error: Cannot access on type PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType"
+        ];
     }
     
     private function resolveAccessType(string $accessAsString, ScopeInterface $scope): TypeInterface
@@ -85,7 +90,7 @@ final class AccessTypeResolverTest extends TestCase
 
         $this->assertEquals("A", $accessType->memberName);
 
-        $this->assertTrue($accessType->memberValueType->is(StringType::get()));
+        $this->assertTrue($accessType->memberBackedValueType?->is(StringType::get()));
     }
 
     /**
@@ -103,7 +108,8 @@ final class AccessTypeResolverTest extends TestCase
         );
         $scope = new DummyScope([
             'someString' => StringType::get(),
-            'SomeEnum' => $someEnum
+            'SomeEnum' => $someEnum,
+            'someEnumValue' => $someEnum->toEnumInstanceType()
         ]);
         $accessTypeResolver = new AccessTypeResolver(
             scope: $scope

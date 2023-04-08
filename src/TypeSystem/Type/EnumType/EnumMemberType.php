@@ -29,12 +29,12 @@ final class EnumMemberType implements TypeInterface
     public function __construct(
         public readonly EnumType|EnumStaticType $enumType,
         public readonly string $memberName,
-        public readonly ?TypeInterface $memberValueType
+        public readonly ?TypeInterface $memberBackedValueType
     ) {
     }
 
     public function is(TypeInterface $other): bool
     {
-        return $this->memberValueType?->is($other) ?? false;
+        return $this->memberBackedValueType?->is($other) ?? false;
     }
 }

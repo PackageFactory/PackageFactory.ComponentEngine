@@ -28,7 +28,6 @@ use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionType
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumMemberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 use PackageFactory\ComponentEngine\Definition\AccessType;
@@ -46,13 +45,13 @@ final class AccessTypeResolver
         $rootType = $expressionResolver->resolveTypeOf($accessNode->root);
 
         return match ($rootType::class) {
-            EnumType::class, EnumStaticType::class => $this->createEnumMemberType($accessNode, $rootType),
+            EnumStaticType::class => $this->createEnumMemberType($accessNode, $rootType),
             StructType::class => throw new \Exception('@TODO: StructType Access is not implemented'),
             default => throw new \Exception('@TODO Error: Cannot access on type ' . $rootType::class)
         };
     }
     
-    private function createEnumMemberType(AccessNode $accessNode, EnumType|EnumStaticType $enumType): EnumMemberType
+    private function createEnumMemberType(AccessNode $accessNode, EnumStaticType $enumType): EnumMemberType
     {
         if (!(
             count($accessNode->chain->items) === 1
