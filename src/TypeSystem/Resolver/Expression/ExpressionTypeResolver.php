@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression;
 
+use PackageFactory\ComponentEngine\Parser\Ast\AccessNode;
 use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
@@ -33,6 +34,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TemplateLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\Access\AccessTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\BinaryOperation\BinaryOperationTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\BooleanLiteral\BooleanLiteralTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Identifier\IdentifierTypeResolver;
@@ -79,6 +81,9 @@ final class ExpressionTypeResolver
             TemplateLiteralNode::class => (new TemplateLiteralTypeResolver())
                 ->resolveTypeOf($rootNode),
             TernaryOperationNode::class => (new TernaryOperationTypeResolver(
+                scope: $this->scope
+            ))->resolveTypeOf($rootNode),
+            AccessNode::class => (new AccessTypeResolver(
                 scope: $this->scope
             ))->resolveTypeOf($rootNode),
             default => throw new \Exception('@TODO: Resolve type of ' . $expressionNode->root::class)
