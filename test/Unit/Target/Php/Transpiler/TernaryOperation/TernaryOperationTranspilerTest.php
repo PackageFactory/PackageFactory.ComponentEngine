@@ -23,9 +23,12 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\TernaryOperation;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\TernaryOperation\TernaryOperationTranspiler;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
 use PHPUnit\Framework\TestCase;
 
 final class TernaryOperationTranspilerTest extends TestCase
@@ -46,8 +49,19 @@ final class TernaryOperationTranspilerTest extends TestCase
         ];
     }
 
+    public function ternaryOperationWithVariablesInConditionExamples()
+    {
+        return [
+            'true === someString ? "a" : "foo"' => ['true === someString ? "a" : "foo"', '((true === $this->someString) ? \'a\' : \'foo\')'],
+            'true === someStruct.foo ? "a" : "foo"' => ['true === someStruct.foo ? "a" : "foo"', '((true === $this->someStruct->foo) ? \'a\' : \'foo\')'],
+            'true === someStruct.deep.foo ? "a" : "foo"' => ['true === someStruct.deep.foo ? "a" : "foo"', '((true === $this->someStruct->deep->foo) ? \'a\' : \'foo\')'],
+            'someStruct.foo === true ? "a" : "foo"' => ['someStruct.foo === true ? "a" : "foo"', '(($this->someStruct->foo === true) ? \'a\' : \'foo\')'],
+        ];
+    }
+    
     /**
      * @dataProvider ternaryOperationExamples
+     * @dataProvider ternaryOperationWithVariablesInConditionExamples
      * @test
      * @param string $ternaryOperationAsString
      * @param string $expectedTranspilationResult
@@ -56,7 +70,17 @@ final class TernaryOperationTranspilerTest extends TestCase
     public function transpilesTernaryOperationNodes(string $ternaryOperationAsString, string $expectedTranspilationResult): void
     {
         $ternaryOperationTranspiler = new TernaryOperationTranspiler(
-            scope: new DummyScope()
+            scope: new DummyScope([
+                "someString" => StringType::get(), 
+                "someStruct" => StructType::fromStructDeclarationNode(
+                    StructDeclarationNode::fromString(<<<'AFX'
+                    struct SomeStruct {
+                        foo: string
+                        deep: ?SomeStruct
+                    }
+                    AFX)
+                )
+            ])
         );
         $ternaryOperationNode = ExpressionNode::fromString($ternaryOperationAsString)->root;
         assert($ternaryOperationNode instanceof TernaryOperationNode);

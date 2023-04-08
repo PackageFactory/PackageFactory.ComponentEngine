@@ -111,6 +111,9 @@ final class ExpressionNode implements \JsonSerializable
                 break;
             default:
                 $root = IdentifierNode::fromTokens($tokens);
+                if (!Scanner::isEnd($tokens) && Scanner::type($tokens) === TokenType::PERIOD) {
+                    $root = AccessNode::fromTokens(new self(root: $root), $tokens);
+                }
                 break;
         }
 
