@@ -27,4 +27,9 @@ use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 final class EnumStaticType implements TypeInterface
 {
     use EnumTrait;
+    
+    public function toEnumInstanceType(): EnumType
+    {
+        return new EnumType($this->enumName, $this->membersWithType);
+    }
 }

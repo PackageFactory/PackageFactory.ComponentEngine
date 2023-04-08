@@ -1,7 +1,15 @@
 {
   "type": "ModuleNode",
   "payload": {
-    "imports": {},
+    "imports": [
+      {
+        "path": "./ButtonType.afx",
+        "name": {
+          "type": "Identifier",
+          "payload": "ButtonType"
+        }
+      }
+    ],
     "exports": [
       {
         "type": "ComponentDeclarationNode",

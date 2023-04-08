@@ -30,7 +30,7 @@ use PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference\TypeRefer
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
@@ -49,7 +49,7 @@ final class TypeReferenceTranspilerTest extends TestCase
                 'Button' => ComponentType::fromComponentDeclarationNode(
                     ComponentDeclarationNode::fromString('component Button { return "" }')
                 ),
-                'DayOfWeek' => EnumType::fromEnumDeclarationNode(
+                'DayOfWeek' => EnumStaticType::fromEnumDeclarationNode(
                     EnumDeclarationNode::fromString('enum DayOfWeek {}')
                 ),
                 'Link' => StructType::fromStructDeclarationNode(

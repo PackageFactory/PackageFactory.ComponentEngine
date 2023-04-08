@@ -32,7 +32,7 @@ use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
@@ -56,7 +56,7 @@ final class ModuleFileLoader implements LoaderInterface
 
         return match ($export->declaration::class) {
             ComponentDeclarationNode::class => ComponentType::fromComponentDeclarationNode($export->declaration),
-            EnumDeclarationNode::class => EnumType::fromEnumDeclarationNode($export->declaration),
+            EnumDeclarationNode::class => EnumStaticType::fromEnumDeclarationNode($export->declaration),
             StructDeclarationNode::class => StructType::fromStructDeclarationNode($export->declaration)
         };
     }

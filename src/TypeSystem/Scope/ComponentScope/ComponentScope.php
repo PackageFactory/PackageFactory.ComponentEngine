@@ -25,9 +25,7 @@ namespace PackageFactory\ComponentEngine\TypeSystem\Scope\ComponentScope;
 use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
-use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class ComponentScope implements ScopeInterface
@@ -43,7 +41,11 @@ final class ComponentScope implements ScopeInterface
         $propertyDeclarationNode = $this->componentDeclarationNode->propertyDeclarations->getPropertyDeclarationNodeOfName($name);
         if ($propertyDeclarationNode) {
             $typeReferenceNode = $propertyDeclarationNode->type;
-            return $this->resolveTypeReference($typeReferenceNode);
+            $type = $this->resolveTypeReference($typeReferenceNode);
+            if ($type instanceof EnumStaticType) {
+                $type = $type->toEnumInstanceType();
+            }
+            return $type;
         }
 
         return $this->parentScope?->lookupTypeFor($name) ?? null;

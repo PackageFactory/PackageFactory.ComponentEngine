@@ -25,14 +25,13 @@ namespace PackageFactory\ComponentEngine\TypeSystem\Type\EnumType;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumMemberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 trait EnumTrait
 {
-    private function __construct(
+    public function __construct(
         public readonly string $enumName,
         private readonly array $membersWithType,
     ) {
@@ -58,10 +57,15 @@ trait EnumTrait
             membersWithType: $membersWithType
         );
     }
+    
+    public function getMemberNames(): array
+    {
+        return array_keys($this->membersWithType);
+    }
 
     public function getMemberType(string $memberName): EnumMemberType
     {
-        if (!isset($this->membersWithType[$memberName])) {
+        if (!array_key_exists($memberName, $this->membersWithType)) {
             throw new \Exception('@TODO cannot access member ' . $memberName . ' of enum ' . $this->enumName);
         }
         return new EnumMemberType(

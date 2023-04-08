@@ -24,7 +24,7 @@ namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference;
 
 use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
 use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
@@ -33,7 +33,7 @@ interface TypeReferenceStrategyInterface
 {
     public function getPhpTypeReferenceForSlotType(SlotType $slotType, TypeReferenceNode $typeReferenceNode): string;
     public function getPhpTypeReferenceForComponentType(ComponentType $componentType, TypeReferenceNode $typeReferenceNode): string;
-    public function getPhpTypeReferenceForEnumType(EnumType $enumType, TypeReferenceNode $typeReferenceNode): string;
+    public function getPhpTypeReferenceForEnumType(EnumStaticType $enumType, TypeReferenceNode $typeReferenceNode): string;
     public function getPhpTypeReferenceForStructType(StructType $structType, TypeReferenceNode $typeReferenceNode): string;
     public function getPhpTypeReferenceForCustomType(TypeInterface $customType, TypeReferenceNode $typeReferenceNode): string;
 }
