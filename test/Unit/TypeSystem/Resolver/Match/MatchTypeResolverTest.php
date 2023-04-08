@@ -188,7 +188,7 @@ final class MatchTypeResolverTest extends TestCase
                 "foo" -> "a"
             }
             EOF,
-            "@TODO Error: To be matched enum value should be referenced like: `Enum.B`"
+            "@TODO Error: Cannot match enum with type of PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType"
         ];
     }
 

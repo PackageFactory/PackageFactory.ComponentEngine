@@ -22,15 +22,12 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\Match;
 
-use PackageFactory\ComponentEngine\Parser\Ast\AccessNode;
 use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
-use PackageFactory\ComponentEngine\TypeSystem\Resolver\Access\AccessTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumMemberType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
@@ -97,8 +94,6 @@ final class MatchTypeResolver
         );
         $types = [];
 
-        $accessTypeResolver = new AccessTypeResolver(scope: $this->scope);
-
         $defaultArmPresent = false;
         $referencedEnumMembers = [];
 
@@ -110,14 +105,9 @@ final class MatchTypeResolver
                 $defaultArmPresent = true;
             } else {
                 foreach ($matchArmNode->left->items as $expressionNode) {
-                    $accessNode = $expressionNode->root;
-                    if (!$accessNode instanceof AccessNode
-                        || !($enumMemberType = $accessTypeResolver->resolveTypeOf($accessNode)) instanceof EnumMemberType) {
-                        throw new \Error('@TODO Error: To be matched enum value should be referenced like: `Enum.B`');
-                    }
-                    
-                    if (!$enumMemberType->enumType instanceof EnumStaticType) {
-                        throw new \Exception('@TODO Error: To be matched enum must be referenced static');
+                    $enumMemberType = $expressionTypeResolver->resolveTypeOf($expressionNode);
+                    if (!$enumMemberType instanceof EnumMemberType) {
+                        throw new \Error('@TODO Error: Cannot match enum with type of ' . $enumMemberType::class);
                     }
 
                     if (!$enumMemberType->enumType->is($subjectEnumType)) {
