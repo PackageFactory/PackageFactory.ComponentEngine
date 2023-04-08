@@ -145,6 +145,7 @@ final class ExpressionNode implements \JsonSerializable
                     $root = BinaryOperationNode::fromTokens(new self(root: $root), $tokens);
                     break;
                 case TokenType::PERIOD:
+                case TokenType::OPTCHAIN:
                     $root = AccessNode::fromTokens(new self(root: $root), $tokens);
                     break;
                 case TokenType::QUESTIONMARK:
