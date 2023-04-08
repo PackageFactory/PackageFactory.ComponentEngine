@@ -35,6 +35,6 @@ final class EnumMemberType implements TypeInterface
 
     public function is(TypeInterface $other): bool
     {
-        return $this->memberBackedValueType?->is($other) ?? false;
+        return false;
     }
 }
