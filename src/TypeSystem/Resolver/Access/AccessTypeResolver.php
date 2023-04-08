@@ -26,10 +26,12 @@ namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\Access;
 use PackageFactory\ComponentEngine\Parser\Ast\AccessNode;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumMemberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
+use PackageFactory\ComponentEngine\Definition\AccessType;
 
 final class AccessTypeResolver
 {
@@ -42,11 +44,25 @@ final class AccessTypeResolver
     {
         $expressionResolver = new ExpressionTypeResolver(scope: $this->scope);
         $rootType = $expressionResolver->resolveTypeOf($accessNode->root);
-        
-        if (!$rootType instanceof EnumType || !$rootType instanceof EnumStaticType || !$rootType instanceof StructType) {
-            throw new \Exception('@TODO: Cannot access on type ' . $rootType::class);
+
+        return match ($rootType::class) {
+            EnumType::class, EnumStaticType::class => $this->createEnumMemberType($accessNode, $rootType),
+            StructType::class => throw new \Exception('@TODO: StructType Access is not implemented'),
+            default => throw new \Exception('@TODO Error: Cannot access on type ' . $rootType::class)
+        };
+    }
+    
+    private function createEnumMemberType(AccessNode $accessNode, EnumType|EnumStaticType $enumType): EnumMemberType
+    {
+        if (!(
+            count($accessNode->chain->items) === 1
+            && $accessNode->chain->items[0]->accessType === AccessType::MANDATORY
+        )) {
+            throw new \Error('@TODO Error: Enum access malformed, only one level member access is allowed.');
         }
+
+        $enumMemberName = $accessNode->chain->items[0]->accessor->value;
         
-        throw new \Exception('@TODO: Enum and StructType Access is not implemented');
+        return $enumType->getMemberType($enumMemberName);
     }
 }

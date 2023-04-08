@@ -22,24 +22,9 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Type\EnumType;
 
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class EnumStaticType implements TypeInterface
 {
-    private function __construct(public readonly string $enumName)
-    {
-    }
-
-    public static function fromEnumDeclarationNode(EnumDeclarationNode $enumDeclarationNode): self
-    {
-        return new self(
-            enumName: $enumDeclarationNode->enumName
-        );
-    }
-
-    public function is(TypeInterface $other): bool
-    {
-        return false;
-    }
+    use EnumTrait;
 }

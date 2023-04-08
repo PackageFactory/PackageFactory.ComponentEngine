@@ -24,7 +24,17 @@ namespace PackageFactory\ComponentEngine\TypeSystem\Type\EnumType;
 
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class EnumType implements TypeInterface
+final class EnumMemberType implements TypeInterface
 {
-    use EnumTrait;
+    public function __construct(
+        public readonly EnumType|EnumStaticType $enumType,
+        public readonly string $memberName,
+        public readonly ?TypeInterface $memberValueType
+    ) {
+    }
+
+    public function is(TypeInterface $other): bool
+    {
+        return $this->memberValueType?->is($other) ?? false;
+    }
 }
