@@ -24,7 +24,7 @@ namespace PackageFactory\ComponentEngine\TypeSystem\Type\EnumType;
 
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class EnumType implements TypeInterface
+final class EnumInstanceType implements TypeInterface
 {
     use EnumTrait;
 }

@@ -83,7 +83,7 @@ trait EnumTrait
     public function is(TypeInterface $other): bool
     {
         return match ($other::class) {
-            EnumType::class, EnumStaticType::class =>
+            EnumInstanceType::class, EnumStaticType::class =>
                 $this->moduleId === $other->moduleId
                 && $this->enumName === $other->enumName,
             default => false

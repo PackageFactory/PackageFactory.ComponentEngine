@@ -28,7 +28,7 @@ use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionType
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumMemberType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumInstanceType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
@@ -87,7 +87,7 @@ final class MatchTypeResolver
         }
     }
 
-    private function resolveTypeOfEnumMatch(MatchNode $matchNode, EnumType $subjectEnumType): TypeInterface
+    private function resolveTypeOfEnumMatch(MatchNode $matchNode, EnumInstanceType $subjectEnumType): TypeInterface
     {
         $expressionTypeResolver = new ExpressionTypeResolver(
             scope: $this->scope
@@ -149,7 +149,7 @@ final class MatchTypeResolver
 
         return match (true) {
             BooleanType::get()->is($typeOfSubject) => $this->resolveTypeOfBooleanMatch($matchNode),
-            $typeOfSubject instanceof EnumType => $this->resolveTypeOfEnumMatch($matchNode, $typeOfSubject),
+            $typeOfSubject instanceof EnumInstanceType => $this->resolveTypeOfEnumMatch($matchNode, $typeOfSubject),
             default => throw new \Exception('@TODO: Not handled ' . $typeOfSubject::class)
         };
     }

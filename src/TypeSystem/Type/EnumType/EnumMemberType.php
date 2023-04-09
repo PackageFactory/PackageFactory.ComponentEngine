@@ -27,7 +27,7 @@ use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 final class EnumMemberType implements TypeInterface
 {
     public function __construct(
-        public readonly EnumType|EnumStaticType $enumType,
+        public readonly EnumInstanceType|EnumStaticType $enumType,
         public readonly string $memberName,
         public readonly ?TypeInterface $memberBackedValueType
     ) {
