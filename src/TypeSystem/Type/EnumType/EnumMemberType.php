@@ -28,8 +28,7 @@ final class EnumMemberType implements TypeInterface
 {
     public function __construct(
         public readonly EnumInstanceType|EnumStaticType $enumType,
-        public readonly string $memberName,
-        public readonly ?TypeInterface $memberBackedValueType
+        public readonly string $memberName
     ) {
     }
 

@@ -24,10 +24,6 @@ namespace PackageFactory\ComponentEngine\TypeSystem\Type\EnumType;
 
 use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
-use PackageFactory\ComponentEngine\TypeSystem\Resolver\NumberLiteral\NumberLiteralTypeResolver;
-use PackageFactory\ComponentEngine\TypeSystem\Resolver\StringLiteral\StringLiteralTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 trait EnumTrait
@@ -35,48 +31,37 @@ trait EnumTrait
     public function __construct(
         public readonly ?ModuleId $moduleId,
         public readonly string $enumName,
-        private readonly array $membersWithType,
+        private readonly array $memberNameHashMap,
     ) {
     }
 
     public static function fromModuleIdAndDeclaration(ModuleId $moduleId, EnumDeclarationNode $enumDeclarationNode): self
     {
-        $membersWithType = [];
-
+        $memberNameHashMap = [];
         foreach ($enumDeclarationNode->memberDeclarations->items as $memberDeclarationNode) {
-            $membersWithType[$memberDeclarationNode->name] = match ($memberDeclarationNode->value
-                ? $memberDeclarationNode->value::class
-                : null
-            ) {
-                NumberLiteralNode::class => (new NumberLiteralTypeResolver())
-                    ->resolveTypeOf($memberDeclarationNode->value),
-                StringLiteralNode::class => (new StringLiteralTypeResolver())
-                    ->resolveTypeOf($memberDeclarationNode->value),
-                null => null
-            };
+            $memberNameHashMap[$memberDeclarationNode->name] = true;
         }
 
         return new self(
             moduleId: $moduleId,
             enumName: $enumDeclarationNode->enumName,
-            membersWithType: $membersWithType
+            memberNameHashMap: $memberNameHashMap
         );
     }
     
     public function getMemberNames(): array
     {
-        return array_keys($this->membersWithType);
+        return array_keys($this->memberNameHashMap);
     }
 
     public function getMemberType(string $memberName): EnumMemberType
     {
-        if (!array_key_exists($memberName, $this->membersWithType)) {
+        if (!array_key_exists($memberName, $this->memberNameHashMap)) {
             throw new \Exception('@TODO cannot access member ' . $memberName . ' of enum ' . $this->enumName);
         }
         return new EnumMemberType(
             $this,
-            $memberName,
-            $this->membersWithType[$memberName]
+            $memberName
         );
     }
 

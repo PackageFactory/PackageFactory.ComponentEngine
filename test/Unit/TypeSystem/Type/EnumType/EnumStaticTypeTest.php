@@ -25,6 +25,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\EnumType;
 use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumInstanceType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumMemberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PHPUnit\Framework\TestCase;
 
@@ -77,6 +78,25 @@ final class EnumStaticTypeTest extends TestCase
         );
 
         $this->assertSame(["A", "B", "C"], $enumStaticType->getMemberNames());
+    }
+
+    /**
+     * @test
+     */
+    public function providesMemberType(): void
+    {
+        $enumStaticType = EnumStaticType::fromModuleIdAndDeclaration(
+            ModuleId::fromString("module-a"),
+            EnumDeclarationNode::fromString(
+                'enum SomeEnum { A B C }'
+            )
+        );
+
+        $enumMemberType = $enumStaticType->getMemberType('A');
+        $this->assertInstanceOf(EnumMemberType::class, $enumMemberType);
+
+        $this->assertSame($enumStaticType, $enumMemberType->enumType);
+        $this->assertSame('A', $enumMemberType->memberName);
     }
 
     /**

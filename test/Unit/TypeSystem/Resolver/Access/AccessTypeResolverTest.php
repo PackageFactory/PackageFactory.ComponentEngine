@@ -91,8 +91,6 @@ final class AccessTypeResolverTest extends TestCase
         $this->assertTrue($accessType->enumType->is($someEnum));
 
         $this->assertEquals("A", $accessType->memberName);
-
-        $this->assertTrue($accessType->memberBackedValueType?->is(StringType::get()));
     }
 
     /**

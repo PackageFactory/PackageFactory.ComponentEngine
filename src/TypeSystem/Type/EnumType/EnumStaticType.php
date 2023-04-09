@@ -30,6 +30,6 @@ final class EnumStaticType implements TypeInterface
     
     public function toEnumInstanceType(): EnumInstanceType
     {
-        return new EnumInstanceType($this->moduleId, $this->enumName, $this->membersWithType);
+        return new EnumInstanceType($this->moduleId, $this->enumName, $this->memberNameHashMap);
     }
 }
