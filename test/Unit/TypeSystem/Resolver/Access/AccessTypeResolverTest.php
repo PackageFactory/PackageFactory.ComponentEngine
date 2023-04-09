@@ -29,7 +29,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Access\AccessTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumMemberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumInstanceType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
@@ -68,7 +68,7 @@ final class AccessTypeResolverTest extends TestCase
     /**
      * @test
      */
-    public function access(): void
+    public function enumMemberAccessOnStaticEnum(): void
     {
         $someEnum = EnumStaticType::fromModuleIdAndDeclaration(
             ModuleId::fromString("module-a"),
@@ -86,9 +86,9 @@ final class AccessTypeResolverTest extends TestCase
             $scope
         );
 
-        $this->assertInstanceOf(EnumMemberType::class, $accessType);
+        $this->assertInstanceOf(EnumInstanceType::class, $accessType);
 
-        $this->assertTrue($accessType->enumType->is($someEnum));
+        $this->assertTrue($accessType->enumStaticType->is($someEnum));
 
         $this->assertEquals("A", $accessType->memberName);
     }

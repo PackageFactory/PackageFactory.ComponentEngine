@@ -22,14 +22,65 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Type\EnumType;
 
+use PackageFactory\ComponentEngine\Module\ModuleId;
+use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class EnumStaticType implements TypeInterface
 {
-    use EnumTrait;
-    
+    public function __construct(
+        public readonly string $enumName,
+        private readonly ModuleId $moduleId,
+        private readonly array $memberNameHashMap,
+    ) {
+    }
+
+    public static function fromModuleIdAndDeclaration(ModuleId $moduleId, EnumDeclarationNode $enumDeclarationNode): self
+    {
+        $memberNameHashMap = [];
+        foreach ($enumDeclarationNode->memberDeclarations->items as $memberDeclarationNode) {
+            $memberNameHashMap[$memberDeclarationNode->name] = true;
+        }
+
+        return new self(
+            enumName: $enumDeclarationNode->enumName,
+            moduleId: $moduleId,
+            memberNameHashMap: $memberNameHashMap
+        );
+    }
+
+    public function getMemberNames(): array
+    {
+        return array_keys($this->memberNameHashMap);
+    }
+
+    public function hasMember(string $memberName): bool
+    {
+        return array_key_exists($memberName, $this->memberNameHashMap);
+    }
+
+    public function getMemberType(string $memberName): EnumInstanceType
+    {
+        return EnumInstanceType::fromStaticEnumAndMemberName(
+            $this,
+            $memberName
+        );
+    }
+
+    public function is(TypeInterface $other): bool
+    {
+        if ($other === $this) {
+            return true;
+        }
+        if ($other instanceof EnumStaticType) {
+            return $this->moduleId === $other->moduleId
+                && $this->enumName === $other->enumName;
+        }
+        return false;
+    }
+
     public function toEnumInstanceType(): EnumInstanceType
     {
-        return new EnumInstanceType($this->moduleId, $this->enumName, $this->memberNameHashMap);
+        return EnumInstanceType::fromStaticEnumCreateUnspecificInstance($this);
     }
 }

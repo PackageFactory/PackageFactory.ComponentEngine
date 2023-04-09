@@ -26,5 +26,33 @@ use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class EnumInstanceType implements TypeInterface
 {
-    use EnumTrait;
+    private function __construct(
+        public readonly EnumStaticType $enumStaticType,
+        public readonly ?string $memberName
+    ) {
+        if ($memberName !== null && !$enumStaticType->hasMember($memberName)) {
+            throw new \Exception('@TODO cannot access member ' . $memberName . ' of enum ' . $this->enumStaticType->enumName);
+        }
+    }
+
+    public static function fromStaticEnumCreateUnspecificInstance(EnumStaticType $enumStaticType): self
+    {
+        return new self(
+            enumStaticType: $enumStaticType,
+            memberName: null
+        );
+    }
+    
+    public static function fromStaticEnumAndMemberName(EnumStaticType $enumStaticType, string $enumMemberName): self
+    {
+        return new self(
+            enumStaticType: $enumStaticType,
+            memberName: $enumMemberName
+        );
+    }
+
+    public function is(TypeInterface $other): bool
+    {
+        return false;
+    }
 }

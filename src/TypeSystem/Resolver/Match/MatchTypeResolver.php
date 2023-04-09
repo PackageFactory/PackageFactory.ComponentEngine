@@ -27,7 +27,6 @@ use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumMemberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumInstanceType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
@@ -106,12 +105,12 @@ final class MatchTypeResolver
             } else {
                 foreach ($matchArmNode->left->items as $expressionNode) {
                     $enumMemberType = $expressionTypeResolver->resolveTypeOf($expressionNode);
-                    if (!$enumMemberType instanceof EnumMemberType) {
+                    if (!$enumMemberType instanceof EnumInstanceType) {
                         throw new \Error('@TODO Error: Cannot match enum with type of ' . $enumMemberType::class);
                     }
 
-                    if (!$enumMemberType->enumType->is($subjectEnumType)) {
-                        throw new \Error('@TODO Error: incompatible enum match: got ' . $enumMemberType->enumType->enumName . ' expected ' . $subjectEnumType->enumName);
+                    if (!$enumMemberType->enumStaticType->is($subjectEnumType->enumStaticType)) {
+                        throw new \Error('@TODO Error: incompatible enum match: got ' . $enumMemberType->enumStaticType->enumName . ' expected ' . $subjectEnumType->enumStaticType->enumName);
                     }
 
                     if (isset($referencedEnumMembers[$enumMemberType->memberName])) {
@@ -128,7 +127,7 @@ final class MatchTypeResolver
         }
 
         if (!$defaultArmPresent) {
-            foreach ($subjectEnumType->getMemberNames() as $member) {
+            foreach ($subjectEnumType->enumStaticType->getMemberNames() as $member) {
                 if (!isset($referencedEnumMembers[$member])) {
                     throw new \Error('@TODO Error: member ' . $member . ' not checked');
                 }
