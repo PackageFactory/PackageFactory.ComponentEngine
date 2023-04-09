@@ -38,26 +38,35 @@ use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class ModuleFileLoader implements LoaderInterface
 {
+    /** @var array<string, array<string, TypeInterface>> */
+    private array $cache = [];
+    
     public function resolveTypeOfImport(ImportNode $importNode): TypeInterface
     {
         $pathToImportFrom = $importNode->source->path->resolveRelationTo(
             Path::fromString($importNode->path)
         );
-        $source = Source::fromFile($pathToImportFrom->value);
-        $tokenizer = Tokenizer::fromSource($source);
-        $module = ModuleNode::fromTokens($tokenizer->getIterator());
-        $export = $module->exports->get($importNode->name->value);
 
-        if ($export === null) {
-            throw new \Exception(
-                '@TODO: Module "' . $importNode->path . '" has no exported member "' . $importNode->name->value . '".'
-            );
+        if (!isset($this->cache[$pathToImportFrom->value])) {
+            $source = Source::fromFile($pathToImportFrom->value);
+            $tokenizer = Tokenizer::fromSource($source);
+            $module = ModuleNode::fromTokens($tokenizer->getIterator());
+
+            foreach ($module->exports->items as $export) {
+                $this->cache[$pathToImportFrom->value][$importNode->name->value] = match ($export->declaration::class) {
+                    ComponentDeclarationNode::class => ComponentType::fromComponentDeclarationNode($export->declaration),
+                    EnumDeclarationNode::class => EnumType::fromEnumDeclarationNode($export->declaration),
+                    StructDeclarationNode::class => StructType::fromStructDeclarationNode($export->declaration)
+                };
+            }
         }
 
-        return match ($export->declaration::class) {
-            ComponentDeclarationNode::class => ComponentType::fromComponentDeclarationNode($export->declaration),
-            EnumDeclarationNode::class => EnumType::fromEnumDeclarationNode($export->declaration),
-            StructDeclarationNode::class => StructType::fromStructDeclarationNode($export->declaration)
-        };
+        if ($type = $this->cache[$pathToImportFrom->value][$importNode->name->value] ?? null) {
+            return $type;
+        }
+
+        throw new \Exception(
+            '@TODO: Module "' . $importNode->path . '" has no exported member "' . $importNode->name->value . '".'
+        );
     }
 }
