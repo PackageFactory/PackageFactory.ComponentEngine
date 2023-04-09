@@ -51,7 +51,7 @@ final class AccessTypeResolverTest extends TestCase
 
         yield "access enum member on non static enum instance" => [
             'someEnumValue.A',
-            "@TODO Error: Cannot access on type PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType"
+            "@TODO Error: Cannot access on type PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumInstanceType"
         ];
     }
     

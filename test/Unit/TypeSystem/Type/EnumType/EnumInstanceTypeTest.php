@@ -25,6 +25,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\EnumType;
 use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumInstanceType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PHPUnit\Framework\TestCase;
 
 final class EnumInstanceTypeTest extends TestCase
@@ -61,5 +62,44 @@ final class EnumInstanceTypeTest extends TestCase
         );
 
         $this->assertEquals('SomeEnum', $enumType->enumName);
+    }
+
+    /**
+     * @test
+     */
+    public function providesMemberNames(): void
+    {
+        $enumStaticType = EnumStaticType::fromModuleIdAndDeclaration(
+            ModuleId::fromString("module-a"),
+            EnumDeclarationNode::fromString(
+                'enum SomeEnum { A B C }'
+            )
+        );
+
+        $this->assertSame(["A", "B", "C"], $enumStaticType->getMemberNames());
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function canBeComparedToOther(): void
+    {
+        $enumDeclarationNode = EnumDeclarationNode::fromString(
+            'enum SomeEnum { A }'
+        );
+        $enumInstanceType = EnumInstanceType::fromModuleIdAndDeclaration(
+            ModuleId::fromString("module-a"),
+            $enumDeclarationNode
+        );
+
+        $this->assertTrue($enumInstanceType->is($enumInstanceType));
+
+        $enumStaticType = EnumStaticType::fromModuleIdAndDeclaration(
+            ModuleId::fromString("module-a"),
+            $enumDeclarationNode
+        );
+
+        $this->assertTrue($enumInstanceType->is($enumStaticType));
     }
 }
