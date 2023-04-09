@@ -27,7 +27,6 @@ use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
@@ -55,16 +54,15 @@ final class TypeReferenceTranspiler
     
     private function transpileUnionType(UnionType $unionType, TypeReferenceNode $typeReferenceNode): string
     {
-        if (count($unionType->members) === 2 && $otherMemberTypeIfOneMemberIsNullType = match (NullType::class) {
-            $unionType->members[0]::class => $unionType->members[1],
-            $unionType->members[1]::class => $unionType->members[0],
-            default => null
-        }) {
-            return $this->transpileNullableType($otherMemberTypeIfOneMemberIsNullType, $typeReferenceNode);
+        if ($unionType->isNullable()) {
+            $nonNullable = $unionType->withoutNullable();
+            if ($nonNullable instanceof UnionType) {
+                throw new \Exception('@TODO Transpilation of nullable union types with more non null members is not implemented');
+            }
+            return $this->transpileNullableType($nonNullable, $typeReferenceNode);
         }
 
         throw new \Exception('@TODO Transpilation of complex union types is not implemented');
-        
     }
     
     private function transpileNonUnionType(TypeInterface $type, TypeReferenceNode $typeReferenceNode): string

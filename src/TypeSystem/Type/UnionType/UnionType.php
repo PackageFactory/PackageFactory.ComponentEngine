@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Type\UnionType;
 
+use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class UnionType implements TypeInterface
@@ -29,7 +30,7 @@ final class UnionType implements TypeInterface
     /**
      * @var TypeInterface[]
      */
-    public array $members;
+    private array $members;
 
     private function __construct(TypeInterface ...$members)
     {
@@ -44,6 +45,31 @@ final class UnionType implements TypeInterface
             $uniqueMembers[] = $member;
         }
         $this->members = $uniqueMembers;
+    }
+
+    public function isNullable(): bool
+    {
+        foreach ($this->members as $member) {
+            if ($member->is(NullType::get())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function withoutNullable(): TypeInterface
+    {
+        $nonNullMembers = [];
+        foreach ($this->members as $member) {
+            if ($member->is(NullType::get())) {
+                continue;
+            }
+            $nonNullMembers[] = $member;
+        }
+        if (count($nonNullMembers) === 1) {
+            return $nonNullMembers[0];
+        }
+        return self::of(...$nonNullMembers);
     }
 
     public static function of(TypeInterface ...$members): TypeInterface
