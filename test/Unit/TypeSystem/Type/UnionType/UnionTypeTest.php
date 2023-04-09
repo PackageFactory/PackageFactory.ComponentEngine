@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\UnionType;
 
+use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
@@ -117,5 +118,53 @@ final class UnionTypeTest extends TestCase
 
         $this->assertFalse($unionType->is(NumberType::get()));
         $this->assertFalse($unionType->is(StringType::get()));
+    }
+
+    /**
+     * @test
+     */
+    public function isNullableOnNullableString(): void
+    {
+        $unionType = UnionType::of(StringType::get(), NullType::get());
+
+        $this->assertInstanceOf(UnionType::class, $unionType);
+
+        $this->assertTrue($unionType->isNullable());
+
+        $nonNullables = $unionType->withoutNullable();
+
+        $this->assertTrue($nonNullables->is(StringType::get()));
+    }
+
+    /**
+     * @test
+     */
+    public function isNullableWithMultipleItems(): void
+    {
+        $unionType = UnionType::of(StringType::get(), NumberType::get(), NullType::get());
+
+        $this->assertInstanceOf(UnionType::class, $unionType);
+
+        $this->assertTrue($unionType->isNullable());
+
+        $nonNullables = $unionType->withoutNullable();
+
+        $this->assertTrue($nonNullables->is(UnionType::of(StringType::get(), NumberType::get())));
+    }
+
+    /**
+     * @test
+     */
+    public function isNullableOnNonNullableUnion(): void
+    {
+        $unionType = UnionType::of(StringType::get(), NumberType::get());
+
+        $this->assertInstanceOf(UnionType::class, $unionType);
+
+        $this->assertFalse($unionType->isNullable());
+
+        $nonNullables = $unionType->withoutNullable();
+
+        $this->assertTrue($nonNullables->is($unionType));
     }
 }
