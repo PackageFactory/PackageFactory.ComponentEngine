@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\Match;
 
+use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
@@ -29,7 +30,6 @@ use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScop
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Match\MatchTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
@@ -92,7 +92,8 @@ final class MatchTypeResolverTest extends TestCase
      */
     public function resolvesMatchToResultingType(string $matchAsString, TypeInterface $expectedType): void
     {
-        $someStaticEnumType = EnumStaticType::fromEnumDeclarationNode(
+        $someStaticEnumType = EnumStaticType::fromModuleIdAndDeclaration(
+            ModuleId::fromString("module-a"),
             EnumDeclarationNode::fromString(
                 'enum SomeEnum { A B C }'
             )
@@ -196,22 +197,20 @@ final class MatchTypeResolverTest extends TestCase
      * @dataProvider malformedEnumExamples
      * @test
      */
-    public function malformedMatchCannotBeResolved(string $matchAsString, string $expectedErrorMessage)
+    public function malformedMatchCannotBeResolved(string $matchAsString, string $expectedErrorMessage): void
     {
         $this->expectExceptionMessage($expectedErrorMessage);
-        $someEnumDeclaration = EnumDeclarationNode::fromString(
-            'enum SomeEnum { A B C }'
-        );
-        $someEnumType = EnumType::fromEnumDeclarationNode(
-            $someEnumDeclaration
-        );
-        $someStaticEnumType = EnumStaticType::fromEnumDeclarationNode(
-            $someEnumDeclaration
+        $someStaticEnumType = EnumStaticType::fromModuleIdAndDeclaration(
+            ModuleId::fromString("module-a"),
+            EnumDeclarationNode::fromString(
+                'enum SomeEnum { A B C }'
+            )
         );
         $scope = new DummyScope([
-            'someEnumValue' => $someEnumType,
             'SomeEnum' => $someStaticEnumType,
-            'OtherEnum' => EnumStaticType::fromEnumDeclarationNode(
+            'someEnumValue' => $someStaticEnumType->toEnumInstanceType(),
+            'OtherEnum' => EnumStaticType::fromModuleIdAndDeclaration(
+                ModuleId::fromString("module-a"),
                 EnumDeclarationNode::fromString('enum OtherEnum { A }')
             )
 

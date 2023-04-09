@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Module\Loader\ModuleFile;
 
 use PackageFactory\ComponentEngine\Module\LoaderInterface;
+use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ImportNode;
@@ -54,9 +55,14 @@ final class ModuleFileLoader implements LoaderInterface
             );
         }
 
+        $moduleId = ModuleId::fromSource($source);
+
         return match ($export->declaration::class) {
             ComponentDeclarationNode::class => ComponentType::fromComponentDeclarationNode($export->declaration),
-            EnumDeclarationNode::class => EnumStaticType::fromEnumDeclarationNode($export->declaration),
+            EnumDeclarationNode::class => EnumStaticType::fromModuleIdAndDeclaration(
+                $moduleId,
+                $export->declaration,
+            ),
             StructDeclarationNode::class => StructType::fromStructDeclarationNode($export->declaration)
         };
     }

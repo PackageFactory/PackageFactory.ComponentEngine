@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\EnumStaticType;
 
+use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PHPUnit\Framework\TestCase;
@@ -37,7 +38,10 @@ final class EnumStaticTypeTest extends TestCase
         $enumDeclarationNode = EnumDeclarationNode::fromString(
             'enum Foo { BAR BAZ }'
         );
-        $enumStaticType = EnumStaticType::fromEnumDeclarationNode($enumDeclarationNode);
+        $enumStaticType = EnumStaticType::fromModuleIdAndDeclaration(
+            ModuleId::fromString("module-a"),
+            $enumDeclarationNode
+        );
 
         $this->assertInstanceOf(EnumStaticType::class, $enumStaticType);
     }
@@ -51,7 +55,8 @@ final class EnumStaticTypeTest extends TestCase
         $enumDeclarationNode = EnumDeclarationNode::fromString(
             'enum SomeEnum {}'
         );
-        $enumStaticType = EnumStaticType::fromEnumDeclarationNode(
+        $enumStaticType = EnumStaticType::fromModuleIdAndDeclaration(
+            ModuleId::fromString("module-a"),
             $enumDeclarationNode
         );
 

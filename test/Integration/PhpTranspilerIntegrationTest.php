@@ -72,7 +72,6 @@ final class PhpTranspilerIntegrationTest extends TestCase
 
         $transpiler = new ModuleTranspiler(
             loader: new ModuleFileLoader(),
-            // Add some assumed types to the global scope
             globalScope: GlobalScope::get(),
             strategy: new ModuleTestStrategy()
         );

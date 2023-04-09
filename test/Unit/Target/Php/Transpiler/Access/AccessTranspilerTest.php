@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Access;
 
+use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Parser\Ast\AccessNode;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
@@ -62,7 +63,8 @@ final class AccessTranspilerTest extends TestCase
                         'struct A { b: B }'
                     )
                 ),
-                'SomeEnum' => EnumStaticType::fromEnumDeclarationNode(
+                'SomeEnum' => EnumStaticType::fromModuleIdAndDeclaration(
+                    ModuleId::fromString("module-a"),
                     EnumDeclarationNode::fromString(
                         'enum SomeEnum { A B C }'
                     )

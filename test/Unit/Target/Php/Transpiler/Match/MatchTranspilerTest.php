@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Match;
 
+use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
@@ -72,7 +73,8 @@ final class MatchTranspilerTest extends TestCase
     {
         $matchTranspiler = new MatchTranspiler(
             scope: new DummyScope([
-                'SomeEnum' => EnumStaticType::fromEnumDeclarationNode(
+                'SomeEnum' => EnumStaticType::fromModuleIdAndDeclaration(
+                    ModuleId::fromString("module-a"),
                     EnumDeclarationNode::fromString(
                         'enum SomeEnum { A B C }'
                     )

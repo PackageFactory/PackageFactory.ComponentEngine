@@ -22,22 +22,24 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Type\EnumType;
 
+use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\NumberLiteral\NumberLiteralTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\StringLiteral\StringLiteralTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 trait EnumTrait
 {
     public function __construct(
+        public readonly ?ModuleId $moduleId,
         public readonly string $enumName,
         private readonly array $membersWithType,
     ) {
     }
 
-    public static function fromEnumDeclarationNode(EnumDeclarationNode $enumDeclarationNode): self
+    public static function fromModuleIdAndDeclaration(ModuleId $moduleId, EnumDeclarationNode $enumDeclarationNode): self
     {
         $membersWithType = [];
 
@@ -46,13 +48,16 @@ trait EnumTrait
                 ? $memberDeclarationNode->value::class
                 : null
             ) {
-                StringLiteralNode::class => StringType::get(),
-                NumberLiteralNode::class => NumberType::get(),
+                NumberLiteralNode::class => (new NumberLiteralTypeResolver())
+                    ->resolveTypeOf($memberDeclarationNode->value),
+                StringLiteralNode::class => (new StringLiteralTypeResolver())
+                    ->resolveTypeOf($memberDeclarationNode->value),
                 null => null
             };
         }
 
         return new self(
+            moduleId: $moduleId,
             enumName: $enumDeclarationNode->enumName,
             membersWithType: $membersWithType
         );
@@ -77,9 +82,10 @@ trait EnumTrait
 
     public function is(TypeInterface $other): bool
     {
-        // todo more satisfied check with namespace taken into account
         return match ($other::class) {
-            EnumType::class, EnumStaticType::class => $this->enumName === $other->enumName,
+            EnumType::class, EnumStaticType::class =>
+                $this->moduleId === $other->moduleId
+                && $this->enumName === $other->enumName,
             default => false
         };
     }

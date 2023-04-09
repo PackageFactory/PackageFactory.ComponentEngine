@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\EnumType;
 
+use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
 use PHPUnit\Framework\TestCase;
@@ -37,7 +38,10 @@ final class EnumTypeTest extends TestCase
         $enumDeclarationNode = EnumDeclarationNode::fromString(
             'enum Foo { BAR BAZ }'
         );
-        $enumType = EnumType::fromEnumDeclarationNode($enumDeclarationNode);
+        $enumType = EnumType::fromModuleIdAndDeclaration(
+            ModuleId::fromString("module-a"),
+            $enumDeclarationNode
+        );
 
         $this->assertInstanceOf(EnumType::class, $enumType);
     }
@@ -51,7 +55,8 @@ final class EnumTypeTest extends TestCase
         $enumDeclarationNode = EnumDeclarationNode::fromString(
             'enum SomeEnum {}'
         );
-        $enumType = EnumType::fromEnumDeclarationNode(
+        $enumType = EnumType::fromModuleIdAndDeclaration(
+            ModuleId::fromString("module-a"),
             $enumDeclarationNode
         );
 

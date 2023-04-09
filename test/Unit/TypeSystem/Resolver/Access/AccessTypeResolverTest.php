@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\Access;
 
+use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Parser\Ast\AccessNode;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
@@ -69,7 +70,8 @@ final class AccessTypeResolverTest extends TestCase
      */
     public function access(): void
     {
-        $someEnum = EnumStaticType::fromEnumDeclarationNode(
+        $someEnum = EnumStaticType::fromModuleIdAndDeclaration(
+            ModuleId::fromString("module-a"),
             EnumDeclarationNode::fromString(
                 'enum SomeEnum { A("Hi") }'
             )
@@ -101,7 +103,8 @@ final class AccessTypeResolverTest extends TestCase
     {
         $this->expectExceptionMessage($expectedErrorMessage);
 
-        $someEnum = EnumStaticType::fromEnumDeclarationNode(
+        $someEnum = EnumStaticType::fromModuleIdAndDeclaration(
+            ModuleId::fromString("module-a"),
             EnumDeclarationNode::fromString(
                 'enum SomeEnum { A }'
             )
