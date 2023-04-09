@@ -24,6 +24,8 @@ namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures;
 
 use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
+use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class DummyScope implements ScopeInterface
@@ -46,6 +48,9 @@ final class DummyScope implements ScopeInterface
     public function resolveTypeReference(TypeReferenceNode $typeReferenceNode): TypeInterface
     {
         if ($type = $this->typeNameToTypeMap[$typeReferenceNode->name] ?? null) {
+            if ($typeReferenceNode->isOptional) {
+                $type = UnionType::of($type, NullType::get());
+            }
             return $type;
         }
 

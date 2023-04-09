@@ -26,6 +26,8 @@ use PackageFactory\ComponentEngine\Module\LoaderInterface;
 use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
+use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class ModuleScope implements ScopeInterface
@@ -45,7 +47,11 @@ final class ModuleScope implements ScopeInterface
     public function resolveTypeReference(TypeReferenceNode $typeReferenceNode): TypeInterface
     {
         if ($importNode = $this->moduleNode->imports->get($typeReferenceNode->name)) {
-            return $this->loader->resolveTypeOfImport($importNode);
+            $type = $this->loader->resolveTypeOfImport($importNode);
+            if ($typeReferenceNode->isOptional) {
+                $type = UnionType::of($type, NullType::get());
+            }
+            return $type;
         }
 
         if ($this->parentScope) {

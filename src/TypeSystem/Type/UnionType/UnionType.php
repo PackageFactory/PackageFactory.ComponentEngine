@@ -29,7 +29,7 @@ final class UnionType implements TypeInterface
     /**
      * @var TypeInterface[]
      */
-    private array $members;
+    public array $members;
 
     private function __construct(TypeInterface ...$members)
     {
