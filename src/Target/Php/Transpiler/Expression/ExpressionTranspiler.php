@@ -50,7 +50,7 @@ use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 final class ExpressionTranspiler
 {
     public function __construct(
-        private readonly ScopeInterface $scope, 
+        private readonly ScopeInterface $scope,
         private readonly bool $shouldAddQuotesIfNecessary = false
     ) {
     }

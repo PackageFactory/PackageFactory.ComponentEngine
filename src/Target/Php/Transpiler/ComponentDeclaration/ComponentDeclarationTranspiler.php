@@ -58,7 +58,7 @@ final class ComponentDeclarationTranspiler
         if ($baseClassName) {
             $lines[] = 'use ' . $baseClassName->getFullyQualifiedClassName() . ';';
         }
-        
+
         foreach ($this->module->imports->items as $importNode) {
             // @TODO: Generate Namespaces Dynamically
             $lines[] = 'use Vendor\\Project\\Component\\' . $importNode->name->value . ';';

@@ -44,7 +44,7 @@ final class AccessTranspiler
         );
         $typeOfRoot = $expressionTypeResolver->resolveTypeOf($accessNode->root);
         $result = $expressionTranspiler->transpile($accessNode->root);
-        
+
         $isFirstElement = true;
         foreach ($accessNode->chain->items as $accessChainNode) {
             if ($typeOfRoot instanceof EnumStaticType && $isFirstElement) {
