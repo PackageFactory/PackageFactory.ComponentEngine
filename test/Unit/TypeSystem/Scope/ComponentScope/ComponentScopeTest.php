@@ -22,11 +22,14 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\ComponentScope;
 
+use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
+use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Scope\ComponentScope\ComponentScope;
 use PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope\GlobalScope;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
@@ -53,6 +56,43 @@ final class ComponentScopeTest extends TestCase
         );
 
         $expectedType = StringType::get();
+        $actualType = $componentScope->lookupTypeFor('foo');
+
+        $this->assertNotNull($actualType);
+
+        $this->assertTrue(
+            $expectedType->is($actualType),
+            sprintf('Expected %s, got %s', $expectedType::class, $actualType::class)
+        );
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function providesTheEnumInstanceTypeWhenAnStaticEnumTypeIsReferencedInTheComponentApi(): void
+    {
+        $componentDeclarationAsString = <<<EOT
+        component Foo {
+            foo: SomeEnum
+
+            return <div>{foo}</div>
+        }
+        EOT;
+        $componentDeclarationNode = ComponentDeclarationNode::fromString($componentDeclarationAsString);
+        $componentScope = new ComponentScope(
+            componentDeclarationNode: $componentDeclarationNode,
+            parentScope: new DummyScope([], [
+                'SomeEnum' => $enumStaticType = EnumStaticType::fromModuleIdAndDeclaration(
+                    ModuleId::fromString("module-a"),
+                    EnumDeclarationNode::fromString(
+                        'enum SomeEnum { A B C }'
+                    )
+                )
+            ])
+        );
+
+        $expectedType = $enumStaticType->toEnumInstanceType();
         $actualType = $componentScope->lookupTypeFor('foo');
 
         $this->assertNotNull($actualType);

@@ -42,7 +42,7 @@ final class EnumInstanceType implements TypeInterface
             memberName: null
         );
     }
-    
+
     public static function fromStaticEnumAndMemberName(EnumStaticType $enumStaticType, string $enumMemberName): self
     {
         return new self(
@@ -53,6 +53,13 @@ final class EnumInstanceType implements TypeInterface
 
     public function is(TypeInterface $other): bool
     {
+        if ($other === $this) {
+            return true;
+        }
+        if ($other instanceof EnumInstanceType) {
+            return $other->enumStaticType->is($other->enumStaticType)
+                && $other->memberName === $this->memberName;
+        }
         return false;
     }
 }
