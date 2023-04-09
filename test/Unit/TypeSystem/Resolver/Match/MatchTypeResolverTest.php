@@ -191,6 +191,15 @@ final class MatchTypeResolverTest extends TestCase
             EOF,
             "@TODO Error: Cannot match enum with type of PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType"
         ];
+
+        yield "Matching enum value should be referenced statically" => [
+            <<<'EOF'
+            match (someEnumValue) {
+                someEnumValue -> "a"
+            }
+            EOF,
+            '@TODO Error: Matching enum value should be referenced statically'
+        ];
     }
 
     /**

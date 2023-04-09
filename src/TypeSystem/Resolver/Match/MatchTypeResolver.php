@@ -109,6 +109,10 @@ final class MatchTypeResolver
                         throw new \Error('@TODO Error: Cannot match enum with type of ' . $enumMemberType::class);
                     }
 
+                    if ($enumMemberType->isUnspecified()) {
+                        throw new \Error('@TODO Error: Matching enum value should be referenced statically');
+                    }
+
                     if (!$enumMemberType->enumStaticType->is($subjectEnumType->enumStaticType)) {
                         throw new \Error('@TODO Error: incompatible enum match: got ' . $enumMemberType->enumStaticType->enumName . ' expected ' . $subjectEnumType->enumStaticType->enumName);
                     }
