@@ -34,6 +34,14 @@ final class UnionType implements TypeInterface
 
     private function __construct(TypeInterface ...$members)
     {
+        if (count($members) < 1) {
+            throw new \Exception('UnionType can only hold more than one different members');
+        }
+        $this->members = $members;
+    }
+
+    public static function of(TypeInterface ...$members): TypeInterface
+    {
         $uniqueMembers = [];
         foreach ($members as $member) {
             foreach ($uniqueMembers as $uniqueMember) {
@@ -44,7 +52,12 @@ final class UnionType implements TypeInterface
 
             $uniqueMembers[] = $member;
         }
-        $this->members = $uniqueMembers;
+
+        if (count($uniqueMembers) === 1) {
+            return $uniqueMembers[0];
+        }
+
+        return new self(...$members);
     }
 
     public function isNullable(): bool
@@ -72,17 +85,6 @@ final class UnionType implements TypeInterface
         return self::of(...$nonNullMembers);
     }
 
-    public static function of(TypeInterface ...$members): TypeInterface
-    {
-        $union = new self(...$members);
-
-        if (count($union->members) === 1) {
-            return $union->members[0];
-        }
-
-        return new self(...$members);
-    }
-
     public function is(TypeInterface $other): bool
     {
         if ($other instanceof UnionType) {
@@ -94,12 +96,12 @@ final class UnionType implements TypeInterface
                         break;
                     }
                 }
-    
+
                 if (!$match) {
                     return false;
                 }
             }
-    
+
             return true;
         } else {
             return false;
