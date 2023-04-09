@@ -25,12 +25,15 @@ namespace PackageFactory\ComponentEngine\TypeSystem\Type\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class UnionType implements TypeInterface
+/**
+ * @implements \IteratorAggregate<int, TypeInterface>
+ */
+final class UnionType implements TypeInterface, \IteratorAggregate, \Countable
 {
     /**
      * @var TypeInterface[]
      */
-    private array $members;
+    private readonly array $members;
 
     private function __construct(TypeInterface ...$members)
     {
@@ -57,7 +60,7 @@ final class UnionType implements TypeInterface
             return $uniqueMembers[0];
         }
 
-        return new self(...$members);
+        return new self(...$uniqueMembers);
     }
 
     public function isNullable(): bool
@@ -106,5 +109,16 @@ final class UnionType implements TypeInterface
         } else {
             return false;
         }
+    }
+
+    /** @return \ArrayIterator<int, TypeInterface> */
+    public function getIterator(): \ArrayIterator
+    {
+        return new \ArrayIterator($this->members);
+    }
+
+    public function count(): int
+    {
+        return count($this->members);
     }
 }

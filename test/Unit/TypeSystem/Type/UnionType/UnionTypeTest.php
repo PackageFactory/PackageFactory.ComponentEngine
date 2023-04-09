@@ -90,6 +90,27 @@ final class UnionTypeTest extends TestCase
     /**
      * @test
      */
+    public function unionOnlyHoldsDeduplicatedMembers(): void
+    {
+        $unionType = UnionType::of(NumberType::get(), StringType::get());
+        $otherUnionType = UnionType::of(NumberType::get(), StringType::get(), NumberType::get(), StringType::get());
+
+        $this->assertTrue($unionType->is($otherUnionType));
+
+        $this->assertInstanceOf(UnionType::class, $unionType);
+        $this->assertInstanceOf(UnionType::class, $otherUnionType);
+
+        $this->assertCount(count($unionType), $otherUnionType);
+
+        $this->assertEqualsCanonicalizing(
+            $unionType->getIterator()->getArrayCopy(),
+            $otherUnionType->getIterator()->getArrayCopy()
+        );
+    }
+
+    /**
+     * @test
+     */
     public function isReturnsFalseIfGivenTypeIsNotCongruent(): void
     {
         $unionType = UnionType::of(StringType::get(), NumberType::get());
