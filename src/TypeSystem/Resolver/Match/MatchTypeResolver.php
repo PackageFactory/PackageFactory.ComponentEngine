@@ -113,11 +113,11 @@ final class MatchTypeResolver
                         throw new \Error('@TODO Error: incompatible enum match: got ' . $enumMemberType->enumStaticType->enumName . ' expected ' . $subjectEnumType->enumStaticType->enumName);
                     }
 
-                    if (isset($referencedEnumMembers[$enumMemberType->memberName])) {
-                        throw new \Error('@TODO Error: Enum path ' . $enumMemberType->memberName . ' was already defined once in this match and cannot be used twice');
+                    if (isset($referencedEnumMembers[$enumMemberType->getMemberName()])) {
+                        throw new \Error('@TODO Error: Enum path ' . $enumMemberType->getMemberName() . ' was already defined once in this match and cannot be used twice');
                     }
 
-                    $referencedEnumMembers[$enumMemberType->memberName] = true;
+                    $referencedEnumMembers[$enumMemberType->getMemberName()] = true;
                 }
             }
 

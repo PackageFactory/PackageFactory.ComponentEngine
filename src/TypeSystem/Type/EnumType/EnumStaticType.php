@@ -61,7 +61,7 @@ final class EnumStaticType implements TypeInterface
 
     public function getMemberType(string $memberName): EnumInstanceType
     {
-        return EnumInstanceType::fromStaticEnumAndMemberName(
+        return EnumInstanceType::fromStaticEnumTypeAndMemberName(
             $this,
             $memberName
         );
@@ -81,6 +81,6 @@ final class EnumStaticType implements TypeInterface
 
     public function toEnumInstanceType(): EnumInstanceType
     {
-        return EnumInstanceType::fromStaticEnumCreateUnspecificInstance($this);
+        return EnumInstanceType::createUnspecifiedEnumInstanceType($this);
     }
 }

@@ -28,14 +28,14 @@ final class EnumInstanceType implements TypeInterface
 {
     private function __construct(
         public readonly EnumStaticType $enumStaticType,
-        public readonly ?string $memberName
+        private readonly ?string $memberName
     ) {
         if ($memberName !== null && !$enumStaticType->hasMember($memberName)) {
-            throw new \Exception('@TODO cannot access member ' . $memberName . ' of enum ' . $this->enumStaticType->enumName);
+            throw new \Exception('@TODO cannot access member ' . $memberName . ' of enum ' . $enumStaticType->enumName);
         }
     }
 
-    public static function fromStaticEnumCreateUnspecificInstance(EnumStaticType $enumStaticType): self
+    public static function createUnspecifiedEnumInstanceType(EnumStaticType $enumStaticType): self
     {
         return new self(
             enumStaticType: $enumStaticType,
@@ -43,12 +43,22 @@ final class EnumInstanceType implements TypeInterface
         );
     }
 
-    public static function fromStaticEnumAndMemberName(EnumStaticType $enumStaticType, string $enumMemberName): self
+    public static function fromStaticEnumTypeAndMemberName(EnumStaticType $enumStaticType, string $enumMemberName): self
     {
         return new self(
             enumStaticType: $enumStaticType,
             memberName: $enumMemberName
         );
+    }
+
+    public function isUnspecified(): bool
+    {
+        return $this->memberName === null;
+    }
+
+    public function getMemberName(): string
+    {
+        return $this->memberName ?? throw new \Exception('@TODO Error cannot access memberName of unspecified instance');
     }
 
     public function is(TypeInterface $other): bool

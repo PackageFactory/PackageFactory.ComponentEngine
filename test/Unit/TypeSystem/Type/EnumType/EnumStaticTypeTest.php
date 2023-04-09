@@ -95,7 +95,7 @@ final class EnumStaticTypeTest extends TestCase
         $this->assertInstanceOf(EnumInstanceType::class, $enumMemberType);
 
         $this->assertSame($enumStaticType, $enumMemberType->enumStaticType);
-        $this->assertSame('A', $enumMemberType->memberName);
+        $this->assertSame('A', $enumMemberType->getMemberName());
     }
 
     /**
@@ -135,7 +135,7 @@ final class EnumStaticTypeTest extends TestCase
 
         $this->assertInstanceOf(EnumStaticType::class, $enumInstanceType->enumStaticType);
         
-        $this->assertNull($enumInstanceType->memberName);
+        $this->assertTrue($enumInstanceType->isUnspecified());
     }
 
     /**
@@ -151,6 +151,8 @@ final class EnumStaticTypeTest extends TestCase
             ModuleId::fromString("module-a"),
             $enumDeclarationNode
         );
+
+        $this->assertTrue($enumStaticType->is($enumStaticType));
 
         $enumStaticType2 = EnumStaticType::fromModuleIdAndDeclaration(
             ModuleId::fromString("module-a"),
