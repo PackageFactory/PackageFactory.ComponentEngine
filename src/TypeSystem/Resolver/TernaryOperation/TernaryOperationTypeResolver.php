@@ -54,17 +54,15 @@ final class TernaryOperationTypeResolver
         }
 
         $trueExpressionTypeResolver = new ExpressionTypeResolver(
-            scope: new TernaryBranchScope(
+            scope: TernaryBranchScope::forTrueBranch(
                 $ternaryOperationNode->condition,
-                true,
                 $this->scope
             )
         );
 
         $falseExpressionTypeResolver = new ExpressionTypeResolver(
-            scope: new TernaryBranchScope(
+            scope: TernaryBranchScope::forFalseBranch(
                 $ternaryOperationNode->condition,
-                false,
                 $this->scope
             )
         );

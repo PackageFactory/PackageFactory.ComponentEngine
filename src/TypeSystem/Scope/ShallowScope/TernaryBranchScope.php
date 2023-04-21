@@ -35,11 +35,21 @@ use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class TernaryBranchScope implements ScopeInterface
 {
-    public function __construct(
+    private function __construct(
         private readonly ExpressionNode $conditionNode,
-        private readonly bool $isBranchLeft,
+        private readonly bool $isBranchTrue,
         private readonly ScopeInterface $parentScope
     ) {
+    }
+
+    public static function forTrueBranch(ExpressionNode $conditionNode, ScopeInterface $parentScope): self
+    {
+        return new self(conditionNode: $conditionNode, isBranchTrue: true, parentScope: $parentScope);
+    }
+
+    public static function forFalseBranch(ExpressionNode $conditionNode, ScopeInterface $parentScope): self
+    {
+        return new self(conditionNode: $conditionNode, isBranchTrue: false, parentScope: $parentScope);
     }
 
     public function lookupTypeFor(string $name): ?TypeInterface
@@ -51,7 +61,7 @@ final class TernaryBranchScope implements ScopeInterface
         }
 
         if ($this->conditionNode->root instanceof IdentifierNode && $this->conditionNode->root->value === $name) {
-            return $this->isBranchLeft ? $type->withoutNull() : NullType::get();
+            return $this->isBranchTrue ? $type->withoutNull() : NullType::get();
         }
 
         if (($binaryOperationNode = $this->conditionNode->root) instanceof BinaryOperationNode) {
@@ -64,11 +74,11 @@ final class TernaryBranchScope implements ScopeInterface
             }
 
             if ($binaryOperationNode->operator === BinaryOperator::EQUAL) {
-                return $this->isBranchLeft ? NullType::get() : $type->withoutNull();
+                return $this->isBranchTrue ? NullType::get() : $type->withoutNull();
             }
 
             if ($binaryOperationNode->operator === BinaryOperator::NOT_EQUAL) {
-                return $this->isBranchLeft ? $type->withoutNull() : NullType::get();
+                return $this->isBranchTrue ? $type->withoutNull() : NullType::get();
             }
         }
 
