@@ -22,8 +22,11 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Scope\ShallowScope;
 
+use PackageFactory\ComponentEngine\Definition\BinaryOperator;
+use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
+use PackageFactory\ComponentEngine\Parser\Ast\NullLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
@@ -34,7 +37,6 @@ final class TernaryBranchScope implements ScopeInterface
 {
     public function __construct(
         private readonly ExpressionNode $conditionNode,
-        private readonly TypeInterface $conditionType,
         private readonly bool $isBranchLeft,
         private readonly ScopeInterface $parentScope
     ) {
@@ -42,13 +44,35 @@ final class TernaryBranchScope implements ScopeInterface
 
     public function lookupTypeFor(string $name): ?TypeInterface
     {
+        $type = $this->parentScope->lookupTypeFor($name);
+
+        if (!$type instanceof UnionType || !$type->containsNull()) {
+            return $type;
+        }
+
         if ($this->conditionNode->root instanceof IdentifierNode && $this->conditionNode->root->value === $name) {
-            if ($this->conditionType instanceof UnionType && $this->conditionType->containsNull()) {
-                return $this->isBranchLeft ? $this->conditionType->withoutNull() : NullType::get();
+            return $this->isBranchLeft ? $type->withoutNull() : NullType::get();
+        }
+
+        if (($binaryOperationNode = $this->conditionNode->root) instanceof BinaryOperationNode) {
+            foreach ($binaryOperationNode->operands as $operand) {
+                if (!$operand->root instanceof NullLiteralNode
+                    && !($operand->root instanceof IdentifierNode && $operand->root->value === $name)
+                ) {
+                    return $type;
+                }
+            }
+
+            if ($binaryOperationNode->operator === BinaryOperator::EQUAL) {
+                return $this->isBranchLeft ? NullType::get() : $type->withoutNull();
+            }
+
+            if ($binaryOperationNode->operator === BinaryOperator::NOT_EQUAL) {
+                return $this->isBranchLeft ? $type->withoutNull() : NullType::get();
             }
         }
 
-        return $this->parentScope->lookupTypeFor($name);
+        return $type;
     }
 
     public function resolveTypeReference(TypeReferenceNode $typeReferenceNode): TypeInterface

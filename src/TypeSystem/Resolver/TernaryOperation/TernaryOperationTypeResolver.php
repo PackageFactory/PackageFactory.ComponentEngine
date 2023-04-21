@@ -44,7 +44,8 @@ final class TernaryOperationTypeResolver
         );
         $conditionNode = $ternaryOperationNode->condition;
 
-        $conditionType = $expressionTypeResolver->resolveTypeOf($conditionNode);
+        // @todo for eager type checks?
+        $expressionTypeResolver->resolveTypeOf($conditionNode);
 
         if ($conditionNode->root instanceof BooleanLiteralNode) {
             return $conditionNode->root->value
@@ -55,7 +56,6 @@ final class TernaryOperationTypeResolver
         $trueExpressionTypeResolver = new ExpressionTypeResolver(
             scope: new TernaryBranchScope(
                 $ternaryOperationNode->condition,
-                $conditionType,
                 true,
                 $this->scope
             )
@@ -64,7 +64,6 @@ final class TernaryOperationTypeResolver
         $falseExpressionTypeResolver = new ExpressionTypeResolver(
             scope: new TernaryBranchScope(
                 $ternaryOperationNode->condition,
-                $conditionType,
                 false,
                 $this->scope
             )
