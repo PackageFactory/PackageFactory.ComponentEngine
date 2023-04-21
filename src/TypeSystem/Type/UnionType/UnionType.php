@@ -63,7 +63,7 @@ final class UnionType implements TypeInterface, \IteratorAggregate, \Countable
         return new self(...$uniqueMembers);
     }
 
-    public function isNullable(): bool
+    public function containsNull(): bool
     {
         foreach ($this->members as $member) {
             if ($member->is(NullType::get())) {
@@ -73,7 +73,7 @@ final class UnionType implements TypeInterface, \IteratorAggregate, \Countable
         return false;
     }
 
-    public function withoutNullable(): TypeInterface
+    public function withoutNull(): TypeInterface
     {
         $nonNullMembers = [];
         foreach ($this->members as $member) {

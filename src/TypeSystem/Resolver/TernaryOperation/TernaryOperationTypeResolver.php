@@ -46,7 +46,7 @@ final class TernaryOperationTypeResolver
         );
         $conditionNode = $ternaryOperationNode->condition;
 
-        $rootType = $expressionTypeResolver->resolveTypeOf($conditionNode);
+        $conditionType = $expressionTypeResolver->resolveTypeOf($conditionNode);
 
         if ($conditionNode->root instanceof BooleanLiteralNode) {
             return $conditionNode->root->value
@@ -54,11 +54,11 @@ final class TernaryOperationTypeResolver
                 : $expressionTypeResolver->resolveTypeOf($ternaryOperationNode->false);
         }
 
-        if ($conditionNode->root instanceof IdentifierNode && $rootType instanceof UnionType && $rootType->isNullable()) {
+        if ($conditionNode->root instanceof IdentifierNode && $conditionType instanceof UnionType && $conditionType->containsNull()) {
             $trueExpressionTypeResolver = new ExpressionTypeResolver(
                 scope: new ShallowScope(
                     $conditionNode->root->value,
-                    $rootType->withoutNullable(),
+                    $conditionType->withoutNull(),
                     $this->scope
                 )
             );

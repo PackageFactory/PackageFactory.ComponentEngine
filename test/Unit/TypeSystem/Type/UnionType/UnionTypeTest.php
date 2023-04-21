@@ -129,9 +129,9 @@ final class UnionTypeTest extends TestCase
 
         $this->assertInstanceOf(UnionType::class, $unionType);
 
-        $this->assertTrue($unionType->isNullable());
+        $this->assertTrue($unionType->containsNull());
 
-        $nonNullables = $unionType->withoutNullable();
+        $nonNullables = $unionType->withoutNull();
 
         $this->assertTrue($nonNullables->is(StringType::get()));
     }
@@ -145,9 +145,9 @@ final class UnionTypeTest extends TestCase
 
         $this->assertInstanceOf(UnionType::class, $unionType);
 
-        $this->assertTrue($unionType->isNullable());
+        $this->assertTrue($unionType->containsNull());
 
-        $nonNullables = $unionType->withoutNullable();
+        $nonNullables = $unionType->withoutNull();
 
         $this->assertTrue($nonNullables->is(UnionType::of(StringType::get(), NumberType::get())));
     }
@@ -161,9 +161,9 @@ final class UnionTypeTest extends TestCase
 
         $this->assertInstanceOf(UnionType::class, $unionType);
 
-        $this->assertFalse($unionType->isNullable());
+        $this->assertFalse($unionType->containsNull());
 
-        $nonNullables = $unionType->withoutNullable();
+        $nonNullables = $unionType->withoutNull();
 
         $this->assertTrue($nonNullables->is($unionType));
     }

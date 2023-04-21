@@ -51,11 +51,11 @@ final class TypeReferenceTranspiler
             default => $this->transpileNonUnionType($type, $typeReferenceNode)
         };
     }
-    
+
     private function transpileUnionType(UnionType $unionType, TypeReferenceNode $typeReferenceNode): string
     {
-        if ($unionType->isNullable()) {
-            $nonNullable = $unionType->withoutNullable();
+        if ($unionType->containsNull()) {
+            $nonNullable = $unionType->withoutNull();
             if ($nonNullable instanceof UnionType) {
                 throw new \Exception('@TODO Transpilation of nullable union types with more non null members is not implemented');
             }
@@ -64,7 +64,7 @@ final class TypeReferenceTranspiler
 
         throw new \Exception('@TODO Transpilation of complex union types is not implemented');
     }
-    
+
     private function transpileNonUnionType(TypeInterface $type, TypeReferenceNode $typeReferenceNode): string
     {
         return match ($type::class) {
