@@ -22,23 +22,30 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Scope\ShallowScope;
 
+use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
+use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class ShallowScope implements ScopeInterface
+final class TernaryBranchScope implements ScopeInterface
 {
     public function __construct(
-        private readonly string $overriddenName,
-        private readonly TypeInterface $overriddenType,
+        private readonly ExpressionNode $conditionNode,
+        private readonly TypeInterface $conditionType,
+        private readonly bool $isBranchLeft,
         private readonly ScopeInterface $parentScope
     ) {
     }
 
     public function lookupTypeFor(string $name): ?TypeInterface
     {
-        if ($this->overriddenName === $name) {
-            return $this->overriddenType;
+        if ($this->conditionNode->root instanceof IdentifierNode && $this->conditionNode->root->value === $name) {
+            if ($this->conditionType instanceof UnionType && $this->conditionType->containsNull()) {
+                return $this->isBranchLeft ? $this->conditionType->withoutNull() : NullType::get();
+            }
         }
 
         return $this->parentScope->lookupTypeFor($name);
