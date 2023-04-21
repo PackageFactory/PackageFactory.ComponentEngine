@@ -37,16 +37,14 @@ final class UnionType implements TypeInterface, \IteratorAggregate, \Countable
 
     private function __construct(TypeInterface ...$members)
     {
-        if (count($members) < 1) {
-            throw new \Exception('UnionType can only hold more than one different members');
-        }
+        assert(count($members) > 1, 'UnionType must hold at least two different members');
         $this->members = $members;
     }
 
-    public static function of(TypeInterface ...$members): TypeInterface
+    public static function of(TypeInterface $firstMember, TypeInterface ...$members): TypeInterface
     {
         $uniqueMembers = [];
-        foreach ($members as $member) {
+        foreach ([$firstMember, ...$members] as $member) {
             foreach ($uniqueMembers as $uniqueMember) {
                 if ($member->is($uniqueMember)) {
                     continue 2;
@@ -81,9 +79,6 @@ final class UnionType implements TypeInterface, \IteratorAggregate, \Countable
                 continue;
             }
             $nonNullMembers[] = $member;
-        }
-        if (count($nonNullMembers) === 1) {
-            return $nonNullMembers[0];
         }
         return self::of(...$nonNullMembers);
     }

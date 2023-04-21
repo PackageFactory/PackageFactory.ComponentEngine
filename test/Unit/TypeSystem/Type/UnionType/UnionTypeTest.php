@@ -33,6 +33,16 @@ final class UnionTypeTest extends TestCase
     /**
      * @test
      */
+    public function unionRequiresAtLeastOneMember(): void
+    {
+        $this->expectException(\TypeError::class);
+        /** @phpstan-ignore-next-line */
+        UnionType::of();
+    }
+
+    /**
+     * @test
+     */
     public function staticOfResolvesToGivenTypeIfOnlyOneTypeIsGiven(): void
     {
         $unionType = UnionType::of(StringType::get());
