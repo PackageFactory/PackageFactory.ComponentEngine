@@ -61,22 +61,31 @@ final class TernaryBranchScope implements ScopeInterface
         }
 
         if ($this->conditionNode->root instanceof IdentifierNode && $this->conditionNode->root->value === $name) {
+            // case `nullableString ? "nullableString is not null" : "nullableString is null"`
             return $this->isBranchTrue ? $type->withoutNull() : NullType::get();
         }
 
         if (($binaryOperationNode = $this->conditionNode->root) instanceof BinaryOperationNode) {
-            foreach ($binaryOperationNode->operands as $operand) {
-                if (!$operand->root instanceof NullLiteralNode
-                    && !($operand->root instanceof IdentifierNode && $operand->root->value === $name)
-                ) {
-                    return $type;
-                }
+            // cases
+            // `nullableString === null ? "nullableString is null" : "nullableString is not null"`
+            // `nullableString !== null ? "nullableString is not null" : "nullableString is null"`
+            if (count($binaryOperationNode->operands->rest) !== 1) {
+                return $type;
             }
-
+            $first = $binaryOperationNode->operands->first;
+            $second = $binaryOperationNode->operands->rest[0];
+            // case `nullableString === null`
+            $isFirstToBeLookedUpName = $first->root instanceof IdentifierNode && $first->root->value === $name;
+            $isFirstComparedToNull = $isFirstToBeLookedUpName && $second->root instanceof NullLiteralNode;
+            // yodas case `null === nullableString`
+            $isSecondToBeLookedUpName = $second->root instanceof IdentifierNode && $second->root->value === $name;
+            $isSecondComparedToNull = $first->root instanceof NullLiteralNode && $isSecondToBeLookedUpName;
+            if (!$isFirstComparedToNull && !$isSecondComparedToNull) {
+                return $type;
+            }
             if ($binaryOperationNode->operator === BinaryOperator::EQUAL) {
                 return $this->isBranchTrue ? NullType::get() : $type->withoutNull();
             }
-
             if ($binaryOperationNode->operator === BinaryOperator::NOT_EQUAL) {
                 return $this->isBranchTrue ? $type->withoutNull() : NullType::get();
             }

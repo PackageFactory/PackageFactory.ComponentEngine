@@ -54,7 +54,6 @@ final class TernaryOperationTypeResolverTest extends TestCase
             'nullableString === null ? "" : nullableString' => [
                 'nullableString === null ? "" : nullableString', StringType::get()
             ],
-            // Tue es oder tue es nicht. Es gibt kein Versuchen.
             'null === nullableString ? "" : nullableString' => [
                 'null === nullableString ? "" : nullableString', StringType::get()
             ],
