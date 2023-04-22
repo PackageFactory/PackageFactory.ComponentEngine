@@ -39,11 +39,11 @@ final class TagTranspiler
     {
         $result = sprintf('<%s', $tagNode->tagName);
 
-        $attributeTranspiler = new AttributeTranspiler(
-            scope: $this->scope
-        );
-
+        $attributeTranspiler = null;
         foreach ($tagNode->attributes->items as $attribute) {
+            $attributeTranspiler ??= new AttributeTranspiler(
+                scope: $this->scope
+            );
             $result .= ' ' . $attributeTranspiler->transpile($attribute);
         }
 
