@@ -28,7 +28,7 @@ use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 
 final class TernaryOperationTranspiler
 {
-    public function __construct(private readonly ScopeInterface $scope) 
+    public function __construct(private readonly ScopeInterface $scope)
     {
     }
 

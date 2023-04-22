@@ -56,7 +56,7 @@ final class ModuleTranspilerTest extends TestCase
         namespace Vendor\\Project\\Component;
 
         use Vendor\\Project\\BaseClass;
-        
+
         final class HelloWorld extends BaseClass
         {
             public function render(): string
@@ -141,21 +141,21 @@ final class ModuleTranspilerTest extends TestCase
         );
         $moduleNode = ModuleNode::fromString($moduleNodeAsString);
 
-        $expectedTranspilationResult = <<<PHP
+        $expectedTranspilationResult = <<<'PHP'
         <?php
 
         declare(strict_types=1);
 
-        namespace Vendor\\Project\\Component;
+        namespace Vendor\Project\Component;
 
-        use Vendor\\Project\\BaseClass;
-        
+        use Vendor\Project\BaseClass;
+
         final class SomeStruct extends BaseClass
         {
             public function __construct(
-                public readonly string \$foo,
-                public readonly int|float \$bar,
-                public readonly bool \$baz
+                public readonly string $foo,
+                public readonly int|float $bar,
+                public readonly bool $baz
             ) {
             }
         }

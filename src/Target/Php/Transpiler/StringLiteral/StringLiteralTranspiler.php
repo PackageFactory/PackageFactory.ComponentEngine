@@ -46,7 +46,7 @@ final class StringLiteralTranspiler
                 if ($line === '') {
                     $additionalLineBreaks .= '\n';
                 } else {
-                    $result .= $result 
+                    $result .= $result
                         ?  '\' . "\n' . $additionalLineBreaks . '" . \'' . $line
                         :  '"\n' . $additionalLineBreaks . '" . \'' . $line;
                     $additionalLineBreaks = '';
@@ -54,7 +54,7 @@ final class StringLiteralTranspiler
             }
 
             if ($additionalLineBreaks) {
-                $result .= $result 
+                $result .= $result
                     ? '\' . "' . $additionalLineBreaks . '"'
                     : '"' . $additionalLineBreaks . '"';
                 $shouldAddTrailingQuote = false;

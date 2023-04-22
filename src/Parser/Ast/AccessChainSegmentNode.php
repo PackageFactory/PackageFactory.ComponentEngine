@@ -45,7 +45,7 @@ final class AccessChainSegmentNode implements \JsonSerializable
         Scanner::assertType($tokens, TokenType::PERIOD, TokenType::OPTCHAIN);
 
         $accessType = AccessType::fromTokenType(Scanner::type($tokens));
-        
+
         Scanner::skipOne($tokens);
 
         $accessor = IdentifierNode::fromTokens($tokens);

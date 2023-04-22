@@ -67,12 +67,12 @@ final class UnionType implements TypeInterface
                         break;
                     }
                 }
-    
+
                 if (!$match) {
                     return false;
                 }
             }
-    
+
             return true;
         } else {
             return false;
