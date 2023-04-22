@@ -77,11 +77,9 @@ final class TypeReferenceTranspiler
         };
     }
 
-    private function transpileNullableType(TypeInterface $type, TypeReferenceNode $typeReferenceNode): string
+    private function transpileNullableType(TypeInterface $typeWithoutNull, TypeReferenceNode $typeReferenceNode): string
     {
-        if ($type->is(NumberType::get())) {
-            return 'null|int|float';
-        }
-        return '?' . $this->transpileNonUnionType($type, $typeReferenceNode);
+        $phpTypeWithoutNull = $this->transpileNonUnionType($typeWithoutNull, $typeReferenceNode);
+        return (str_contains($phpTypeWithoutNull, '|') ? 'null|' : '?') . $phpTypeWithoutNull;
     }
 }
