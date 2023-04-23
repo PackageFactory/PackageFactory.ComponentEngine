@@ -193,7 +193,7 @@ final class Tokenizer implements \IteratorAggregate
                     if (!$fragments->valid()) {
                         throw new \Exception("@TODO: Unexpected end of input");
                     }
-                    
+
                     $nextFragment = $fragments->current();
 
                     if ($nextFragment->value === '{') {

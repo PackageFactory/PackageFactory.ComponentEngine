@@ -31,7 +31,7 @@ use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 
 final class TemplateLiteralTranspiler
 {
-    public function __construct(private readonly ScopeInterface $scope) 
+    public function __construct(private readonly ScopeInterface $scope)
     {
     }
 

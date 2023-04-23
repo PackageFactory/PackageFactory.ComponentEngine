@@ -67,7 +67,7 @@ final class AttributeNode implements \JsonSerializable
             Scanner::skipOne($tokens);
 
             $value = ExpressionNode::fromTokens($tokens);
-    
+
             Scanner::skipSpaceAndComments($tokens);
             Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
             Scanner::skipOne($tokens);

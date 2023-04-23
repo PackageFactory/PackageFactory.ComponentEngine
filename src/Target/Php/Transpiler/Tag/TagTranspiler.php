@@ -63,8 +63,8 @@ final class TagTranspiler
             $result .= sprintf('</%s>', $tagNode->tagName);
         }
 
-        return $this->shouldAddQuotes 
-            ? sprintf('\'%s\'', $result) 
+        return $this->shouldAddQuotes
+            ? sprintf('\'%s\'', $result)
             : $result;
     }
 }
