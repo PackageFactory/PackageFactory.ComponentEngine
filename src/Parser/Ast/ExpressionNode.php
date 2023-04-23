@@ -126,7 +126,7 @@ final class ExpressionNode implements \JsonSerializable
             );
         }
 
-        while ($tokens->valid()) {
+        while (!Scanner::isEnd($tokens)) {
             Scanner::skipSpaceAndComments($tokens);
 
             switch (Scanner::type($tokens)) {

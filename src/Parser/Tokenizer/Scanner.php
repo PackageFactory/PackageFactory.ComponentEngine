@@ -169,8 +169,14 @@ final class Scanner
     /**
      * @param \Iterator<mixed,Token> $tokens
      */
-    public static function debugPrint(\Iterator $tokens): string
+    public static function debugPrint(\Iterator &$tokens): string
     {
+        $tokens = (function(): \Generator {
+            throw new \Exception('Once debugged, $tokens is empty.');
+            // @phpstan-ignore-next-line
+            yield;
+        })();
+
         $tokensAsArray = [];
         while ($tokens->valid()) {
             $tokensAsArray[] = [

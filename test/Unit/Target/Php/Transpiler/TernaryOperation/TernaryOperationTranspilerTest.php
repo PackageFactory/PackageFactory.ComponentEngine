@@ -37,6 +37,7 @@ final class TernaryOperationTranspilerTest extends TestCase
     {
         return [
             'true ? 42 : "foo"' => ['true ? 42 : "foo"', '(true ? 42 : \'foo\')'],
+            '(true) ? 42 : "foo"' => ['(true) ? 42 : "foo"', '(true ? 42 : \'foo\')'],
             'a ? 42 : "foo"' => ['a ? 42 : "foo"', '($this->a ? 42 : \'foo\')'],
             'true ? b : "foo"' => ['true ? b : "foo"', '(true ? $this->b : \'foo\')'],
             'true ? 42 : c' => ['true ? 42 : c', '(true ? 42 : $this->c)'],
