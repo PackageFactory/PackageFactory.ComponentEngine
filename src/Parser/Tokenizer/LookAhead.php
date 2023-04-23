@@ -58,7 +58,9 @@ final class LookAhead implements  \IteratorAggregate
             yield $token;
         }
 
-        yield from $this->tokens;
+        if (!Scanner::isEnd($this->tokens)) {
+            yield from $this->tokens;
+        }
     }
 
     public function shift(): void

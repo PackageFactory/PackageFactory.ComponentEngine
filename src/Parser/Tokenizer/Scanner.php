@@ -165,4 +165,20 @@ final class Scanner
     {
         return !$tokens->valid();
     }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
+     */
+    public static function debugPrint(\Iterator $tokens): string
+    {
+        $tokensAsArray = [];
+        while ($tokens->valid()) {
+            $tokensAsArray[] = [
+                "type" => $tokens->current()->type,
+                "value" => $tokens->current()->value
+            ];
+            $tokens->next();
+        }
+        return json_encode($tokensAsArray, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR);
+    }
 }
