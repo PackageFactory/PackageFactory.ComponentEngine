@@ -22,19 +22,32 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Inferrer;
 
+use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
+use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
+
 enum TypeInferrerContext
 {
     case TRUTHY;
 
     case FALSY;
 
-    public function isTrue(): bool
+    public function negate(): self
     {
-        return $this === self::TRUTHY;
+        return match ($this) {
+            self::TRUTHY => self::FALSY,
+            self::FALSY => self::TRUTHY
+        };
     }
 
-    public function isFalse(): bool
+    public function narrowDownType(TypeInterface $type): TypeInterface
     {
-        return $this === self::FALSY;
+        if (!$type instanceof UnionType || !$type->containsNull()) {
+            return $type;
+        }
+        return match ($this) {
+            self::TRUTHY => $type->withoutNull(),
+            self::FALSY => NullType::get()
+        };
     }
 }

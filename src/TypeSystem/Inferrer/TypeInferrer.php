@@ -28,8 +28,6 @@ use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
 use PackageFactory\ComponentEngine\Parser\Ast\NullLiteralNode;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 
 /**
  * This class handles the analysis of identifier types that are used in a condition
@@ -53,14 +51,11 @@ class TypeInferrer
     {
         if ($conditionNode->root instanceof IdentifierNode) {
             $type = $this->scope->lookupTypeFor($conditionNode->root->value);
-            // case `nullableString ? "nullableString is not null" : "nullableString is null"`
-            if (!$type instanceof UnionType || !$type->containsNull()) {
-                return new InferredTypes();
+            if (!$type) {
+                return InferredTypes::empty();
             }
-
-            return new InferredTypes(
-                ...[$conditionNode->root->value => $context->isTrue() ? $type->withoutNull() : NullType::get()]
-            );
+            // case `nullableString ? "nullableString is not null" : "nullableString is null"`
+            return InferredTypes::fromType($conditionNode->root->value, $context->narrowDownType($type));
         }
 
         if (($binaryOperationNode = $conditionNode->root) instanceof BinaryOperationNode) {
@@ -68,7 +63,7 @@ class TypeInferrer
             // `nullableString === null ? "nullableString is null" : "nullableString is not null"`
             // `nullableString !== null ? "nullableString is not null" : "nullableString is null"`
             if (count($binaryOperationNode->operands->rest) !== 1) {
-                return new InferredTypes();
+                return InferredTypes::empty();
             }
             $first = $binaryOperationNode->operands->first;
             $second = $binaryOperationNode->operands->rest[0];
@@ -82,26 +77,21 @@ class TypeInferrer
             };
 
             if ($comparedIdentifierValueToNull === null) {
-                return new InferredTypes();
+                return InferredTypes::empty();
             }
-
             $type = $this->scope->lookupTypeFor($comparedIdentifierValueToNull);
-            if (!$type instanceof UnionType || !$type->containsNull()) {
-                return new InferredTypes();
+            if (!$type) {
+                return InferredTypes::empty();
             }
 
             if ($binaryOperationNode->operator === BinaryOperator::EQUAL) {
-                return new InferredTypes(
-                    ...[$comparedIdentifierValueToNull => $context->isTrue() ? NullType::get() : $type->withoutNull()]
-                );
+                return InferredTypes::fromType($comparedIdentifierValueToNull, $context->negate()->narrowDownType($type));
             }
             if ($binaryOperationNode->operator === BinaryOperator::NOT_EQUAL) {
-                return new InferredTypes(
-                    ...[$comparedIdentifierValueToNull => $context->isTrue() ? $type->withoutNull() : NullType::get()]
-                );
+                return InferredTypes::fromType($comparedIdentifierValueToNull, $context->narrowDownType($type));
             }
         }
 
-        return new InferredTypes();
+        return InferredTypes::empty();
     }
 }

@@ -27,13 +27,30 @@ use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 class InferredTypes
 {
     /**
-     * @var TypeInterface[]
+     * Map of identifierName to the corresponding inferred type
+     * @var array<string,TypeInterface>
      */
-    public readonly array $types;
+    private readonly array $types;
 
-    public function __construct(
+    private function __construct(
         TypeInterface ...$types
     ) {
+        // @phpstan-ignore-next-line
         $this->types = $types;
+    }
+
+    public static function empty(): self
+    {
+        return new self();
+    }
+
+    public static function fromType(string $identifierName, TypeInterface $type): self
+    {
+        return new self(...[$identifierName => $type]);
+    }
+
+    public function getType(string $identifierName): ?TypeInterface
+    {
+        return $this->types[$identifierName] ?? null;
     }
 }

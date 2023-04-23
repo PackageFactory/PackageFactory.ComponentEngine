@@ -56,7 +56,7 @@ final class TernaryBranchScope implements ScopeInterface
 
     public function lookupTypeFor(string $name): ?TypeInterface
     {
-        return $this->inferredTypes->types[$name] ?? $this->parentScope->lookupTypeFor($name);
+        return $this->inferredTypes->getType($name) ?? $this->parentScope->lookupTypeFor($name);
     }
 
     public function resolveTypeReference(TypeReferenceNode $typeReferenceNode): TypeInterface
