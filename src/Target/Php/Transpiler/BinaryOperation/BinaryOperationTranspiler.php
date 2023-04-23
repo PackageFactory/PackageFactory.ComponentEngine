@@ -59,14 +59,10 @@ final class BinaryOperationTranspiler
             shouldAddQuotesIfNecessary: true
         );
 
-        $result = $expressionTranspiler->transpile($binaryOperationNode->operands->first);
-        $operator = sprintf(' %s ', $this->transpileBinaryOperator($binaryOperationNode->operator));
+        $first = $expressionTranspiler->transpile($binaryOperationNode->operands->first);
+        $operator = $this->transpileBinaryOperator($binaryOperationNode->operator);
+        $second = $expressionTranspiler->transpile($binaryOperationNode->operands->second);
 
-        foreach ($binaryOperationNode->operands->rest as $operandNode) {
-            $result .= $operator;
-            $result .= $expressionTranspiler->transpile($operandNode);
-        }
-
-        return sprintf('(%s)', $result);
+        return sprintf('(%s %s %s)', $first, $operator, $second);
     }
 }

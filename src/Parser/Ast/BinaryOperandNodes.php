@@ -25,23 +25,16 @@ namespace PackageFactory\ComponentEngine\Parser\Ast;
 use PackageFactory\ComponentEngine\Definition\BinaryOperator;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 /**
  * @implements \IteratorAggregate<ExpressionNode>
  */
 final class BinaryOperandNodes implements \IteratorAggregate, \JsonSerializable
 {
-    /**
-     * @var ExpressionNode[]
-     */
-    public readonly array $rest;
-
     private function __construct(
         public readonly ExpressionNode $first,
-        ExpressionNode ...$rest
+        public readonly ExpressionNode $second
     ) {
-        $this->rest = $rest;
     }
 
     /**
@@ -55,36 +48,11 @@ final class BinaryOperandNodes implements \IteratorAggregate, \JsonSerializable
         $precedence = $operator->toPrecedence();
         $operands = [$first];
 
-        while (true) {
-            Scanner::skipSpaceAndComments($tokens);
+        Scanner::skipSpaceAndComments($tokens);
 
-            $operands[] = ExpressionNode::fromTokens($tokens, $precedence);
+        $operands[] = ExpressionNode::fromTokens($tokens, $precedence);
 
-            Scanner::skipSpaceAndComments($tokens);
-
-            if (Scanner::isEnd($tokens)) {
-                break;
-            }
-
-            switch (Scanner::type($tokens)) {
-                case TokenType::BRACKET_ROUND_CLOSE:
-                case TokenType::BRACKET_CURLY_CLOSE:
-                case TokenType::BRACKET_SQUARE_CLOSE:
-                case TokenType::ARROW_SINGLE:
-                case TokenType::QUESTIONMARK:
-                    break 2;
-                case $operator->toTokenType():
-                    Scanner::skipOne($tokens);
-                    break;
-                default:
-                    if ($precedence->mustStopAt(Scanner::type($tokens))) {
-                        break 2;
-                    } else {
-                        Scanner::assertType($tokens, $operator->toTokenType());
-                    }
-                    break;
-            }
-        }
+        Scanner::skipSpaceAndComments($tokens);
 
         return new self(...$operands);
     }
@@ -92,11 +60,11 @@ final class BinaryOperandNodes implements \IteratorAggregate, \JsonSerializable
     public function getIterator(): \Traversable
     {
         yield $this->first;
-        yield from $this->rest;
+        yield $this->second;
     }
 
     public function jsonSerialize(): mixed
     {
-        return [$this->first, ...$this->rest];
+        return [$this->first, $this->second];
     }
 }

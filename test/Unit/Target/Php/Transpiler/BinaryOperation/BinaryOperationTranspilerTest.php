@@ -100,9 +100,9 @@ final class BinaryOperationTranspilerTest extends TestCase
             '4 <= b' => ['4 <= b', '(4 <= $this->b)'],
             'a <= b' => ['a <= b', '($this->a <= $this->b)'],
 
-            'true && true && true' => ['true && true && true', '(true && true && true)'],
-            '1 === 1 === true' => ['1 === 1 === true', '(1 === 1 === true)'],
-            '1 + 1 + 1' => ['1 + 1 + 1', '(1 + 1 + 1)'],
+            'true && true && true' => ['true && true && true', '((true && true) && true)'],
+            '1 === 1 === true' => ['1 === 1 === true', '((1 === 1) === true)'],
+            '1 + 1 + 1' => ['1 + 1 + 1', '((1 + 1) + 1)'],
         ];
     }
 
