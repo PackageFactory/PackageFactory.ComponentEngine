@@ -63,7 +63,7 @@ final class ExpressionNode implements \JsonSerializable
                 $lookAhead->shift();
 
                 while (true) {
-                    switch (Scanner::isEnd($lookAhead->tokens) ?: $lookAhead->type()) {
+                    switch ($lookAhead->type()) {
                         case TokenType::STRING:
                         case TokenType::COLON:
                         case TokenType::COMMA:
