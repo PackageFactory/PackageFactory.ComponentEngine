@@ -36,6 +36,11 @@ final class BinaryOperationTranspilerTest extends TestCase
     public function binaryOperationExamples(): array
     {
         return [
+            // in php the or operator is not 100% equivalent to ecmascript
+            // `null || "fallback"` will be `true` in php but we want "fallback" like in js
+            'null || "fallback"' => '($temp_123 = null) ? $temp_123 : "fallback"',
+            'null && "fallback"' => '($temp_123 = null) ? "fallback" : $temp_123',
+
             'true && false' => ['true && false', '(true && false)'],
             'a && false' => ['a && false', '($this->a && false)'],
             'true && b' => ['true && b', '(true && $this->b)'],
