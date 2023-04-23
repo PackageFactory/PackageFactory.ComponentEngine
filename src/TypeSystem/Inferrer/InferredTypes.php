@@ -35,7 +35,7 @@ class InferredTypes
     private function __construct(
         TypeInterface ...$types
     ) {
-        // @phpstan-ignore-next-line
+        assert(self::isAssociativeArray($types), '$types must be an associative array');
         $this->types = $types;
     }
 
@@ -52,5 +52,21 @@ class InferredTypes
     public function getType(string $identifierName): ?TypeInterface
     {
         return $this->types[$identifierName] ?? null;
+    }
+
+    /**
+     * @template T
+     * @param array<string|int,T> $array
+     * @phpstan-assert-if-true array<string,T> $array
+     */
+    private static function isAssociativeArray(array $array): bool
+    {
+        foreach ($array as $key => $value) {
+            if (is_string($key)) {
+                continue;
+            }
+            return false;
+        }
+        return true;
     }
 }
