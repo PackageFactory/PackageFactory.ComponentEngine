@@ -26,6 +26,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\UnaryOperationNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\UnaryOperation\UnaryOperationTranspiler;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
 
 final class UnaryOperationTranspilerTest extends TestCase
@@ -37,6 +38,10 @@ final class UnaryOperationTranspilerTest extends TestCase
     {
         return [
             '!false' => ['!false', '(!false)'],
+            '!!false' => ['!!false', '(!(!false))'],
+            '!!!false' => ['!!!false', '(!(!(!false)))'],
+            '!1 + 1' => ['!1 + 1', '(!(1 + 1))'],
+            '!foo' => ['!foo', '(!$this->foo)'],
         ];
     }
 
@@ -47,7 +52,7 @@ final class UnaryOperationTranspilerTest extends TestCase
     public function transpilesUnaryOperationNodes(string $unaryOperationAsString, string $expectedTranspilationResult): void
     {
         $transpiler = new UnaryOperationTranspiler(
-            scope: new DummyScope()
+            scope: new DummyScope(['foo' => StringType::get()])
         );
         $node = ExpressionNode::fromString($unaryOperationAsString)->root;
         assert($node instanceof UnaryOperationNode);
