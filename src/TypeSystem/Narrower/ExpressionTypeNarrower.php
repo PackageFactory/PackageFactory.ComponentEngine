@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Narrower;
 
+use PackageFactory\ComponentEngine\Definition\BinaryOperator;
 use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
@@ -74,18 +75,28 @@ class ExpressionTypeNarrower
                     && $other = $first // @phpstan-ignore-line
                 )
             ) {
-                if (!$contextBasedOnOperator = $context->basedOnBinaryOperator($binaryOperationNode->operator)) {
-                    return NarrowedTypes::empty();
+                switch ($binaryOperationNode->operator) {
+                    case BinaryOperator::AND:
+                        if ($boolean->value && $context === TypeNarrowerContext::TRUTHY) {
+                            return $this->narrowTypesOfSymbolsIn($other, $context);
+                        }
+                        break;
+                    case BinaryOperator::EQUAL:
+                    case BinaryOperator::NOT_EQUAL:
+                        $contextBasedOnOperator = $context->basedOnBinaryOperator($binaryOperationNode->operator);
+                        assert($contextBasedOnOperator !== null);
+
+                        if ($other->root instanceof IdentifierNode) {
+                            return NarrowedTypes::empty();
+                        }
+
+                        return $this->narrowTypesOfSymbolsIn(
+                            $other,
+                            $boolean->value ? $contextBasedOnOperator : $contextBasedOnOperator->negate()
+                        );
                 }
 
-                if ($other->root instanceof IdentifierNode) {
-                    return NarrowedTypes::empty();
-                }
-
-                return $this->narrowTypesOfSymbolsIn(
-                    $other,
-                    $boolean->value ? $contextBasedOnOperator : $contextBasedOnOperator->negate()
-                );
+                return NarrowedTypes::empty();
             }
 
             $expressionTypeResolver = (new ExpressionTypeResolver($this->scope));

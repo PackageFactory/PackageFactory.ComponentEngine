@@ -77,6 +77,17 @@ final class ExpressionTypeNarrowerTest extends TestCase
                 'nullableString === variableOfTypeNull', $variableIsNull
             ],
 
+            'nullableString && true' => [
+                'nullableString && true',
+                $variableIsString
+            ],
+
+            'FALSY:: nullableString && true' => [
+                'nullableString && true',
+                NarrowedTypes::empty(),
+                TypeNarrowerContext::FALSY
+            ],
+
             'nullableString === true' => [
                 'nullableString === true',
                 NarrowedTypes::empty()
@@ -88,8 +99,11 @@ final class ExpressionTypeNarrowerTest extends TestCase
      * @dataProvider narrowedExpressionsExamples
      * @test
      */
-    public function narrowedExpressions(string $expressionAsString, NarrowedTypes $expectedTypes): void
-    {
+    public function narrowedExpressions(
+        string $expressionAsString,
+        NarrowedTypes $expectedTypes,
+        TypeNarrowerContext $context = TypeNarrowerContext::TRUTHY
+    ): void {
         $expressionTypeNarrower = new ExpressionTypeNarrower(
             scope: new DummyScope([
                 'nullableString' => UnionType::of(StringType::get(), NullType::get()),
@@ -99,7 +113,7 @@ final class ExpressionTypeNarrowerTest extends TestCase
 
         $expressionNode = ExpressionNode::fromString($expressionAsString);
 
-        $actualTypes = $expressionTypeNarrower->narrowTypesOfSymbolsIn($expressionNode, TypeNarrowerContext::TRUTHY);
+        $actualTypes = $expressionTypeNarrower->narrowTypesOfSymbolsIn($expressionNode, $context);
 
         $this->assertEqualsCanonicalizing(
             $expectedTypes->toArray(),
