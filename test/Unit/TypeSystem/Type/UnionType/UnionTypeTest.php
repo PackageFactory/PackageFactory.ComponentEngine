@@ -114,8 +114,8 @@ final class UnionTypeTest extends TestCase
         $this->assertCount(count($unionType), $otherUnionType);
 
         $this->assertEqualsCanonicalizing(
-            $unionType->getIterator()->getArrayCopy(),
-            $otherUnionType->getIterator()->getArrayCopy()
+            $unionType->toArray(),
+            $otherUnionType->toArray()
         );
     }
 

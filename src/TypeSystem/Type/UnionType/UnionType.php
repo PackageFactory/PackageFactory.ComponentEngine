@@ -106,10 +106,16 @@ final class UnionType implements TypeInterface, \IteratorAggregate, \Countable
         }
     }
 
-    /** @return \ArrayIterator<int, TypeInterface> */
-    public function getIterator(): \ArrayIterator
+    /** @return \Iterator<int, TypeInterface> */
+    public function getIterator(): \Iterator
     {
-        return new \ArrayIterator($this->members);
+        yield from $this->members;
+    }
+
+    /** @return array<int, TypeInterface> */
+    public function toArray(): array
+    {
+        return $this->members;
     }
 
     public function count(): int
