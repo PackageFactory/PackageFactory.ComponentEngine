@@ -24,6 +24,7 @@ namespace PackageFactory\ComponentEngine\TypeSystem\Narrower;
 
 use PackageFactory\ComponentEngine\Definition\BinaryOperator;
 use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
+use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
 use PackageFactory\ComponentEngine\Parser\Ast\NullLiteralNode;
@@ -59,15 +60,43 @@ class ExpressionTypeNarrower
         }
 
         if (($binaryOperationNode = $expressionNode->root) instanceof BinaryOperationNode) {
-            // cases
-            // `nullableString === null ? "nullableString is null" : "nullableString is not null"`
-            // `nullableString !== null ? "nullableString is not null" : "nullableString is null"`
+            // todo we currently only work with two operands
             if (count($binaryOperationNode->operands->rest) !== 1) {
                 return NarrowedTypes::empty();
             }
             $first = $binaryOperationNode->operands->first;
             $second = $binaryOperationNode->operands->rest[0];
 
+            if (
+                ($first->root instanceof BooleanLiteralNode
+                    && ($boolean = $first->root) instanceof BooleanLiteralNode
+                    // @phpstan-ignore-next-line
+                    && $other = $second
+                ) || ($second->root instanceof BooleanLiteralNode
+                    && ($boolean = $second->root) instanceof BooleanLiteralNode
+                    // @phpstan-ignore-next-line
+                    && $other = $first
+                )
+            ) {
+                $contextBasedOnOperator = match ($binaryOperationNode->operator) {
+                    BinaryOperator::EQUAL => $context,
+                    BinaryOperator::NOT_EQUAL => $context->negate(),
+                    default => null,
+                };
+
+                if (!$contextBasedOnOperator) {
+                    return NarrowedTypes::empty();
+                }
+
+                return $this->narrowTypesOfSymbolsIn(
+                    $other,
+                    $boolean->value ? $contextBasedOnOperator : $contextBasedOnOperator->negate()
+                );
+            }
+
+            // cases
+            // `nullableString === null ? "nullableString is null" : "nullableString is not null"`
+            // `nullableString !== null ? "nullableString is not null" : "nullableString is null"`
             $comparedIdentifierValueToNull = match (true) {
                 // case `nullableString === null`
                 $first->root instanceof IdentifierNode && $second->root instanceof NullLiteralNode => $first->root->value,

@@ -45,27 +45,44 @@ final class TernaryOperationTypeResolverTest extends TestCase
             'false ? 42 : "foo"' => ['false ? 42 : "foo"', StringType::get()],
             '1 < 2 ? 42 : "foo"' => ['1 < 2 ? 42 : "foo"', UnionType::of(NumberType::get(), StringType::get())],
             '1 < 2 ? variableOfTypeString : variableOfTypeNumber' => [
-                '1 < 2 ? variableOfTypeString : variableOfTypeNumber', 
+                '1 < 2 ? variableOfTypeString : variableOfTypeNumber',
                 UnionType::of(NumberType::get(), StringType::get())
             ],
+
             'nullableString ? nullableString : "fallback"' => [
                 'nullableString ? nullableString : "fallback"', StringType::get()
             ],
+            'nullableString ? null : nullableString' => [
+                'nullableString ? null : nullableString', NullType::get()
+            ],
+
             'nullableString === null ? "" : nullableString' => [
                 'nullableString === null ? "" : nullableString', StringType::get()
             ],
+            // Patience you must have my young Padawan.
             'null === nullableString ? "" : nullableString' => [
                 'null === nullableString ? "" : nullableString', StringType::get()
             ],
+
             'nullableString !== null ? nullableString : ""' => [
                 'nullableString !== null ? nullableString : ""', StringType::get()
             ],
-            // Patience you must have my young Padawan.
             'null !== nullableString ? nullableString : ""' => [
                 'null !== nullableString ? nullableString : ""', StringType::get()
             ],
-            'nullableString ? null : nullableString' => [
-                'nullableString ? null : nullableString', NullType::get()
+
+            'true === (nullableString === null) ? "" : nullableString' => [
+                'true === (nullableString === null) ? "" : nullableString', StringType::get()
+            ],
+            'false !== (nullableString === null) ? "" : nullableString' => [
+                'false !== (nullableString === null) ? "" : nullableString', StringType::get()
+            ],
+
+            'false === (nullableString === null) ? nullableString : ""' => [
+                'false === (nullableString === null) ? nullableString : ""', StringType::get()
+            ],
+            'true !== (nullableString === null) ? nullableString : ""' => [
+                'true !== (nullableString === null) ? nullableString : ""', StringType::get()
             ],
         ];
     }
