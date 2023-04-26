@@ -84,6 +84,10 @@ final class TernaryOperationTypeResolverTest extends TestCase
             'true !== (nullableString === null) ? nullableString : ""' => [
                 'true !== (nullableString === null) ? nullableString : ""', StringType::get()
             ],
+
+            'nullableString === variableOfTypeNull ? "" : nullableString' => [
+                'nullableString === variableOfTypeNull ? "" : nullableString', StringType::get()
+            ],
         ];
     }
 
@@ -99,6 +103,7 @@ final class TernaryOperationTypeResolverTest extends TestCase
         $scope = new DummyScope([
             'variableOfTypeString' => StringType::get(),
             'variableOfTypeNumber' => NumberType::get(),
+            'variableOfTypeNull' => NullType::get(),
             'nullableString' => UnionType::of(StringType::get(), NullType::get())
         ]);
         $ternaryOperationTypeResolver = new TernaryOperationTypeResolver(

@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Narrower;
 
+use PackageFactory\ComponentEngine\Definition\BinaryOperator;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
@@ -37,6 +38,15 @@ enum TypeNarrowerContext
         return match ($this) {
             self::TRUTHY => self::FALSY,
             self::FALSY => self::TRUTHY
+        };
+    }
+
+    public function basedOnBinaryOperator(BinaryOperator $operator): ?self
+    {
+        return match ($operator) {
+            BinaryOperator::EQUAL => $this,
+            BinaryOperator::NOT_EQUAL => $this->negate(),
+            default => null,
         };
     }
 

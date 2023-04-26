@@ -22,13 +22,13 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Narrower;
 
-use PackageFactory\ComponentEngine\Definition\BinaryOperator;
 use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
-use PackageFactory\ComponentEngine\Parser\Ast\NullLiteralNode;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
+use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
 
 /**
  * This class handles the analysis of identifier types that are used in a condition
@@ -68,23 +68,13 @@ class ExpressionTypeNarrower
             $second = $binaryOperationNode->operands->rest[0];
 
             if (
-                ($first->root instanceof BooleanLiteralNode
-                    && ($boolean = $first->root) instanceof BooleanLiteralNode
-                    // @phpstan-ignore-next-line
-                    && $other = $second
-                ) || ($second->root instanceof BooleanLiteralNode
-                    && ($boolean = $second->root) instanceof BooleanLiteralNode
-                    // @phpstan-ignore-next-line
-                    && $other = $first
+                (($boolean = $first->root) instanceof BooleanLiteralNode
+                    && $other = $second // @phpstan-ignore-line
+                ) || (($boolean = $second->root) instanceof BooleanLiteralNode
+                    && $other = $first // @phpstan-ignore-line
                 )
             ) {
-                $contextBasedOnOperator = match ($binaryOperationNode->operator) {
-                    BinaryOperator::EQUAL => $context,
-                    BinaryOperator::NOT_EQUAL => $context->negate(),
-                    default => null,
-                };
-
-                if (!$contextBasedOnOperator) {
+                if (!$contextBasedOnOperator = $context->basedOnBinaryOperator($binaryOperationNode->operator)) {
                     return NarrowedTypes::empty();
                 }
 
@@ -94,30 +84,30 @@ class ExpressionTypeNarrower
                 );
             }
 
-            // cases
-            // `nullableString === null ? "nullableString is null" : "nullableString is not null"`
-            // `nullableString !== null ? "nullableString is not null" : "nullableString is null"`
-            $comparedIdentifierValueToNull = match (true) {
-                // case `nullableString === null`
-                $first->root instanceof IdentifierNode && $second->root instanceof NullLiteralNode => $first->root->value,
-                // yodas case `null === nullableString`
-                $first->root instanceof NullLiteralNode && $second->root instanceof IdentifierNode => $second->root->value,
-                default => null
-            };
+            $expressionTypeResolver = (new ExpressionTypeResolver($this->scope));
+            if (
+                ($expressionTypeResolver->resolveTypeOf($first)->is(NullType::get())
+                    && $other = $second // @phpstan-ignore-line
+                ) || ($expressionTypeResolver->resolveTypeOf($second)->is(NullType::get())
+                    && $other = $first // @phpstan-ignore-line
+                )
+            ) {
+                if (!$other->root instanceof IdentifierNode) {
+                    return NarrowedTypes::empty();
+                }
+                $type = $this->scope->lookupTypeFor($other->root->value);
+                if (!$type) {
+                    return NarrowedTypes::empty();
+                }
 
-            if ($comparedIdentifierValueToNull === null) {
-                return NarrowedTypes::empty();
-            }
-            $type = $this->scope->lookupTypeFor($comparedIdentifierValueToNull);
-            if (!$type) {
-                return NarrowedTypes::empty();
-            }
+                if (!$contextBasedOnOperator = $context->basedOnBinaryOperator($binaryOperationNode->operator)) {
+                    return NarrowedTypes::empty();
+                }
 
-            if ($binaryOperationNode->operator === BinaryOperator::EQUAL) {
-                return NarrowedTypes::fromEntry($comparedIdentifierValueToNull, $context->negate()->narrowType($type));
-            }
-            if ($binaryOperationNode->operator === BinaryOperator::NOT_EQUAL) {
-                return NarrowedTypes::fromEntry($comparedIdentifierValueToNull, $context->narrowType($type));
+                return NarrowedTypes::fromEntry(
+                    $other->root->value,
+                    $contextBasedOnOperator->negate()->narrowType($type)
+                );
             }
         }
 
