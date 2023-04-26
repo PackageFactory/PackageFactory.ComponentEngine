@@ -53,4 +53,10 @@ class NarrowedTypes
     {
         return $this->types[$identifierName] ?? null;
     }
+
+    /** @return array<string,TypeInterface> */
+    public function toArray(): array
+    {
+        return $this->types;
+    }
 }
