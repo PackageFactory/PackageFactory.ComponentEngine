@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\BinaryOperation;
 
 use PackageFactory\ComponentEngine\Definition\BinaryOperator;
-use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperandNodes;
 use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
@@ -43,13 +42,13 @@ final class BinaryOperationTypeResolver
     {
         return match ($binaryOperationNode->operator) {
             BinaryOperator::AND,
-            BinaryOperator::OR => $this->resolveTypeOfBooleanOperation($binaryOperationNode->operands),
+            BinaryOperator::OR => $this->resolveTypeOfBooleanOperation($binaryOperationNode),
 
             BinaryOperator::PLUS,
             BinaryOperator::MINUS,
             BinaryOperator::MULTIPLY_BY,
             BinaryOperator::DIVIDE_BY,
-            BinaryOperator::MODULO => $this->resolveTypeOfArithmeticOperation($binaryOperationNode->operands),
+            BinaryOperator::MODULO => $this->resolveTypeOfArithmeticOperation($binaryOperationNode),
 
             BinaryOperator::EQUAL,
             BinaryOperator::NOT_EQUAL,
@@ -60,36 +59,31 @@ final class BinaryOperationTypeResolver
         };
     }
 
-    private function resolveTypeOfBooleanOperation(BinaryOperandNodes $operandNodes): TypeInterface
+    private function resolveTypeOfBooleanOperation(BinaryOperationNode $binaryOperationNode): TypeInterface
     {
         $expressionTypeResolver = new ExpressionTypeResolver(
             scope: $this->scope
         );
-        $operandTypes = [];
 
-        foreach ($operandNodes as $operandNode) {
-            $operandTypes[] = $expressionTypeResolver->resolveTypeOf($operandNode);
-        }
-
-        return UnionType::of(...$operandTypes);
+        return UnionType::of(
+            $expressionTypeResolver->resolveTypeOf($binaryOperationNode->left),
+            $expressionTypeResolver->resolveTypeOf($binaryOperationNode->right)
+        );
     }
 
-    private function resolveTypeOfArithmeticOperation(BinaryOperandNodes $operandNodes): TypeInterface
+    private function resolveTypeOfArithmeticOperation(BinaryOperationNode $binaryOperationNode): TypeInterface
     {
         $expressionTypeResolver = new ExpressionTypeResolver(
             scope: $this->scope
         );
-        $numberType = NumberType::get();
 
-        foreach ($operandNodes as $operandNode) {
+        foreach ([$binaryOperationNode->left, $binaryOperationNode->right] as $operandNode) {
             $typeOfOperandNode = $expressionTypeResolver->resolveTypeOf($operandNode);
-            $typeOfOperandNodeIsNumberType = $typeOfOperandNode->is($numberType);
-
-            if (!$typeOfOperandNodeIsNumberType) {
+            if (!$typeOfOperandNode->is(NumberType::get())) {
                 throw new \Exception('@TODO: Operand must be of type number');
             }
         }
 
-        return $numberType;
+        return NumberType::get();
     }
 }
