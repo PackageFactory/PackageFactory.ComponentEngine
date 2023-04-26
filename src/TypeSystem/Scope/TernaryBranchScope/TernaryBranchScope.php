@@ -24,16 +24,16 @@ namespace PackageFactory\ComponentEngine\TypeSystem\Scope\TernaryBranchScope;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
-use PackageFactory\ComponentEngine\TypeSystem\Inferrer\InferredTypes;
-use PackageFactory\ComponentEngine\TypeSystem\Inferrer\TypeInferrer;
-use PackageFactory\ComponentEngine\TypeSystem\Inferrer\TypeInferrerContext;
+use PackageFactory\ComponentEngine\TypeSystem\Narrower\NarrowedTypes;
+use PackageFactory\ComponentEngine\TypeSystem\Narrower\ExpressionTypeNarrower;
+use PackageFactory\ComponentEngine\TypeSystem\Narrower\TypeNarrowerContext;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class TernaryBranchScope implements ScopeInterface
 {
     private function __construct(
-        private readonly InferredTypes $inferredTypes,
+        private readonly NarrowedTypes $inferredTypes,
         private readonly ScopeInterface $parentScope
     ) {
     }
@@ -41,7 +41,7 @@ final class TernaryBranchScope implements ScopeInterface
     public static function forTruthyBranch(ExpressionNode $conditionNode, ScopeInterface $parentScope): self
     {
         return new self(
-            (new TypeInferrer($parentScope))->inferTypesInCondition($conditionNode, TypeInferrerContext::TRUTHY),
+            (new ExpressionTypeNarrower($parentScope))->narrowTypesOfSymbolsIn($conditionNode, TypeNarrowerContext::TRUTHY),
             $parentScope
         );
     }
@@ -49,7 +49,7 @@ final class TernaryBranchScope implements ScopeInterface
     public static function forFalsyBranch(ExpressionNode $conditionNode, ScopeInterface $parentScope): self
     {
         return new self(
-            (new TypeInferrer($parentScope))->inferTypesInCondition($conditionNode, TypeInferrerContext::FALSY),
+            (new ExpressionTypeNarrower($parentScope))->narrowTypesOfSymbolsIn($conditionNode, TypeNarrowerContext::FALSY),
             $parentScope
         );
     }

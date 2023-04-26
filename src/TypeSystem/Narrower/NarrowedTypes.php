@@ -20,11 +20,11 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Inferrer;
+namespace PackageFactory\ComponentEngine\TypeSystem\Narrower;
 
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-class InferredTypes
+class NarrowedTypes
 {
     /**
      * Map of identifierName to the corresponding inferred type
@@ -35,7 +35,7 @@ class InferredTypes
     private function __construct(
         TypeInterface ...$types
     ) {
-        assert(self::isAssociativeArray($types), '$types must be an associative array');
+        /** @var array<string,TypeInterface> $types */
         $this->types = $types;
     }
 
@@ -44,7 +44,7 @@ class InferredTypes
         return new self();
     }
 
-    public static function fromType(string $identifierName, TypeInterface $type): self
+    public static function fromEntry(string $identifierName, TypeInterface $type): self
     {
         return new self(...[$identifierName => $type]);
     }
@@ -52,21 +52,5 @@ class InferredTypes
     public function getType(string $identifierName): ?TypeInterface
     {
         return $this->types[$identifierName] ?? null;
-    }
-
-    /**
-     * @template T
-     * @param array<string|int,T> $array
-     * @phpstan-assert-if-true array<string,T> $array
-     */
-    private static function isAssociativeArray(array $array): bool
-    {
-        foreach ($array as $key => $value) {
-            if (is_string($key)) {
-                continue;
-            }
-            return false;
-        }
-        return true;
     }
 }

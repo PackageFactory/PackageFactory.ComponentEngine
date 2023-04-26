@@ -20,7 +20,7 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Inferrer;
+namespace PackageFactory\ComponentEngine\TypeSystem\Narrower;
 
 use PackageFactory\ComponentEngine\Definition\BinaryOperator;
 use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
@@ -40,30 +40,30 @@ use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
  * The structure is partially inspired by phpstan
  * https://github.com/phpstan/phpstan-src/blob/07bb4aa2d5e39dafa78f56c5df132c763c2d1b67/src/Analyser/TypeSpecifier.php#L111
  */
-class TypeInferrer
+class ExpressionTypeNarrower
 {
     public function __construct(
         private readonly ScopeInterface $scope
     ) {
     }
 
-    public function inferTypesInCondition(ExpressionNode $conditionNode, TypeInferrerContext $context): InferredTypes
+    public function narrowTypesOfSymbolsIn(ExpressionNode $expressionNode, TypeNarrowerContext $context): NarrowedTypes
     {
-        if ($conditionNode->root instanceof IdentifierNode) {
-            $type = $this->scope->lookupTypeFor($conditionNode->root->value);
+        if ($expressionNode->root instanceof IdentifierNode) {
+            $type = $this->scope->lookupTypeFor($expressionNode->root->value);
             if (!$type) {
-                return InferredTypes::empty();
+                return NarrowedTypes::empty();
             }
             // case `nullableString ? "nullableString is not null" : "nullableString is null"`
-            return InferredTypes::fromType($conditionNode->root->value, $context->narrowDownType($type));
+            return NarrowedTypes::fromEntry($expressionNode->root->value, $context->narrowType($type));
         }
 
-        if (($binaryOperationNode = $conditionNode->root) instanceof BinaryOperationNode) {
+        if (($binaryOperationNode = $expressionNode->root) instanceof BinaryOperationNode) {
             // cases
             // `nullableString === null ? "nullableString is null" : "nullableString is not null"`
             // `nullableString !== null ? "nullableString is not null" : "nullableString is null"`
             if (count($binaryOperationNode->operands->rest) !== 1) {
-                return InferredTypes::empty();
+                return NarrowedTypes::empty();
             }
             $first = $binaryOperationNode->operands->first;
             $second = $binaryOperationNode->operands->rest[0];
@@ -77,21 +77,21 @@ class TypeInferrer
             };
 
             if ($comparedIdentifierValueToNull === null) {
-                return InferredTypes::empty();
+                return NarrowedTypes::empty();
             }
             $type = $this->scope->lookupTypeFor($comparedIdentifierValueToNull);
             if (!$type) {
-                return InferredTypes::empty();
+                return NarrowedTypes::empty();
             }
 
             if ($binaryOperationNode->operator === BinaryOperator::EQUAL) {
-                return InferredTypes::fromType($comparedIdentifierValueToNull, $context->negate()->narrowDownType($type));
+                return NarrowedTypes::fromEntry($comparedIdentifierValueToNull, $context->negate()->narrowType($type));
             }
             if ($binaryOperationNode->operator === BinaryOperator::NOT_EQUAL) {
-                return InferredTypes::fromType($comparedIdentifierValueToNull, $context->narrowDownType($type));
+                return NarrowedTypes::fromEntry($comparedIdentifierValueToNull, $context->narrowType($type));
             }
         }
 
-        return InferredTypes::empty();
+        return NarrowedTypes::empty();
     }
 }

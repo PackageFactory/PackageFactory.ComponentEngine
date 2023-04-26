@@ -20,13 +20,13 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Inferrer;
+namespace PackageFactory\ComponentEngine\TypeSystem\Narrower;
 
 use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-enum TypeInferrerContext
+enum TypeNarrowerContext
 {
     case TRUTHY;
 
@@ -40,7 +40,7 @@ enum TypeInferrerContext
         };
     }
 
-    public function narrowDownType(TypeInterface $type): TypeInterface
+    public function narrowType(TypeInterface $type): TypeInterface
     {
         if (!$type instanceof UnionType || !$type->containsNull()) {
             return $type;
