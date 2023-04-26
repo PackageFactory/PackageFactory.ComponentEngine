@@ -20,12 +20,12 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Narrower;
+namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Narrower\Expression;
 
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
-use PackageFactory\ComponentEngine\TypeSystem\Narrower\ExpressionTypeNarrower;
+use PackageFactory\ComponentEngine\TypeSystem\Narrower\Expression\ExpressionTypeNarrower;
 use PackageFactory\ComponentEngine\TypeSystem\Narrower\NarrowedTypes;
 use PackageFactory\ComponentEngine\TypeSystem\Narrower\TypeNarrowerContext;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;

@@ -20,13 +20,15 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Narrower;
+namespace PackageFactory\ComponentEngine\TypeSystem\Narrower\Expression;
 
 use PackageFactory\ComponentEngine\Definition\BinaryOperator;
 use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
+use PackageFactory\ComponentEngine\TypeSystem\Narrower\NarrowedTypes;
+use PackageFactory\ComponentEngine\TypeSystem\Narrower\TypeNarrowerContext;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
