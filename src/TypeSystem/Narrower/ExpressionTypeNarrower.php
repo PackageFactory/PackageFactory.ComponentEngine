@@ -78,6 +78,10 @@ class ExpressionTypeNarrower
                     return NarrowedTypes::empty();
                 }
 
+                if ($other->root instanceof IdentifierNode) {
+                    return NarrowedTypes::empty();
+                }
+
                 return $this->narrowTypesOfSymbolsIn(
                     $other,
                     $boolean->value ? $contextBasedOnOperator : $contextBasedOnOperator->negate()
