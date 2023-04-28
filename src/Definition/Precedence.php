@@ -50,6 +50,7 @@ enum Precedence: int
             TokenType::BRACKET_ROUND_CLOSE,
             TokenType::BRACKET_SQUARE_OPEN,
             TokenType::BRACKET_SQUARE_CLOSE,
+            TokenType::OPTCHAIN,
             TokenType::PERIOD => self::ACCESS,
 
             TokenType::OPERATOR_BOOLEAN_NOT => self::UNARY,
