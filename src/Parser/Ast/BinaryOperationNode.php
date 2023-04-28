@@ -29,8 +29,9 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 final class BinaryOperationNode implements \JsonSerializable
 {
     private function __construct(
+        public readonly ExpressionNode $left,
         public readonly BinaryOperator $operator,
-        public readonly BinaryOperandNodes $operands
+        public readonly ExpressionNode $right
     ) {
     }
 
@@ -46,11 +47,18 @@ final class BinaryOperationNode implements \JsonSerializable
 
         Scanner::skipOne($tokens);
 
-        $operands = BinaryOperandNodes::fromTokens($left, $tokens, $operator);
+        $precedence = $operator->toPrecedence();
+
+        Scanner::skipSpaceAndComments($tokens);
+
+        $right = ExpressionNode::fromTokens($tokens, $precedence);
+
+        Scanner::skipSpaceAndComments($tokens);
 
         return new self(
+            left: $left,
             operator: $operator,
-            operands: $operands
+            right: $right
         );
     }
 
@@ -60,7 +68,7 @@ final class BinaryOperationNode implements \JsonSerializable
             'type' => 'BinaryOperationNode',
             'payload' => [
                 'operator' => $this->operator,
-                'operands' => $this->operands
+                'operands' => [$this->left, $this->right]
             ]
         ];
     }
