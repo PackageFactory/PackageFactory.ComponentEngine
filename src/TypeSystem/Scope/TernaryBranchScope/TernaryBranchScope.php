@@ -26,13 +26,12 @@ use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
 use PackageFactory\ComponentEngine\TypeSystem\Narrower\NarrowedTypes;
 use PackageFactory\ComponentEngine\TypeSystem\Narrower\Expression\ExpressionTypeNarrower;
-use PackageFactory\ComponentEngine\TypeSystem\Narrower\TypeNarrowerContext;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class TernaryBranchScope implements ScopeInterface
 {
-    private function __construct(
+    public function __construct(
         private readonly NarrowedTypes $narrowedTypes,
         private readonly ScopeInterface $parentScope
     ) {
@@ -41,7 +40,7 @@ final class TernaryBranchScope implements ScopeInterface
     public static function forTruthyBranch(ExpressionNode $conditionNode, ScopeInterface $parentScope): self
     {
         return new self(
-            (new ExpressionTypeNarrower($parentScope))->narrowTypesOfSymbolsIn($conditionNode, TypeNarrowerContext::TRUTHY),
+            ExpressionTypeNarrower::forTruthy($parentScope)->narrowTypesOfSymbolsIn($conditionNode),
             $parentScope
         );
     }
@@ -49,7 +48,7 @@ final class TernaryBranchScope implements ScopeInterface
     public static function forFalsyBranch(ExpressionNode $conditionNode, ScopeInterface $parentScope): self
     {
         return new self(
-            (new ExpressionTypeNarrower($parentScope))->narrowTypesOfSymbolsIn($conditionNode, TypeNarrowerContext::FALSY),
+            ExpressionTypeNarrower::forFalsy($parentScope)->narrowTypesOfSymbolsIn($conditionNode),
             $parentScope
         );
     }

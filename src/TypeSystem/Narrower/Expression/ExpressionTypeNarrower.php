@@ -28,7 +28,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
 use PackageFactory\ComponentEngine\TypeSystem\Narrower\NarrowedTypes;
-use PackageFactory\ComponentEngine\TypeSystem\Narrower\TypeNarrowerContext;
+use PackageFactory\ComponentEngine\TypeSystem\Narrower\Truthiness;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
@@ -38,20 +38,32 @@ use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
  * and based on the requested branch: truthy or falsy, will predict the types a variable will have in the respective branch
  * so it matches the expected runtime behaviour
  *
- * For example given this expression: `nullableString ? "nullableString is not null" : "nullableString is null"` based on the condition `nullableString`
- * It will infer that in the truthy context nullableString is a string while in the falsy context it will infer that it is a null
+ * For example given this expression: `nullableString ? nullableString : "fallback"` based on the condition `nullableString`
+ * it will infer that in the truthy context nullableString is a string while in the falsy context it will infer that it is null.
+ * In the above case the ternary expression will resolve to a string.
  *
  * The structure is partially inspired by phpstan
  * https://github.com/phpstan/phpstan-src/blob/07bb4aa2d5e39dafa78f56c5df132c763c2d1b67/src/Analyser/TypeSpecifier.php#L111
  */
 class ExpressionTypeNarrower
 {
-    public function __construct(
-        private readonly ScopeInterface $scope
+    private function __construct(
+        private readonly ScopeInterface $scope,
+        private readonly Truthiness $assumedTruthiness
     ) {
     }
 
-    public function narrowTypesOfSymbolsIn(ExpressionNode $expressionNode, TypeNarrowerContext $context): NarrowedTypes
+    public static function forTruthy(ScopeInterface $scope): self
+    {
+        return new self($scope, Truthiness::TRUTHY);
+    }
+
+    public static function forFalsy(ScopeInterface $scope): self
+    {
+        return new self($scope, Truthiness::FALSY);
+    }
+
+    public function narrowTypesOfSymbolsIn(ExpressionNode $expressionNode): NarrowedTypes
     {
         if ($expressionNode->root instanceof IdentifierNode) {
             $type = $this->scope->lookupTypeFor($expressionNode->root->value);
@@ -59,7 +71,7 @@ class ExpressionTypeNarrower
                 return NarrowedTypes::empty();
             }
             // case `nullableString ? "nullableString is not null" : "nullableString is null"`
-            return NarrowedTypes::fromEntry($expressionNode->root->value, $context->narrowType($type));
+            return NarrowedTypes::fromEntry($expressionNode->root->value, $this->assumedTruthiness->narrowType($type));
         }
 
         if (($binaryOperationNode = $expressionNode->root) instanceof BinaryOperationNode) {
@@ -75,23 +87,24 @@ class ExpressionTypeNarrower
             ) {
                 switch ($binaryOperationNode->operator) {
                     case BinaryOperator::AND:
-                        if ($boolean->value && $context === TypeNarrowerContext::TRUTHY) {
-                            return $this->narrowTypesOfSymbolsIn($other, $context);
+                        if ($boolean->value && $this->assumedTruthiness === Truthiness::TRUTHY) {
+                            return $this->narrowTypesOfSymbolsIn($other);
                         }
                         break;
                     case BinaryOperator::EQUAL:
                     case BinaryOperator::NOT_EQUAL:
-                        $contextBasedOnOperator = $context->basedOnBinaryOperator($binaryOperationNode->operator);
+                        $contextBasedOnOperator = $this->assumedTruthiness->basedOnBinaryOperator($binaryOperationNode->operator);
                         assert($contextBasedOnOperator !== null);
 
                         if ($other->root instanceof IdentifierNode) {
                             return NarrowedTypes::empty();
                         }
 
-                        return $this->narrowTypesOfSymbolsIn(
-                            $other,
+                        $subNarrower = new self(
+                            $this->scope,
                             $boolean->value ? $contextBasedOnOperator : $contextBasedOnOperator->negate()
                         );
+                        return $subNarrower->narrowTypesOfSymbolsIn($other);
                 }
 
                 return NarrowedTypes::empty();
@@ -113,7 +126,7 @@ class ExpressionTypeNarrower
                     return NarrowedTypes::empty();
                 }
 
-                if (!$contextBasedOnOperator = $context->basedOnBinaryOperator($binaryOperationNode->operator)) {
+                if (!$contextBasedOnOperator = $this->assumedTruthiness->basedOnBinaryOperator($binaryOperationNode->operator)) {
                     return NarrowedTypes::empty();
                 }
 

@@ -27,7 +27,7 @@ use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-enum TypeNarrowerContext
+enum Truthiness
 {
     case TRUTHY;
 

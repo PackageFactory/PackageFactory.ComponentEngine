@@ -27,7 +27,6 @@ use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Narrower\Expression\ExpressionTypeNarrower;
 use PackageFactory\ComponentEngine\TypeSystem\Narrower\NarrowedTypes;
-use PackageFactory\ComponentEngine\TypeSystem\Narrower\TypeNarrowerContext;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
@@ -85,7 +84,7 @@ final class ExpressionTypeNarrowerTest extends TestCase
             'FALSY:: nullableString && true' => [
                 'nullableString && true',
                 NarrowedTypes::empty(),
-                TypeNarrowerContext::FALSY
+                false
             ],
 
             'nullableString === true' => [
@@ -102,18 +101,20 @@ final class ExpressionTypeNarrowerTest extends TestCase
     public function narrowedExpressions(
         string $expressionAsString,
         NarrowedTypes $expectedTypes,
-        TypeNarrowerContext $context = TypeNarrowerContext::TRUTHY
+        bool $truthiness = true
     ): void {
-        $expressionTypeNarrower = new ExpressionTypeNarrower(
-            scope: new DummyScope([
-                'nullableString' => UnionType::of(StringType::get(), NullType::get()),
-                'variableOfTypeNull' => NullType::get()
-            ])
-        );
+        $scope = new DummyScope([
+            'nullableString' => UnionType::of(StringType::get(), NullType::get()),
+            'variableOfTypeNull' => NullType::get()
+        ]);
+
+        $expressionTypeNarrower = $truthiness
+            ? ExpressionTypeNarrower::forTruthy($scope)
+            : ExpressionTypeNarrower::forFalsy($scope);
 
         $expressionNode = ExpressionNode::fromString($expressionAsString);
 
-        $actualTypes = $expressionTypeNarrower->narrowTypesOfSymbolsIn($expressionNode, $context);
+        $actualTypes = $expressionTypeNarrower->narrowTypesOfSymbolsIn($expressionNode);
 
         $this->assertEqualsCanonicalizing(
             $expectedTypes->toArray(),
