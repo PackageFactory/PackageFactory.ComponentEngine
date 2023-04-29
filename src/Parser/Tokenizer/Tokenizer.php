@@ -256,14 +256,22 @@ final class Tokenizer implements \IteratorAggregate
         yield from $buffer->flush(TokenType::PERIOD);
     }
 
+    /**
+     * @param \Iterator<mixed, Fragment> $fragments
+     */
     public static function symbol(\Iterator $fragments, ?Buffer $buffer = null): \Iterator
     {
         $buffer = $buffer ?? Buffer::empty();
         $capture = true;
 
         while ($capture && $fragments->valid()) {
-            /** @var Fragment $fragment */
             $fragment = $fragments->current();
+
+            if ($buffer->value() === '!' && $fragment->value === '!') {
+                // chained `!` must be kept as individual fragments/tokens
+                break;
+            }
+
             $capture = match (CharacterType::get($fragment->value)) {
                 CharacterType::ANGLE_CLOSE,
                 CharacterType::FORWARD_SLASH,
