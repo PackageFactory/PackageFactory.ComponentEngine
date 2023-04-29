@@ -91,6 +91,14 @@ final class ExpressionTypeNarrowerTest extends TestCase
                 'nullableString === true',
                 NarrowedTypes::empty()
             ],
+
+            '!nullableString' => [
+                '!nullableString', $variableIsNull
+            ],
+
+            '!!nullableString' => [
+                '!!nullableString', $variableIsString
+            ],
         ];
     }
 

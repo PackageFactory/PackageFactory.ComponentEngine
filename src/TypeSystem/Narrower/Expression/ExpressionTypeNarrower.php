@@ -27,6 +27,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
+use PackageFactory\ComponentEngine\Parser\Ast\UnaryOperationNode;
 use PackageFactory\ComponentEngine\TypeSystem\Narrower\NarrowedTypes;
 use PackageFactory\ComponentEngine\TypeSystem\Narrower\Truthiness;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
@@ -135,6 +136,14 @@ class ExpressionTypeNarrower
                     $contextBasedOnOperator->negate()->narrowType($type)
                 );
             }
+        }
+
+        if (($unaryOperationNode = $expressionNode->root) instanceof UnaryOperationNode) {
+            $subNarrower = new self(
+                $this->scope,
+                $this->assumedTruthiness->negate()
+            );
+            return $subNarrower->narrowTypesOfSymbolsIn($unaryOperationNode->argument);
         }
 
         return NarrowedTypes::empty();
