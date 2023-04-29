@@ -70,6 +70,8 @@ final class BinaryOperationTranspilerTest extends TestCase
             '2 % b' => ['2 % b', '(2 % $this->b)'],
             'a % b' => ['a % b', '($this->a % $this->b)'],
 
+            '!1 + 1' => ['!1 + 1', '((!1) + 1)'],
+
             '42 * a / 23 + b - 17 * c' => [
                 '42 * a / 23 + b - 17 * c',
                 '((((42 * $this->a) / 23) + $this->b) - (17 * $this->c))'
@@ -99,6 +101,10 @@ final class BinaryOperationTranspilerTest extends TestCase
             'a <= 2' => ['a <= 2', '($this->a <= 2)'],
             '4 <= b' => ['4 <= b', '(4 <= $this->b)'],
             'a <= b' => ['a <= b', '($this->a <= $this->b)'],
+
+            'true && true && true' => ['true && true && true', '((true && true) && true)'],
+            '1 === 1 === true' => ['1 === 1 === true', '((1 === 1) === true)'],
+            '1 + 1 + 1' => ['1 + 1 + 1', '((1 + 1) + 1)'],
         ];
     }
 

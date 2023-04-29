@@ -60,6 +60,10 @@ final class BinaryOperationTypeResolverTest extends TestCase
             '4 >= 2' => ['4 >= 2', BooleanType::get()],
             '4 < 2' => ['4 < 2', BooleanType::get()],
             '4 <= 2' => ['4 <= 2', BooleanType::get()],
+
+            'true && true && true' => ['true && true && true', BooleanType::get()],
+            '1 === 1 === true' => ['1 === 1 === true', BooleanType::get()],
+            '1 + 1 + 1' => ['1 + 1 + 1', NumberType::get()],
         ];
     }
 

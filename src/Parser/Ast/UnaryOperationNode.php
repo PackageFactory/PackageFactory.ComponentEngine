@@ -22,53 +22,45 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
-use PackageFactory\ComponentEngine\Definition\BinaryOperator;
+use PackageFactory\ComponentEngine\Definition\Precedence;
+use PackageFactory\ComponentEngine\Definition\UnaryOperator;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 
-final class BinaryOperationNode implements \JsonSerializable
+final class UnaryOperationNode implements \JsonSerializable
 {
     private function __construct(
-        public readonly ExpressionNode $left,
-        public readonly BinaryOperator $operator,
-        public readonly ExpressionNode $right
+        public readonly UnaryOperator $operator,
+        public readonly ExpressionNode $argument
     ) {
     }
 
     /**
      * @param \Iterator<mixed,Token> $tokens
-     * @return self
      */
-    public static function fromTokens(ExpressionNode $left, \Iterator $tokens): self
+    public static function fromTokens(\Iterator $tokens): self
     {
         Scanner::skipSpace($tokens);
 
-        $operator = BinaryOperator::fromTokenType(Scanner::type($tokens));
+        $operator = UnaryOperator::fromTokenType(Scanner::type($tokens));
 
         Scanner::skipOne($tokens);
 
-        $precedence = $operator->toPrecedence();
-
-        Scanner::skipSpaceAndComments($tokens);
-
-        $right = ExpressionNode::fromTokens($tokens, $precedence);
-
-        Scanner::skipSpaceAndComments($tokens);
+        $argument = ExpressionNode::fromTokens($tokens, Precedence::UNARY);
 
         return new self(
-            left: $left,
             operator: $operator,
-            right: $right
+            argument: $argument
         );
     }
 
     public function jsonSerialize(): mixed
     {
         return [
-            'type' => 'BinaryOperationNode',
+            'type' => 'UnaryOperationNode',
             'payload' => [
                 'operator' => $this->operator,
-                'operands' => [$this->left, $this->right]
+                'argument' => $this->argument
             ]
         ];
     }
