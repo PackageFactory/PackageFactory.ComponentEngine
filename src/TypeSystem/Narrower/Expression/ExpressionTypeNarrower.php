@@ -63,18 +63,14 @@ class ExpressionTypeNarrower
         }
 
         if (($binaryOperationNode = $expressionNode->root) instanceof BinaryOperationNode) {
-            // todo we currently only work with two operands
-            if (count($binaryOperationNode->operands->rest) !== 1) {
-                return NarrowedTypes::empty();
-            }
-            $first = $binaryOperationNode->operands->first;
-            $second = $binaryOperationNode->operands->rest[0];
+            $right = $binaryOperationNode->right;
+            $left = $binaryOperationNode->left;
 
             if (
-                (($boolean = $first->root) instanceof BooleanLiteralNode
-                    && $other = $second // @phpstan-ignore-line
-                ) || (($boolean = $second->root) instanceof BooleanLiteralNode
-                    && $other = $first // @phpstan-ignore-line
+                (($boolean = $right->root) instanceof BooleanLiteralNode
+                    && $other = $left // @phpstan-ignore-line
+                ) || (($boolean = $left->root) instanceof BooleanLiteralNode
+                    && $other = $right // @phpstan-ignore-line
                 )
             ) {
                 switch ($binaryOperationNode->operator) {
@@ -103,10 +99,10 @@ class ExpressionTypeNarrower
 
             $expressionTypeResolver = (new ExpressionTypeResolver($this->scope));
             if (
-                ($expressionTypeResolver->resolveTypeOf($first)->is(NullType::get())
-                    && $other = $second // @phpstan-ignore-line
-                ) || ($expressionTypeResolver->resolveTypeOf($second)->is(NullType::get())
-                    && $other = $first // @phpstan-ignore-line
+                ($expressionTypeResolver->resolveTypeOf($right)->is(NullType::get())
+                    && $other = $left // @phpstan-ignore-line
+                ) || ($expressionTypeResolver->resolveTypeOf($left)->is(NullType::get())
+                    && $other = $right // @phpstan-ignore-line
                 )
             ) {
                 if (!$other->root instanceof IdentifierNode) {
