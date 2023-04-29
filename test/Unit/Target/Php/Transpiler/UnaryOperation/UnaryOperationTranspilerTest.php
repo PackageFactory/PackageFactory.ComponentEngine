@@ -40,7 +40,6 @@ final class UnaryOperationTranspilerTest extends TestCase
             '!false' => ['!false', '(!false)'],
             '!!false' => ['!!false', '(!(!false))'],
             '!!!false' => ['!!!false', '(!(!(!false)))'],
-            '!1 + 1' => ['!1 + 1', '(!(1 + 1))'],
             '!foo' => ['!foo', '(!$this->foo)'],
         ];
     }

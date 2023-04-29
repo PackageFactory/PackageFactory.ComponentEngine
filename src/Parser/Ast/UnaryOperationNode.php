@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
+use PackageFactory\ComponentEngine\Definition\Precedence;
 use PackageFactory\ComponentEngine\Definition\UnaryOperator;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
@@ -45,7 +46,7 @@ final class UnaryOperationNode implements \JsonSerializable
 
         Scanner::skipOne($tokens);
 
-        $argument = ExpressionNode::fromTokens($tokens);
+        $argument = ExpressionNode::fromTokens($tokens, Precedence::UNARY);
 
         return new self(
             operator: $operator,
