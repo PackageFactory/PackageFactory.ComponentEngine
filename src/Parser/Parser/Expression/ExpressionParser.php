@@ -35,50 +35,46 @@ use PackageFactory\ComponentEngine\Parser\Parser\TernaryOperation\TernaryOperati
 use PackageFactory\ComponentEngine\Parser\Parser\UnaryOperation\UnaryOperationParser;
 use Parsica\Parsica\Internal\Succeed;
 use Parsica\Parsica\Parser;
-
 use Parsica\Parsica\ParseResult;
 use Parsica\Parsica\Stream;
 
-use function Parsica\Parsica\{any, between, skipSpace};
+use function Parsica\Parsica\{any, between, either, pure, skipSpace};
 
 final class ExpressionParser
 {
     public static function get(Precedence $precedence = Precedence::SEQUENCE): Parser
     {
-        return Parser::make('Expression', function (Stream $stream) use ($precedence): ParseResult {
-            $expressionRootParser = between(skipSpace(), skipSpace(), any(
-                NumberLiteralParser::get(),
-                BooleanLiteralParser::get(),
-                NullLiteralParser::get(),
-                StringLiteralParser::get(),
-                IdentifierParser::get(),
-                UnaryOperationParser::get()
-            ));
+        $expressionRootParser = between(skipSpace(), skipSpace(), any(
+            NumberLiteralParser::get(),
+            BooleanLiteralParser::get(),
+            NullLiteralParser::get(),
+            StringLiteralParser::get(),
+            IdentifierParser::get(),
+            UnaryOperationParser::get()
+        ));
 
-            $parseResult = $expressionRootParser->run($stream);
-            if ($parseResult->isFail()) {
-                return $parseResult;
-            }
-            $expressionNode = new ExpressionNode($parseResult->output());
-            $remainder = $parseResult->remainder();
+        return $expressionRootParser->map(fn ($expressionRoot) => new ExpressionNode($expressionRoot))
+            ->bind(function ($expressionNode) use ($precedence) {
+                return self::continueParsing($expressionNode, $precedence);
+            });
+    }
 
-            while ($parseResult->isSuccess() && !$precedence->mustStopAt(Precedence::fromRemainder($remainder))) {
-                $parseResult = any(
-                    BinaryOperationParser::get($expressionNode),
-                    AccessParser::get($expressionNode),
-                    TernaryOperationParser::get($expressionNode),
-                )->thenIgnore(skipSpace())->continueFrom($parseResult);
+    private static function continueParsing(ExpressionNode $expressionNode, Precedence $precedence): Parser
+    {
+        $continuationParsers = any(
+            BinaryOperationParser::get($expressionNode),
+            AccessParser::get($expressionNode),
+            TernaryOperationParser::get($expressionNode)
+        )
+            ->thenIgnore(skipSpace())
+            ->bind(function ($expressionRoot) use ($precedence) {
+                $newExpressionNode = new ExpressionNode($expressionRoot);
+                return self::continueParsing($newExpressionNode, $precedence);
+            });
 
-                if ($parseResult->isSuccess()) {
-                    $expressionNode = new ExpressionNode($parseResult->output());
-                    $remainder = $parseResult->remainder();
-                }
-            }
-
-            return new Succeed(
-                $expressionNode,
-                $remainder
-            );
-        });
+        return either(
+            $precedence->delegate($continuationParsers),
+            pure($expressionNode)
+        );
     }
 }

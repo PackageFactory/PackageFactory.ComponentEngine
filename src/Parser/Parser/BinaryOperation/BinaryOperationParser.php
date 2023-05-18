@@ -40,21 +40,12 @@ final class BinaryOperationParser
 {
     public static function get(ExpressionNode $left): Parser
     {
-        return Parser::make('binary operation', function (Stream $stream) use ($left): ParseResult {
-            $result = self::binaryOperatorParser()->run($stream);
-            if ($result->isFail()) {
-                return $result;
-            }
-            $binaryOperator = $result->output();
-            assert($binaryOperator instanceof BinaryOperator);
-            $result = ExpressionParser::get($binaryOperator->toPrecedence())->continueFrom($result);
-            if ($result->isFail()) {
-                return $result;
-            }
-            return new Succeed(
-                new BinaryOperationNode($left, $binaryOperator, $result->output()),
-                $result->remainder()
-            );
+        return self::binaryOperatorParser()->bind(function (BinaryOperator $binaryOperator) use ($left) {
+            return ExpressionParser::get($binaryOperator->toPrecedence())->map(fn ($right) => new BinaryOperationNode(
+                $left,
+                $binaryOperator,
+                $right
+            ));
         });
     }
 

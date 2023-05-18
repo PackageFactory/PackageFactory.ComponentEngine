@@ -42,10 +42,9 @@ final class UnaryOperationParser
 
     private static function build(): Parser
     {
-        return collect(
-            self::unaryOperator(),
-            ExpressionParser::get(Precedence::UNARY)
-        )->map(fn ($result) => new UnaryOperationNode($result[0], $result[1]));
+        return self::unaryOperator()->bind(function (UnaryOperator $unaryOperator) {
+            return ExpressionParser::get($unaryOperator->toPrecedence())->map(fn ($expression) => new UnaryOperationNode($unaryOperator, $expression));
+        });
     }
 
     private static function unaryOperator(): Parser

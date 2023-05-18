@@ -23,8 +23,11 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Definition;
 
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use Parsica\Parsica\Parser;
+use Parsica\Parsica\ParseResult;
 use Parsica\Parsica\Stream;
 
+use function Parsica\Parsica\fail;
 
 enum Precedence: int
 {
@@ -94,7 +97,17 @@ enum Precedence: int
         };
     }
 
-    public static function fromRemainder(Stream $stream): self
+    public function delegate(Parser $parser): Parser
+    {
+        return Parser::make('delegate in Precedence(' . $this->name . ')', function (Stream $stream) use($parser): ParseResult {
+             if ($this->mustStopAt(self::fromRemainder($stream))) {
+                return fail('<stopped at precedence>')->run($stream);
+            }
+            return $parser->run($stream);
+        });
+    }
+
+    private static function fromRemainder(Stream $stream): self
     {
         // @todo dont rely on `__toString` as its an implementation detail and the stream could be lazy
         $contents = $stream->__toString();
