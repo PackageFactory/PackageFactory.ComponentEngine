@@ -20,40 +20,27 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast;
+namespace PackageFactory\ComponentEngine\Parser\Parser\BooleanLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
+use Parsica\Parsica\Parser;
 
-final class AccessNode implements \JsonSerializable
+use function Parsica\Parsica\{either, skipSpace, string};
+
+final class BooleanLiteralParser
 {
-    public function __construct(
-        public readonly ExpressionNode $root,
-        public readonly AccessChainSegmentNodes $chain
-    ) {
+    private static ?Parser $instance = null;
+
+    public static function get(): Parser
+    {
+        return self::$instance ??= self::build();
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return self
-     */
-    public static function fromTokens(ExpressionNode $root, \Iterator $tokens): self
+    private static function build(): Parser
     {
-        $chain = AccessChainSegmentNodes::fromTokens($tokens);
-
-        return new self(
-            root: $root,
-            chain: $chain
-        );
-    }
-
-    public function jsonSerialize(): mixed
-    {
-        return [
-            'type' => 'AccessNode',
-            'payload' => [
-                'root' => $this->root,
-                'chain' => $this->chain
-            ]
-        ];
+        return skipSpace()->sequence(either(
+            string('true')->map(fn () => new BooleanLiteralNode(true)),
+            string('false')->map(fn () => new BooleanLiteralNode(false))
+        ));
     }
 }

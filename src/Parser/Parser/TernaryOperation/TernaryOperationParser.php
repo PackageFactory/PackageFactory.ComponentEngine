@@ -20,34 +20,24 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast;
+namespace PackageFactory\ComponentEngine\Parser\Parser\TernaryOperation;
 
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use PackageFactory\ComponentEngine\Definition\Precedence;
+use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
+use PackageFactory\ComponentEngine\Parser\Parser\Expression\ExpressionParser;
+use Parsica\Parsica\Parser;
 
-final class NullLiteralNode implements \JsonSerializable
+use function Parsica\Parsica\char;
+use function Parsica\Parsica\collect;
+
+final class TernaryOperationParser
 {
-    public function __construct()
+    public static function get(ExpressionNode $condition): Parser
     {
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return self
-     */
-    public static function fromTokens(\Iterator $tokens): self
-    {
-        Scanner::assertType($tokens, TokenType::KEYWORD_NULL);
-        Scanner::skipOne($tokens);
-
-        return new self();
-    }
-
-    public function jsonSerialize(): mixed
-    {
-        return [
-            'type' => 'NullLiteralNode'
-        ];
+        return collect(
+            char('?')->sequence(ExpressionParser::get(Precedence::TERNARY)),
+            char(':')->sequence(ExpressionParser::get(Precedence::TERNARY))
+        )->map(fn ($branches) => new TernaryOperationNode($condition, $branches[0], $branches[1]));
     }
 }

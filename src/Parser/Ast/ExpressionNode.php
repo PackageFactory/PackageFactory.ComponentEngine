@@ -23,27 +23,22 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
 use PackageFactory\ComponentEngine\Definition\Precedence;
-use PackageFactory\ComponentEngine\Parser\Source\Source;
+use PackageFactory\ComponentEngine\Parser\Parser\Expression\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\LookAhead;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class ExpressionNode implements \JsonSerializable
 {
-    private function __construct(
+    public function __construct(
         public readonly IdentifierNode | NumberLiteralNode | BinaryOperationNode | UnaryOperationNode | AccessNode | TernaryOperationNode | TagNode | StringLiteralNode | MatchNode | TemplateLiteralNode | BooleanLiteralNode | NullLiteralNode $root
     ) {
     }
 
     public static function fromString(string $expressionAsString): self
     {
-        return self::fromTokens(
-            Tokenizer::fromSource(
-                Source::fromString($expressionAsString)
-            )->getIterator()
-        );
+        return ExpressionParser::get()->tryString($expressionAsString)->output();
     }
 
     /**
@@ -122,7 +117,7 @@ final class ExpressionNode implements \JsonSerializable
         }
 
         Scanner::skipSpaceAndComments($tokens);
-        if (Scanner::isEnd($tokens) || $precedence->mustStopAt(Scanner::type($tokens))) {
+        if (Scanner::isEnd($tokens) || $precedence->mustStopAtTokenType(Scanner::type($tokens))) {
             return new self(
                 root: $root
             );

@@ -29,7 +29,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class TernaryOperationNode implements \JsonSerializable
 {
-    private function __construct(
+    public function __construct(
         public readonly ExpressionNode $condition,
         public readonly ExpressionNode $true,
         public readonly ExpressionNode $false

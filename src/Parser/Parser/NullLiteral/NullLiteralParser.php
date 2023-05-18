@@ -20,40 +20,24 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast;
+namespace PackageFactory\ComponentEngine\Parser\Parser\NullLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+use PackageFactory\ComponentEngine\Parser\Ast\NullLiteralNode;
+use Parsica\Parsica\Parser;
 
-final class AccessNode implements \JsonSerializable
+use function Parsica\Parsica\{string};
+
+final class NullLiteralParser
 {
-    public function __construct(
-        public readonly ExpressionNode $root,
-        public readonly AccessChainSegmentNodes $chain
-    ) {
+    private static ?Parser $instance = null;
+
+    public static function get(): Parser
+    {
+        return self::$instance ??= self::build();
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return self
-     */
-    public static function fromTokens(ExpressionNode $root, \Iterator $tokens): self
+    private static function build(): Parser
     {
-        $chain = AccessChainSegmentNodes::fromTokens($tokens);
-
-        return new self(
-            root: $root,
-            chain: $chain
-        );
-    }
-
-    public function jsonSerialize(): mixed
-    {
-        return [
-            'type' => 'AccessNode',
-            'payload' => [
-                'root' => $this->root,
-                'chain' => $this->chain
-            ]
-        ];
+        return string('null')->map(fn () => new NullLiteralNode());
     }
 }

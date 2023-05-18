@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Definition;
 
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
-
+use Parsica\Parsica\Stream;
 
 
 enum Precedence: int
@@ -42,6 +42,19 @@ enum Precedence: int
     case LOGICAL_OR = 4;
     case TERNARY = 3;
     case SEQUENCE = 1;
+
+    private const ARRAY_OF_STRINGS_TO_PRECEDENCE = [
+        [['(', ')', '[', ']', '?.', '.'], self::ACCESS],
+        [['!'], self::UNARY],
+        [['*', '/', '%'], self::POINT],
+        [['+', '-'], self::DASH],
+        [['+', '-'], self::DASH],
+        [['>', '>=', '<', '<='], self::COMPARISON],
+        [['===', '!=='], self::EQUALITY],
+        [['&&'], self::LOGICAL_AND],
+        [['||'], self::LOGICAL_OR],
+        [['?', ':'], self::TERNARY]
+    ];
 
     public static function forTokenType(TokenType $tokenType): self
     {
@@ -81,8 +94,27 @@ enum Precedence: int
         };
     }
 
-    public function mustStopAt(TokenType $tokenType): bool
+    public static function fromRemainder(Stream $stream): self
     {
-        return self::forTokenType($tokenType)->value <= $this->value;
+        // @todo dont rely on `__toString` as its an implementation detail and the stream could be lazy
+        $contents = $stream->__toString();
+        foreach (self::ARRAY_OF_STRINGS_TO_PRECEDENCE as [$strings, $pre]) {
+            foreach ($strings as $string) {
+                if (str_starts_with($contents, $string)) {
+                    return $pre;
+                }
+            }
+        }
+        return self::SEQUENCE;
+    }
+
+    public function mustStopAt(self $precedence): bool
+    {
+        return $precedence->value <= $this->value;
+    }
+
+    public function mustStopAtTokenType(TokenType $tokenType): bool
+    {
+        return $this->mustStopAt(self::forTokenType($tokenType));
     }
 }

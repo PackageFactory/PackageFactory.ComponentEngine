@@ -20,40 +20,30 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast;
+namespace PackageFactory\ComponentEngine\Parser\Parser\NumberLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+use PackageFactory\ComponentEngine\Definition\NumberFormat;
+use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
+use PackageFactory\ComponentEngine\Parser\Parser\NullLiteral\NullLiteralParser;
+use Parsica\Parsica\Parser;
 
-final class AccessNode implements \JsonSerializable
+use function Parsica\Parsica\alphaNumChar;
+use function Parsica\Parsica\isDigit;
+use function Parsica\Parsica\takeWhile;
+use function Parsica\Parsica\takeWhile1;
+
+final class NumberLiteralParser
 {
-    public function __construct(
-        public readonly ExpressionNode $root,
-        public readonly AccessChainSegmentNodes $chain
-    ) {
+    private static ?Parser $instance = null;
+
+    public static function get(): Parser
+    {
+        return self::$instance ??= self::build();
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return self
-     */
-    public static function fromTokens(ExpressionNode $root, \Iterator $tokens): self
+    private static function build(): Parser
     {
-        $chain = AccessChainSegmentNodes::fromTokens($tokens);
-
-        return new self(
-            root: $root,
-            chain: $chain
-        );
-    }
-
-    public function jsonSerialize(): mixed
-    {
-        return [
-            'type' => 'AccessNode',
-            'payload' => [
-                'root' => $this->root,
-                'chain' => $this->chain
-            ]
-        ];
+        return takeWhile1(isDigit())
+            ->map(fn ($value) => new NumberLiteralNode($value, NumberFormat::DECIMAL));
     }
 }

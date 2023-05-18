@@ -28,7 +28,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 
 final class BinaryOperationNode implements \JsonSerializable
 {
-    private function __construct(
+    public function __construct(
         public readonly ExpressionNode $left,
         public readonly BinaryOperator $operator,
         public readonly ExpressionNode $right
