@@ -73,7 +73,8 @@ final class ExpressionParser
             });
 
         return either(
-            $precedence->delegate($continuationParsers),
+            $precedence->check()
+                ->sequence($continuationParsers),
             pure($expressionNode)
         );
     }

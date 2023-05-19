@@ -24,10 +24,13 @@ namespace PackageFactory\ComponentEngine\Definition;
 
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 use Parsica\Parsica\Parser;
-use Parsica\Parsica\ParseResult;
-use Parsica\Parsica\Stream;
 
+use function Parsica\Parsica\any;
 use function Parsica\Parsica\fail;
+use function Parsica\Parsica\lookAhead;
+use function Parsica\Parsica\pure;
+use function Parsica\Parsica\string;
+use function Parsica\Parsica\succeed;
 
 enum Precedence: int
 {
@@ -97,28 +100,31 @@ enum Precedence: int
         };
     }
 
-    public function delegate(Parser $parser): Parser
+    private static function getPrecedenceMatcher(): Parser
     {
-        return Parser::make('delegate in Precedence(' . $this->name . ')', function (Stream $stream) use($parser): ParseResult {
-             if ($this->mustStopAt(self::fromRemainder($stream))) {
-                return fail('<stopped at precedence>')->run($stream);
-            }
-            return $parser->run($stream);
-        });
-    }
-
-    private static function fromRemainder(Stream $stream): self
-    {
-        // @todo dont rely on `__toString` as its an implementation detail and the stream could be lazy
-        $contents = $stream->__toString();
-        foreach (self::ARRAY_OF_STRINGS_TO_PRECEDENCE as [$strings, $pre]) {
+        static $matcher;
+        if ($matcher) {
+            return $matcher;
+        }
+        $parsers = [];
+        foreach (self::ARRAY_OF_STRINGS_TO_PRECEDENCE as [$strings, $precedence]) {
+            $toPrecedence = fn () => $precedence;
             foreach ($strings as $string) {
-                if (str_starts_with($contents, $string)) {
-                    return $pre;
-                }
+                $parsers[] = string($string)->map($toPrecedence);
             }
         }
-        return self::SEQUENCE;
+        $matcher = any(...$parsers, ...[pure(self::SEQUENCE)]);
+        return $matcher;
+    }
+
+    public function check(): Parser
+    {
+        return lookAhead(self::getPrecedenceMatcher()->bind(function (Precedence $precedence) {
+            if ($this->mustStopAt($precedence)) {
+                return fail('<stopped at precedence>');
+            }
+            return succeed();
+        }))->label('delegate in Precedence(' . $this->name . ')');
     }
 
     public function mustStopAt(self $precedence): bool
