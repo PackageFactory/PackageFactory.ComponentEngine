@@ -24,11 +24,21 @@ namespace PackageFactory\ComponentEngine\Parser\Parser\NumberLiteral;
 
 use PackageFactory\ComponentEngine\Definition\NumberFormat;
 use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Parser\NullLiteral\NullLiteralParser;
 use Parsica\Parsica\Parser;
 
-use function Parsica\Parsica\alphaNumChar;
+use function Parsica\Parsica\any;
+use function Parsica\Parsica\append;
+use function Parsica\Parsica\assemble;
+use function Parsica\Parsica\char;
+use function Parsica\Parsica\charI;
+use function Parsica\Parsica\either;
+use function Parsica\Parsica\float;
+use function Parsica\Parsica\integer;
+use function Parsica\Parsica\isCharCode;
 use function Parsica\Parsica\isDigit;
+use function Parsica\Parsica\isHexDigit;
+use function Parsica\Parsica\optional;
+use function Parsica\Parsica\stringI;
 use function Parsica\Parsica\takeWhile;
 use function Parsica\Parsica\takeWhile1;
 
@@ -43,7 +53,47 @@ final class NumberLiteralParser
 
     private static function build(): Parser
     {
-        return takeWhile1(isDigit())
+        $isOctalDigit = isCharCode(range(0x30, 0x37));
+        $isBinaryDigit = isCharCode([0x30, 0x31]);
+
+        $binaryParser = stringI('0b')->append(takeWhile($isBinaryDigit))
+            ->map(fn ($value) => new NumberLiteralNode($value, NumberFormat::BINARY));
+
+        $octalParser = stringI('0o')->append(takeWhile($isOctalDigit))
+            ->map(fn ($value) => new NumberLiteralNode($value, NumberFormat::OCTAL));
+
+        $hexadecimalParser = stringI('0x')->append(takeWhile(isHexDigit()))
+            ->map(fn ($value) => new NumberLiteralNode($value, NumberFormat::HEXADECIMAL));
+
+        $decimalParser = self::float()
             ->map(fn ($value) => new NumberLiteralNode($value, NumberFormat::DECIMAL));
+
+        return any(
+            $binaryParser,
+            $octalParser,
+            $hexadecimalParser,
+            $decimalParser,
+        );
+    }
+
+    /**
+     * adjusted from {@see float()}
+     */
+    private static function float(): Parser
+    {
+        $digits = takeWhile1(isDigit())->label('at least one 0-9');
+        $fraction = char('.')->append($digits);
+        $exponent = charI('e')->append($digits);
+        return either(
+            assemble(
+                integer(),
+                optional($fraction),
+                optional($exponent)
+            ),
+            append(
+                $fraction,
+                optional($exponent)
+            )
+        )->label("float");
     }
 }
