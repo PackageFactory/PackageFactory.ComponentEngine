@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Parser;
 
+use PackageFactory\ComponentEngine\Parser\Source\Path;
 use Parsica\Parsica\Internal\Fail;
 use Parsica\Parsica\Internal\Succeed;
 use Parsica\Parsica\Parser;
@@ -105,6 +106,27 @@ final class UtilityParser
                 }
             }
             return new Fail('strings', $stream);
+        });
+    }
+
+    /**
+     * Map a function over the parser (which in turn maps it over the result).
+     *
+     * @template T1
+     * @template T2
+     * @psalm-param Parser<T1> $parser
+     * @psalm-param callable(T1, Path) : T2 $transformWithPath
+     * @psalm-return Parser<T2>
+     */
+    public static function mapWithPath(Parser $parser, callable $transformWithPath): Parser
+    {
+        return Parser::make($parser->getLabel(), function (Stream $stream) use($parser, $transformWithPath) {
+            $fileName = $stream->position()->filename();
+            $path = match ($fileName) {
+                '<input>' => Path::createMemory(),
+                default => Path::fromString($fileName)
+            };
+            return $parser->run($stream)->map(fn ($output) => $transformWithPath($output, $path));
         });
     }
 }

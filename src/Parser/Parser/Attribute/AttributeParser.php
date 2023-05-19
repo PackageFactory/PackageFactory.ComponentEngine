@@ -22,10 +22,20 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Parser\Attribute;
 
+use PackageFactory\ComponentEngine\Parser\Ast\AttributeNode;
 use PackageFactory\ComponentEngine\Parser\Ast\AttributeNodes;
+use PackageFactory\ComponentEngine\Parser\Parser\Expression\ExpressionParser;
+use PackageFactory\ComponentEngine\Parser\Parser\StringLiteral\StringLiteralParser;
+use PackageFactory\ComponentEngine\Parser\Parser\UtilityParser;
 use Parsica\Parsica\Parser;
 
-use function Parsica\Parsica\succeed;
+use function Parsica\Parsica\between;
+use function Parsica\Parsica\char;
+use function Parsica\Parsica\collect;
+use function Parsica\Parsica\either;
+use function Parsica\Parsica\many;
+use function Parsica\Parsica\skipSpace;
+
 final class AttributeParser
 {
     private static ?Parser $instance = null;
@@ -37,6 +47,25 @@ final class AttributeParser
 
     private static function build(): Parser
     {
-        return succeed()->map(fn () => new AttributeNodes());
+        return many(
+            collect(
+                skipSpace(),
+                self::attributeIdentifier(),
+                char('='),
+                either(
+                    StringLiteralParser::get(),
+                    between(
+                        char('{'),
+                        char('}'),
+                        ExpressionParser::get()
+                    )
+                )
+            )->map(fn ($collected) => new AttributeNode($collected[1], $collected[3]))
+        )->map(fn ($collected) => new AttributeNodes(...$collected ? $collected : []));
+    }
+
+    private static function attributeIdentifier(): Parser
+    {
+        return UtilityParser::identifier();
     }
 }

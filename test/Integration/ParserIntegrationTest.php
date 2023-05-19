@@ -22,9 +22,11 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Integration;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
+use PackageFactory\ComponentEngine\Parser\Parser\Module\ModuleParser;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
+use Parsica\Parsica\Internal\Position;
+use Parsica\Parsica\StringStream;
 use PHPUnit\Framework\TestCase;
 
 final class ParserIntegrationTest extends TestCase
@@ -61,6 +63,7 @@ final class ParserIntegrationTest extends TestCase
      */
     public function testParser(string $example): void
     {
+        // @todo remove token tests
         $source = Source::fromFile(__DIR__ . '/Examples/' . $example . '/' . $example . '.afx');
         $tokenizer = Tokenizer::fromSource($source);
         $astAsJsonString = file_get_contents(__DIR__ . '/Examples/' . $example . '/' . $example . '.ast.json');
@@ -68,7 +71,12 @@ final class ParserIntegrationTest extends TestCase
 
         $expected = json_decode($astAsJsonString, true);
 
-        $module = ModuleNode::fromTokens($tokenizer->getIterator());
+        $fileName = __DIR__ . '/Examples/' . $example . '/' . $example . '.afx';
+        $stream = new StringStream(
+            file_get_contents($fileName) ?: throw new \RuntimeException('could not load file.'),
+            Position::initial($fileName)
+        );
+        $module = ModuleParser::parseFromStream($stream);
         $moduleAsJson = json_encode($module);
         assert($moduleAsJson !== false);
 

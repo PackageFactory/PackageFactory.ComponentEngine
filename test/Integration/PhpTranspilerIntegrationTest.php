@@ -24,18 +24,18 @@ namespace PackageFactory\ComponentEngine\Test\Integration;
 
 use PackageFactory\ComponentEngine\Module\Loader\ModuleFile\ModuleFileLoader;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
-use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
+use PackageFactory\ComponentEngine\Parser\Parser\Module\ModuleParser;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Module\ModuleTranspiler;
 use PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Module\ModuleTestStrategy;
+use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
+use Parsica\Parsica\Internal\Position;
+use Parsica\Parsica\StringStream;
 use PHPUnit\Framework\TestCase;
 
 final class PhpTranspilerIntegrationTest extends TestCase
@@ -71,9 +71,12 @@ final class PhpTranspilerIntegrationTest extends TestCase
      */
     public function testTranspiler(string $example): void
     {
-        $source = Source::fromFile(__DIR__ . '/Examples/' . $example . '/' . $example . '.afx');
-        $tokenizer = Tokenizer::fromSource($source);
-        $module = ModuleNode::fromTokens($tokenizer->getIterator());
+        $fileName = __DIR__ . '/Examples/' . $example . '/' . $example . '.afx';
+        $stream = new StringStream(
+            file_get_contents($fileName) ?: throw new \RuntimeException('could not load file.'),
+            Position::initial($fileName)
+        );
+        $module = ModuleParser::parseFromStream($stream);
 
         $expected = file_get_contents(__DIR__ . '/Examples/' . $example . '/' . $example . '.php');
 

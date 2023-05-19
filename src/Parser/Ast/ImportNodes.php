@@ -50,7 +50,8 @@ final class ImportNodes implements \JsonSerializable
 
     public function merge(ImportNodes $other): self
     {
-        return new self(...$this->items, ...$other->items);
+        // without array_values we would silently ignore double named imports
+        return new self(...array_values($this->items), ...array_values($other->items));
     }
 
     public function withAddedImport(ImportNode $import): self

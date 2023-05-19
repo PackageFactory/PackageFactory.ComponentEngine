@@ -24,37 +24,35 @@ namespace PackageFactory\ComponentEngine\Parser\Parser\Module;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExportNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExportNodes;
-use PackageFactory\ComponentEngine\Parser\Ast\ImportNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ImportNodes;
 use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
 use PackageFactory\ComponentEngine\Parser\Parser\Export\ExportParser;
 use PackageFactory\ComponentEngine\Parser\Parser\Import\ImportParser;
-use PackageFactory\ComponentEngine\Parser\Source\Path;
 use Parsica\Parsica\Parser;
+use Parsica\Parsica\Stream;
 
 use function Parsica\Parsica\either;
 use function Parsica\Parsica\many;
-use function Parsica\Parsica\skipSpace;
 
 final class ModuleParser
 {
     private static ?Parser $instance = null;
 
-    public static function fromPath(Path $path): ModuleNode
+    public static function parseFromStream(Stream $stream): ModuleNode
     {
-
+        return self::get()->thenEof()->try($stream)->output();
     }
 
     public static function parseFromString(string $string): ModuleNode
     {
-        return self::get(Path::createMemory())->thenEof()->tryString($string)->output();
+        return self::get()->thenEof()->tryString($string)->output();
     }
 
-    public static function get(Path $path): Parser
+    public static function get(): Parser
     {
-        return many(
+        return self::$instance ??= many(
             either(
-                ImportParser::get($path),
+                ImportParser::get(),
                 ExportParser::get()
             )
         )->map(function ($collected) {

@@ -23,11 +23,9 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
 use PackageFactory\ComponentEngine\Parser\Parser\Module\ModuleParser;
-use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class ModuleNode implements \JsonSerializable
 {

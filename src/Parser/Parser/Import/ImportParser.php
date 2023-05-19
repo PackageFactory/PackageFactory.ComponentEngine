@@ -33,41 +33,43 @@ use Parsica\Parsica\Parser;
 use function Parsica\Parsica\between;
 use function Parsica\Parsica\char;
 use function Parsica\Parsica\collect;
-use function Parsica\Parsica\sepBy;
 use function Parsica\Parsica\sepBy1;
 use function Parsica\Parsica\skipSpace;
 
 final class ImportParser
 {
     /** @return Parser<ImportNodes> */
-    public static function get(Path $path): Parser
+    public static function get(): Parser
     {
-        return collect(
-            skipSpace(),
-            UtilityParser::keyword('from'),
-            skipSpace(),
-            UtilityParser::quotedStringContents(),
-            skipSpace(),
-            UtilityParser::keyword('import'),
-            skipSpace(),
-            char('{'),
-            skipSpace(),
-            sepBy1(
-                between(skipSpace(), skipSpace(), char(',')),
-                IdentifierParser::get(),
-            ),
-            skipSpace(),
-            char('}'),
-            skipSpace(),
-        )->map(fn ($collected) => new ImportNodes(
-            ...array_map(
-                fn (IdentifierNode $name) => new ImportNode(
-                    sourcePath: $path,
-                    path: $collected[3],
-                    name: $name
+        return UtilityParser::mapWithPath(
+            collect(
+                skipSpace(),
+                UtilityParser::keyword('from'),
+                skipSpace(),
+                UtilityParser::quotedStringContents(),
+                skipSpace(),
+                UtilityParser::keyword('import'),
+                skipSpace(),
+                char('{'),
+                skipSpace(),
+                sepBy1(
+                    between(skipSpace(), skipSpace(), char(',')),
+                    IdentifierParser::get(),
                 ),
-                $collected[9],
+                skipSpace(),
+                char('}'),
+                skipSpace(),
+            ),
+            fn (array $collected, Path $sourcePath) => new ImportNodes(
+                ...array_map(
+                    fn (IdentifierNode $name) => new ImportNode(
+                        sourcePath: $sourcePath,
+                        path: $collected[3],
+                        name: $name
+                    ),
+                    $collected[9],
+                )
             )
-        ));
+        );
     }
 }
