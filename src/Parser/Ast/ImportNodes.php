@@ -29,18 +29,28 @@ final class ImportNodes implements \JsonSerializable
      */
     public readonly array $items;
 
-    /**
-     * @param array<string,ImportNode> $items
-     */
-    private function __construct(
-        array $items
+    public function __construct(
+        ImportNode ...$items
     ) {
-        $this->items = $items;
+        $itemsAsHashMap = [];
+        foreach ($items as $item) {
+            if (array_key_exists($item->name->value, $itemsAsHashMap)) {
+                throw new \Exception('@TODO: Duplicate Import ' . $item->name->value);
+            }
+            $itemsAsHashMap[$item->name->value] = $item;
+        }
+
+        $this->items = $itemsAsHashMap;
     }
 
     public static function empty(): self
     {
-        return new self([]);
+        return new self();
+    }
+
+    public function merge(ImportNodes $other): self
+    {
+        return new self(...$this->items, ...$other->items);
     }
 
     public function withAddedImport(ImportNode $import): self
@@ -51,7 +61,7 @@ final class ImportNodes implements \JsonSerializable
             throw new \Exception('@TODO: Duplicate Import ' . $name);
         }
 
-        return new self([...$this->items, ...[$name => $import]]);
+        return new self(...[...$this->items, ...[$name => $import]]);
     }
 
     public function get(string $name): ?ImportNode

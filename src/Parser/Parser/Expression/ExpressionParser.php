@@ -43,9 +43,9 @@ use function Parsica\Parsica\{any, between, either, pure, skipSpace};
 
 final class ExpressionParser
 {
-    public static function parseFromString(string $expressionAsString): ExpressionNode
+    public static function parseFromString(string $string): ExpressionNode
     {
-        return self::get()->thenEof()->tryString($expressionAsString)->output();
+        return self::get()->thenEof()->tryString($string)->output();
     }
 
     /** @return Parser<ExpressionNode> */

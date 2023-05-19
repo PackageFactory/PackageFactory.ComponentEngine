@@ -33,18 +33,23 @@ final class PropertyDeclarationNodes implements \JsonSerializable
      */
     public readonly array $items;
 
-    /**
-     * @param array<string,PropertyDeclarationNode> $items
-     */
-    private function __construct(
-        array $items
+    public function __construct(
+        PropertyDeclarationNode ...$items
     ) {
-        $this->items = $items;
+        $itemsAsHashMap = [];
+        foreach ($items as $item) {
+            if (array_key_exists($item->name, $itemsAsHashMap)) {
+                throw new \Exception('@TODO: Duplicate Property Declaration ' . $item->name);
+            }
+            $itemsAsHashMap[$item->name] = $item;
+        }
+
+        $this->items = $itemsAsHashMap;
     }
 
     public static function empty(): self
     {
-        return new self([]);
+        return new self();
     }
 
     /**
@@ -85,7 +90,7 @@ final class PropertyDeclarationNodes implements \JsonSerializable
             throw new \Exception('@TODO: Duplicate Property Declaration ' . $name);
         }
 
-        return new self([...$this->items, ...[$name => $propertyDeclarationNode]]);
+        return new self(...[...$this->items, ...[$name => $propertyDeclarationNode]]);
     }
 
     public function getPropertyDeclarationNodeOfName(string $name): ?PropertyDeclarationNode
