@@ -33,7 +33,7 @@ final class TagContentNodes implements \JsonSerializable
      */
     public readonly array $items;
 
-    private function __construct(
+    public function __construct(
         TagContentNode ...$items
     ) {
         $this->items = $items;

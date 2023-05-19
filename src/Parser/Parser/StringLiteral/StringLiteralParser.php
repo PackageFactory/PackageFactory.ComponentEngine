@@ -38,6 +38,8 @@ final class StringLiteralParser
 
     private static function build(): Parser
     {
+        // labels, and escaping handling
+        // also maybe use bind with the start character instead of two parsers
         return either(
             self::forQuotedStringType('\''),
             self::forQuotedStringType('"')

@@ -33,7 +33,6 @@ use function Parsica\Parsica\char;
 use function Parsica\Parsica\charI;
 use function Parsica\Parsica\either;
 use function Parsica\Parsica\float;
-use function Parsica\Parsica\integer;
 use function Parsica\Parsica\isCharCode;
 use function Parsica\Parsica\isDigit;
 use function Parsica\Parsica\isHexDigit;
@@ -86,7 +85,7 @@ final class NumberLiteralParser
         $exponent = charI('e')->append($digits);
         return either(
             assemble(
-                integer(),
+                $digits,
                 optional($fraction),
                 optional($exponent)
             ),

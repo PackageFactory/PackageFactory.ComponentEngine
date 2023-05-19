@@ -32,6 +32,7 @@ use PackageFactory\ComponentEngine\Parser\Parser\Match\MatchParser;
 use PackageFactory\ComponentEngine\Parser\Parser\NullLiteral\NullLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Parser\NumberLiteral\NumberLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Parser\StringLiteral\StringLiteralParser;
+use PackageFactory\ComponentEngine\Parser\Parser\Tag\TagParser;
 use PackageFactory\ComponentEngine\Parser\Parser\TernaryOperation\TernaryOperationParser;
 use PackageFactory\ComponentEngine\Parser\Parser\UnaryOperation\UnaryOperationParser;
 use Parsica\Parsica\Parser;
@@ -47,6 +48,7 @@ final class ExpressionParser
             BooleanLiteralParser::get(),
             NullLiteralParser::get(),
             MatchParser::get(),
+            TagParser::get(),
             StringLiteralParser::get(),
             IdentifierParser::get(),
             UnaryOperationParser::get()
