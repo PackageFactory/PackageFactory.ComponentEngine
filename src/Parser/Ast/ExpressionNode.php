@@ -36,9 +36,10 @@ final class ExpressionNode implements \JsonSerializable
     ) {
     }
 
+    /** @deprecated */
     public static function fromString(string $expressionAsString): self
     {
-        return ExpressionParser::get()->tryString($expressionAsString)->output();
+        return ExpressionParser::parseFromString($expressionAsString);
     }
 
     /**

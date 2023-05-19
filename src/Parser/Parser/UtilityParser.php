@@ -28,15 +28,28 @@ use Parsica\Parsica\Parser;
 use Parsica\Parsica\ParseResult;
 use Parsica\Parsica\Stream;
 
+use function Parsica\Parsica\alphaChar;
+use function Parsica\Parsica\alphaNumChar;
 use function Parsica\Parsica\anySingle;
 use function Parsica\Parsica\append;
 use function Parsica\Parsica\char;
 use function Parsica\Parsica\oneOfS;
+use function Parsica\Parsica\string;
 use function Parsica\Parsica\takeWhile;
 use function Parsica\Parsica\zeroOrMore;
 
 final class UtilityParser
 {
+    public static function identifier(): Parser
+    {
+        return alphaChar()->append(zeroOrMore(alphaNumChar()));
+    }
+
+    public static function keyword(string $keyword): Parser
+    {
+        return string($keyword)->notFollowedBy(alphaNumChar());
+    }
+
     /**
      * @return Parser<string>
      */

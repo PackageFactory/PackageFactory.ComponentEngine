@@ -43,6 +43,11 @@ use function Parsica\Parsica\{any, between, either, pure, skipSpace};
 
 final class ExpressionParser
 {
+    public static function parseFromString(string $expressionAsString): ExpressionNode
+    {
+        return self::get()->thenEof()->tryString($expressionAsString)->output();
+    }
+
     /** @return Parser<ExpressionNode> */
     public static function get(Precedence $precedence = Precedence::SEQUENCE): Parser
     {
@@ -58,8 +63,8 @@ final class ExpressionParser
             UnaryOperationParser::get()
         ));
 
-        return $expressionRootParser->map(fn ($expressionRoot) => new ExpressionNode($expressionRoot))
-            ->bind(fn ($expressionNode) => self::continueParsingWhilePrecedence($expressionNode, $precedence)
+        return $expressionRootParser->bind(
+            fn ($expressionRoot) => self::continueParsingWhilePrecedence(new ExpressionNode($expressionRoot), $precedence)
         );
     }
 

@@ -31,7 +31,7 @@ use Parsica\Parsica\Parser;
 
 use function Parsica\Parsica\any;
 use function Parsica\Parsica\char;
-use function Parsica\Parsica\zeroOrMore;
+use function Parsica\Parsica\many;
 
 final class TagContentParser
 {
@@ -44,7 +44,7 @@ final class TagContentParser
 
     private static function build(): Parser
     {
-        return zeroOrMore(
+        return many(
             self::tagContent()
         )->map(fn ($collected) => new TagContentNodes(...$collected ? $collected : []));
     }
@@ -55,6 +55,6 @@ final class TagContentParser
             TagParser::get(),
             TextParser::get(),
             char('{')->followedBy(ExpressionParser::get())->thenIgnore(char('}')),
-        )->map(fn ($item) => [new TagContentNode($item)]);
+        )->map(fn ($item) => new TagContentNode($item));
     }
 }

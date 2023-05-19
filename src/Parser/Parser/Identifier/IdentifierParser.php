@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Parser\Identifier;
 
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
+use PackageFactory\ComponentEngine\Parser\Parser\UtilityParser;
 use Parsica\Parsica\Parser;
 
 use function Parsica\Parsica\{alphaChar, alphaNumChar, zeroOrMore};
@@ -38,7 +39,7 @@ final class IdentifierParser
 
     private static function build(): Parser
     {
-        return alphaChar()->append(zeroOrMore(alphaNumChar()))
+        return UtilityParser::identifier()
             ->map(fn ($name) => new IdentifierNode($name));
     }
 }

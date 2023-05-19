@@ -30,21 +30,21 @@ use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Parser\Identifier\IdentifierParser;
 use Parsica\Parsica\Parser;
 
-use function Parsica\Parsica\atLeastOne;
 use function Parsica\Parsica\char;
 use function Parsica\Parsica\collect;
 use function Parsica\Parsica\either;
+use function Parsica\Parsica\some;
 use function Parsica\Parsica\string;
 
 final class AccessParser
 {
     public static function get(ExpressionNode $subject): Parser
     {
-        return atLeastOne(
+        return some(
             collect(
                 self::accessType(),
                 IdentifierParser::get()
-            )->map(fn ($result) => [new AccessChainSegmentNode($result[0], $result[1])])
+            )->map(fn ($result) => new AccessChainSegmentNode($result[0], $result[1]))
         )->map(fn ($segments) => new AccessNode(
             $subject,
             new AccessChainSegmentNodes(...$segments)

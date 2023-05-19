@@ -31,9 +31,9 @@ use Parsica\Parsica\Parser;
 
 use function Parsica\Parsica\collect;
 use function Parsica\Parsica\either;
+use function Parsica\Parsica\many;
 use function Parsica\Parsica\skipSpace;
 use function Parsica\Parsica\string;
-use function Parsica\Parsica\zeroOrMore;
 
 final class MatchArmParser
 {
@@ -46,8 +46,8 @@ final class MatchArmParser
 
     private static function build(): Parser
     {
-        return zeroOrMore(
-            self::getMatchArmParser()->map(fn ($matchArmNode) => [$matchArmNode])
+        return many(
+            self::getMatchArmParser()
         )->map(fn ($matchArmNodes) => new MatchArmNodes(...$matchArmNodes ? $matchArmNodes : []));
     }
 
