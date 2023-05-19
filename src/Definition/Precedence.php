@@ -23,18 +23,6 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Definition;
 
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
-use Parsica\Parsica\Internal\Fail;
-use Parsica\Parsica\Internal\Succeed;
-use Parsica\Parsica\Parser;
-use Parsica\Parsica\ParseResult;
-use Parsica\Parsica\Stream;
-
-use function Parsica\Parsica\either;
-use function Parsica\Parsica\fail;
-use function Parsica\Parsica\lookAhead;
-use function Parsica\Parsica\oneOf;
-use function Parsica\Parsica\pure;
-use function Parsica\Parsica\succeed;
 
 enum Precedence: int
 {
@@ -52,19 +40,6 @@ enum Precedence: int
     case LOGICAL_OR = 4;
     case TERNARY = 3;
     case SEQUENCE = 1;
-
-    private const ARRAY_OF_STRINGS_TO_PRECEDENCE = [
-        [['(', ')', '[', ']', '?.', '.'], self::ACCESS],
-        [['!'], self::UNARY],
-        [['*', '/', '%'], self::POINT],
-        [['+', '-'], self::DASH],
-        [['+', '-'], self::DASH],
-        [['>', '>=', '<', '<='], self::COMPARISON],
-        [['===', '!=='], self::EQUALITY],
-        [['&&'], self::LOGICAL_AND],
-        [['||'], self::LOGICAL_OR],
-        [['?', ':'], self::TERNARY]
-    ];
 
     public static function forTokenType(TokenType $tokenType): self
     {
@@ -102,79 +77,6 @@ enum Precedence: int
 
             default => self::SEQUENCE
         };
-    }
-
-    /**
-     * A multi character compatible version (eg. for strings) of {@see oneOf()}
-     *
-     * While one could leverage multiple string parsers, it's not really performance efficient:
-     *
-     *  any(string('f'), string('bar'))
-     *
-     * the above can be rewritten like:
-     *
-     *  strings(['f', 'bar'])
-     *
-     * @param array<int, string> $strings
-     * @return Parser<string>
-     */
-    private static function strings(array $strings): Parser
-    {
-        $longestString = 0;
-        foreach ($strings as $string) {
-            $len = mb_strlen($string);
-            if ($longestString < $len) {
-                $longestString = $len;
-            }
-        }
-        return Parser::make('strings', function (Stream $stream) use($strings, $longestString): ParseResult {
-            if ($stream->isEOF()) {
-                return new Fail('strings', $stream);
-            }
-            $result = $stream->takeN($longestString);
-            foreach ($strings as $string) {
-                if (str_starts_with($result->chunk(), $string)) {
-                    return new Succeed($string, $stream->takeN(mb_strlen($string))->stream());
-                }
-            }
-            return new Fail('strings', $stream);
-        });
-    }
-
-    private static function getPrecedenceMatcher(): Parser
-    {
-        static $matcher;
-        if ($matcher) {
-            return $matcher;
-        }
-        $allStrings = [];
-        $stringToPrecedence = [];
-        foreach (self::ARRAY_OF_STRINGS_TO_PRECEDENCE as [$strings, $precedence]) {
-            foreach ($strings as $string) {
-                $allStrings[] = $string;
-                $stringToPrecedence[$string] = $precedence;
-            }
-        }
-        $matcher =
-            either(
-                lookAhead(
-                    self::strings($allStrings)->map(function ($match) use($stringToPrecedence) {
-                        return $stringToPrecedence[$match];
-                    })
-                ),
-                pure(self::SEQUENCE)
-            );
-        return $matcher;
-    }
-
-    public function check(): Parser
-    {
-        return self::getPrecedenceMatcher()->bind(function (Precedence $precedence) {
-            if ($this->mustStopAt($precedence)) {
-                return fail('<stopped at precedence>');
-            }
-            return succeed();
-        })->label('check Precedence(' . $this->name . ')');
     }
 
     public function mustStopAt(self $precedence): bool

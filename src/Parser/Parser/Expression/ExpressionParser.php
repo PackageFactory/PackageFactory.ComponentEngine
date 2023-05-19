@@ -31,6 +31,7 @@ use PackageFactory\ComponentEngine\Parser\Parser\Identifier\IdentifierParser;
 use PackageFactory\ComponentEngine\Parser\Parser\Match\MatchParser;
 use PackageFactory\ComponentEngine\Parser\Parser\NullLiteral\NullLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Parser\NumberLiteral\NumberLiteralParser;
+use PackageFactory\ComponentEngine\Parser\Parser\PrecedenceParser;
 use PackageFactory\ComponentEngine\Parser\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Parser\Tag\TagParser;
 use PackageFactory\ComponentEngine\Parser\Parser\TernaryOperation\TernaryOperationParser;
@@ -41,6 +42,7 @@ use function Parsica\Parsica\{any, between, either, pure, skipSpace};
 
 final class ExpressionParser
 {
+    /** @return Parser<ExpressionNode> */
     public static function get(Precedence $precedence = Precedence::SEQUENCE): Parser
     {
         $expressionRootParser = between(skipSpace(), skipSpace(), any(
@@ -55,29 +57,26 @@ final class ExpressionParser
         ));
 
         return $expressionRootParser->map(fn ($expressionRoot) => new ExpressionNode($expressionRoot))
-            ->bind(function ($expressionNode) use ($precedence) {
-                return self::continueParsing($expressionNode, $precedence);
-            });
+            ->bind(fn ($expressionNode) => self::continueParsingWhilePrecedence($expressionNode, $precedence)
+        );
     }
 
-    private static function continueParsing(ExpressionNode $expressionNode, Precedence $precedence): Parser
+    /** @return Parser<ExpressionNode> */
+    private static function continueParsingWhilePrecedence(ExpressionNode $expressionNode, Precedence $precedence): Parser
     {
-        $continuationParsers = any(
+        $continuationParser = any(
             BinaryOperationParser::get($expressionNode),
             AccessParser::get($expressionNode),
             TernaryOperationParser::get($expressionNode)
         )
             ->thenIgnore(skipSpace())
-            ->bind(function ($expressionRoot) use ($precedence) {
-                $newExpressionNode = new ExpressionNode($expressionRoot);
-                return self::continueParsing($newExpressionNode, $precedence);
-            });
+            ->bind(
+                fn ($expressionRoot) => self::continueParsingWhilePrecedence(new ExpressionNode($expressionRoot), $precedence)
+            );
 
         return either(
-            $precedence->check()
-                ->sequence($continuationParsers),
+            PrecedenceParser::hasPrecedence($precedence)->sequence($continuationParser),
             pure($expressionNode)
         );
     }
 }
-
