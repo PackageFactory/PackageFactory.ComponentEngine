@@ -23,13 +23,17 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Definition;
 
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use Parsica\Parsica\Internal\Fail;
+use Parsica\Parsica\Internal\Succeed;
 use Parsica\Parsica\Parser;
+use Parsica\Parsica\ParseResult;
+use Parsica\Parsica\Stream;
 
-use function Parsica\Parsica\any;
+use function Parsica\Parsica\either;
 use function Parsica\Parsica\fail;
 use function Parsica\Parsica\lookAhead;
+use function Parsica\Parsica\oneOf;
 use function Parsica\Parsica\pure;
-use function Parsica\Parsica\string;
 use function Parsica\Parsica\succeed;
 
 enum Precedence: int
@@ -100,31 +104,77 @@ enum Precedence: int
         };
     }
 
+    /**
+     * A multi character compatible version (eg. for strings) of {@see oneOf()}
+     *
+     * While one could leverage multiple string parsers, it's not really performance efficient:
+     *
+     *  any(string('f'), string('bar'))
+     *
+     * the above can be rewritten like:
+     *
+     *  strings(['f', 'bar'])
+     *
+     * @param array<int, string> $strings
+     * @return Parser<string>
+     */
+    private static function strings(array $strings): Parser
+    {
+        $longestString = 0;
+        foreach ($strings as $string) {
+            $len = mb_strlen($string);
+            if ($longestString < $len) {
+                $longestString = $len;
+            }
+        }
+        return Parser::make('strings', function (Stream $stream) use($strings, $longestString): ParseResult {
+            if ($stream->isEOF()) {
+                return new Fail('strings', $stream);
+            }
+            $result = $stream->takeN($longestString);
+            foreach ($strings as $string) {
+                if (str_starts_with($result->chunk(), $string)) {
+                    return new Succeed($string, $stream->takeN(mb_strlen($string))->stream());
+                }
+            }
+            return new Fail('strings', $stream);
+        });
+    }
+
     private static function getPrecedenceMatcher(): Parser
     {
         static $matcher;
         if ($matcher) {
             return $matcher;
         }
-        $parsers = [];
+        $allStrings = [];
+        $stringToPrecedence = [];
         foreach (self::ARRAY_OF_STRINGS_TO_PRECEDENCE as [$strings, $precedence]) {
-            $toPrecedence = fn () => $precedence;
             foreach ($strings as $string) {
-                $parsers[] = string($string)->map($toPrecedence);
+                $allStrings[] = $string;
+                $stringToPrecedence[$string] = $precedence;
             }
         }
-        $matcher = any(...$parsers, ...[pure(self::SEQUENCE)]);
+        $matcher =
+            either(
+                lookAhead(
+                    self::strings($allStrings)->map(function ($match) use($stringToPrecedence) {
+                        return $stringToPrecedence[$match];
+                    })
+                ),
+                pure(self::SEQUENCE)
+            );
         return $matcher;
     }
 
     public function check(): Parser
     {
-        return lookAhead(self::getPrecedenceMatcher()->bind(function (Precedence $precedence) {
+        return self::getPrecedenceMatcher()->bind(function (Precedence $precedence) {
             if ($this->mustStopAt($precedence)) {
                 return fail('<stopped at precedence>');
             }
             return succeed();
-        }))->label('delegate in Precedence(' . $this->name . ')');
+        })->label('check Precedence(' . $this->name . ')');
     }
 
     public function mustStopAt(self $precedence): bool
