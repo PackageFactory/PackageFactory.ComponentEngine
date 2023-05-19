@@ -20,19 +20,22 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Parser\Match;
+namespace PackageFactory\ComponentEngine\Parser\Parser\MatchArm;
 
-use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
+use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNodes;
+use PackageFactory\ComponentEngine\Parser\Ast\MatchArmNode;
+use PackageFactory\ComponentEngine\Parser\Ast\MatchArmNodes;
 use PackageFactory\ComponentEngine\Parser\Parser\Expression\ExpressionParser;
-use PackageFactory\ComponentEngine\Parser\Parser\MatchArm\MatchArmParser;
 use Parsica\Parsica\Parser;
 
-use function Parsica\Parsica\char;
 use function Parsica\Parsica\collect;
+use function Parsica\Parsica\either;
 use function Parsica\Parsica\skipSpace;
 use function Parsica\Parsica\string;
+use function Parsica\Parsica\zeroOrMore;
 
-final class MatchParser
+final class MatchArmParser
 {
     private static ?Parser $instance = null;
 
@@ -43,20 +46,23 @@ final class MatchParser
 
     private static function build(): Parser
     {
-        // @todo for some reason we must use bind here to avoid infinite recursion
-        return string('match')
-            ->bind(fn () => collect(
-                skipSpace(),
-                char('('),
-                ExpressionParser::get(),
-                char(')'),
-                skipSpace(),
-                char('{'),
-                skipSpace(),
-                MatchArmParser::get(),
-                skipSpace(),
-                char('}')
-            )->map(fn ($collected) => new MatchNode($collected[2], $collected[7]))
-        );
+        return zeroOrMore(
+            self::getMatchArmParser()->map(fn ($matchArmNode) => [$matchArmNode])
+        )->map(fn ($matchArmNodes) => new MatchArmNodes(...$matchArmNodes ? $matchArmNodes : []));
+    }
+
+    private static function getMatchArmParser(): Parser
+    {
+        return collect(
+            either(
+                string('default')->map(fn () => null),
+                ExpressionParser::get()->map(fn (ExpressionNode $expressionNode) => new ExpressionNodes($expressionNode))
+            ),
+            skipSpace(),
+            string('->'),
+            skipSpace(),
+            ExpressionParser::get(),
+            skipSpace(),
+        )->map(fn ($collected) => new MatchArmNode($collected[0], $collected[4]));
     }
 }
