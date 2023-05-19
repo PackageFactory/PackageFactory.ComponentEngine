@@ -28,8 +28,36 @@ use Parsica\Parsica\Parser;
 use Parsica\Parsica\ParseResult;
 use Parsica\Parsica\Stream;
 
+use function Parsica\Parsica\anySingle;
+use function Parsica\Parsica\append;
+use function Parsica\Parsica\char;
+use function Parsica\Parsica\oneOfS;
+use function Parsica\Parsica\takeWhile;
+use function Parsica\Parsica\zeroOrMore;
+
 final class UtilityParser
 {
+    /**
+     * @return Parser<string>
+     */
+    public static function quotedStringContents(): Parser
+    {
+        // labels, and escaping handling
+        return oneOfS('"\'')->bind(
+            fn (string $startingQuoteChar) => append(
+                $simpleCase = takeWhile(
+                    fn (string $char): bool => $char !== $startingQuoteChar && $char !== '\\'
+                ),
+                zeroOrMore(
+                    append(
+                        char('\\')->followedBy(anySingle()),
+                        $simpleCase,
+                    )
+                )
+            )->thenIgnore(char($startingQuoteChar))
+        );
+    }
+
     /**
      * A multi character compatible version (eg. for strings) of {@see oneOf()}
      *

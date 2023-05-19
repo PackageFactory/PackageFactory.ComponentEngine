@@ -34,6 +34,7 @@ use PackageFactory\ComponentEngine\Parser\Parser\NumberLiteral\NumberLiteralPars
 use PackageFactory\ComponentEngine\Parser\Parser\PrecedenceParser;
 use PackageFactory\ComponentEngine\Parser\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Parser\Tag\TagParser;
+use PackageFactory\ComponentEngine\Parser\Parser\TemplateLiteral\TemplateLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Parser\TernaryOperation\TernaryOperationParser;
 use PackageFactory\ComponentEngine\Parser\Parser\UnaryOperation\UnaryOperationParser;
 use Parsica\Parsica\Parser;
@@ -53,6 +54,7 @@ final class ExpressionParser
             TagParser::get(),
             StringLiteralParser::get(),
             IdentifierParser::get(),
+            TemplateLiteralParser::get(),
             UnaryOperationParser::get()
         ));
 

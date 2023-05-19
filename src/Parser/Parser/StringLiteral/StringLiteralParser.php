@@ -23,9 +23,8 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Parser\StringLiteral;
 
 use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
+use PackageFactory\ComponentEngine\Parser\Parser\UtilityParser;
 use Parsica\Parsica\Parser;
-
-use function Parsica\Parsica\{anySingle, append, between, char, assemble, either, takeWhile, zeroOrMore};
 
 final class StringLiteralParser
 {
@@ -38,32 +37,6 @@ final class StringLiteralParser
 
     private static function build(): Parser
     {
-        // labels, and escaping handling
-        // also maybe use bind with the start character instead of two parsers
-        return either(
-            self::forQuotedStringType('\''),
-            self::forQuotedStringType('"')
-        )->map(fn (string $contents) => new StringLiteralNode($contents));
-    }
-
-    private static function forQuotedStringType(string $qouteType): Parser
-    {
-        assert($qouteType === '"' || $qouteType === '\'');
-        $takeAllNonBackslashesAndQuoteChars = takeWhile(
-            fn (string $char): bool => $char !== $qouteType && $char !== '\\'
-        );
-        return between(
-            char($qouteType),
-            char($qouteType),
-            append(
-                $takeAllNonBackslashesAndQuoteChars,
-                zeroOrMore(
-                    append(
-                        char("\\")->followedBy(anySingle()),
-                        $takeAllNonBackslashesAndQuoteChars,
-                    )
-                )
-            )
-        );
+        return UtilityParser::quotedStringContents()->map(fn (string $contents) => new StringLiteralNode($contents));
     }
 }
