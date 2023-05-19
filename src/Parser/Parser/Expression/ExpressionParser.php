@@ -28,15 +28,13 @@ use PackageFactory\ComponentEngine\Parser\Parser\Access\AccessParser;
 use PackageFactory\ComponentEngine\Parser\Parser\BinaryOperation\BinaryOperationParser;
 use PackageFactory\ComponentEngine\Parser\Parser\BooleanLiteral\BooleanLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Parser\Identifier\IdentifierParser;
+use PackageFactory\ComponentEngine\Parser\Parser\Match\MatchParser;
 use PackageFactory\ComponentEngine\Parser\Parser\NullLiteral\NullLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Parser\NumberLiteral\NumberLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Parser\TernaryOperation\TernaryOperationParser;
 use PackageFactory\ComponentEngine\Parser\Parser\UnaryOperation\UnaryOperationParser;
-use Parsica\Parsica\Internal\Succeed;
 use Parsica\Parsica\Parser;
-use Parsica\Parsica\ParseResult;
-use Parsica\Parsica\Stream;
 
 use function Parsica\Parsica\{any, between, either, pure, skipSpace};
 
@@ -48,6 +46,7 @@ final class ExpressionParser
             NumberLiteralParser::get(),
             BooleanLiteralParser::get(),
             NullLiteralParser::get(),
+            MatchParser::get(),
             StringLiteralParser::get(),
             IdentifierParser::get(),
             UnaryOperationParser::get()
@@ -79,3 +78,4 @@ final class ExpressionParser
         );
     }
 }
+

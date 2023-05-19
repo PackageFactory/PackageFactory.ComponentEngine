@@ -33,7 +33,7 @@ final class MatchArmNodes implements \JsonSerializable
      */
     public readonly array $items;
 
-    private function __construct(
+    public function __construct(
         MatchArmNode ...$items
     ) {
         $this->items = $items;
