@@ -32,6 +32,7 @@ use Parsica\Parsica\Parser;
 use function Parsica\Parsica\any;
 use function Parsica\Parsica\char;
 use function Parsica\Parsica\many;
+use function Parsica\Parsica\skipSpace;
 
 final class TagContentParser
 {
@@ -44,9 +45,11 @@ final class TagContentParser
 
     private static function build(): Parser
     {
-        return many(
-            self::tagContent()
-        )->map(fn ($collected) => new TagContentNodes(...$collected ? $collected : []));
+        return skipSpace()->sequence(
+            many(
+                self::tagContent()
+            )->map(fn ($collected) => new TagContentNodes(...$collected ? array_filter($collected) : []))
+        );
     }
 
     private static function tagContent(): Parser
@@ -55,6 +58,6 @@ final class TagContentParser
             TagParser::get(),
             TextParser::get(),
             char('{')->followedBy(ExpressionParser::get())->thenIgnore(char('}')),
-        )->map(fn ($item) => new TagContentNode($item));
+        )->map(fn ($item) => $item ? new TagContentNode($item) : null);
     }
 }

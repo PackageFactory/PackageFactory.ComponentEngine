@@ -25,20 +25,33 @@ namespace PackageFactory\ComponentEngine\Parser\Parser\Text;
 use PackageFactory\ComponentEngine\Parser\Ast\TextNode;
 use Parsica\Parsica\Parser;
 
+use function Parsica\Parsica\anySingle;
+use function Parsica\Parsica\collect;
+use function Parsica\Parsica\lookAhead;
 use function Parsica\Parsica\takeWhile1;
 
 final class TextParser
 {
-    private static ?Parser $instance = null;
-
     public static function get(): Parser
     {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
-    {
-        // @todo space handling and valid chars
-        return takeWhile1(fn ($char) => $char !== '<' && $char !== '{')->map(fn ($text) => new TextNode($text));
+        return
+            collect(
+                takeWhile1(
+                    // @todo handling of valid chars
+                    fn ($char) => $char !== '<' && $char !== '{'
+                ),
+                lookAhead(anySingle()->append(anySingle()))
+            )
+            ->map(function ($collected) {
+                [$text, $nextChars] = $collected;
+                if ($nextChars === '</') {
+                    $text = rtrim($text);
+                }
+                $trimmedNewlinesAndSpaces = preg_replace('/\s+|\n|\t/', ' ', $text);
+                if (!$trimmedNewlinesAndSpaces || ctype_space($trimmedNewlinesAndSpaces)) {
+                    return null;
+                }
+                return  new TextNode($trimmedNewlinesAndSpaces);
+            });
     }
 }
