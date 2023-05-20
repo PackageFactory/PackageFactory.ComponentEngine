@@ -37,6 +37,7 @@ use PackageFactory\ComponentEngine\Parser\Parser\Tag\TagParser;
 use PackageFactory\ComponentEngine\Parser\Parser\TemplateLiteral\TemplateLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Parser\TernaryOperation\TernaryOperationParser;
 use PackageFactory\ComponentEngine\Parser\Parser\UnaryOperation\UnaryOperationParser;
+use PackageFactory\ComponentEngine\Parser\Parser\UtilityParser;
 use Parsica\Parsica\Parser;
 
 use function Parsica\Parsica\{any, between, either, pure, skipSpace};
@@ -51,7 +52,8 @@ final class ExpressionParser
     /** @return Parser<ExpressionNode> */
     public static function get(Precedence $precedence = Precedence::SEQUENCE): Parser
     {
-        $expressionRootParser = between(skipSpace(), skipSpace(), any(
+        // @todo parens () are currently hard to implement in the current architecture
+        $expressionRootParser = between(UtilityParser::skipSpaceAndComments(), UtilityParser::skipSpaceAndComments(), any(
             NumberLiteralParser::get(),
             BooleanLiteralParser::get(),
             NullLiteralParser::get(),

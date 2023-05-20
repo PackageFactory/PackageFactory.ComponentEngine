@@ -28,6 +28,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\ImportNodes;
 use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
 use PackageFactory\ComponentEngine\Parser\Parser\Export\ExportParser;
 use PackageFactory\ComponentEngine\Parser\Parser\Import\ImportParser;
+use PackageFactory\ComponentEngine\Parser\Parser\UtilityParser;
 use Parsica\Parsica\Parser;
 use Parsica\Parsica\Stream;
 
@@ -50,7 +51,7 @@ final class ModuleParser
 
     public static function get(): Parser
     {
-        return self::$instance ??= many(
+        return self::$instance ??= UtilityParser::skipSpaceAndComments()->then(many(
             either(
                 ImportParser::get(),
                 ExportParser::get()
@@ -68,6 +69,6 @@ final class ModuleParser
                 $importNodes,
                 new ExportNodes(...$exportNodes)
             );
-        });
+        }));
     }
 }

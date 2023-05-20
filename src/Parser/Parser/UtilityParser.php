@@ -34,9 +34,12 @@ use function Parsica\Parsica\alphaNumChar;
 use function Parsica\Parsica\anySingle;
 use function Parsica\Parsica\append;
 use function Parsica\Parsica\char;
+use function Parsica\Parsica\either;
+use function Parsica\Parsica\isSpace;
 use function Parsica\Parsica\oneOfS;
 use function Parsica\Parsica\string;
 use function Parsica\Parsica\takeWhile;
+use function Parsica\Parsica\takeWhile1;
 use function Parsica\Parsica\zeroOrMore;
 
 final class UtilityParser
@@ -49,6 +52,16 @@ final class UtilityParser
     public static function keyword(string $keyword): Parser
     {
         return string($keyword)->notFollowedBy(alphaNumChar());
+    }
+
+    public static function skipSpaceAndComments(): Parser
+    {
+        return zeroOrMore(
+            either(
+                takeWhile1(isSpace()),
+                char('#')->then(takeWhile(fn ($char) => $char !== "\n"))
+            )
+        )->voidLeft(null);
     }
 
     /**
