@@ -40,7 +40,7 @@ use PackageFactory\ComponentEngine\Parser\Parser\UnaryOperation\UnaryOperationPa
 use PackageFactory\ComponentEngine\Parser\Parser\UtilityParser;
 use Parsica\Parsica\Parser;
 
-use function Parsica\Parsica\{any, between, either, pure, skipSpace};
+use function Parsica\Parsica\{any, between, char, either, pure, skipSpace};
 
 final class ExpressionParser
 {
@@ -52,8 +52,7 @@ final class ExpressionParser
     /** @return Parser<ExpressionNode> */
     public static function get(Precedence $precedence = Precedence::SEQUENCE): Parser
     {
-        // @todo parens () are currently hard to implement in the current architecture
-        $expressionRootParser = between(UtilityParser::skipSpaceAndComments(), UtilityParser::skipSpaceAndComments(), any(
+        $expressionRootParser = any(
             NumberLiteralParser::get(),
             BooleanLiteralParser::get(),
             NullLiteralParser::get(),
@@ -63,10 +62,17 @@ final class ExpressionParser
             IdentifierParser::get(),
             TemplateLiteralParser::get(),
             UnaryOperationParser::get()
-        ));
+        );
 
-        return $expressionRootParser->bind(
-            fn ($expressionRoot) => self::continueParsingWhilePrecedence(new ExpressionNode($expressionRoot), $precedence)
+        return UtilityParser::skipSpaceAndComments()->sequence(
+            either(
+                char('(')->bind(
+                    fn () => self::get()->thenIgnore(char(')'))->thenIgnore(UtilityParser::skipSpaceAndComments())
+                ),
+                $expressionRootParser->thenIgnore(UtilityParser::skipSpaceAndComments())->bind(
+                    fn ($expressionRoot) => self::continueParsingWhilePrecedence(new ExpressionNode($expressionRoot), $precedence)
+                ),
+            )
         );
     }
 
@@ -78,7 +84,7 @@ final class ExpressionParser
             AccessParser::get($expressionNode),
             TernaryOperationParser::get($expressionNode)
         )
-            ->thenIgnore(skipSpace())
+            ->thenIgnore(UtilityParser::skipSpaceAndComments())
             ->bind(
                 fn ($expressionRoot) => self::continueParsingWhilePrecedence(new ExpressionNode($expressionRoot), $precedence)
             );
