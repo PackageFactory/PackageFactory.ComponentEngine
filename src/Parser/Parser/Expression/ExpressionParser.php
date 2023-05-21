@@ -40,7 +40,7 @@ use PackageFactory\ComponentEngine\Parser\Parser\UnaryOperation\UnaryOperationPa
 use PackageFactory\ComponentEngine\Parser\Parser\UtilityParser;
 use Parsica\Parsica\Parser;
 
-use function Parsica\Parsica\{any, between, char, either, pure, skipSpace};
+use function Parsica\Parsica\{any, char, either, pure};
 
 final class ExpressionParser
 {

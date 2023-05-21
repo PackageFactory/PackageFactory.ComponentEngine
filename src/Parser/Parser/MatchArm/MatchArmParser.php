@@ -22,11 +22,10 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Parser\MatchArm;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNodes;
 use PackageFactory\ComponentEngine\Parser\Ast\MatchArmNode;
 use PackageFactory\ComponentEngine\Parser\Ast\MatchArmNodes;
 use PackageFactory\ComponentEngine\Parser\Parser\Expression\ExpressionParser;
+use PackageFactory\ComponentEngine\Parser\Parser\Expression\ExpressionsParser;
 use Parsica\Parsica\Parser;
 
 use function Parsica\Parsica\collect;
@@ -55,8 +54,8 @@ final class MatchArmParser
     {
         return collect(
             either(
-                string('default')->map(fn () => null),
-                ExpressionParser::get()->map(fn (ExpressionNode $expressionNode) => new ExpressionNodes($expressionNode))
+                string('default')->voidLeft(null),
+                ExpressionsParser::get()
             ),
             skipSpace(),
             string('->'),
