@@ -22,25 +22,17 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Parser\UnaryOperation;
 
-use PackageFactory\ComponentEngine\Definition\Precedence;
 use PackageFactory\ComponentEngine\Definition\UnaryOperator;
 use PackageFactory\ComponentEngine\Parser\Ast\UnaryOperationNode;
 use PackageFactory\ComponentEngine\Parser\Parser\Expression\ExpressionParser;
 use Parsica\Parsica\Parser;
 
 use function Parsica\Parsica\char;
-use function Parsica\Parsica\collect;
 
 final class UnaryOperationParser
 {
-    private static ?Parser $instance = null;
-
+    /** @return Parser<UnaryOperationNode> */
     public static function get(): Parser
-    {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
     {
         return self::unaryOperator()->bind(function (UnaryOperator $unaryOperator) {
             return ExpressionParser::get($unaryOperator->toPrecedence())->map(fn ($expression) => new UnaryOperationNode($unaryOperator, $expression));

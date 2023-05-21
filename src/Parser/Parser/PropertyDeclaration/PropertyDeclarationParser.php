@@ -35,14 +35,8 @@ use function Parsica\Parsica\skipSpace;
 
 final class PropertyDeclarationParser
 {
-    private static ?Parser $instance = null;
-
+    /** @return Parser<PropertyDeclarationNodes> */
     public static function get(): Parser
-    {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
     {
         return many(
             collect(
@@ -53,6 +47,6 @@ final class PropertyDeclarationParser
                 TypeReferenceParser::get(),
                 skipSpace()
             )->map(fn ($collected) => new PropertyDeclarationNode($collected[0], $collected[4]))
-        )->map(fn ($collected) => new PropertyDeclarationNodes(...$collected ? $collected : []));
+        )->map(fn ($collected) => new PropertyDeclarationNodes(...$collected ?? []));
     }
 }

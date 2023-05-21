@@ -29,15 +29,9 @@ use function Parsica\Parsica\{string};
 
 final class NullLiteralParser
 {
-    private static ?Parser $instance = null;
-
+    /** @return Parser<NullLiteralNode> */
     public static function get(): Parser
     {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
-    {
-        return string('null')->map(fn () => new NullLiteralNode());
+        return string('null')->voidLeft(new NullLiteralNode());
     }
 }

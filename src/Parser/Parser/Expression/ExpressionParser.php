@@ -44,6 +44,9 @@ use function Parsica\Parsica\{any, char, either, pure};
 
 final class ExpressionParser
 {
+    /** @var array<int, Parser<ExpressionNode>> */
+    private static $instances = [];
+
     public static function parseFromString(string $string): ExpressionNode
     {
         return self::get()->thenEof()->tryString($string)->output();
@@ -51,6 +54,12 @@ final class ExpressionParser
 
     /** @return Parser<ExpressionNode> */
     public static function get(Precedence $precedence = Precedence::SEQUENCE): Parser
+    {
+        return self::$instances[$precedence->value] ??= self::build($precedence);
+    }
+
+    /** @return Parser<ExpressionNode> */
+    public static function build(Precedence $precedence = Precedence::SEQUENCE): Parser
     {
         $expressionRootParser = any(
             NumberLiteralParser::get(),

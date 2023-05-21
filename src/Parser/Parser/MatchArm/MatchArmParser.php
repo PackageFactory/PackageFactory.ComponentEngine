@@ -36,14 +36,8 @@ use function Parsica\Parsica\string;
 
 final class MatchArmParser
 {
-    private static ?Parser $instance = null;
-
+    /** @return Parser<MatchArmNodes> */
     public static function get(): Parser
-    {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
     {
         return many(
             self::getMatchArmParser()

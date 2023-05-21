@@ -36,19 +36,13 @@ use function Parsica\Parsica\skipSpace;
 
 final class TagContentParser
 {
-    private static ?Parser $instance = null;
-
+    /** @return Parser<TagContentNodes> */
     public static function get(): Parser
-    {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
     {
         return skipSpace()->sequence(
             many(
                 self::tagContent()
-            )->map(fn ($collected) => new TagContentNodes(...$collected ? array_filter($collected) : []))
+            )->map(fn ($collected) => new TagContentNodes(...array_filter($collected ?? [])))
         );
     }
 

@@ -30,14 +30,8 @@ use function Parsica\Parsica\sepBy1;
 
 final class ExpressionsParser
 {
-    private static ?Parser $instance = null;
-
+    /** @return Parser<ExpressionNodes> */
     public static function get(): Parser
-    {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
     {
         return sepBy1(
             char(','),

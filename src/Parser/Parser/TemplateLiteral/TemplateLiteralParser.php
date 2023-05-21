@@ -35,14 +35,8 @@ use function Parsica\Parsica\zeroOrMore;
 
 final class TemplateLiteralParser
 {
-    private static ?Parser $instance = null;
-
+    /** @return Parser<TemplateLiteralNode> */
     public static function get(): Parser
-    {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
     {
         return char('`')->bind(
             fn () => zeroOrMore(
@@ -50,7 +44,7 @@ final class TemplateLiteralParser
                     self::stringLiteral(),
                     self::expression(),
                 )->map(fn ($item) => [$item])
-            )->map(fn ($collected) => new TemplateLiteralNode(...$collected ? $collected : []))
+            )->map(fn ($collected) => new TemplateLiteralNode(...$collected ?? []))
                 ->thenIgnore(char('`'))
         );
     }

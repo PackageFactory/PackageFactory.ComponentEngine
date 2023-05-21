@@ -23,8 +23,6 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Parser\Export;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExportNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ExportNodes;
-use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Parser\ComponentDeclaration\ComponentDeclarationParser;
 use PackageFactory\ComponentEngine\Parser\Parser\EnumDeclaration\EnumDeclarationParser;
 use PackageFactory\ComponentEngine\Parser\Parser\StructDeclaration\StructDeclarationParser;
@@ -33,19 +31,12 @@ use Parsica\Parsica\Parser;
 
 use function Parsica\Parsica\any;
 use function Parsica\Parsica\collect;
-use function Parsica\Parsica\many;
 use function Parsica\Parsica\skipSpace;
 
 final class ExportParser
 {
-    private static ?Parser $instance = null;
-
+    /** @return Parser<ExportNode> */
     public static function get(): Parser
-    {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
     {
         return collect(
             skipSpace(),

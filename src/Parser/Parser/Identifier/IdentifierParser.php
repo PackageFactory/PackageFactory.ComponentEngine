@@ -26,18 +26,10 @@ use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
 use PackageFactory\ComponentEngine\Parser\Parser\UtilityParser;
 use Parsica\Parsica\Parser;
 
-use function Parsica\Parsica\{alphaChar, alphaNumChar, zeroOrMore};
-
 final class IdentifierParser
 {
-    private static ?Parser $instance = null;
-
+    /** @return Parser<IdentifierNode> */
     public static function get(): Parser
-    {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
     {
         return UtilityParser::identifier()
             ->map(fn ($name) => new IdentifierNode($name));

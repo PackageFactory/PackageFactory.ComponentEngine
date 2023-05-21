@@ -35,14 +35,8 @@ use function Parsica\Parsica\skipHSpace;
 
 final class TypeReferenceParser
 {
-    private static ?Parser $instance = null;
-
+    /** @return Parser<TypeReferenceNode> */
     public static function get(): Parser
-    {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
     {
         return collect(
             optional(char('?')),

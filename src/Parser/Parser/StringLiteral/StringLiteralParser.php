@@ -28,14 +28,8 @@ use Parsica\Parsica\Parser;
 
 final class StringLiteralParser
 {
-    private static ?Parser $instance = null;
-
+    /** @return Parser<StringLiteralNode> */
     public static function get(): Parser
-    {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
     {
         return UtilityParser::quotedStringContents()->map(fn (string $contents) => new StringLiteralNode($contents));
     }

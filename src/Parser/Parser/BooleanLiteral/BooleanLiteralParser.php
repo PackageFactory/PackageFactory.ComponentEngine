@@ -29,18 +29,12 @@ use function Parsica\Parsica\{either, skipSpace, string};
 
 final class BooleanLiteralParser
 {
-    private static ?Parser $instance = null;
-
+    /** @return Parser<BooleanLiteralNode> */
     public static function get(): Parser
     {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
-    {
         return skipSpace()->sequence(either(
-            string('true')->map(fn () => new BooleanLiteralNode(true)),
-            string('false')->map(fn () => new BooleanLiteralNode(false))
+            string('true')->voidLeft(new BooleanLiteralNode(true)),
+            string('false')->voidLeft(new BooleanLiteralNode(false))
         ));
     }
 }

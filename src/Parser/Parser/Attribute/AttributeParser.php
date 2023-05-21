@@ -38,14 +38,8 @@ use function Parsica\Parsica\skipSpace;
 
 final class AttributeParser
 {
-    private static ?Parser $instance = null;
-
+    /** @return Parser<AttributeNodes> */
     public static function get(): Parser
-    {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
     {
         return many(
             collect(
@@ -61,7 +55,7 @@ final class AttributeParser
                     )
                 )
             )->map(fn ($collected) => new AttributeNode($collected[1], $collected[3]))
-        )->map(fn ($collected) => new AttributeNodes(...$collected ? $collected : []));
+        )->map(fn ($collected) => new AttributeNodes(...$collected ?? []));
     }
 
     private static function attributeIdentifier(): Parser

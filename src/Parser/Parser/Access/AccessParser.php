@@ -38,6 +38,7 @@ use function Parsica\Parsica\string;
 
 final class AccessParser
 {
+    /** @return Parser<AccessNode> */
     public static function get(ExpressionNode $subject): Parser
     {
         return some(

@@ -69,6 +69,6 @@ final class EnumMemberDeclarationParser
                 ),
                 skipSpace()
             )->map(fn ($collected) => new EnumMemberDeclarationNode($collected[0], $collected[2]))
-        )->map(fn ($collected) => new EnumMemberDeclarationNodes(...$collected ? $collected : []));
+        )->map(fn ($collected) => new EnumMemberDeclarationNodes(...$collected ?? []));
     }
 }
