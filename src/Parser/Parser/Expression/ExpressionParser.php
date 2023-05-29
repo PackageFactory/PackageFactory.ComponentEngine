@@ -40,7 +40,7 @@ use PackageFactory\ComponentEngine\Parser\Parser\UnaryOperation\UnaryOperationPa
 use PackageFactory\ComponentEngine\Parser\Parser\UtilityParser;
 use Parsica\Parsica\Parser;
 
-use function Parsica\Parsica\{any, char, either, pure};
+use function Parsica\Parsica\{any, char, either, pure, succeed};
 
 final class ExpressionParser
 {
@@ -61,16 +61,25 @@ final class ExpressionParser
     /** @return Parser<ExpressionNode> */
     public static function build(Precedence $precedence = Precedence::SEQUENCE): Parser
     {
+        /**
+         * Lazy identity, to avoid infinite recursion, in case the nested parser calls `ExpressionParser::get()`
+         *
+         * @template T
+         * @param callable(): Parser<T> $f
+         * @return Parser<T>
+         */
+        $lazy = fn (callable|array $f): Parser => succeed()->bind($f);
+
         $expressionRootParser = any(
-            NumberLiteralParser::get(),
-            BooleanLiteralParser::get(),
-            NullLiteralParser::get(),
-            MatchParser::get(),
-            TagParser::get(),
-            StringLiteralParser::get(),
-            IdentifierParser::get(),
-            TemplateLiteralParser::get(),
-            UnaryOperationParser::get()
+            $lazy(fn () => NumberLiteralParser::get()),
+            $lazy(fn () => BooleanLiteralParser::get()),
+            $lazy(fn () => NullLiteralParser::get()),
+            $lazy(fn () => MatchParser::get()),
+            $lazy(fn () => TagParser::get()),
+            $lazy(fn () => StringLiteralParser::get()),
+            $lazy(fn () => IdentifierParser::get()),
+            $lazy(fn () => TemplateLiteralParser::get()),
+            $lazy(fn () => UnaryOperationParser::get())
         );
 
         return UtilityParser::skipSpaceAndComments()->sequence(

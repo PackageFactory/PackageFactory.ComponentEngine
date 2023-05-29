@@ -43,20 +43,19 @@ final class MatchParser
 
     private static function build(): Parser
     {
-        // @todo for some reason we must use bind here to avoid infinite recursion
-        return string('match')
-            ->bind(fn () => collect(
-                skipSpace(),
-                char('('),
-                ExpressionParser::get(),
-                char(')'),
-                skipSpace(),
-                char('{'),
-                skipSpace(),
-                MatchArmParser::get(),
-                skipSpace(),
-                char('}')
-            )->map(fn ($collected) => new MatchNode($collected[2], $collected[7]))
+        return collect(
+            string('match'),
+            skipSpace(),
+            char('('),
+            ExpressionParser::get(),
+            char(')'),
+            skipSpace(),
+            char('{'),
+            skipSpace(),
+            MatchArmParser::get(),
+            skipSpace(),
+            char('}')
+            )->map(fn ($collected) => new MatchNode($collected[3], $collected[8])
         );
     }
 }

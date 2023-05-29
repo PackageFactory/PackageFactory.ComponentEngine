@@ -38,8 +38,8 @@ final class TemplateLiteralParser
     /** @return Parser<TemplateLiteralNode> */
     public static function get(): Parser
     {
-        return char('`')->bind(
-            fn () => zeroOrMore(
+        return char('`')->sequence(
+            zeroOrMore(
                 any(
                     self::stringLiteral(),
                     self::expression(),

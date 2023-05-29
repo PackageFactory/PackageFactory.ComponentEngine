@@ -49,7 +49,7 @@ final class TagParser
     }
     private static function build(): Parser
     {
-        return char('<')->bind(fn () =>
+        return char('<')->sequence(
             self::tagName()->bind(fn (string $tagName) =>
                 skipSpace()->followedBy(AttributeParser::get())->thenIgnore(skipSpace())->bind(fn ($attributeNodes) =>
                     either(
