@@ -33,21 +33,19 @@ use function Parsica\Parsica\skipSpace;
 
 final class EnumDeclarationParser
 {
-    private static ?Parser $instance = null;
+    /** @var Parser<EnumDeclarationNode> */
+    private static Parser $i;
 
+    /** @return Parser<EnumDeclarationNode> */
     public static function parseFromString(string $string): EnumDeclarationNode
     {
         return self::get()->thenEof()->tryString($string)->output();
     }
 
+    /** @return Parser<EnumDeclarationNode> */
     public static function get(): Parser
     {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
-    {
-        return collect(
+        return self::$i ??= collect(
             UtilityParser::keyword('enum'),
             skipSpace(),
             UtilityParser::identifier(),

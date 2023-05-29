@@ -41,15 +41,13 @@ use function Parsica\Parsica\takeWhile;
 
 final class TagParser
 {
-    private static ?Parser $instance = null;
+    /** @var Parser<TagNode> */
+    private static Parser $i;
 
+    /** @return Parser<TagNode> */
     public static function get(): Parser
     {
-        return self::$instance ??= self::build();
-    }
-    private static function build(): Parser
-    {
-        return char('<')->sequence(
+        return self::$i ??= char('<')->sequence(
             self::tagName()->bind(fn (string $tagName) =>
                 skipSpace()->followedBy(AttributeParser::get())->thenIgnore(skipSpace())->bind(fn ($attributeNodes) =>
                     either(

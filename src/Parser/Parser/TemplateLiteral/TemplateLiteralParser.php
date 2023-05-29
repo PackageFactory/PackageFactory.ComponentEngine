@@ -35,10 +35,13 @@ use function Parsica\Parsica\zeroOrMore;
 
 final class TemplateLiteralParser
 {
+    /** @var Parser<TemplateLiteralNode> */
+    private static Parser $i;
+
     /** @return Parser<TemplateLiteralNode> */
     public static function get(): Parser
     {
-        return char('`')->sequence(
+        return self::$i ??= char('`')->sequence(
             zeroOrMore(
                 any(
                     self::stringLiteral(),

@@ -31,10 +31,13 @@ use function Parsica\Parsica\char;
 
 final class UnaryOperationParser
 {
+    /** @var Parser<UnaryOperationNode> */
+    private static Parser $i;
+
     /** @return Parser<UnaryOperationNode> */
     public static function get(): Parser
     {
-        return self::unaryOperator()->bind(function (UnaryOperator $unaryOperator) {
+        return self::$i ??= self::unaryOperator()->bind(function (UnaryOperator $unaryOperator) {
             return ExpressionParser::get($unaryOperator->toPrecedence())->map(fn ($expression) => new UnaryOperationNode($unaryOperator, $expression));
         });
     }

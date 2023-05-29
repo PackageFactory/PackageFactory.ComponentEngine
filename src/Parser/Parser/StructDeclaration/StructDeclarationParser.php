@@ -33,21 +33,18 @@ use function Parsica\Parsica\skipSpace;
 
 final class StructDeclarationParser
 {
-    private static ?Parser $instance = null;
+    /** @var Parser<StructDeclarationNode> */
+    private static Parser $i;
 
     public static function parseFromString(string $string): StructDeclarationNode
     {
         return self::get()->thenEof()->tryString($string)->output();
     }
 
+    /** @return Parser<StructDeclarationNode> */
     public static function get(): Parser
     {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
-    {
-        return collect(
+        return self::$i ??= collect(
             UtilityParser::keyword('struct'),
             skipSpace(),
             UtilityParser::identifier(),

@@ -32,6 +32,7 @@ use function Parsica\Parsica\takeWhile1;
 
 final class TextParser
 {
+    /** @return Parser<TextNode|null> */
     public static function get(): Parser
     {
         return
@@ -51,7 +52,7 @@ final class TextParser
                 if (!$trimmedNewlinesAndSpaces || ctype_space($trimmedNewlinesAndSpaces)) {
                     return null;
                 }
-                return  new TextNode($trimmedNewlinesAndSpaces);
+                return new TextNode($trimmedNewlinesAndSpaces);
             });
     }
 }

@@ -37,7 +37,8 @@ use function Parsica\Parsica\many;
 
 final class ModuleParser
 {
-    private static ?Parser $instance = null;
+    /** @var Parser<ModuleNode> */
+    private static Parser $i;
 
     public static function parseFromStream(Stream $stream): ModuleNode
     {
@@ -49,9 +50,10 @@ final class ModuleParser
         return self::get()->thenEof()->tryString($string)->output();
     }
 
+    /** @return Parser<ModuleNode> */
     public static function get(): Parser
     {
-        return self::$instance ??= UtilityParser::skipSpaceAndComments()->then(many(
+        return self::$i ??= UtilityParser::skipSpaceAndComments()->then(many(
             either(
                 ImportParser::get(),
                 ExportParser::get()

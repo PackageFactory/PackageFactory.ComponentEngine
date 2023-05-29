@@ -28,10 +28,13 @@ use Parsica\Parsica\Parser;
 
 final class IdentifierParser
 {
+    /** @var Parser<IdentifierNode> */
+    private static Parser $i;
+
     /** @return Parser<IdentifierNode> */
     public static function get(): Parser
     {
-        return UtilityParser::identifier()
+        return self::$i ??= UtilityParser::identifier()
             ->map(fn ($name) => new IdentifierNode($name));
     }
 }

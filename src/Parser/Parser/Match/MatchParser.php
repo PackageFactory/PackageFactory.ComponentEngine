@@ -34,16 +34,13 @@ use function Parsica\Parsica\string;
 
 final class MatchParser
 {
-    private static ?Parser $instance = null;
+    /** @var Parser<MatchNode> */
+    private static Parser $i;
 
+    /** @return Parser<MatchNode> */
     public static function get(): Parser
     {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
-    {
-        return collect(
+        return self::$i ??= collect(
             string('match'),
             skipSpace(),
             char('('),

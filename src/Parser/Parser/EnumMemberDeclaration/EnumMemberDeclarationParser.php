@@ -22,18 +22,13 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Parser\EnumMemberDeclaration;
 
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumMemberDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumMemberDeclarationNodes;
-use PackageFactory\ComponentEngine\Parser\Ast\PropertyDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\PropertyDeclarationNodes;
 use PackageFactory\ComponentEngine\Parser\Parser\NumberLiteral\NumberLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Parser\StringLiteral\StringLiteralParser;
-use PackageFactory\ComponentEngine\Parser\Parser\TypeReference\TypeReferenceParser;
 use PackageFactory\ComponentEngine\Parser\Parser\UtilityParser;
 use Parsica\Parsica\Parser;
 
-use function Parsica\Parsica\any;
 use function Parsica\Parsica\between;
 use function Parsica\Parsica\char;
 use function Parsica\Parsica\collect;
@@ -44,14 +39,8 @@ use function Parsica\Parsica\skipSpace;
 
 final class EnumMemberDeclarationParser
 {
-    private static ?Parser $instance = null;
-
+    /** @return Parser<EnumMemberDeclarationNodes> */
     public static function get(): Parser
-    {
-        return self::$instance ??= self::build();
-    }
-
-    private static function build(): Parser
     {
         return many(
             collect(

@@ -24,7 +24,6 @@ namespace PackageFactory\ComponentEngine\Parser\Parser\ComponentDeclaration;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Parser\Expression\ExpressionParser;
-use PackageFactory\ComponentEngine\Parser\Parser\ParseFromString;
 use PackageFactory\ComponentEngine\Parser\Parser\PropertyDeclaration\PropertyDeclarationParser;
 use PackageFactory\ComponentEngine\Parser\Parser\UtilityParser;
 use Parsica\Parsica\Parser;
@@ -33,13 +32,10 @@ use function Parsica\Parsica\char;
 use function Parsica\Parsica\collect;
 use function Parsica\Parsica\skipSpace;
 
-/**
- * @template T
- */
 final class ComponentDeclarationParser
 {
-    /** @var ?Parser<ComponentDeclarationNode> */
-    private static ?Parser $instance = null;
+    /** @var Parser<ComponentDeclarationNode> */
+    private static Parser $i;
 
     public static function parseFromString(string $string): ComponentDeclarationNode
     {
@@ -49,13 +45,7 @@ final class ComponentDeclarationParser
     /** @return Parser<ComponentDeclarationNode> */
     public static function get(): Parser
     {
-        return self::$instance ??= self::build();
-    }
-
-    /** @return Parser<ComponentDeclarationNode> */
-    private static function build(): Parser
-    {
-        return collect(
+        return self::$i ??= collect(
             UtilityParser::keyword('component'),
             skipSpace(),
             UtilityParser::identifier(),

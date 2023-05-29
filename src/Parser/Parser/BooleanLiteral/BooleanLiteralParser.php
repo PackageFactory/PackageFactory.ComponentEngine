@@ -25,14 +25,19 @@ namespace PackageFactory\ComponentEngine\Parser\Parser\BooleanLiteral;
 use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
 use Parsica\Parsica\Parser;
 
-use function Parsica\Parsica\{either, skipSpace, string};
+use function Parsica\Parsica\either;
+use function Parsica\Parsica\skipSpace;
+use function Parsica\Parsica\string;
 
 final class BooleanLiteralParser
 {
+    /** @var Parser<BooleanLiteralNode> */
+    private static Parser $i;
+
     /** @return Parser<BooleanLiteralNode> */
     public static function get(): Parser
     {
-        return skipSpace()->sequence(either(
+        return self::$i ??= skipSpace()->sequence(either(
             string('true')->voidLeft(new BooleanLiteralNode(true)),
             string('false')->voidLeft(new BooleanLiteralNode(false))
         ));

@@ -25,13 +25,16 @@ namespace PackageFactory\ComponentEngine\Parser\Parser\NullLiteral;
 use PackageFactory\ComponentEngine\Parser\Ast\NullLiteralNode;
 use Parsica\Parsica\Parser;
 
-use function Parsica\Parsica\{string};
+use function Parsica\Parsica\string;
 
 final class NullLiteralParser
 {
+    /** @var Parser<NullLiteralNode> */
+    private static Parser $i;
+
     /** @return Parser<NullLiteralNode> */
     public static function get(): Parser
     {
-        return string('null')->voidLeft(new NullLiteralNode());
+        return self::$i ??= string('null')->voidLeft(new NullLiteralNode());
     }
 }

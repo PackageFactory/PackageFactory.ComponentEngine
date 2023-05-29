@@ -43,14 +43,17 @@ use function Parsica\Parsica\takeWhile1;
 
 final class NumberLiteralParser
 {
-    private static ?Parser $instance = null;
+    /** @var Parser<NumberLiteralNode> */
+    private static Parser $i;
 
+    /** @return Parser<NumberLiteralNode> */
     public static function get(): Parser
     {
-        return self::$instance ??= self::build();
+        return self::$i ??= self::initialize();
     }
 
-    private static function build(): Parser
+    /** @return Parser<NumberLiteralNode> */
+    private static function initialize(): Parser
     {
         $isOctalDigit = isCharCode(range(0x30, 0x37));
         $isBinaryDigit = isCharCode([0x30, 0x31]);
