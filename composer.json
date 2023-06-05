@@ -2,12 +2,6 @@
     "name": "packagefactory/componentengine",
     "type": "library",
     "license": "GPL-3.0-or-later",
-    "authors": [
-        {
-            "name": "Wilhelm Behncke",
-            "email": "wilhelm.behncke@protonmail.com"
-        }
-    ],
     "require": {
         "php": ">=8.1"
     },
