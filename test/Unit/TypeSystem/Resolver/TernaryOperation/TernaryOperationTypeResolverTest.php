@@ -37,14 +37,14 @@ final class TernaryOperationTypeResolverTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function ternaryOperationExamples(): array
+    public static function ternaryOperationExamples(): array
     {
         return [
             'true ? 42 : "foo"' => ['true ? 42 : "foo"', NumberType::get()],
             'false ? 42 : "foo"' => ['false ? 42 : "foo"', StringType::get()],
             '1 < 2 ? 42 : "foo"' => ['1 < 2 ? 42 : "foo"', UnionType::of(NumberType::get(), StringType::get())],
             '1 < 2 ? variableOfTypeString : variableOfTypeNumber' => [
-                '1 < 2 ? variableOfTypeString : variableOfTypeNumber', 
+                '1 < 2 ? variableOfTypeString : variableOfTypeNumber',
                 UnionType::of(NumberType::get(), StringType::get())
             ]
         ];

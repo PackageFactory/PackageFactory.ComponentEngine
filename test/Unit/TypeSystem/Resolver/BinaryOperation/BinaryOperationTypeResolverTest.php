@@ -38,7 +38,7 @@ final class BinaryOperationTypeResolverTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function binaryOperationExamples(): array
+    public static function binaryOperationExamples(): array
     {
         return [
             'true && false' => ['true && false', BooleanType::get()],

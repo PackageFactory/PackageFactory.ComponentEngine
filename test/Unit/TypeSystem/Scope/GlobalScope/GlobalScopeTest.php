@@ -45,7 +45,7 @@ final class GlobalScopeTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function primitiveTypeExamples(): array
+    public static function primitiveTypeExamples(): array
     {
         return [
             'string' => ['string', StringType::get()]

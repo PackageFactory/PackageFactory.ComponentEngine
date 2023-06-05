@@ -32,7 +32,7 @@ final class NumberLiteralTranspilerTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function numberLiteralExamples(): array
+    public static function numberLiteralExamples(): array
     {
         return [
             // Decimal

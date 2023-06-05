@@ -7,7 +7,7 @@ test::
 		--bootstrap vendor/autoload.php \
 		--testdox test/Integration \
 		--coverage-html build/coverage-report \
-		--whitelist src
+		--coverage-filter src
 
 test-unit::
 	./vendor/bin/phpunit \
@@ -15,7 +15,7 @@ test-unit::
 		--bootstrap vendor/autoload.php \
 		--testdox test/Unit \
 		--coverage-html build/coverage-report \
-		--whitelist src
+		--coverage-filter src
 
 test-filter::
 	./vendor/bin/phpunit \

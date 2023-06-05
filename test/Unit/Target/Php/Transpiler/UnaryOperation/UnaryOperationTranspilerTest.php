@@ -34,7 +34,7 @@ final class UnaryOperationTranspilerTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function unaryOperationExamples(): array
+    public static function unaryOperationExamples(): array
     {
         return [
             '!false' => ['!false', '(!false)'],

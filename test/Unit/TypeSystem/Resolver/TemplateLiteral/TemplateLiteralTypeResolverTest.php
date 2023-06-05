@@ -32,7 +32,7 @@ final class TemplateLiteralTypeResolverTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function templateLiteralExamples(): array
+    public static function templateLiteralExamples(): array
     {
         return [
             '`Hello World`' => ['`Hello World`'],

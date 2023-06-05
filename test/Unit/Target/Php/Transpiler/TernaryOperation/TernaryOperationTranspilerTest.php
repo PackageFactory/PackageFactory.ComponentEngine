@@ -36,7 +36,7 @@ final class TernaryOperationTranspilerTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function ternaryOperationExamples(): array
+    public static function ternaryOperationExamples(): array
     {
         return [
             'true ? 42 : "foo"' => ['true ? 42 : "foo"', '(true ? 42 : \'foo\')'],
@@ -52,7 +52,7 @@ final class TernaryOperationTranspilerTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function ternaryOperationWithVariablesInConditionExamples(): array
+    public static function ternaryOperationWithVariablesInConditionExamples(): array
     {
         return [
             'true === someString ? "a" : "foo"' => ['true === someString ? "a" : "foo"', '((true === $this->someString) ? \'a\' : \'foo\')'],

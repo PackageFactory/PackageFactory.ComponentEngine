@@ -51,20 +51,20 @@ final class TagContentTranspilerTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function tagContentExamples(): array
+    public static function tagContentExamples(): array
     {
         return [
             'Just some text.' => [
-                'Just some text.', 
-                'Just some text.', 
+                'Just some text.',
+                'Just some text.',
             ],
             '{someValue}' => [
                 '{someValue}',
-                '\' . $this->someValue . \'', 
+                '\' . $this->someValue . \'',
             ],
             '<h1>Headline</h1>' => [
                 '<h1>Headline</h1>',
-                '<h1>Headline</h1>', 
+                '<h1>Headline</h1>',
             ],
         ];
     }

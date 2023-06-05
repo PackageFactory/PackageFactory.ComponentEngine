@@ -33,7 +33,7 @@ final class BinaryOperationTranspilerTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function binaryOperationExamples(): array
+    public static function binaryOperationExamples(): array
     {
         return [
             'true && false' => ['true && false', '(true && false)'],

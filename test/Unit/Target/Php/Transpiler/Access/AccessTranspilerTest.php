@@ -37,7 +37,7 @@ final class AccessTranspilerTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function accessExamples(): array
+    public static function accessExamples(): array
     {
         return [
             'a.b' => ['a.b', '$this->a->b'],
