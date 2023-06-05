@@ -22,9 +22,3 @@ test-filter::
 		--bootstrap vendor/autoload.php \
 		--testdox \
 		--filter $(filter)
-
-update::
-	./vendor/bin/phpunit \
-		--bootstrap vendor/autoload.php \
-		--testdox test \
-		-d --update-snapshots
