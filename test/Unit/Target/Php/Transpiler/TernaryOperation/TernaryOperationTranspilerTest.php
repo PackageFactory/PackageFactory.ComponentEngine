@@ -59,8 +59,8 @@ final class TernaryOperationTranspilerTest extends TestCase
             'true === someStruct.foo ? "a" : "foo"' => ['true === someStruct.foo ? "a" : "foo"', '((true === $this->someStruct->foo) ? \'a\' : \'foo\')'],
             'true === someStruct.deep.foo ? "a" : "foo"' => ['true === someStruct.deep.foo ? "a" : "foo"', '((true === $this->someStruct->deep->foo) ? \'a\' : \'foo\')'],
             'someStruct.foo === true ? "a" : "foo"' => ['someStruct.foo === true ? "a" : "foo"', '(($this->someStruct->foo === true) ? \'a\' : \'foo\')'],
-            'someStruct.foo === true || false ? "a" : "foo"' => ['someStruct.foo === true || false ? "a" : "foo"', '(($this->someStruct->foo === true || false) ? \'a\' : \'foo\')'],
-            '1 + 2 + 3 === a || 5 * b || c === true && false ? "a" : "foo"' => ['1 + 2 + 3 === a || 5 * b || c === true && false ? "a" : "foo"', '((1 + 2 + 3 === $this->a || 5 * $this->b || $this->c === true && false) ? \'a\' : \'foo\')'],
+            'someStruct.foo === true || false ? "a" : "foo"' => ['someStruct.foo === true || false ? "a" : "foo"', '((($this->someStruct->foo === true) || false) ? \'a\' : \'foo\')'],
+            '1 + 2 + 3 === a || 5 * b || c === true && false ? "a" : "foo"' => ['1 + 2 + 3 === a || 5 * b || c === true && false ? "a" : "foo"', '((((((1 + 2) + 3) === $this->a) || (5 * $this->b)) || (($this->c === true) && false)) ? \'a\' : \'foo\')'],
         ];
     }
 
