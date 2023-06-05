@@ -49,7 +49,10 @@ final class TernaryOperationTranspilerTest extends TestCase
         ];
     }
 
-    public function ternaryOperationWithVariablesInConditionExamples()
+    /**
+     * @return array<string,mixed>
+     */
+    public function ternaryOperationWithVariablesInConditionExamples(): array
     {
         return [
             'true === someString ? "a" : "foo"' => ['true === someString ? "a" : "foo"', '((true === $this->someString) ? \'a\' : \'foo\')'],
