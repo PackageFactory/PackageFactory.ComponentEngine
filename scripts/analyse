@@ -1,0 +1,11 @@
+#!/bin/env bash
+
+##
+## Usage (plain):
+##   ./scripts/analyse
+##
+## Usage (composer):
+##   composer analyse
+##
+
+./vendor/bin/phpstan analyse -c phpstan.neon

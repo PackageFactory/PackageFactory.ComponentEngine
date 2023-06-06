@@ -16,6 +16,7 @@ or, alternatively, directly via:
 
 | script-name | description |
 |-|-|
+| `analyse` | Run static code analysis with [phpstan](https://phpstan.org/) |
 
 ## License
 

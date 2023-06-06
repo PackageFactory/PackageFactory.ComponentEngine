@@ -1,6 +1,3 @@
-analyse::
-	./vendor/bin/phpstan analyse -c phpstan.neon
-
 test::
 	./vendor/bin/phpunit \
 		--enforce-time-limit \
