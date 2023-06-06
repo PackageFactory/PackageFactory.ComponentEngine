@@ -51,10 +51,13 @@ final class EnumMemberDeclarationNode implements \JsonSerializable
         if (Scanner::type($tokens) === TokenType::BRACKET_ROUND_OPEN) {
             Scanner::skipOne($tokens);
             $value = match (Scanner::type($tokens)) {
+                /** @phpstan-ignore-next-line */
                 TokenType::STRING_QUOTED => StringLiteralNode::fromTokens($tokens),
+                /** @phpstan-ignore-next-line */
                 TokenType::NUMBER_DECIMAL => NumberLiteralNode::fromTokens($tokens),
                 default => throw new \Exception('@TODO: Unexpected Token ' . Scanner::type($tokens)->value)
             };
+            /** @phpstan-ignore-next-line */
             Scanner::assertType($tokens, TokenType::BRACKET_ROUND_CLOSE);
             Scanner::skipOne($tokens);
         }

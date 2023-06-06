@@ -1,0 +1,27 @@
+name: 'Set up PHP'
+description: 'Set up PHP and composer incl. caches'
+inputs:
+  php-version:
+    description: 'The version of PHP to set up'
+    required: true
+runs:
+  using: "composite"
+  steps:
+
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ inputs.php-version }}
+        coverage: xdebug
+
+    - id: composer-cache
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - uses: actions/cache@v2
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+        restore-keys: ${{ runner.os }}-composer-
+
+    - run: composer install
+      shell: bash
