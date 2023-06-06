@@ -48,7 +48,7 @@ final class ClassNameTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<string,mixed>
      */
     public static function invalidClassNameExamples(): array
     {
