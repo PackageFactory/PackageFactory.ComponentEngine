@@ -1,0 +1,19 @@
+#!/bin/env bash
+
+##
+## Usage (plain):
+##   ./scripts/test
+##   ./scripts/test --testsuite unit
+##   ./scripts/test --testsuite integration
+##
+## Usage (composer):
+##   composer test
+##   composer test -- --testsuite unit
+##   composer test -- --testsuite integration
+##
+
+./vendor/bin/phpunit \
+    --enforce-time-limit \
+    --testdox \
+    --coverage-html build/coverage-report \
+    --coverage-filter src $@

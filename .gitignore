@@ -7,3 +7,4 @@ simple.md
 test.php
 error.afx
 composer.lock
+.phpunit.result.cache

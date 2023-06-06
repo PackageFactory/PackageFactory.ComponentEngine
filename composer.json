@@ -3,7 +3,8 @@
     "type": "library",
     "license": "GPL-3.0-or-later",
     "scripts": {
-      "analyse": "./scripts/analyse"
+      "analyse": "./scripts/analyse",
+      "test": "./scripts/test"
     },
     "require": {
         "php": ">=8.1"
