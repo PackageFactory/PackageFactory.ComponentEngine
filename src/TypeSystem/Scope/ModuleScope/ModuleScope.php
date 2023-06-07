@@ -33,13 +33,13 @@ final class ModuleScope implements ScopeInterface
     public function __construct(
         private readonly LoaderInterface $loader,
         private readonly ModuleNode $moduleNode,
-        private readonly ?ScopeInterface $parentScope
+        private readonly ScopeInterface $parentScope
     ) {
     }
 
     public function lookupTypeFor(string $name): ?TypeInterface
     {
-        return $this->parentScope?->lookupTypeFor($name) ?? null;
+        return $this->parentScope->lookupTypeFor($name);
     }
 
     public function resolveTypeReference(TypeReferenceNode $typeReferenceNode): TypeInterface
@@ -48,10 +48,6 @@ final class ModuleScope implements ScopeInterface
             return $this->loader->resolveTypeOfImport($importNode);
         }
 
-        if ($this->parentScope) {
-            return $this->parentScope->resolveTypeReference($typeReferenceNode);
-        }
-
-        throw new \Exception('@TODO: Unknown Type ' . $typeReferenceNode->name);
+        return $this->parentScope->resolveTypeReference($typeReferenceNode);
     }
 }
