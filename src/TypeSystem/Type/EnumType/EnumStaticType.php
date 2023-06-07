@@ -40,6 +40,6 @@ final class EnumStaticType implements TypeInterface
 
     public function is(TypeInterface $other): bool
     {
-        return false;
+        return $other === $this;
     }
 }
