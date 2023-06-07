@@ -57,4 +57,20 @@ final class StructTypeTest extends TestCase
 
         $this->assertEquals('SomeStruct', $structStaticType->structName);
     }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function isEquivalentToItself(): void
+    {
+        $structDeclarationNode = StructDeclarationNode::fromString(
+            'struct SomeStruct {}'
+        );
+        $structStaticType = StructType::fromStructDeclarationNode(
+            $structDeclarationNode
+        );
+
+        $this->assertTrue($structStaticType->is($structStaticType));
+    }
 }
