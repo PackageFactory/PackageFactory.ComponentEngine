@@ -57,4 +57,20 @@ final class EnumStaticTypeTest extends TestCase
 
         $this->assertEquals('SomeEnum', $enumStaticType->enumName);
     }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function isEquivalentToItself(): void
+    {
+        $enumDeclarationNode = EnumDeclarationNode::fromString(
+            'enum SomeEnum {}'
+        );
+        $enumStaticType = EnumStaticType::fromEnumDeclarationNode(
+            $enumDeclarationNode
+        );
+
+        $this->assertTrue($enumStaticType->is($enumStaticType));
+    }
 }
