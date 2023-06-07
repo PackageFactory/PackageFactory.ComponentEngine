@@ -71,4 +71,15 @@ final class GlobalScopeTest extends TestCase
             sprintf('Expected %s, got %s', $expectedType::class, $actualType::class)
         );
     }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function knowsNoLocalNames(): void
+    {
+        $globalScope = GlobalScope::get();
+
+        $this->assertNull($globalScope->lookupTypeFor('someVariable'));
+    }
 }
