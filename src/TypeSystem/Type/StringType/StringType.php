@@ -30,7 +30,7 @@ final class StringType implements TypeInterface
 
     private function __construct()
     {
-    }
+    } // @codeCoverageIgnore
 
     public static function get(): self
     {
