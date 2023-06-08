@@ -65,27 +65,6 @@ enum BinaryOperator: string
         };
     }
 
-    public function toTokenType(): TokenType
-    {
-        return match ($this) {
-            self::AND => TokenType::OPERATOR_BOOLEAN_AND,
-            self::OR => TokenType::OPERATOR_BOOLEAN_OR,
-
-            self::PLUS => TokenType::OPERATOR_ARITHMETIC_PLUS,
-            self::MINUS => TokenType::OPERATOR_ARITHMETIC_MINUS,
-            self::MULTIPLY_BY => TokenType::OPERATOR_ARITHMETIC_MULTIPLY_BY,
-            self::DIVIDE_BY => TokenType::OPERATOR_ARITHMETIC_DIVIDE_BY,
-            self::MODULO => TokenType::OPERATOR_ARITHMETIC_MODULO,
-
-            self::EQUAL => TokenType::COMPARATOR_EQUAL,
-            self::NOT_EQUAL => TokenType::COMPARATOR_NOT_EQUAL,
-            self::GREATER_THAN => TokenType::COMPARATOR_GREATER_THAN,
-            self::GREATER_THAN_OR_EQUAL => TokenType::COMPARATOR_GREATER_THAN_OR_EQUAL,
-            self::LESS_THAN => TokenType::COMPARATOR_LESS_THAN,
-            self::LESS_THAN_OR_EQUAL => TokenType::COMPARATOR_LESS_THAN_OR_EQUAL
-        };
-    }
-
     public function toPrecedence(): Precedence
     {
         return match ($this) {
