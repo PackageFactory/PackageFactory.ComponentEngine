@@ -20,22 +20,34 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Definition;
+namespace PackageFactory\ComponentEngine\Test\Unit\Definition;
 
+use PackageFactory\ComponentEngine\Definition\AccessType;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use PHPUnit\Framework\TestCase;
 
-enum AccessType: string
+final class AccessTypeTest extends TestCase
 {
-    case MANDATORY = 'MANDATORY';
-    case OPTIONAL = 'OPTIONAL';
-
-    public static function fromTokenType(TokenType $tokenType): self
+    /**
+     * @return array<string,mixed>
+     */
+    public static function tokenTypeToAccessTypeExamples(): array
     {
-        return match ($tokenType) {
-            TokenType::PERIOD => self::MANDATORY,
-            TokenType::OPTCHAIN => self::OPTIONAL,
+        return [
+            TokenType::PERIOD->name => [TokenType::PERIOD, AccessType::MANDATORY],
+            TokenType::OPTCHAIN->name => [TokenType::OPTCHAIN, AccessType::OPTIONAL],
+        ];
+    }
 
-            default => throw new \Exception('@TODO: Unknown AccessType')
-        };
+    /**
+     * @test
+     * @dataProvider tokenTypeToAccessTypeExamples
+     * @param TokenType $givenTokenType
+     * @param AccessType $expectedAccessType
+     * @return void
+     */
+    public function canBeCreatedFromTokenType(TokenType $givenTokenType, AccessType $expectedAccessType): void
+    {
+        $this->assertSame($expectedAccessType, AccessType::fromTokenType($givenTokenType));
     }
 }
