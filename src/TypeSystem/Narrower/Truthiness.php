@@ -20,40 +20,44 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures;
+namespace PackageFactory\ComponentEngine\TypeSystem\Narrower;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
-use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
+use PackageFactory\ComponentEngine\Definition\BinaryOperator;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class DummyScope implements ScopeInterface
+enum Truthiness
 {
-    /**
-     * @param array<string,TypeInterface> $identifierToTypeMap
-     * @param array<string,TypeInterface> $typeNameToTypeMap
-     */
-    public function __construct(
-        private readonly array $identifierToTypeMap = [],
-        private readonly array $typeNameToTypeMap = []
-    ) {
+    case TRUTHY;
+
+    case FALSY;
+
+    public function negate(): self
+    {
+        return match ($this) {
+            self::TRUTHY => self::FALSY,
+            self::FALSY => self::TRUTHY
+        };
     }
 
-    public function lookupTypeFor(string $name): ?TypeInterface
+    public function basedOnBinaryOperator(BinaryOperator $operator): ?self
     {
-        return $this->identifierToTypeMap[$name] ?? null;
+        return match ($operator) {
+            BinaryOperator::EQUAL => $this,
+            BinaryOperator::NOT_EQUAL => $this->negate(),
+            default => null,
+        };
     }
 
-    public function resolveTypeReference(TypeReferenceNode $typeReferenceNode): TypeInterface
+    public function narrowType(TypeInterface $type): TypeInterface
     {
-        if ($type = $this->typeNameToTypeMap[$typeReferenceNode->name] ?? null) {
-            if ($typeReferenceNode->isOptional) {
-                $type = UnionType::of($type, NullType::get());
-            }
+        if (!$type instanceof UnionType || !$type->containsNull()) {
             return $type;
         }
-
-        throw new \Exception('DummyScope: Unknown type ' . $typeReferenceNode->name);
+        return match ($this) {
+            self::TRUTHY => $type->withoutNull(),
+            self::FALSY => NullType::get()
+        };
     }
 }

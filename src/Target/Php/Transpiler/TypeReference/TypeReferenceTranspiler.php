@@ -31,6 +31,8 @@ use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
+use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class TypeReferenceTranspiler
 {
@@ -43,7 +45,26 @@ final class TypeReferenceTranspiler
     public function transpile(TypeReferenceNode $typeReferenceNode): string
     {
         $type = $this->scope->resolveTypeReference($typeReferenceNode);
-        $phpTypeReference = match ($type::class) {
+
+        return match ($type::class) {
+            UnionType::class => $this->transpileUnionType($type, $typeReferenceNode),
+            default => $this->transpileNonUnionType($type, $typeReferenceNode)
+        };
+    }
+
+    private function transpileUnionType(UnionType $unionType, TypeReferenceNode $typeReferenceNode): string
+    {
+        if (count($unionType) === 2 && $unionType->containsNull()) {
+            $typeWithoutNull = $unionType->withoutNull();
+            return $this->transpileNullableType($typeWithoutNull, $typeReferenceNode);
+        }
+
+        throw new \Exception('@TODO Transpilation of complex union types is not implemented');
+    }
+
+    private function transpileNonUnionType(TypeInterface $type, TypeReferenceNode $typeReferenceNode): string
+    {
+        return match ($type::class) {
             NumberType::class => 'int|float',
             StringType::class => 'string',
             BooleanType::class => 'bool',
@@ -51,14 +72,14 @@ final class TypeReferenceTranspiler
             ComponentType::class => $this->strategy->getPhpTypeReferenceForComponentType($type, $typeReferenceNode),
             EnumType::class => $this->strategy->getPhpTypeReferenceForEnumType($type, $typeReferenceNode),
             StructType::class => $this->strategy->getPhpTypeReferenceForStructType($type, $typeReferenceNode),
+            UnionType::class => throw new \Exception("There is no such thing as nested unions, think again."),
             default => $this->strategy->getPhpTypeReferenceForCustomType($type, $typeReferenceNode)
         };
+    }
 
-        return $typeReferenceNode->isOptional
-            ? match ($phpTypeReference) {
-                'int|float' => 'null|int|float',
-                default => '?' . $phpTypeReference
-            }
-            : $phpTypeReference;
+    private function transpileNullableType(TypeInterface $typeWithoutNull, TypeReferenceNode $typeReferenceNode): string
+    {
+        $phpTypeWithoutNull = $this->transpileNonUnionType($typeWithoutNull, $typeReferenceNode);
+        return (str_contains($phpTypeWithoutNull, '|') ? 'null|' : '?') . $phpTypeWithoutNull;
     }
 }

@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\UnionType;
 
+use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
@@ -29,6 +30,16 @@ use PHPUnit\Framework\TestCase;
 
 final class UnionTypeTest extends TestCase
 {
+    /**
+     * @test
+     */
+    public function unionRequiresAtLeastOneMember(): void
+    {
+        $this->expectException(\TypeError::class);
+        /** @phpstan-ignore-next-line */
+        UnionType::of();
+    }
+
     /**
      * @test
      */
@@ -90,11 +101,80 @@ final class UnionTypeTest extends TestCase
     /**
      * @test
      */
+    public function unionOnlyHoldsDeduplicatedMembers(): void
+    {
+        $unionType = UnionType::of(NumberType::get(), StringType::get());
+        $otherUnionType = UnionType::of(NumberType::get(), StringType::get(), NumberType::get(), StringType::get());
+
+        $this->assertTrue($unionType->is($otherUnionType));
+
+        $this->assertInstanceOf(UnionType::class, $unionType);
+        $this->assertInstanceOf(UnionType::class, $otherUnionType);
+
+        $this->assertCount(count($unionType), $otherUnionType);
+
+        $this->assertEqualsCanonicalizing(
+            $unionType->toArray(),
+            $otherUnionType->toArray()
+        );
+    }
+
+    /**
+     * @test
+     */
     public function isReturnsFalseIfGivenTypeIsNotCongruent(): void
     {
         $unionType = UnionType::of(StringType::get(), NumberType::get());
 
         $this->assertFalse($unionType->is(NumberType::get()));
         $this->assertFalse($unionType->is(StringType::get()));
+    }
+
+    /**
+     * @test
+     */
+    public function containsNullOnNullableString(): void
+    {
+        $unionType = UnionType::of(StringType::get(), NullType::get());
+
+        $this->assertInstanceOf(UnionType::class, $unionType);
+
+        $this->assertTrue($unionType->containsNull());
+
+        $withoutNull = $unionType->withoutNull();
+
+        $this->assertTrue($withoutNull->is(StringType::get()));
+    }
+
+    /**
+     * @test
+     */
+    public function containsNullWithMultipleMembers(): void
+    {
+        $unionType = UnionType::of(StringType::get(), NumberType::get(), NullType::get());
+
+        $this->assertInstanceOf(UnionType::class, $unionType);
+
+        $this->assertTrue($unionType->containsNull());
+
+        $withoutNull = $unionType->withoutNull();
+
+        $this->assertTrue($withoutNull->is(UnionType::of(StringType::get(), NumberType::get())));
+    }
+
+    /**
+     * @test
+     */
+    public function withoutNullOnUnionWithoutNull(): void
+    {
+        $unionType = UnionType::of(StringType::get(), NumberType::get());
+
+        $this->assertInstanceOf(UnionType::class, $unionType);
+
+        $this->assertFalse($unionType->containsNull());
+
+        $withoutNull = $unionType->withoutNull();
+
+        $this->assertTrue($withoutNull->is($unionType));
     }
 }

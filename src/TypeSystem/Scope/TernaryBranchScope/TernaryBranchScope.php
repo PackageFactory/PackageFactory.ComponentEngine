@@ -20,48 +20,46 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope;
+namespace PackageFactory\ComponentEngine\TypeSystem\Scope\TernaryBranchScope;
 
+use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
+use PackageFactory\ComponentEngine\TypeSystem\Narrower\NarrowedTypes;
+use PackageFactory\ComponentEngine\TypeSystem\Narrower\Expression\ExpressionTypeNarrower;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
-use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class GlobalScope implements ScopeInterface
+final class TernaryBranchScope implements ScopeInterface
 {
-    private static null|self $instance = null;
-
-    private function __construct()
-    {
+    public function __construct(
+        private readonly NarrowedTypes $narrowedTypes,
+        private readonly ScopeInterface $parentScope
+    ) {
     }
 
-    public static function get(): self
+    public static function forTruthyBranch(ExpressionNode $conditionNode, ScopeInterface $parentScope): self
     {
-        return self::$instance ??= new self();
+        return new self(
+            ExpressionTypeNarrower::forTruthy($parentScope)->narrowTypesOfSymbolsIn($conditionNode),
+            $parentScope
+        );
+    }
+
+    public static function forFalsyBranch(ExpressionNode $conditionNode, ScopeInterface $parentScope): self
+    {
+        return new self(
+            ExpressionTypeNarrower::forFalsy($parentScope)->narrowTypesOfSymbolsIn($conditionNode),
+            $parentScope
+        );
     }
 
     public function lookupTypeFor(string $name): ?TypeInterface
     {
-        return null;
+        return $this->narrowedTypes->getType($name) ?? $this->parentScope->lookupTypeFor($name);
     }
 
     public function resolveTypeReference(TypeReferenceNode $typeReferenceNode): TypeInterface
     {
-        $type = match ($typeReferenceNode->name) {
-            'string' => StringType::get(),
-            'number' => NumberType::get(),
-            'boolean' => BooleanType::get(),
-            'slot' => SlotType::get(),
-            default => throw new \Exception('@TODO: Unknown Type ' . $typeReferenceNode->name)
-        };
-        if ($typeReferenceNode->isOptional) {
-            $type = UnionType::of($type, NullType::get());
-        }
-        return $type;
+        return $this->parentScope->resolveTypeReference($typeReferenceNode);
     }
 }

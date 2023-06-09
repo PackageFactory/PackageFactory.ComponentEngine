@@ -26,6 +26,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\TernaryOperation\TernaryOperationTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
@@ -46,7 +47,22 @@ final class TernaryOperationTypeResolverTest extends TestCase
             '1 < 2 ? variableOfTypeString : variableOfTypeNumber' => [
                 '1 < 2 ? variableOfTypeString : variableOfTypeNumber',
                 UnionType::of(NumberType::get(), StringType::get())
-            ]
+            ],
+
+            'nullableString ? nullableString : "fallback"' => [
+                'nullableString ? nullableString : "fallback"', StringType::get()
+            ],
+            'nullableString ? null : nullableString' => [
+                'nullableString ? null : nullableString', NullType::get()
+            ],
+
+            'nullableString === null ? "" : nullableString' => [
+                'nullableString === null ? "" : nullableString', StringType::get()
+            ],
+            // Patience you must have my young Padawan.
+            'null === nullableString ? "" : nullableString' => [
+                'null === nullableString ? "" : nullableString', StringType::get()
+            ],
         ];
     }
 
@@ -62,6 +78,7 @@ final class TernaryOperationTypeResolverTest extends TestCase
         $scope = new DummyScope([
             'variableOfTypeString' => StringType::get(),
             'variableOfTypeNumber' => NumberType::get(),
+            'nullableString' => UnionType::of(StringType::get(), NullType::get())
         ]);
         $ternaryOperationTypeResolver = new TernaryOperationTypeResolver(
             scope: $scope

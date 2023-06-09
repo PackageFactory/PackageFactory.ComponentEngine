@@ -25,6 +25,7 @@ namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\TernaryOperation;
 use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Scope\TernaryBranchScope\TernaryBranchScope;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
@@ -38,20 +39,29 @@ final class TernaryOperationTypeResolver
 
     public function resolveTypeOf(TernaryOperationNode $ternaryOperationNode): TypeInterface
     {
-        $expressionTypeResolver = new ExpressionTypeResolver(
-            scope: $this->scope
+        $trueExpressionTypeResolver = new ExpressionTypeResolver(
+            scope: TernaryBranchScope::forTruthyBranch(
+                $ternaryOperationNode->condition,
+                $this->scope
+            )
         );
-        $conditionNode = $ternaryOperationNode->condition->root;
 
-        if ($conditionNode instanceof BooleanLiteralNode) {
-            return $conditionNode->value
-                ? $expressionTypeResolver->resolveTypeOf($ternaryOperationNode->true)
-                : $expressionTypeResolver->resolveTypeOf($ternaryOperationNode->false);
+        $falseExpressionTypeResolver = new ExpressionTypeResolver(
+            scope: TernaryBranchScope::forFalsyBranch(
+                $ternaryOperationNode->condition,
+                $this->scope
+            )
+        );
+
+        if ($ternaryOperationNode->condition->root instanceof BooleanLiteralNode) {
+            return $ternaryOperationNode->condition->root->value
+                ? $trueExpressionTypeResolver->resolveTypeOf($ternaryOperationNode->true)
+                : $falseExpressionTypeResolver->resolveTypeOf($ternaryOperationNode->false);
         }
 
         return UnionType::of(
-            $expressionTypeResolver->resolveTypeOf($ternaryOperationNode->true),
-            $expressionTypeResolver->resolveTypeOf($ternaryOperationNode->false)
+            $trueExpressionTypeResolver->resolveTypeOf($ternaryOperationNode->true),
+            $falseExpressionTypeResolver->resolveTypeOf($ternaryOperationNode->false)
         );
     }
 }

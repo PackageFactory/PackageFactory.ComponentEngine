@@ -22,24 +22,29 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Type\UnionType;
 
+use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class UnionType implements TypeInterface
+/**
+ * @implements \IteratorAggregate<int, TypeInterface>
+ */
+final class UnionType implements TypeInterface, \IteratorAggregate, \Countable
 {
     /**
      * @var TypeInterface[]
      */
-    private array $members;
+    private readonly array $members;
 
     private function __construct(TypeInterface ...$members)
     {
+        assert(count($members) > 1, 'UnionType must hold at least two different members');
         $this->members = $members;
     }
 
-    public static function of(TypeInterface ...$members): TypeInterface
+    public static function of(TypeInterface $firstMember, TypeInterface ...$members): TypeInterface
     {
         $uniqueMembers = [];
-        foreach ($members as $member) {
+        foreach ([$firstMember, ...$members] as $member) {
             foreach ($uniqueMembers as $uniqueMember) {
                 if ($member->is($uniqueMember)) {
                     continue 2;
@@ -53,7 +58,29 @@ final class UnionType implements TypeInterface
             return $uniqueMembers[0];
         }
 
-        return new self(...$members);
+        return new self(...$uniqueMembers);
+    }
+
+    public function containsNull(): bool
+    {
+        foreach ($this->members as $member) {
+            if ($member->is(NullType::get())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function withoutNull(): TypeInterface
+    {
+        $nonNullMembers = [];
+        foreach ($this->members as $member) {
+            if ($member->is(NullType::get())) {
+                continue;
+            }
+            $nonNullMembers[] = $member;
+        }
+        return self::of(...$nonNullMembers);
     }
 
     public function is(TypeInterface $other): bool
@@ -77,5 +104,22 @@ final class UnionType implements TypeInterface
         } else {
             return false;
         }
+    }
+
+    /** @return \Iterator<int, TypeInterface> */
+    public function getIterator(): \Iterator
+    {
+        yield from $this->members;
+    }
+
+    /** @return array<int, TypeInterface> */
+    public function toArray(): array
+    {
+        return $this->members;
+    }
+
+    public function count(): int
+    {
+        return count($this->members);
     }
 }
