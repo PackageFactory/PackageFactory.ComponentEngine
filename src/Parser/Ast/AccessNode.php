@@ -26,7 +26,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 
 final class AccessNode implements \JsonSerializable
 {
-    private function __construct(
+    public function __construct(
         public readonly ExpressionNode $root,
         public readonly AccessChainSegmentNodes $chain
     ) {

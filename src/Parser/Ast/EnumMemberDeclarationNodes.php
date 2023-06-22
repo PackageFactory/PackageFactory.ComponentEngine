@@ -33,7 +33,7 @@ final class EnumMemberDeclarationNodes implements \JsonSerializable
      */
     public readonly array $items;
 
-    private function __construct(
+    public function __construct(
         EnumMemberDeclarationNode ...$items
     ) {
         $itemsAsHashMap = [];

@@ -28,7 +28,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class NullLiteralNode implements \JsonSerializable
 {
-    private function __construct()
+    public function __construct()
     {
     }
 

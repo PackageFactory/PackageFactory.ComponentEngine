@@ -28,7 +28,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 
 final class NumberLiteralNode implements \JsonSerializable
 {
-    private function __construct(
+    public function __construct(
         public readonly string $value,
         public readonly NumberFormat $format
     ) {

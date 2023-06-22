@@ -35,4 +35,11 @@ enum UnaryOperator: string
             default => throw new \Exception('@TODO: Unknown Unary Operator')
         };
     }
+
+    public function toPrecedence(): Precedence
+    {
+        return match ($this) {
+            self::NOT => Precedence::UNARY
+        };
+    }
 }

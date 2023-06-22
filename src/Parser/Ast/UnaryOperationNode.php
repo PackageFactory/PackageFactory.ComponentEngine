@@ -29,7 +29,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 
 final class UnaryOperationNode implements \JsonSerializable
 {
-    private function __construct(
+    public function __construct(
         public readonly UnaryOperator $operator,
         public readonly ExpressionNode $argument
     ) {

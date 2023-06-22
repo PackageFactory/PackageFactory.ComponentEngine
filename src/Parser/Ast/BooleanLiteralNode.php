@@ -28,7 +28,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class BooleanLiteralNode implements \JsonSerializable
 {
-    private function __construct(
+    public function __construct(
         public readonly bool $value
     ) {
     }

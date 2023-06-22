@@ -30,7 +30,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class AttributeNode implements \JsonSerializable
 {
-    private function __construct(
+    public function __construct(
         public readonly string $name,
         public readonly ExpressionNode | StringLiteralNode $value
     ) {

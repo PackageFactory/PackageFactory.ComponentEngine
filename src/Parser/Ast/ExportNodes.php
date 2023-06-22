@@ -22,10 +22,6 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\InterfaceDeclarationNode;
-
 final class ExportNodes implements \JsonSerializable
 {
     /**
@@ -33,18 +29,28 @@ final class ExportNodes implements \JsonSerializable
      */
     public readonly array $items;
 
-    /**
-     * @param array<string,ExportNode> $items
-     */
-    private function __construct(
-        array $items
+    public function __construct(
+        ExportNode ...$items
     ) {
-        $this->items = $items;
+        $itemsAsHashMap = [];
+        foreach ($items as $item) {
+            $name = match ($item->declaration::class) {
+                ComponentDeclarationNode::class => $item->declaration->componentName,
+                StructDeclarationNode::class => $item->declaration->structName,
+                EnumDeclarationNode::class => $item->declaration->enumName
+            };
+            if (array_key_exists($name, $itemsAsHashMap)) {
+                throw new \Exception('@TODO: Duplicate Export ' . $name);
+            }
+            $itemsAsHashMap[$name] = $item;
+        }
+
+        $this->items = $itemsAsHashMap;
     }
 
     public static function empty(): self
     {
-        return new self([]);
+        return new self();
     }
 
     public function withAddedExport(ExportNode $export): self
@@ -59,7 +65,7 @@ final class ExportNodes implements \JsonSerializable
             throw new \Exception('@TODO: Duplicate Export ' . $name);
         }
 
-        return new self([...$this->items, ...[$name => $export]]);
+        return new self(...[...$this->items, ...[$name => $export]]);
     }
 
     public function get(string $name): ?ExportNode

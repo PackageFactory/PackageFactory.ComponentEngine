@@ -24,8 +24,6 @@ namespace PackageFactory\ComponentEngine\Definition;
 
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-
-
 enum Precedence: int
 {
     //
@@ -81,8 +79,13 @@ enum Precedence: int
         };
     }
 
-    public function mustStopAt(TokenType $tokenType): bool
+    public function mustStopAt(self $precedence): bool
     {
-        return self::forTokenType($tokenType)->value <= $this->value;
+        return $precedence->value <= $this->value;
+    }
+
+    public function mustStopAtTokenType(TokenType $tokenType): bool
+    {
+        return $this->mustStopAt(self::forTokenType($tokenType));
     }
 }

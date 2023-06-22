@@ -23,27 +23,23 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
 use PackageFactory\ComponentEngine\Definition\Precedence;
-use PackageFactory\ComponentEngine\Parser\Source\Source;
+use PackageFactory\ComponentEngine\Parser\Parser\Expression\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\LookAhead;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class ExpressionNode implements \JsonSerializable
 {
-    private function __construct(
+    public function __construct(
         public readonly IdentifierNode | NumberLiteralNode | BinaryOperationNode | UnaryOperationNode | AccessNode | TernaryOperationNode | TagNode | StringLiteralNode | MatchNode | TemplateLiteralNode | BooleanLiteralNode | NullLiteralNode $root
     ) {
     }
 
+    /** @deprecated */
     public static function fromString(string $expressionAsString): self
     {
-        return self::fromTokens(
-            Tokenizer::fromSource(
-                Source::fromString($expressionAsString)
-            )->getIterator()
-        );
+        return ExpressionParser::parseFromString($expressionAsString);
     }
 
     /**
@@ -123,7 +119,7 @@ final class ExpressionNode implements \JsonSerializable
 
         Scanner::skipSpaceAndComments($tokens);
 
-        while (!Scanner::isEnd($tokens) && !$precedence->mustStopAt(Scanner::type($tokens))) {
+        while (!Scanner::isEnd($tokens) && !$precedence->mustStopAtTokenType(Scanner::type($tokens))) {
             switch (Scanner::type($tokens)) {
                 case TokenType::OPERATOR_BOOLEAN_AND:
                 case TokenType::OPERATOR_BOOLEAN_OR:

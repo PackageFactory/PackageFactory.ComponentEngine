@@ -33,7 +33,7 @@ final class AttributeNodes implements \JsonSerializable
      */
     public readonly array $items;
 
-    private function __construct(
+    public function __construct(
         AttributeNode ...$items
     ) {
         $itemsAsHashMap = [];

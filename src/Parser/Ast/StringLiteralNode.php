@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
+use PackageFactory\ComponentEngine\Parser\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
@@ -30,18 +31,14 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class StringLiteralNode implements \JsonSerializable
 {
-    private function __construct(
+    public function __construct(
         public readonly string $value
     ) {
     }
 
     public static function fromString(string $stringLiteralAsString): self
     {
-        return self::fromTokens(
-            Tokenizer::fromSource(
-                Source::fromString($stringLiteralAsString)
-            )->getIterator()
-        );
+        return StringLiteralParser::get()->tryString($stringLiteralAsString)->output();
     }
 
     /**

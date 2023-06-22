@@ -35,7 +35,7 @@ final class TemplateLiteralNode implements \JsonSerializable
      */
     public readonly array $segments;
 
-    private function __construct(
+    public function __construct(
         StringLiteralNode|ExpressionNode ...$segments
     ) {
         $this->segments = $segments;

@@ -28,7 +28,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class PropertyDeclarationNode implements \JsonSerializable
 {
-    private function __construct(
+    public function __construct(
         public readonly string $name,
         public readonly TypeReferenceNode $type
     ) {

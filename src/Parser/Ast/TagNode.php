@@ -28,7 +28,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class TagNode implements \JsonSerializable
 {
-    private function __construct(
+    public function __construct(
         public readonly string $tagName,
         public readonly AttributeNodes $attributes,
         public readonly TagContentNodes $children,
