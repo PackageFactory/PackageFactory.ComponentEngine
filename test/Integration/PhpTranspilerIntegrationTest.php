@@ -43,7 +43,7 @@ final class PhpTranspilerIntegrationTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function transpilerExamples(): array
+    public static function transpilerExamples(): array
     {
         return [
             'Component' => ["Component"],

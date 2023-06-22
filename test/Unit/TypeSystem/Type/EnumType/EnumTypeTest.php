@@ -57,4 +57,20 @@ final class EnumTypeTest extends TestCase
 
         $this->assertEquals('SomeEnum', $enumType->enumName);
     }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function isEquivalentToItself(): void
+    {
+        $enumDeclarationNode = EnumDeclarationNode::fromString(
+            'enum SomeEnum {}'
+        );
+        $enumType = EnumType::fromEnumDeclarationNode(
+            $enumDeclarationNode
+        );
+
+        $this->assertTrue($enumType->is($enumType));
+    }
 }

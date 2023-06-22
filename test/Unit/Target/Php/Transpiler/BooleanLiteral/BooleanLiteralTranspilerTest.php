@@ -32,7 +32,7 @@ final class BooleanLiteralTranspilerTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function booleanLiteralExamples(): array
+    public static function booleanLiteralExamples(): array
     {
         return [
             'true' => ['true', 'true'],

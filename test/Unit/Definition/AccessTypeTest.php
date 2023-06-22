@@ -20,35 +20,34 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\BooleanType;
+namespace PackageFactory\ComponentEngine\Test\Unit\Definition;
 
-use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
+use PackageFactory\ComponentEngine\Definition\AccessType;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 use PHPUnit\Framework\TestCase;
 
-final class BooleanTypeTest extends TestCase
+final class AccessTypeTest extends TestCase
 {
     /**
-     * @test
+     * @return array<string,mixed>
      */
-    public function booleanTypeIsSingleton(): void
+    public static function tokenTypeToAccessTypeExamples(): array
     {
-        $this->assertSame(BooleanType::get(), BooleanType::get());
+        return [
+            TokenType::PERIOD->name => [TokenType::PERIOD, AccessType::MANDATORY],
+            TokenType::OPTCHAIN->name => [TokenType::OPTCHAIN, AccessType::OPTIONAL],
+        ];
     }
 
     /**
      * @test
+     * @dataProvider tokenTypeToAccessTypeExamples
+     * @param TokenType $givenTokenType
+     * @param AccessType $expectedAccessType
+     * @return void
      */
-    public function isReturnsTrueIfGivenTypeIsBooleanType(): void
+    public function canBeCreatedFromTokenType(TokenType $givenTokenType, AccessType $expectedAccessType): void
     {
-        $this->assertTrue(BooleanType::get()->is(BooleanType::get()));
-    }
-
-    /**
-     * @test
-     */
-    public function isReturnsFalseIfGivenTypeIsNotBooleanType(): void
-    {
-        $this->assertFalse(BooleanType::get()->is(StringType::get()));
+        $this->assertSame($expectedAccessType, AccessType::fromTokenType($givenTokenType));
     }
 }

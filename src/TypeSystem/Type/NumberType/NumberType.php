@@ -30,7 +30,7 @@ final class NumberType implements TypeInterface
 
     private function __construct()
     {
-    }
+    } // @codeCoverageIgnore
 
     public static function get(): self
     {

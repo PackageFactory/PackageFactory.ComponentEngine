@@ -31,7 +31,7 @@ final class TokenizerIntegrationTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function tokenizationExamples(): array
+    public static function tokenizationExamples(): array
     {
         return [
             'Comment' => ["Comment"],

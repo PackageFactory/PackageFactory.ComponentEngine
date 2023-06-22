@@ -34,7 +34,7 @@ final class ParserIntegrationTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function astExamples(): array
+    public static function astExamples(): array
     {
         return [
             'Comment' => ["Comment"],

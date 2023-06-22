@@ -32,19 +32,19 @@ final class TemplateLiteralTranspilerTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function templateLiteralExamples(): array
+    public static function templateLiteralExamples(): array
     {
         return [
             '`Hello World`' => [
-                '`Hello World`', 
+                '`Hello World`',
                 '\'Hello World\''
             ],
             '`Hello ${name}`' => [
-                '`Hello ${name}`', 
+                '`Hello ${name}`',
                 '\'Hello \' . $this->name'
             ],
             '`${greeting} World`' => [
-                '`${greeting} World`', 
+                '`${greeting} World`',
                 '$this->greeting . \' World\''
             ],
             '`Hello ${name}! How are you?`' => [

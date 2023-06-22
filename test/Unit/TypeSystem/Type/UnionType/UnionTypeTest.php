@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\UnionType;
 
+use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
@@ -90,11 +91,22 @@ final class UnionTypeTest extends TestCase
     /**
      * @test
      */
-    public function isReturnsFalseIfGivenTypeIsNotCongruent(): void
+    public function isReturnsFalseIfGivenTypeIsNotAUnionType(): void
     {
         $unionType = UnionType::of(StringType::get(), NumberType::get());
 
         $this->assertFalse($unionType->is(NumberType::get()));
         $this->assertFalse($unionType->is(StringType::get()));
+    }
+
+    /**
+     * @test
+     */
+    public function isReturnsFalseIfGivenTypeIsANonCongruentUnionType(): void
+    {
+        $unionType = UnionType::of(StringType::get(), NumberType::get());
+        $otherUnionType = UnionType::of(StringType::get(), BooleanType::get());
+
+        $this->assertFalse($unionType->is($otherUnionType));
     }
 }

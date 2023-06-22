@@ -38,17 +38,4 @@ enum AccessType: string
             default => throw new \Exception('@TODO: Unknown AccessType')
         };
     }
-
-    public function toTokenType(): TokenType
-    {
-        return match ($this) {
-            self::MANDATORY => TokenType::PERIOD,
-            self::OPTIONAL => TokenType::OPTCHAIN
-        };
-    }
-
-    public function toPrecedence(): Precedence
-    {
-        return Precedence::ACCESS;
-    }
 }

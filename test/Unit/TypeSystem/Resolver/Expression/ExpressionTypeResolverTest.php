@@ -38,7 +38,7 @@ final class ExpressionTypeResolverTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function binaryOperationExamples(): array
+    public static function binaryOperationExamples(): array
     {
         return [
             'true && false' => ['true && false', BooleanType::get()],
@@ -125,7 +125,7 @@ final class ExpressionTypeResolverTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function matchExamples(): array
+    public static function matchExamples(): array
     {
         return [
             'match (true) { true -> 42 false -> "foo" }' => [
@@ -251,7 +251,7 @@ final class ExpressionTypeResolverTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function templateLiteralExamples(): array
+    public static function templateLiteralExamples(): array
     {
         return [
             '`Hello World`' => ['`Hello World`'],
@@ -285,7 +285,7 @@ final class ExpressionTypeResolverTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function ternaryOperationExamples(): array
+    public static function ternaryOperationExamples(): array
     {
         return [
             'true ? 42 : "foo"' => ['true ? 42 : "foo"', NumberType::get()],
