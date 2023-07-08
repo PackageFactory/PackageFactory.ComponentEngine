@@ -44,7 +44,7 @@
                       "payload": "a"
                     },
                     {
-                      "type": "NumberLiteralNode",
+                      "type": "IntegerLiteralNode",
                       "payload": {
                         "value": "120",
                         "format": "DECIMAL"
@@ -80,7 +80,7 @@
                         "operator": "MODULO",
                         "operands": [
                           {
-                            "type": "NumberLiteralNode",
+                            "type": "IntegerLiteralNode",
                             "payload": {
                               "value": "17",
                               "format": "DECIMAL"

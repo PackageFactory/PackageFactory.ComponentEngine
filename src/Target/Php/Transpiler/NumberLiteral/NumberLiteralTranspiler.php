@@ -23,15 +23,15 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\NumberLiteral;
 
 use PackageFactory\ComponentEngine\Definition\NumberFormat;
-use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
+use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
 
 final class NumberLiteralTranspiler
 {
-    public function transpile(NumberLiteralNode $numberLiteralNode): string
+    public function transpile(IntegerLiteralNode $IntegerLiteralNode): string
     {
-        return match ($numberLiteralNode->format) {
-            NumberFormat::BINARY => strtolower($numberLiteralNode->value),
-            default => $numberLiteralNode->value
+        return match ($IntegerLiteralNode->format) {
+            NumberFormat::BINARY => strtolower($IntegerLiteralNode->value),
+            default => $IntegerLiteralNode->value
         };
     }
 }

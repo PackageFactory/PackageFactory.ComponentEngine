@@ -26,7 +26,7 @@ use PackageFactory\ComponentEngine\Definition\NumberFormat;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 
-final class NumberLiteralNode implements \JsonSerializable
+final class IntegerLiteralNode implements \JsonSerializable
 {
     private function __construct(
         public readonly string $value,
@@ -54,7 +54,7 @@ final class NumberLiteralNode implements \JsonSerializable
     public function jsonSerialize(): mixed
     {
         return [
-            'type' => 'NumberLiteralNode',
+            'type' => 'IntegerLiteralNode',
             'payload' => [
                 'value' => $this->value,
                 'format' => $this->format->value

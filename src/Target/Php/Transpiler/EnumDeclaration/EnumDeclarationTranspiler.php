@@ -24,7 +24,7 @@ namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\EnumDeclaration;
 
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumMemberDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
+use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
 
 final class EnumDeclarationTranspiler
@@ -62,7 +62,7 @@ final class EnumDeclarationTranspiler
     private function transpileBackingType(EnumDeclarationNode $enumDeclarationNode): string
     {
         foreach ($enumDeclarationNode->memberDeclarations->items as $memberDeclarationNode) {
-            if ($memberDeclarationNode->value instanceof NumberLiteralNode) {
+            if ($memberDeclarationNode->value instanceof IntegerLiteralNode) {
                 return 'int';
             } else {
                 return 'string';
@@ -74,7 +74,7 @@ final class EnumDeclarationTranspiler
 
     private function transpileMemberValue(EnumMemberDeclarationNode $enumMemberDeclarationNode): string
     {
-        if ($enumMemberDeclarationNode->value instanceof NumberLiteralNode) {
+        if ($enumMemberDeclarationNode->value instanceof IntegerLiteralNode) {
             return $enumMemberDeclarationNode->value->value;
         } else if ($enumMemberDeclarationNode->value instanceof StringLiteralNode) {
             return '\'' . $enumMemberDeclarationNode->value->value . '\'';

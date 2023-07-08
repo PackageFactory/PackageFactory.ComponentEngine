@@ -29,7 +29,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
 use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
 use PackageFactory\ComponentEngine\Parser\Ast\NullLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
+use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TemplateLiteralNode;
@@ -80,7 +80,7 @@ final class ExpressionTranspiler
                 scope: $this->scope
             ),
             NullLiteralNode::class => new NullLiteralTranspiler(),
-            NumberLiteralNode::class => new NumberLiteralTranspiler(),
+            IntegerLiteralNode::class => new NumberLiteralTranspiler(),
             StringLiteralNode::class => new StringLiteralTranspiler(
                 shouldAddQuotes: $this->shouldAddQuotesIfNecessary
             ),

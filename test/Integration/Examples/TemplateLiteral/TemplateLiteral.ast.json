@@ -58,7 +58,7 @@
                       "operator": "MULTIPLY_BY",
                       "operands": [
                         {
-                          "type": "NumberLiteralNode",
+                          "type": "IntegerLiteralNode",
                           "payload": { "value": "27", "format": "DECIMAL" }
                         },
                         {
@@ -78,7 +78,7 @@
                           "payload": "someNumber"
                         },
                         {
-                          "type": "NumberLiteralNode",
+                          "type": "IntegerLiteralNode",
                           "payload": { "value": "17", "format": "DECIMAL" }
                         }
                       ]
@@ -114,7 +114,7 @@
                                   "payload": "someNumber"
                                 },
                                 {
-                                  "type": "NumberLiteralNode",
+                                  "type": "IntegerLiteralNode",
                                   "payload": {
                                     "value": "27",
                                     "format": "DECIMAL"
@@ -140,7 +140,7 @@
                     "payload": [
                       { "type": "StringLiteralNode", "payload": "Number is " },
                       {
-                        "type": "NumberLiteralNode",
+                        "type": "IntegerLiteralNode",
                         "payload": { "value": "27", "format": "DECIMAL" }
                       }
                     ]

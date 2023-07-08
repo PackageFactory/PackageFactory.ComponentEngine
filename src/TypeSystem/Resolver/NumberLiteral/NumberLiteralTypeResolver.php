@@ -22,13 +22,13 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\NumberLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
+use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class NumberLiteralTypeResolver
 {
-    public function resolveTypeOf(NumberLiteralNode $numberLiteralNode): TypeInterface
+    public function resolveTypeOf(IntegerLiteralNode $IntegerLiteralNode): TypeInterface
     {
         return NumberType::get();
     }

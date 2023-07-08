@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\NumberLiteral;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
+use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\NumberLiteral\NumberLiteralTranspiler;
 use PHPUnit\Framework\TestCase;
 
@@ -72,14 +72,14 @@ final class NumberLiteralTranspilerTest extends TestCase
      * @param string $expectedTranspilationResult
      * @return void
      */
-    public function transpilesNumberLiteralNodes(string $numberLiteralAsString, string $expectedTranspilationResult): void
+    public function transpilesIntegerLiteralNodes(string $numberLiteralAsString, string $expectedTranspilationResult): void
     {
         $numberLiteralTranspiler = new NumberLiteralTranspiler();
-        $numberLiteralNode = ExpressionNode::fromString($numberLiteralAsString)->root;
-        assert($numberLiteralNode instanceof NumberLiteralNode);
+        $IntegerLiteralNode = ExpressionNode::fromString($numberLiteralAsString)->root;
+        assert($IntegerLiteralNode instanceof IntegerLiteralNode);
 
         $actualTranspilationResult = $numberLiteralTranspiler->transpile(
-            $numberLiteralNode
+            $IntegerLiteralNode
         );
 
         $this->assertEquals(
