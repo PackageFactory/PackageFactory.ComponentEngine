@@ -140,8 +140,8 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC_MULTIPLY_BY",
-    "value": "*"
+    "type": "OPERATOR_BOOLEAN_OR",
+    "value": "||"
   },
   {
     "type": "SPACE",
@@ -156,40 +156,16 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC_PLUS",
-    "value": "+"
+    "type": "OPERATOR_BOOLEAN_OR",
+    "value": "||"
   },
   {
     "type": "SPACE",
     "value": " "
-  },
-  {
-    "type": "BRACKET_ROUND_OPEN",
-    "value": "("
   },
   {
     "type": "NUMBER_DECIMAL",
     "value": "17"
-  },
-  {
-    "type": "SPACE",
-    "value": " "
-  },
-  {
-    "type": "OPERATOR_ARITHMETIC_MODULO",
-    "value": "%"
-  },
-  {
-    "type": "SPACE",
-    "value": " "
-  },
-  {
-    "type": "STRING",
-    "value": "b"
-  },
-  {
-    "type": "BRACKET_ROUND_CLOSE",
-    "value": ")"
   },
   {
     "type": "END_OF_LINE",
@@ -216,8 +192,8 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC_DIVIDE_BY",
-    "value": "/"
+    "type": "OPERATOR_BOOLEAN_AND",
+    "value": "&&"
   },
   {
     "type": "SPACE",

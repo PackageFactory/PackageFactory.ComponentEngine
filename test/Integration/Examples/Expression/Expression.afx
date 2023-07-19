@@ -3,6 +3,6 @@ export component Expression {
   b: number
 
   return a <= 120
-    ? b * a + (17 % b)
-    : b / a
+    ? b || a || 17
+    : b && a
 }

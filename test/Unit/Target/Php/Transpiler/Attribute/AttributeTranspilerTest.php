@@ -37,7 +37,6 @@ final class AttributeTranspilerTest extends TestCase
         return [
             'foo="bar"' => ['foo="bar"', 'foo="bar"'],
             'foo={42}' => ['foo={42}', 'foo="\' . 42 . \'"'],
-            'foo={4 + 2}' => ['foo={4 + 2}', 'foo="\' . (4 + 2) . \'"'],
             'foo={a}' => ['foo={a}', 'foo="\' . $this->a . \'"'],
         ];
     }

@@ -56,12 +56,12 @@
               "true": {
                 "type": "BinaryOperationNode",
                 "payload": {
-                  "operator": "PLUS",
+                  "operator": "OR",
                   "operands": [
                     {
                       "type": "BinaryOperationNode",
                       "payload": {
-                        "operator": "MULTIPLY_BY",
+                        "operator": "OR",
                         "operands": [
                           {
                             "type": "Identifier",
@@ -75,22 +75,10 @@
                       }
                     },
                     {
-                      "type": "BinaryOperationNode",
+                      "type": "IntegerLiteralNode",
                       "payload": {
-                        "operator": "MODULO",
-                        "operands": [
-                          {
-                            "type": "IntegerLiteralNode",
-                            "payload": {
-                              "value": "17",
-                              "format": "DECIMAL"
-                            }
-                          },
-                          {
-                            "type": "Identifier",
-                            "payload": "b"
-                          }
-                        ]
+                        "value": "17",
+                        "format": "DECIMAL"
                       }
                     }
                   ]
@@ -99,7 +87,7 @@
               "false": {
                 "type": "BinaryOperationNode",
                 "payload": {
-                  "operator": "DIVIDE_BY",
+                  "operator": "AND",
                   "operands": [
                     {
                       "type": "Identifier",

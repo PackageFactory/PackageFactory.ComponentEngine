@@ -27,7 +27,6 @@ use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
@@ -43,12 +42,6 @@ final class BinaryOperationTypeResolver
         return match ($binaryOperationNode->operator) {
             BinaryOperator::AND,
             BinaryOperator::OR => $this->resolveTypeOfBooleanOperation($binaryOperationNode),
-
-            BinaryOperator::PLUS,
-            BinaryOperator::MINUS,
-            BinaryOperator::MULTIPLY_BY,
-            BinaryOperator::DIVIDE_BY,
-            BinaryOperator::MODULO => $this->resolveTypeOfArithmeticOperation($binaryOperationNode),
 
             BinaryOperator::EQUAL,
             BinaryOperator::NOT_EQUAL,
@@ -69,21 +62,5 @@ final class BinaryOperationTypeResolver
             $expressionTypeResolver->resolveTypeOf($binaryOperationNode->left),
             $expressionTypeResolver->resolveTypeOf($binaryOperationNode->right)
         );
-    }
-
-    private function resolveTypeOfArithmeticOperation(BinaryOperationNode $binaryOperationNode): TypeInterface
-    {
-        $expressionTypeResolver = new ExpressionTypeResolver(
-            scope: $this->scope
-        );
-
-        foreach ([$binaryOperationNode->left, $binaryOperationNode->right] as $operandNode) {
-            $typeOfOperandNode = $expressionTypeResolver->resolveTypeOf($operandNode);
-            if (!$typeOfOperandNode->is(NumberType::get())) {
-                throw new \Exception('@TODO: Operand must be of type number');
-            }
-        }
-
-        return NumberType::get();
     }
 }

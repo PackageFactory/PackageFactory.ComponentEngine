@@ -11,77 +11,77 @@
           "returnExpression": {
             "type": "BinaryOperationNode",
             "payload": {
-              "operator": "PLUS",
+              "operator": "OR",
               "operands": [
                 {
                   "type": "BinaryOperationNode",
                   "payload": {
-                    "operator": "PLUS",
+                    "operator": "OR",
                     "operands": [
                       {
                         "type": "BinaryOperationNode",
                         "payload": {
-                          "operator": "PLUS",
+                          "operator": "OR",
                           "operands": [
                             {
                               "type": "BinaryOperationNode",
                               "payload": {
-                                "operator": "PLUS",
+                                "operator": "OR",
                                 "operands": [
                                   {
                                     "type": "BinaryOperationNode",
                                     "payload": {
-                                      "operator": "PLUS",
+                                      "operator": "OR",
                                       "operands": [
                                         {
                                           "type": "BinaryOperationNode",
                                           "payload": {
-                                            "operator": "PLUS",
+                                            "operator": "OR",
                                             "operands": [
                                               {
                                                 "type": "BinaryOperationNode",
                                                 "payload": {
-                                                  "operator": "PLUS",
+                                                  "operator": "OR",
                                                   "operands": [
                                                     {
                                                       "type": "BinaryOperationNode",
                                                       "payload": {
-                                                        "operator": "PLUS",
+                                                        "operator": "OR",
                                                         "operands": [
                                                           {
                                                             "type": "BinaryOperationNode",
                                                             "payload": {
-                                                              "operator": "PLUS",
+                                                              "operator": "OR",
                                                               "operands": [
                                                                 {
                                                                   "type": "BinaryOperationNode",
                                                                   "payload": {
-                                                                    "operator": "PLUS",
+                                                                    "operator": "OR",
                                                                     "operands": [
                                                                       {
                                                                         "type": "BinaryOperationNode",
                                                                         "payload": {
-                                                                          "operator": "PLUS",
+                                                                          "operator": "OR",
                                                                           "operands": [
                                                                             {
                                                                               "type": "BinaryOperationNode",
                                                                               "payload": {
-                                                                                "operator": "PLUS",
+                                                                                "operator": "OR",
                                                                                 "operands": [
                                                                                   {
                                                                                     "type": "BinaryOperationNode",
                                                                                     "payload": {
-                                                                                      "operator": "PLUS",
+                                                                                      "operator": "OR",
                                                                                       "operands": [
                                                                                         {
                                                                                           "type": "BinaryOperationNode",
                                                                                           "payload": {
-                                                                                            "operator": "PLUS",
+                                                                                            "operator": "OR",
                                                                                             "operands": [
                                                                                               {
                                                                                                 "type": "BinaryOperationNode",
                                                                                                 "payload": {
-                                                                                                  "operator": "PLUS",
+                                                                                                  "operator": "OR",
                                                                                                   "operands": [
                                                                                                     {
                                                                                                       "type": "IntegerLiteralNode",

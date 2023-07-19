@@ -48,12 +48,6 @@ final class BinaryOperationTypeResolverTest extends TestCase
             'true && 42' => ['true && 42', UnionType::of(BooleanType::get(), NumberType::get())],
             'true || 42' => ['true || 42', UnionType::of(BooleanType::get(), NumberType::get())],
 
-            '1 + 2' => ['1 + 2', NumberType::get()],
-            '2 - 1' => ['2 - 1', NumberType::get()],
-            '2 * 4' => ['2 * 4', NumberType::get()],
-            '2 / 4' => ['2 / 4', NumberType::get()],
-            '2 % 4' => ['2 % 4', NumberType::get()],
-
             '4 === 2' => ['4 === 2', BooleanType::get()],
             '4 !== 2' => ['4 !== 2', BooleanType::get()],
             '4 > 2' => ['4 > 2', BooleanType::get()],
@@ -63,7 +57,6 @@ final class BinaryOperationTypeResolverTest extends TestCase
 
             'true && true && true' => ['true && true && true', BooleanType::get()],
             '1 === 1 === true' => ['1 === 1 === true', BooleanType::get()],
-            '1 + 1 + 1' => ['1 + 1 + 1', NumberType::get()],
         ];
     }
 
@@ -89,47 +82,5 @@ final class BinaryOperationTypeResolverTest extends TestCase
             $expectedType->is($actualType),
             sprintf('Expected %s, got %s', $expectedType::class, $actualType::class)
         );
-    }
-
-
-    /**
-     * @return array<string,mixed>
-     */
-    public static function faultyArithmeticOperationExamples(): array
-    {
-        return [
-            '1 + false' => ['1 + false'],
-            '1 + "foo"' => ['1 + "foo"'],
-            '1 + null' => ['1 + null'],
-            '1 + <img/>' => ['1 + <img/>'],
-            'true + 1' => ['true + 1'],
-            '"bar" + 1' => ['"bar" + 1'],
-            'null + 1' => ['null + 1'],
-            '<input/> + 1' => ['<input/> + 1'],
-            'true + false' => ['true + false'],
-            'true + null' => ['true + null'],
-            'null + "foobar"' => ['null + "foobar"'],
-            '"foobar" + <link rel="barfoo"/>' => ['"foobar" + <link rel="barfoo"/>'],
-        ];
-    }
-
-    /**
-     * @dataProvider faultyArithmeticOperationExamples
-     * @test
-     * @param string $faultyArithmeticOperationAsString
-     * @return void
-     */
-    public function throwsIfBinaryOperationIsArithmeticButOperandsAreNotOfTypeNumber(string $faultyArithmeticOperationAsString): void
-    {
-        $scope = new DummyScope();
-        $binaryOperationTypeResolver = new BinaryOperationTypeResolver(
-            scope: $scope
-        );
-        $arithmeticOperationNode = ExpressionNode::fromString($faultyArithmeticOperationAsString)->root;
-        assert($arithmeticOperationNode instanceof BinaryOperationNode);
-
-        $this->expectExceptionMessageMatches('/number/i');
-
-        $binaryOperationTypeResolver->resolveTypeOf($arithmeticOperationNode);
     }
 }

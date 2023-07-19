@@ -48,12 +48,6 @@ final class ExpressionTypeResolverTest extends TestCase
             'true && 42' => ['true && 42', UnionType::of(BooleanType::get(), NumberType::get())],
             'true || 42' => ['true || 42', UnionType::of(BooleanType::get(), NumberType::get())],
 
-            '1 + 2' => ['1 + 2', NumberType::get()],
-            '2 - 1' => ['2 - 1', NumberType::get()],
-            '2 * 4' => ['2 * 4', NumberType::get()],
-            '2 / 4' => ['2 / 4', NumberType::get()],
-            '2 % 4' => ['2 % 4', NumberType::get()],
-
             '4 === 2' => ['4 === 2', BooleanType::get()],
             '4 !== 2' => ['4 !== 2', BooleanType::get()],
             '4 > 2' => ['4 > 2', BooleanType::get()],

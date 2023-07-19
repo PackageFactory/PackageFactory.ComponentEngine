@@ -180,40 +180,8 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC_MULTIPLY_BY",
-    "value": "*"
-  },
-  {
-    "type": "SPACE",
-    "value": " "
-  },
-  {
-    "type": "STRING",
-    "value": "someNumber"
-  },
-  {
-    "type": "SPACE",
-    "value": " "
-  },
-  {
     "type": "COLON",
     "value": ":"
-  },
-  {
-    "type": "SPACE",
-    "value": " "
-  },
-  {
-    "type": "STRING",
-    "value": "someNumber"
-  },
-  {
-    "type": "SPACE",
-    "value": " "
-  },
-  {
-    "type": "OPERATOR_ARITHMETIC_MODULO",
-    "value": "%"
   },
   {
     "type": "SPACE",

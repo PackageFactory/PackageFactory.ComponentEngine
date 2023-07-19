@@ -38,11 +38,6 @@ final class BinaryOperationTranspiler
         return match ($binaryOperator) {
             BinaryOperator::AND => '&&',
             BinaryOperator::OR => '||',
-            BinaryOperator::PLUS => '+',
-            BinaryOperator::MINUS => '-',
-            BinaryOperator::MULTIPLY_BY => '*',
-            BinaryOperator::DIVIDE_BY => '/',
-            BinaryOperator::MODULO => '%',
             BinaryOperator::EQUAL => '===',
             BinaryOperator::NOT_EQUAL => '!==',
             BinaryOperator::GREATER_THAN => '>',
