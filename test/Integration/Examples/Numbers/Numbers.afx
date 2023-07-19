@@ -17,9 +17,5 @@ export component Numbers {
   # Hexadecimal
   0xFFFFFFFFFFFFFFFFF ||
   0x123456789ABCDEF ||
-  0xA ||
-
-  # With Exponent
-  1E3 ||
-  2e6
+  0xA
 }

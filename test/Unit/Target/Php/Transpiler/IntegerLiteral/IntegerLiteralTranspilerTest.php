@@ -53,10 +53,6 @@ final class IntegerLiteralTranspilerTest extends TestCase
             ' 0xFFFFFFFFFFFFFFFFF ' => ['0xFFFFFFFFFFFFFFFFF', '0xFFFFFFFFFFFFFFFFF'],
             ' 0x123456789ABCDEF ' => ['0x123456789ABCDEF', '0x123456789ABCDEF'],
             ' 0xA ' => ['0xA', '0xA'],
-
-            // With Exponent
-            ' 1E3 ' => ['1E3', '1E3'],
-            ' 2e6 ' => ['2e6', '2e6'],
         ];
     }
 

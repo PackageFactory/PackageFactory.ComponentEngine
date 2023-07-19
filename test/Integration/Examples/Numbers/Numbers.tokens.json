@@ -312,62 +312,6 @@
     "value": "0xA"
   },
   {
-    "type": "SPACE",
-    "value": " "
-  },
-  {
-    "type": "OPERATOR_BOOLEAN_OR",
-    "value": "||"
-  },
-  {
-    "type": "END_OF_LINE",
-    "value": "\n"
-  },
-  {
-    "type": "END_OF_LINE",
-    "value": "\n"
-  },
-  {
-    "type": "SPACE",
-    "value": "  "
-  },
-  {
-    "type": "COMMENT",
-    "value": "# With Exponent"
-  },
-  {
-    "type": "END_OF_LINE",
-    "value": "\n"
-  },
-  {
-    "type": "SPACE",
-    "value": "  "
-  },
-  {
-    "type": "NUMBER_DECIMAL",
-    "value": "1E3"
-  },
-  {
-    "type": "SPACE",
-    "value": " "
-  },
-  {
-    "type": "OPERATOR_BOOLEAN_OR",
-    "value": "||"
-  },
-  {
-    "type": "END_OF_LINE",
-    "value": "\n"
-  },
-  {
-    "type": "SPACE",
-    "value": "  "
-  },
-  {
-    "type": "NUMBER_DECIMAL",
-    "value": "2e6"
-  },
-  {
     "type": "END_OF_LINE",
     "value": "\n"
   },

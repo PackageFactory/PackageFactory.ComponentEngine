@@ -27,11 +27,11 @@ use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
 
 final class IntegerLiteralTranspiler
 {
-    public function transpile(IntegerLiteralNode $IntegerLiteralNode): string
+    public function transpile(IntegerLiteralNode $integerLiteralNode): string
     {
-        return match ($IntegerLiteralNode->format) {
-            NumberFormat::BINARY => strtolower($IntegerLiteralNode->value),
-            default => $IntegerLiteralNode->value
+        return match ($integerLiteralNode->format) {
+            NumberFormat::BINARY => strtolower($integerLiteralNode->value),
+            default => $integerLiteralNode->value
         };
     }
 }
