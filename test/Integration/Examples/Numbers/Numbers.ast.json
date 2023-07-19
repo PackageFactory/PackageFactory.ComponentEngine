@@ -69,62 +69,17 @@
                                                                                 "operator": "OR",
                                                                                 "operands": [
                                                                                   {
-                                                                                    "type": "BinaryOperationNode",
+                                                                                    "type": "IntegerLiteralNode",
                                                                                     "payload": {
-                                                                                      "operator": "OR",
-                                                                                      "operands": [
-                                                                                        {
-                                                                                          "type": "BinaryOperationNode",
-                                                                                          "payload": {
-                                                                                            "operator": "OR",
-                                                                                            "operands": [
-                                                                                              {
-                                                                                                "type": "BinaryOperationNode",
-                                                                                                "payload": {
-                                                                                                  "operator": "OR",
-                                                                                                  "operands": [
-                                                                                                    {
-                                                                                                      "type": "IntegerLiteralNode",
-                                                                                                      "payload": {
-                                                                                                        "value": "0",
-                                                                                                        "format": "DECIMAL"
-                                                                                                      }
-                                                                                                    },
-                                                                                                    {
-                                                                                                      "type": "IntegerLiteralNode",
-                                                                                                      "payload": {
-                                                                                                        "value": "1234567890",
-                                                                                                        "format": "DECIMAL"
-                                                                                                      }
-                                                                                                    }
-                                                                                                  ]
-                                                                                                }
-                                                                                              },
-                                                                                              {
-                                                                                                "type": "IntegerLiteralNode",
-                                                                                                "payload": {
-                                                                                                  "value": "42",
-                                                                                                  "format": "DECIMAL"
-                                                                                                }
-                                                                                              }
-                                                                                            ]
-                                                                                          }
-                                                                                        },
-                                                                                        {
-                                                                                          "type": "IntegerLiteralNode",
-                                                                                          "payload": {
-                                                                                            "value": "0b10000000000000000000000000000000",
-                                                                                            "format": "BINARY"
-                                                                                          }
-                                                                                        }
-                                                                                      ]
+                                                                                      "value": "0",
+                                                                                      "format": "DECIMAL"
                                                                                     }
                                                                                   },
                                                                                   {
                                                                                     "type": "IntegerLiteralNode",
                                                                                     "payload": {
-                                                                                      "value": "0b01111111100000000000000000000000",
-                                                                                      "format": "BINARY"
+                                                                                      "value": "1234567890",
+                                                                                      "format": "DECIMAL"
                                                                                     }
                                                                                   }
                                                                                 ]
@@ -133,8 +88,8 @@
                                                                             {
                                                                               "type": "IntegerLiteralNode",
                                                                               "payload": {
-                                                                                "value": "0B00000000011111111111111111111111",
-                                                                                "format": "BINARY"
+                                                                                "value": "42",
+                                                                                "format": "DECIMAL"
                                                                               }
                                                                             }
                                                                           ]
@@ -143,8 +98,8 @@
                                                                       {
                                                                         "type": "IntegerLiteralNode",
                                                                         "payload": {
-                                                                          "value": "0o755",
-                                                                          "format": "OCTAL"
+                                                                          "value": "0b10000000000000000000000000000000",
+                                                                          "format": "BINARY"
                                                                         }
                                                                       }
                                                                     ]
@@ -153,8 +108,8 @@
                                                                 {
                                                                   "type": "IntegerLiteralNode",
                                                                   "payload": {
-                                                                    "value": "0o644",
-                                                                    "format": "OCTAL"
+                                                                    "value": "0b01111111100000000000000000000000",
+                                                                    "format": "BINARY"
                                                                   }
                                                                 }
                                                               ]
@@ -163,8 +118,8 @@
                                                           {
                                                             "type": "IntegerLiteralNode",
                                                             "payload": {
-                                                              "value": "0xFFFFFFFFFFFFFFFFF",
-                                                              "format": "HEXADECIMAL"
+                                                              "value": "0B00000000011111111111111111111111",
+                                                              "format": "BINARY"
                                                             }
                                                           }
                                                         ]
@@ -173,8 +128,8 @@
                                                     {
                                                       "type": "IntegerLiteralNode",
                                                       "payload": {
-                                                        "value": "0x123456789ABCDEF",
-                                                        "format": "HEXADECIMAL"
+                                                        "value": "0o755",
+                                                        "format": "OCTAL"
                                                       }
                                                     }
                                                   ]
@@ -183,8 +138,8 @@
                                               {
                                                 "type": "IntegerLiteralNode",
                                                 "payload": {
-                                                  "value": "0xA",
-                                                  "format": "HEXADECIMAL"
+                                                  "value": "0o644",
+                                                  "format": "OCTAL"
                                                 }
                                               }
                                             ]
@@ -193,8 +148,8 @@
                                         {
                                           "type": "IntegerLiteralNode",
                                           "payload": {
-                                            "value": "1E3",
-                                            "format": "DECIMAL"
+                                            "value": "0xFFFFFFFFFFFFFFFFF",
+                                            "format": "HEXADECIMAL"
                                           }
                                         }
                                       ]
@@ -203,8 +158,8 @@
                                   {
                                     "type": "IntegerLiteralNode",
                                     "payload": {
-                                      "value": "2e6",
-                                      "format": "DECIMAL"
+                                      "value": "0x123456789ABCDEF",
+                                      "format": "HEXADECIMAL"
                                     }
                                   }
                                 ]
@@ -213,8 +168,8 @@
                             {
                               "type": "IntegerLiteralNode",
                               "payload": {
-                                "value": "123.456",
-                                "format": "DECIMAL"
+                                "value": "0xA",
+                                "format": "HEXADECIMAL"
                               }
                             }
                           ]
@@ -223,7 +178,7 @@
                       {
                         "type": "IntegerLiteralNode",
                         "payload": {
-                          "value": "0.1e2",
+                          "value": "1E3",
                           "format": "DECIMAL"
                         }
                       }
@@ -233,7 +188,7 @@
                 {
                   "type": "IntegerLiteralNode",
                   "payload": {
-                    "value": ".22",
+                    "value": "2e6",
                     "format": "DECIMAL"
                   }
                 }

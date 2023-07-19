@@ -111,6 +111,8 @@ enum TokenType: string
             $value === 'false' => self::KEYWORD_FALSE,
             $value === 'null' => self::KEYWORD_NULL,
 
+            $value === '.' => self::PERIOD,
+
             (bool) preg_match(
                 '/^0[bB][0-1]+$/',
                 $value
@@ -120,7 +122,7 @@ enum TokenType: string
                 $value
             ) => self::NUMBER_OCTAL,
             $value !== '' && preg_match(
-                '/^([-+]?[0-9]+)?(\.[0-9]+)?([eE][0-9]+)?$/',
+                '/^([-+]?[0-9]+)?([eE][0-9]+)?$/',
                 $value
             ) => self::NUMBER_DECIMAL,
             (bool) preg_match(
