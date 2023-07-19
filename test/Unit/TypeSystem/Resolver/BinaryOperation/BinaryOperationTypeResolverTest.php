@@ -27,7 +27,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\BinaryOperation\BinaryOperationTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
@@ -45,8 +45,8 @@ final class BinaryOperationTypeResolverTest extends TestCase
             'true || false' => ['true || false', BooleanType::get()],
             'true && "foo"' => ['true && "foo"', UnionType::of(BooleanType::get(), StringType::get())],
             'true || "foo"' => ['true || "foo"', UnionType::of(BooleanType::get(), StringType::get())],
-            'true && 42' => ['true && 42', UnionType::of(BooleanType::get(), NumberType::get())],
-            'true || 42' => ['true || 42', UnionType::of(BooleanType::get(), NumberType::get())],
+            'true && 42' => ['true && 42', UnionType::of(BooleanType::get(), IntegerType::get())],
+            'true || 42' => ['true || 42', UnionType::of(BooleanType::get(), IntegerType::get())],
 
             '4 === 2' => ['4 === 2', BooleanType::get()],
             '4 !== 2' => ['4 !== 2', BooleanType::get()],

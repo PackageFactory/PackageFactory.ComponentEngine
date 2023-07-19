@@ -20,19 +20,19 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\NumberLiteral;
+namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\IntegerLiteral;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
-use PackageFactory\ComponentEngine\Target\Php\Transpiler\NumberLiteral\NumberLiteralTranspiler;
+use PackageFactory\ComponentEngine\Target\Php\Transpiler\IntegerLiteral\IntegerLiteralTranspiler;
 use PHPUnit\Framework\TestCase;
 
-final class NumberLiteralTranspilerTest extends TestCase
+final class IntegerLiteralTranspilerTest extends TestCase
 {
     /**
      * @return array<string,mixed>
      */
-    public static function numberLiteralExamples(): array
+    public static function integerLiteralExamples(): array
     {
         return [
             // Decimal
@@ -66,20 +66,20 @@ final class NumberLiteralTranspilerTest extends TestCase
     }
 
     /**
-     * @dataProvider numberLiteralExamples
+     * @dataProvider integerLiteralExamples
      * @test
-     * @param string $numberLiteralAsString
+     * @param string $integerLiteralAsString
      * @param string $expectedTranspilationResult
      * @return void
      */
-    public function transpilesIntegerLiteralNodes(string $numberLiteralAsString, string $expectedTranspilationResult): void
+    public function transpilesIntegerLiteralNodes(string $integerLiteralAsString, string $expectedTranspilationResult): void
     {
-        $numberLiteralTranspiler = new NumberLiteralTranspiler();
-        $IntegerLiteralNode = ExpressionNode::fromString($numberLiteralAsString)->root;
-        assert($IntegerLiteralNode instanceof IntegerLiteralNode);
+        $integerLiteralTranspiler = new IntegerLiteralTranspiler();
+        $integerLiteralNode = ExpressionNode::fromString($integerLiteralAsString)->root;
+        assert($integerLiteralNode instanceof IntegerLiteralNode);
 
-        $actualTranspilationResult = $numberLiteralTranspiler->transpile(
-            $IntegerLiteralNode
+        $actualTranspilationResult = $integerLiteralTranspiler->transpile(
+            $integerLiteralNode
         );
 
         $this->assertEquals(

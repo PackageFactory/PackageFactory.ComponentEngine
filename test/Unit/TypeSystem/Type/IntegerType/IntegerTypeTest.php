@@ -20,25 +20,35 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Type\NumberType;
+namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\IntegerType;
 
-use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
+use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
+use PHPUnit\Framework\TestCase;
 
-final class NumberType implements TypeInterface
+final class IntegerTypeTest extends TestCase
 {
-    private static null|self $instance = null;
-
-    private function __construct()
+    /**
+     * @test
+     */
+    public function integerTypeIsSingleton(): void
     {
-    } // @codeCoverageIgnore
-
-    public static function get(): self
-    {
-        return self::$instance ??= new self();
+        $this->assertSame(IntegerType::get(), IntegerType::get());
     }
 
-    public function is(TypeInterface $other): bool
+    /**
+     * @test
+     */
+    public function isReturnsTrueIfGivenTypeIsIntegerType(): void
     {
-        return $other === self::$instance;
+        $this->assertTrue(IntegerType::get()->is(IntegerType::get()));
+    }
+
+    /**
+     * @test
+     */
+    public function isReturnsFalseIfGivenTypeIsNotIntegerType(): void
+    {
+        $this->assertFalse(IntegerType::get()->is(StringType::get()));
     }
 }

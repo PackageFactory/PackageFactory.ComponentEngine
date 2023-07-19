@@ -30,7 +30,7 @@ use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScop
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Match\MatchTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
@@ -46,7 +46,7 @@ final class MatchTypeResolverTest extends TestCase
         return [
             'match (true) { true -> 42 false -> "foo" }' => [
                 'match (true) { true -> 42 false -> "foo" }',
-                NumberType::get()
+                IntegerType::get()
             ],
             'match (false) { true -> 42 false -> "foo" }' => [
                 'match (false) { true -> 42 false -> "foo" }',
@@ -54,11 +54,11 @@ final class MatchTypeResolverTest extends TestCase
             ],
             'match (variableOfTypeBoolean) { true -> 42 false -> "foo" }' => [
                 'match (variableOfTypeBoolean) { true -> 42 false -> "foo" }',
-                UnionType::of(NumberType::get(), StringType::get())
+                UnionType::of(IntegerType::get(), StringType::get())
             ],
             'match (variableOfTypeBoolean) { true -> variableOfTypeNumber false -> variableOfTypeString }' => [
                 'match (variableOfTypeBoolean) { true -> variableOfTypeNumber false -> variableOfTypeString }',
-                UnionType::of(NumberType::get(), StringType::get())
+                UnionType::of(IntegerType::get(), StringType::get())
             ],
             'match enum with all declared members' => [
                 <<<'EOF'
@@ -68,7 +68,7 @@ final class MatchTypeResolverTest extends TestCase
                         SomeEnum.C -> variableOfTypeBoolean
                     }
                 EOF,
-                UnionType::of(NumberType::get(), StringType::get(), BooleanType::get())
+                UnionType::of(IntegerType::get(), StringType::get(), BooleanType::get())
             ],
             'match enum with some declared members and default' => [
                 <<<'EOF'
@@ -78,7 +78,7 @@ final class MatchTypeResolverTest extends TestCase
                         default -> variableOfTypeBoolean
                     }
                 EOF,
-                UnionType::of(NumberType::get(), StringType::get(), BooleanType::get())
+                UnionType::of(IntegerType::get(), StringType::get(), BooleanType::get())
             ],
         ];
     }
@@ -101,7 +101,7 @@ final class MatchTypeResolverTest extends TestCase
         $scope = new DummyScope([
             'variableOfTypeBoolean' => BooleanType::get(),
             'variableOfTypeString' => StringType::get(),
-            'variableOfTypeNumber' => NumberType::get(),
+            'variableOfTypeNumber' => IntegerType::get(),
             'someEnumValue' => $someStaticEnumType->toEnumInstanceType(),
             'SomeEnum' => $someStaticEnumType
         ]);

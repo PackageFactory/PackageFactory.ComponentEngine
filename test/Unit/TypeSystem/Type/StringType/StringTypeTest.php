@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\StringType;
 
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
 
@@ -49,6 +49,6 @@ final class StringTypeTest extends TestCase
      */
     public function isReturnsFalseIfGivenTypeIsNotStringType(): void
     {
-        $this->assertFalse(StringType::get()->is(NumberType::get()));
+        $this->assertFalse(StringType::get()->is(IntegerType::get()));
     }
 }

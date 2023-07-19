@@ -32,7 +32,7 @@ use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScop
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
@@ -46,7 +46,7 @@ final class TypeReferenceTranspilerTest extends TestCase
             scope: new DummyScope([], [
                 'string' => StringType::get(),
                 'boolean' => BooleanType::get(),
-                'number' => NumberType::get(),
+                'number' => IntegerType::get(),
                 'Button' => ComponentType::fromComponentDeclarationNode(
                     ComponentDeclarationNode::fromString('component Button { return "" }')
                 ),

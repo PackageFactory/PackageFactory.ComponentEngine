@@ -30,7 +30,7 @@ use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScop
 use PackageFactory\ComponentEngine\TypeSystem\Scope\ComponentScope\ComponentScope;
 use PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope\GlobalScope;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
 
@@ -119,10 +119,10 @@ final class ComponentScopeTest extends TestCase
         $componentDeclarationNode = ComponentDeclarationNode::fromString($componentDeclarationAsString);
         $componentScope = new ComponentScope(
             componentDeclarationNode: $componentDeclarationNode,
-            parentScope: new DummyScope(['bar' => NumberType::get()], [])
+            parentScope: new DummyScope(['bar' => IntegerType::get()], [])
         );
 
-        $expectedType = NumberType::get();
+        $expectedType = IntegerType::get();
         $actualType = $componentScope->lookupTypeFor('bar');
 
         $this->assertNotNull($actualType);

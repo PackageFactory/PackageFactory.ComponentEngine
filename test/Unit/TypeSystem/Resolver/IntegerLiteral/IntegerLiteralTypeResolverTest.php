@@ -24,23 +24,23 @@ namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\NumberLit
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
-use PackageFactory\ComponentEngine\TypeSystem\Resolver\NumberLiteral\NumberLiteralTypeResolver;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\IntegerLiteral\IntegerLiteralTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PHPUnit\Framework\TestCase;
 
-final class NumberLiteralTypeResolverTest extends TestCase
+final class IntegerLiteralTypeResolverTest extends TestCase
 {
     /**
      * @test
      */
-    public function resolvesNumberLiteralToNumberType(): void
+    public function resolvesIntegerLiteralToIntegerType(): void
     {
-        $numberLiteralTypeResolver = new NumberLiteralTypeResolver();
-        $IntegerLiteralNode = ExpressionNode::fromString('42')->root;
-        assert($IntegerLiteralNode instanceof IntegerLiteralNode);
+        $integerLiteralTypeResolver = new IntegerLiteralTypeResolver();
+        $integerLiteralNode = ExpressionNode::fromString('42')->root;
+        assert($integerLiteralNode instanceof IntegerLiteralNode);
 
-        $expectedType = NumberType::get();
-        $actualType = $numberLiteralTypeResolver->resolveTypeOf($IntegerLiteralNode);
+        $expectedType = IntegerType::get();
+        $actualType = $integerLiteralTypeResolver->resolveTypeOf($integerLiteralNode);
 
         $this->assertTrue(
             $expectedType->is($actualType),

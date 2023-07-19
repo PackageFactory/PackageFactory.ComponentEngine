@@ -22,11 +22,10 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
@@ -53,7 +52,7 @@ final class GlobalScope implements ScopeInterface
     {
         return match ($typeReferenceNode->name) {
             'string' => StringType::get(),
-            'number' => NumberType::get(),
+            'number' => IntegerType::get(),
             'boolean' => BooleanType::get(),
             'slot' => SlotType::get(),
             default => throw new \Exception('@TODO: Unknown Type ' . $typeReferenceNode->name)

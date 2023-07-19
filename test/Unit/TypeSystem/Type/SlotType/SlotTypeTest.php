@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\SlotType;
 
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
 use PHPUnit\Framework\TestCase;
 
@@ -49,6 +49,6 @@ final class SlotTypeTest extends TestCase
      */
     public function isReturnsFalseIfGivenTypeIsNotSlotType(): void
     {
-        $this->assertFalse(SlotType::get()->is(NumberType::get()));
+        $this->assertFalse(SlotType::get()->is(IntegerType::get()));
     }
 }

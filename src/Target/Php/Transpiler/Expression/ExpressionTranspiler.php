@@ -41,7 +41,7 @@ use PackageFactory\ComponentEngine\Target\Php\Transpiler\BooleanLiteral\BooleanL
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Identifier\IdentifierTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Match\MatchTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\NullLiteral\NullLiteralTranspiler;
-use PackageFactory\ComponentEngine\Target\Php\Transpiler\NumberLiteral\NumberLiteralTranspiler;
+use PackageFactory\ComponentEngine\Target\Php\Transpiler\IntegerLiteral\IntegerLiteralTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\StringLiteral\StringLiteralTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Tag\TagTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\TemplateLiteral\TemplateLiteralTranspiler;
@@ -80,7 +80,7 @@ final class ExpressionTranspiler
                 scope: $this->scope
             ),
             NullLiteralNode::class => new NullLiteralTranspiler(),
-            IntegerLiteralNode::class => new NumberLiteralTranspiler(),
+            IntegerLiteralNode::class => new IntegerLiteralTranspiler(),
             StringLiteralNode::class => new StringLiteralTranspiler(
                 shouldAddQuotes: $this->shouldAddQuotesIfNecessary
             ),
