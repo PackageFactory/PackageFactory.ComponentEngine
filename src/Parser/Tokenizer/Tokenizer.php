@@ -287,11 +287,6 @@ final class Tokenizer implements \IteratorAggregate
         }
 
         yield from match ($buffer->value()) {
-            '+' => $buffer->flush(TokenType::OPERATOR_ARITHMETIC_PLUS),
-            '-' => $buffer->flush(TokenType::OPERATOR_ARITHMETIC_MINUS),
-            '*' => $buffer->flush(TokenType::OPERATOR_ARITHMETIC_MULTIPLY_BY),
-            '/' => $buffer->flush(TokenType::OPERATOR_ARITHMETIC_DIVIDE_BY),
-            '%' => $buffer->flush(TokenType::OPERATOR_ARITHMETIC_MODULO),
             '&&' => $buffer->flush(TokenType::OPERATOR_BOOLEAN_AND),
             '||' => $buffer->flush(TokenType::OPERATOR_BOOLEAN_OR),
             '!' => $buffer->flush(TokenType::OPERATOR_BOOLEAN_NOT),

@@ -134,11 +134,6 @@ final class ExpressionNode implements \JsonSerializable
             switch (Scanner::type($tokens)) {
                 case TokenType::OPERATOR_BOOLEAN_AND:
                 case TokenType::OPERATOR_BOOLEAN_OR:
-                case TokenType::OPERATOR_ARITHMETIC_PLUS:
-                case TokenType::OPERATOR_ARITHMETIC_MINUS:
-                case TokenType::OPERATOR_ARITHMETIC_MULTIPLY_BY:
-                case TokenType::OPERATOR_ARITHMETIC_DIVIDE_BY:
-                case TokenType::OPERATOR_ARITHMETIC_MODULO:
                 case TokenType::COMPARATOR_EQUAL:
                 case TokenType::COMPARATOR_NOT_EQUAL:
                 case TokenType::COMPARATOR_GREATER_THAN:
