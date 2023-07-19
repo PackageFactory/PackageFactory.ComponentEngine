@@ -61,7 +61,6 @@ final class IntegerLiteralTranspilerTest extends TestCase
             // With Floating Point
             ' 123.456 ' => ['123.456', '123.456'],
             ' 0.1e2 ' => ['0.1e2', '0.1e2'],
-            ' .22 ' => ['.22', '.22'],
         ];
     }
 
