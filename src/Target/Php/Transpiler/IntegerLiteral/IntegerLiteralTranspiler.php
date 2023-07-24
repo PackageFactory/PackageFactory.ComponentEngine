@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\IntegerLiteral;
 
-use PackageFactory\ComponentEngine\Definition\NumberFormat;
+use PackageFactory\ComponentEngine\Definition\IntegerFormat;
 use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
 
 final class IntegerLiteralTranspiler
@@ -30,7 +30,7 @@ final class IntegerLiteralTranspiler
     public function transpile(IntegerLiteralNode $integerLiteralNode): string
     {
         return match ($integerLiteralNode->format) {
-            NumberFormat::BINARY => strtolower($integerLiteralNode->value),
+            IntegerFormat::BINARY => strtolower($integerLiteralNode->value),
             default => $integerLiteralNode->value
         };
     }

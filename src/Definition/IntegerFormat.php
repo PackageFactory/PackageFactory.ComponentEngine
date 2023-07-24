@@ -24,7 +24,7 @@ namespace PackageFactory\ComponentEngine\Definition;
 
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-enum NumberFormat: string
+enum IntegerFormat: string
 {
     case BINARY = 'BINARY';
     case OCTAL = 'OCTAL';
@@ -39,7 +39,7 @@ enum NumberFormat: string
             TokenType::NUMBER_DECIMAL => self::DECIMAL,
             TokenType::NUMBER_HEXADECIMAL => self::HEXADECIMAL,
 
-            default => throw new \Exception('@TODO: Unknown Number Format: ' . $tokenType->value)
+            default => throw new \Exception('@TODO: Unknown Integer Format: ' . $tokenType->value)
         };
     }
 }
