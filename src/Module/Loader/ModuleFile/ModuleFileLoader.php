@@ -41,7 +41,7 @@ final class ModuleFileLoader implements LoaderInterface
 {
     public function resolveTypeOfImport(ImportNode $importNode): TypeInterface
     {
-        $pathToImportFrom = $importNode->source->path->resolveRelationTo(
+        $pathToImportFrom = $importNode->sourcePath->resolveRelationTo(
             Path::fromString($importNode->path)
         );
         $source = Source::fromFile($pathToImportFrom->value);

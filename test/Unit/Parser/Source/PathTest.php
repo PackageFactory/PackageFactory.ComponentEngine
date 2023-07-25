@@ -94,4 +94,40 @@ final class PathTest extends TestCase
             $path->resolveRelationTo($otherPath)->value
         );
     }
+
+    /**
+     * @test
+     */
+    public function equalsOtherPathIfValuesAreIdentical(): void
+    {
+        $path = Path::fromString('/some/where/in/the/filesystem');
+        $otherPath = Path::fromString('/some/where/in/the/filesystem');
+
+        $this->assertTrue($path->equals($otherPath));
+        $this->assertTrue($otherPath->equals($path));
+    }
+
+    /**
+     * @test
+     */
+    public function doesNotEqualOtherPathIfValuesAreNotIdentical(): void
+    {
+        $path = Path::fromString('/some/where/in/the/filesystem');
+        $otherPath = Path::fromString('/else/where/in/the/filesystem');
+
+        $this->assertFalse($path->equals($otherPath));
+        $this->assertFalse($otherPath->equals($path));
+    }
+
+    /**
+     * @test
+     */
+    public function memoryPathsEqualEachOther(): void
+    {
+        $path = Path::createMemory();
+        $otherPath = Path::createMemory();
+
+        $this->assertTrue($path->equals($otherPath));
+        $this->assertTrue($otherPath->equals($path));
+    }
 }

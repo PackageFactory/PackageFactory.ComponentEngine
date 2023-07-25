@@ -43,7 +43,7 @@ final class DummyLoader implements LoaderInterface
             }
 
             throw new \Exception(
-                '[DummyLoader] Cannot import "' . $importNode->name->value . '" from "' . $importNode->source->path->value . '"'
+                '[DummyLoader] Cannot import "' . $importNode->name->value . '" from "' . $importNode->sourcePath->value . '"'
             );
         }
 

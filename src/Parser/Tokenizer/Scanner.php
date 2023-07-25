@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Tokenizer;
 
-use PackageFactory\ComponentEngine\Parser\Source\Source;
+use PackageFactory\ComponentEngine\Parser\Source\Path;
 
 final class Scanner
 {
@@ -149,12 +149,12 @@ final class Scanner
 
     /**
      * @param \Iterator<mixed,Token> $tokens
-     * @return Source
+     * @return Path
      */
-    public static function source(\Iterator $tokens): Source
+    public static function sourcePath(\Iterator $tokens): Path
     {
         self::assertValid($tokens);
-        return $tokens->current()->source;
+        return $tokens->current()->sourcePath;
     }
 
     /**

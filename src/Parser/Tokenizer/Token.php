@@ -23,8 +23,8 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Parser\Tokenizer;
 
 use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
-use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Source\Fragment;
+use PackageFactory\ComponentEngine\Parser\Source\Path;
 
 final class Token
 {
@@ -32,7 +32,7 @@ final class Token
         public readonly TokenType $type,
         public readonly string $value,
         public readonly Boundaries $boundaries,
-        public readonly Source $source
+        public readonly Path $sourcePath
     ) {
     }
 
@@ -44,7 +44,7 @@ final class Token
             $type,
             $fragment->value,
             Boundaries::fromPositions($fragment->start, $fragment->end),
-            $fragment->source
+            $fragment->source->path
         );
     }
 
@@ -57,7 +57,7 @@ final class Token
             $type,
             '',
             Boundaries::fromPositions($startFragment->start, $endFragment->end),
-            $startFragment->source
+            $startFragment->source->path
         );
     }
 
@@ -66,7 +66,7 @@ final class Token
         return ($this->type === $other->type
             && $this->value === $other->value
             && $this->boundaries->equals($other->boundaries)
-            && $this->source->equals($other->source)
+            && $this->sourcePath->equals($other->sourcePath)
         );
     }
 
