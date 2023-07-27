@@ -22,7 +22,12 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\BooleanLiteral;
 
+use PackageFactory\ComponentEngine\Language\AST\BooleanLiteral\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\BooleanLiteral\BooleanLiteralParser;
+use PackageFactory\ComponentEngine\Language\Shared\Location\Location;
+use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
+use PackageFactory\ComponentEngine\Parser\Source\Path;
+use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PHPUnit\Framework\TestCase;
@@ -35,18 +40,23 @@ final class BooleanLiteralParserTest extends TestCase
     public function producesAstNodeForTrueIfGivenOneTrueToken(): void
     {
         $booleanLiteralParser = new BooleanLiteralParser();
-
         $tokens = Tokenizer::fromSource(Source::fromString('true'))->getIterator();
-        $booleanLiteralNode = $booleanLiteralParser->parse($tokens);
 
-        $this->assertEquals(true, $booleanLiteralNode->value);
-        $this->assertEquals(':memory:', $booleanLiteralNode->location->sourcePath);
-        $this->assertEquals(0, $booleanLiteralNode->location->boundaries->start->index);
-        $this->assertEquals(0, $booleanLiteralNode->location->boundaries->start->rowIndex);
-        $this->assertEquals(0, $booleanLiteralNode->location->boundaries->start->columnIndex);
-        $this->assertEquals(3, $booleanLiteralNode->location->boundaries->end->index);
-        $this->assertEquals(0, $booleanLiteralNode->location->boundaries->end->rowIndex);
-        $this->assertEquals(3, $booleanLiteralNode->location->boundaries->end->columnIndex);
+        $expectedBooleanLiteralNode = new BooleanLiteralNode(
+            location: new Location(
+                sourcePath: Path::fromString(':memory:'),
+                boundaries: Boundaries::fromPositions(
+                    Position::create(0, 0, 0),
+                    Position::create(3, 0, 3)
+                )
+                ),
+                value: true
+        );
+
+        $this->assertEquals(
+            $expectedBooleanLiteralNode,
+            $booleanLiteralParser->parse($tokens)
+        );
     }
 
     /**
@@ -55,17 +65,22 @@ final class BooleanLiteralParserTest extends TestCase
     public function producesAstNodeForFalseIfGivenOneFalseToken(): void
     {
         $booleanLiteralParser = new BooleanLiteralParser();
-
         $tokens = Tokenizer::fromSource(Source::fromString('false'))->getIterator();
-        $booleanLiteralNode = $booleanLiteralParser->parse($tokens);
 
-        $this->assertEquals(false, $booleanLiteralNode->value);
-        $this->assertEquals(':memory:', $booleanLiteralNode->location->sourcePath);
-        $this->assertEquals(0, $booleanLiteralNode->location->boundaries->start->index);
-        $this->assertEquals(0, $booleanLiteralNode->location->boundaries->start->rowIndex);
-        $this->assertEquals(0, $booleanLiteralNode->location->boundaries->start->columnIndex);
-        $this->assertEquals(4, $booleanLiteralNode->location->boundaries->end->index);
-        $this->assertEquals(0, $booleanLiteralNode->location->boundaries->end->rowIndex);
-        $this->assertEquals(4, $booleanLiteralNode->location->boundaries->end->columnIndex);
+        $expectedBooleanLiteralNode = new BooleanLiteralNode(
+            location: new Location(
+                sourcePath: Path::fromString(':memory:'),
+                boundaries: Boundaries::fromPositions(
+                    Position::create(0, 0, 0),
+                    Position::create(4, 0, 4)
+                )
+                ),
+                value: false
+        );
+
+        $this->assertEquals(
+            $expectedBooleanLiteralNode,
+            $booleanLiteralParser->parse($tokens)
+        );
     }
 }
