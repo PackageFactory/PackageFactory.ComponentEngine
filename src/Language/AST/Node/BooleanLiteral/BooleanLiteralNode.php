@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,15 +20,15 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\AST\StringLiteral;
+namespace PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral;
 
 use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
 
-final class StringLiteralNode
+final class BooleanLiteralNode
 {
     public function __construct(
         public readonly NodeAttributes $attributes,
-        public readonly string $value
+        public readonly bool $value
     ) {
     }
 }

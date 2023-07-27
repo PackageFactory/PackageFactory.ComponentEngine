@@ -22,14 +22,14 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\EnumDeclaration;
 
-use PackageFactory\ComponentEngine\Language\AST\EnumDeclaration\EnumDeclarationNode;
-use PackageFactory\ComponentEngine\Language\AST\EnumDeclaration\EnumMemberDeclarationNode;
-use PackageFactory\ComponentEngine\Language\AST\EnumDeclaration\EnumMemberDeclarationNodes;
-use PackageFactory\ComponentEngine\Language\AST\EnumDeclaration\EnumMemberName;
-use PackageFactory\ComponentEngine\Language\AST\EnumDeclaration\EnumName;
-use PackageFactory\ComponentEngine\Language\AST\IntegerLiteral\IntegerFormat;
-use PackageFactory\ComponentEngine\Language\AST\IntegerLiteral\IntegerLiteralNode;
-use PackageFactory\ComponentEngine\Language\AST\StringLiteral\StringLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumDeclarationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberDeclarationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberDeclarationNodes;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberName;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumName;
+use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerFormat;
+use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\EnumDeclaration\EnumDeclarationParser;
 use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Boundaries;

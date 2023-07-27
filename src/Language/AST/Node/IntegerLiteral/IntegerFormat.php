@@ -20,16 +20,26 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\AST\IntegerLiteral;
+namespace PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral;
 
-use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class IntegerLiteralNode
+enum IntegerFormat: string
 {
-    public function __construct(
-        public readonly NodeAttributes $attributes,
-        public readonly IntegerFormat $format,
-        public readonly string $value
-    ) {
+    case BINARY = 'BINARY';
+    case OCTAL = 'OCTAL';
+    case DECIMAL = 'DECIMAL';
+    case HEXADECIMAL = 'HEXADECIMAL';
+
+    public static function fromTokenType(TokenType $tokenType): self
+    {
+        return match ($tokenType) {
+            TokenType::NUMBER_BINARY => self::BINARY,
+            TokenType::NUMBER_OCTAL => self::OCTAL,
+            TokenType::NUMBER_DECIMAL => self::DECIMAL,
+            TokenType::NUMBER_HEXADECIMAL => self::HEXADECIMAL,
+
+            default => throw new \Exception('@TODO: Unknown Integer Format: ' . $tokenType->value)
+        };
     }
 }

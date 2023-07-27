@@ -22,11 +22,11 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\EnumDeclaration;
 
-use PackageFactory\ComponentEngine\Language\AST\EnumDeclaration\EnumDeclarationNode;
-use PackageFactory\ComponentEngine\Language\AST\EnumDeclaration\EnumMemberDeclarationNode;
-use PackageFactory\ComponentEngine\Language\AST\EnumDeclaration\EnumMemberDeclarationNodes;
-use PackageFactory\ComponentEngine\Language\AST\EnumDeclaration\EnumMemberName;
-use PackageFactory\ComponentEngine\Language\AST\EnumDeclaration\EnumName;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumDeclarationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberDeclarationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberDeclarationNodes;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberName;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumName;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;

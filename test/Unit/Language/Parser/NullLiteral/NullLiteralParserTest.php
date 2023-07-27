@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\NullLiteral;
 
-use PackageFactory\ComponentEngine\Language\AST\NullLiteral\NullLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\NullLiteral\NullLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\NullLiteral\NullLiteralParser;
 use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Boundaries;

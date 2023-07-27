@@ -20,16 +20,18 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\AST\EnumDeclaration;
+namespace PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration;
 
+use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
 
-final class EnumDeclarationNode
+final class EnumMemberDeclarationNode
 {
     public function __construct(
         public readonly NodeAttributes $attributes,
-        public readonly EnumName $enumName,
-        public readonly EnumMemberDeclarationNodes $memberDeclarations
+        public readonly EnumMemberName $name,
+        public readonly null|StringLiteralNode|IntegerLiteralNode $value
     ) {
     }
 }

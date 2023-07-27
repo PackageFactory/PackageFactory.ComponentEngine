@@ -22,8 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral;
 
-use PackageFactory\ComponentEngine\Language\AST\IntegerLiteral\IntegerFormat;
-use PackageFactory\ComponentEngine\Language\AST\IntegerLiteral\IntegerLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerFormat;
+use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;

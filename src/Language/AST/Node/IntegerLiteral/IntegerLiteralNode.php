@@ -20,17 +20,16 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\AST\EnumDeclaration;
+namespace PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral;
 
-final class EnumName
+use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
+
+final class IntegerLiteralNode
 {
-    private function __construct(
+    public function __construct(
+        public readonly NodeAttributes $attributes,
+        public readonly IntegerFormat $format,
         public readonly string $value
     ) {
-    }
-
-    public static function from(string $string): self
-    {
-        return new self($string);
     }
 }
