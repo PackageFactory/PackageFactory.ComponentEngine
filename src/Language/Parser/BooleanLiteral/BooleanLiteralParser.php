@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Parser\BooleanLiteral;
 
 use PackageFactory\ComponentEngine\Language\AST\BooleanLiteral\BooleanLiteralNode;
-use PackageFactory\ComponentEngine\Language\Shared\Location\Location;
+use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
@@ -44,9 +44,9 @@ final class BooleanLiteralParser
         Scanner::skipOne($tokens);
 
         return new BooleanLiteralNode(
-            location: new Location(
-                sourcePath: $token->sourcePath,
-                boundaries: $token->boundaries
+            attributes: new NodeAttributes(
+                pathToSource: $token->sourcePath,
+                rangeInSource: $token->boundaries
             ),
             value: $value
         );

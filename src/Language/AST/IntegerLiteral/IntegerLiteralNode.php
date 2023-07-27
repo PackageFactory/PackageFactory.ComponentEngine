@@ -22,12 +22,12 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\AST\IntegerLiteral;
 
-use PackageFactory\ComponentEngine\Language\Shared\Location\Location;
+use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
 
 final class IntegerLiteralNode
 {
     public function __construct(
-        public readonly Location $location,
+        public readonly NodeAttributes $attributes,
         public readonly IntegerFormat $format,
         public readonly string $value
     ) {

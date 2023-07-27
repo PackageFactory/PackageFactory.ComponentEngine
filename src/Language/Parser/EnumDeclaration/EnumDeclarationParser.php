@@ -29,7 +29,7 @@ use PackageFactory\ComponentEngine\Language\AST\EnumDeclaration\EnumMemberName;
 use PackageFactory\ComponentEngine\Language\AST\EnumDeclaration\EnumName;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
-use PackageFactory\ComponentEngine\Language\Shared\Location\Location;
+use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
@@ -69,9 +69,9 @@ final class EnumDeclarationParser
         Scanner::skipOne($tokens);
 
         return new EnumDeclarationNode(
-            location: new Location(
-                sourcePath: $enumKeyWordToken->sourcePath,
-                boundaries: Boundaries::fromPositions(
+            attributes: new NodeAttributes(
+                pathToSource: $enumKeyWordToken->sourcePath,
+                rangeInSource: Boundaries::fromPositions(
                     $enumKeyWordToken->boundaries->start,
                     $closingBracketToken->boundaries->end
                 )
@@ -137,9 +137,9 @@ final class EnumDeclarationParser
         }
 
         return new EnumMemberDeclarationNode(
-            location: new Location(
-                sourcePath: $enumMemberNameToken->sourcePath,
-                boundaries: Boundaries::fromPositions(
+            attributes: new NodeAttributes(
+                pathToSource: $enumMemberNameToken->sourcePath,
+                rangeInSource: Boundaries::fromPositions(
                     $enumMemberNameToken->boundaries->start,
                     $finalToken->boundaries->end
                 )

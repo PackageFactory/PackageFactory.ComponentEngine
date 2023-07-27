@@ -24,10 +24,9 @@ namespace PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral;
 
 use PackageFactory\ComponentEngine\Language\AST\IntegerLiteral\IntegerFormat;
 use PackageFactory\ComponentEngine\Language\AST\IntegerLiteral\IntegerLiteralNode;
-use PackageFactory\ComponentEngine\Language\Shared\Location\Location;
+use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class IntegerLiteralParser
 {
@@ -42,9 +41,9 @@ final class IntegerLiteralParser
         Scanner::skipOne($tokens);
 
         return new IntegerLiteralNode(
-            location: new Location(
-                sourcePath: $token->sourcePath,
-                boundaries: $token->boundaries
+            attributes: new NodeAttributes(
+                pathToSource: $token->sourcePath,
+                rangeInSource: $token->boundaries
             ),
             format: IntegerFormat::fromTokenType($token->type),
             value: $token->value

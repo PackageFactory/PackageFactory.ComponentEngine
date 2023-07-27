@@ -25,12 +25,12 @@ namespace PackageFactory\ComponentEngine\Language\AST\EnumDeclaration;
 use PackageFactory\ComponentEngine\Language\AST\EnumDeclaration\EnumMemberName;
 use PackageFactory\ComponentEngine\Language\AST\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\StringLiteral\StringLiteralNode;
-use PackageFactory\ComponentEngine\Language\Shared\Location\Location;
+use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
 
 final class EnumMemberDeclarationNode
 {
     public function __construct(
-        public readonly Location $location,
+        public readonly NodeAttributes $attributes,
         public readonly EnumMemberName $name,
         public readonly null|StringLiteralNode|IntegerLiteralNode $value
     ) {

@@ -20,16 +20,16 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\Shared\Location;
+namespace PackageFactory\ComponentEngine\Language\Shared\NodeAttributes;
 
 use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
 
-final class Location
+final class NodeAttributes
 {
     public function __construct(
-        public readonly Path $sourcePath,
-        public readonly Boundaries $boundaries
+        public readonly Path $pathToSource,
+        public readonly Boundaries $rangeInSource
     ) {
     }
 }

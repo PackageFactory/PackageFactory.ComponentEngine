@@ -24,7 +24,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\StringLiteral
 
 use PackageFactory\ComponentEngine\Language\AST\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
-use PackageFactory\ComponentEngine\Language\Shared\Location\Location;
+use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
@@ -43,9 +43,9 @@ final class StringLiteralParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('"Hello World"'))->getIterator();
 
         $expectedStringLiteralNode = new StringLiteralNode(
-            location: new Location(
-                sourcePath: Path::fromString(':memory:'),
-                boundaries: Boundaries::fromPositions(
+            attributes: new NodeAttributes(
+                pathToSource: Path::fromString(':memory:'),
+                rangeInSource: Boundaries::fromPositions(
                     Position::create(1, 0, 1),
                     Position::create(11, 0, 11)
                 )

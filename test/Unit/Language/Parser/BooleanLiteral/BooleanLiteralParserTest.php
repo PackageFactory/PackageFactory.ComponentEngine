@@ -24,7 +24,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\BooleanLitera
 
 use PackageFactory\ComponentEngine\Language\AST\BooleanLiteral\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\BooleanLiteral\BooleanLiteralParser;
-use PackageFactory\ComponentEngine\Language\Shared\Location\Location;
+use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
@@ -43,14 +43,14 @@ final class BooleanLiteralParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('true'))->getIterator();
 
         $expectedBooleanLiteralNode = new BooleanLiteralNode(
-            location: new Location(
-                sourcePath: Path::fromString(':memory:'),
-                boundaries: Boundaries::fromPositions(
+            attributes: new NodeAttributes(
+                pathToSource: Path::fromString(':memory:'),
+                rangeInSource: Boundaries::fromPositions(
                     Position::create(0, 0, 0),
                     Position::create(3, 0, 3)
                 )
-                ),
-                value: true
+            ),
+            value: true
         );
 
         $this->assertEquals(
@@ -68,14 +68,14 @@ final class BooleanLiteralParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('false'))->getIterator();
 
         $expectedBooleanLiteralNode = new BooleanLiteralNode(
-            location: new Location(
-                sourcePath: Path::fromString(':memory:'),
-                boundaries: Boundaries::fromPositions(
+            attributes: new NodeAttributes(
+                pathToSource: Path::fromString(':memory:'),
+                rangeInSource: Boundaries::fromPositions(
                     Position::create(0, 0, 0),
                     Position::create(4, 0, 4)
                 )
-                ),
-                value: false
+            ),
+            value: false
         );
 
         $this->assertEquals(

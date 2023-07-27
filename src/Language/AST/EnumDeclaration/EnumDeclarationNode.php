@@ -22,12 +22,12 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\AST\EnumDeclaration;
 
-use PackageFactory\ComponentEngine\Language\Shared\Location\Location;
+use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
 
 final class EnumDeclarationNode
 {
     public function __construct(
-        public readonly Location $location,
+        public readonly NodeAttributes $attributes,
         public readonly EnumName $enumName,
         public readonly EnumMemberDeclarationNodes $memberDeclarations
     ) {

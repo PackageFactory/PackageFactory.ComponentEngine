@@ -25,7 +25,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\IntegerLitera
 use PackageFactory\ComponentEngine\Language\AST\IntegerLiteral\IntegerFormat;
 use PackageFactory\ComponentEngine\Language\AST\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
-use PackageFactory\ComponentEngine\Language\Shared\Location\Location;
+use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
@@ -44,9 +44,9 @@ final class IntegerLiteralParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('0b1010110101'))->getIterator();
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
-            location: new Location(
-                sourcePath: Path::fromString(':memory:'),
-                boundaries: Boundaries::fromPositions(
+            attributes: new NodeAttributes(
+                pathToSource: Path::fromString(':memory:'),
+                rangeInSource: Boundaries::fromPositions(
                     Position::create(0, 0, 0),
                     Position::create(11, 0, 11)
                 )
@@ -70,9 +70,9 @@ final class IntegerLiteralParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('0o755'))->getIterator();
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
-            location: new Location(
-                sourcePath: Path::fromString(':memory:'),
-                boundaries: Boundaries::fromPositions(
+            attributes: new NodeAttributes(
+                pathToSource: Path::fromString(':memory:'),
+                rangeInSource: Boundaries::fromPositions(
                     Position::create(0, 0, 0),
                     Position::create(4, 0, 4)
                 )
@@ -96,9 +96,9 @@ final class IntegerLiteralParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('1234567890'))->getIterator();
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
-            location: new Location(
-                sourcePath: Path::fromString(':memory:'),
-                boundaries: Boundaries::fromPositions(
+            attributes: new NodeAttributes(
+                pathToSource: Path::fromString(':memory:'),
+                rangeInSource: Boundaries::fromPositions(
                     Position::create(0, 0, 0),
                     Position::create(9, 0, 9)
                 )
@@ -122,9 +122,9 @@ final class IntegerLiteralParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('0x123456789ABCDEF'))->getIterator();
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
-            location: new Location(
-                sourcePath: Path::fromString(':memory:'),
-                boundaries: Boundaries::fromPositions(
+            attributes: new NodeAttributes(
+                pathToSource: Path::fromString(':memory:'),
+                rangeInSource: Boundaries::fromPositions(
                     Position::create(0, 0, 0),
                     Position::create(16, 0, 16)
                 )

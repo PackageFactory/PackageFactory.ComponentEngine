@@ -31,7 +31,7 @@ use PackageFactory\ComponentEngine\Language\AST\IntegerLiteral\IntegerFormat;
 use PackageFactory\ComponentEngine\Language\AST\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\EnumDeclaration\EnumDeclarationParser;
-use PackageFactory\ComponentEngine\Language\Shared\Location\Location;
+use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
@@ -50,9 +50,9 @@ final class EnumDeclarationParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('enum Foo { BAR }'))->getIterator();
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
-            location: new Location(
-                sourcePath: Path::fromString(':memory:'),
-                boundaries: Boundaries::fromPositions(
+            attributes: new NodeAttributes(
+                pathToSource: Path::fromString(':memory:'),
+                rangeInSource: Boundaries::fromPositions(
                     Position::create(0, 0, 0),
                     Position::create(15, 0, 15)
                 )
@@ -60,9 +60,9 @@ final class EnumDeclarationParserTest extends TestCase
             enumName: EnumName::from('Foo'),
             memberDeclarations: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(11, 0, 11),
                             Position::create(13, 0, 13)
                         )
@@ -88,9 +88,9 @@ final class EnumDeclarationParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('enum Foo { BAR BAZ QUX }'))->getIterator();
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
-            location: new Location(
-                sourcePath: Path::fromString(':memory:'),
-                boundaries: Boundaries::fromPositions(
+            attributes: new NodeAttributes(
+                pathToSource: Path::fromString(':memory:'),
+                rangeInSource: Boundaries::fromPositions(
                     Position::create(0, 0, 0),
                     Position::create(23, 0, 23)
                 )
@@ -98,9 +98,9 @@ final class EnumDeclarationParserTest extends TestCase
             enumName: EnumName::from('Foo'),
             memberDeclarations: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(11, 0, 11),
                             Position::create(13, 0, 13)
                         )
@@ -109,9 +109,9 @@ final class EnumDeclarationParserTest extends TestCase
                     value: null
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(15, 0, 15),
                             Position::create(17, 0, 17)
                         )
@@ -120,9 +120,9 @@ final class EnumDeclarationParserTest extends TestCase
                     value: null
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(19, 0, 19),
                             Position::create(21, 0, 21)
                         )
@@ -148,9 +148,9 @@ final class EnumDeclarationParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('enum Foo { BAR("BAR") }'))->getIterator();
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
-            location: new Location(
-                sourcePath: Path::fromString(':memory:'),
-                boundaries: Boundaries::fromPositions(
+            attributes: new NodeAttributes(
+                pathToSource: Path::fromString(':memory:'),
+                rangeInSource: Boundaries::fromPositions(
                     Position::create(0, 0, 0),
                     Position::create(22, 0, 22)
                 )
@@ -158,18 +158,18 @@ final class EnumDeclarationParserTest extends TestCase
             enumName: EnumName::from('Foo'),
             memberDeclarations: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(11, 0, 11),
                             Position::create(20, 0, 20)
                         )
                     ),
                     name: EnumMemberName::from('BAR'),
                     value: new StringLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(16, 0, 16),
                                 Position::create(18, 0, 18)
                             )
@@ -206,9 +206,9 @@ final class EnumDeclarationParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString($enumAsString))->getIterator();
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
-            location: new Location(
-                sourcePath: Path::fromString(':memory:'),
-                boundaries: Boundaries::fromPositions(
+            attributes: new NodeAttributes(
+                pathToSource: Path::fromString(':memory:'),
+                rangeInSource: Boundaries::fromPositions(
                     Position::create(0, 0, 0),
                     Position::create(149, 8, 0)
                 )
@@ -216,18 +216,18 @@ final class EnumDeclarationParserTest extends TestCase
             enumName: EnumName::from('Weekday'),
             memberDeclarations: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(19, 1, 4),
                             Position::create(31, 1, 16)
                         )
                     ),
                     name: EnumMemberName::from('MONDAY'),
                     value: new StringLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(27, 1, 12),
                                 Position::create(29, 1, 14)
                             )
@@ -236,18 +236,18 @@ final class EnumDeclarationParserTest extends TestCase
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(37, 2, 4),
                             Position::create(50, 2, 17)
                         )
                     ),
                     name: EnumMemberName::from('TUESDAY'),
                     value: new StringLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(46, 2, 13),
                                 Position::create(48, 2, 15)
                             )
@@ -256,18 +256,18 @@ final class EnumDeclarationParserTest extends TestCase
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(56, 3, 4),
                             Position::create(71, 3, 19)
                         )
                     ),
                     name: EnumMemberName::from('WEDNESDAY'),
                     value: new StringLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(67, 3, 15),
                                 Position::create(69, 3, 17)
                             )
@@ -276,18 +276,18 @@ final class EnumDeclarationParserTest extends TestCase
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(77, 4, 4),
                             Position::create(91, 4, 18)
                         )
                     ),
                     name: EnumMemberName::from('THURSDAY'),
                     value: new StringLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(87, 4, 14),
                                 Position::create(89, 4, 16)
                             )
@@ -296,18 +296,18 @@ final class EnumDeclarationParserTest extends TestCase
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(97, 5, 4),
                             Position::create(109, 5, 16)
                         )
                     ),
                     name: EnumMemberName::from('FRIDAY'),
                     value: new StringLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(105, 5, 12),
                                 Position::create(107, 5, 14)
                             )
@@ -316,18 +316,18 @@ final class EnumDeclarationParserTest extends TestCase
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(115, 6, 4),
                             Position::create(129, 6, 18)
                         )
                     ),
                     name: EnumMemberName::from('SATURDAY'),
                     value: new StringLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(125, 6, 14),
                                 Position::create(127, 6, 16)
                             )
@@ -336,18 +336,18 @@ final class EnumDeclarationParserTest extends TestCase
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(135, 7, 4),
                             Position::create(147, 7, 16)
                         )
                     ),
                     name: EnumMemberName::from('SUNDAY'),
                     value: new StringLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(143, 7, 12),
                                 Position::create(145, 7, 14)
                             )
@@ -373,9 +373,9 @@ final class EnumDeclarationParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('enum Foo { BAR(42) }'))->getIterator();
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
-            location: new Location(
-                sourcePath: Path::fromString(':memory:'),
-                boundaries: Boundaries::fromPositions(
+            attributes: new NodeAttributes(
+                pathToSource: Path::fromString(':memory:'),
+                rangeInSource: Boundaries::fromPositions(
                     Position::create(0, 0, 0),
                     Position::create(19, 0, 19)
                 )
@@ -383,18 +383,18 @@ final class EnumDeclarationParserTest extends TestCase
             enumName: EnumName::from('Foo'),
             memberDeclarations: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(11, 0, 11),
                             Position::create(17, 0, 17)
                         )
                     ),
                     name: EnumMemberName::from('BAR'),
                     value: new IntegerLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(15, 0, 15),
                                 Position::create(16, 0, 16)
                             )
@@ -437,9 +437,9 @@ final class EnumDeclarationParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString($enumAsString))->getIterator();
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
-            location: new Location(
-                sourcePath: Path::fromString(':memory:'),
-                boundaries: Boundaries::fromPositions(
+            attributes: new NodeAttributes(
+                pathToSource: Path::fromString(':memory:'),
+                rangeInSource: Boundaries::fromPositions(
                     Position::create(0, 0, 0),
                     Position::create(186, 13, 0)
                 )
@@ -447,18 +447,18 @@ final class EnumDeclarationParserTest extends TestCase
             enumName: EnumName::from('Month'),
             memberDeclarations: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(17, 1, 4),
                             Position::create(26, 1, 13)
                         )
                     ),
                     name: EnumMemberName::from('JANUARY'),
                     value: new IntegerLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(25, 1, 12),
                                 Position::create(25, 1, 12)
                             )
@@ -468,18 +468,18 @@ final class EnumDeclarationParserTest extends TestCase
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(32, 2, 4),
                             Position::create(42, 2, 14)
                         )
                     ),
                     name: EnumMemberName::from('FEBRUARY'),
                     value: new IntegerLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(41, 2, 13),
                                 Position::create(41, 2, 13)
                             )
@@ -489,18 +489,18 @@ final class EnumDeclarationParserTest extends TestCase
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(48, 3, 4),
                             Position::create(55, 3, 11)
                         )
                     ),
                     name: EnumMemberName::from('MARCH'),
                     value: new IntegerLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(54, 3, 10),
                                 Position::create(54, 3, 10)
                             )
@@ -510,18 +510,18 @@ final class EnumDeclarationParserTest extends TestCase
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(61, 4, 4),
                             Position::create(68, 4, 11)
                         )
                     ),
                     name: EnumMemberName::from('APRIL'),
                     value: new IntegerLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(67, 4, 10),
                                 Position::create(67, 4, 10)
                             )
@@ -531,18 +531,18 @@ final class EnumDeclarationParserTest extends TestCase
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(74, 5, 4),
                             Position::create(79, 5, 9)
                         )
                     ),
                     name: EnumMemberName::from('MAY'),
                     value: new IntegerLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(78, 5, 8),
                                 Position::create(78, 5, 8)
                             )
@@ -552,18 +552,18 @@ final class EnumDeclarationParserTest extends TestCase
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(85, 6, 4),
                             Position::create(91, 6, 10)
                         )
                     ),
                     name: EnumMemberName::from('JUNE'),
                     value: new IntegerLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(90, 6, 9),
                                 Position::create(90, 6, 9)
                             )
@@ -573,18 +573,18 @@ final class EnumDeclarationParserTest extends TestCase
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(97, 7, 4),
                             Position::create(103, 7, 10)
                         )
                     ),
                     name: EnumMemberName::from('JULY'),
                     value: new IntegerLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(102, 7, 9),
                                 Position::create(102, 7, 9)
                             )
@@ -594,18 +594,18 @@ final class EnumDeclarationParserTest extends TestCase
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(109, 8, 4),
                             Position::create(117, 8, 12)
                         )
                     ),
                     name: EnumMemberName::from('AUGUST'),
                     value: new IntegerLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(116, 8, 11),
                                 Position::create(116, 8, 11)
                             )
@@ -615,18 +615,18 @@ final class EnumDeclarationParserTest extends TestCase
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(123, 9, 4),
                             Position::create(134, 9, 15)
                         )
                     ),
                     name: EnumMemberName::from('SEPTEMBER'),
                     value: new IntegerLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(133, 9, 14),
                                 Position::create(133, 9, 14)
                             )
@@ -636,18 +636,18 @@ final class EnumDeclarationParserTest extends TestCase
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(140, 10, 4),
                             Position::create(150, 10, 14)
                         )
                     ),
                     name: EnumMemberName::from('OCTOBER'),
                     value: new IntegerLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(148, 10, 12),
                                 Position::create(149, 10, 13)
                             )
@@ -657,18 +657,18 @@ final class EnumDeclarationParserTest extends TestCase
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(156, 11, 4),
                             Position::create(167, 11, 15)
                         )
                     ),
                     name: EnumMemberName::from('NOVEMBER'),
                     value: new IntegerLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(165, 11, 13),
                                 Position::create(166, 11, 14)
                             )
@@ -678,18 +678,18 @@ final class EnumDeclarationParserTest extends TestCase
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    location: new Location(
-                        sourcePath: Path::fromString(':memory:'),
-                        boundaries: Boundaries::fromPositions(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
                             Position::create(173, 12, 4),
                             Position::create(184, 12, 15)
                         )
                     ),
                     name: EnumMemberName::from('DECEMBER'),
                     value: new IntegerLiteralNode(
-                        location: new Location(
-                            sourcePath: Path::fromString(':memory:'),
-                            boundaries: Boundaries::fromPositions(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
                                 Position::create(182, 12, 13),
                                 Position::create(183, 12, 14)
                             )
