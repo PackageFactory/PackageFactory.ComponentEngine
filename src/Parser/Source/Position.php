@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Source;
 
-final class Position implements \JsonSerializable
+final class Position
 {
     private function __construct(
         public readonly int $index,
@@ -41,35 +41,5 @@ final class Position implements \JsonSerializable
             rowIndex: $rowIndex,
             columnIndex: $columnIndex
         );
-    }
-
-    public function equals(Position $other): bool
-    {
-        return $this->index === $other->index;
-    }
-
-    public function gt(Position $other): bool
-    {
-        return $this->index > $other->index;
-    }
-
-    public function gte(Position $other): bool
-    {
-        return $this->gt($other) || $this->equals($other);
-    }
-
-    public function lt(Position $other): bool
-    {
-        return $this->index < $other->index;
-    }
-
-    public function lte(Position $other): bool
-    {
-        return $this->lt($other) || $this->equals($other);
-    }
-
-    public function jsonSerialize(): mixed
-    {
-        return $this->index;
     }
 }
