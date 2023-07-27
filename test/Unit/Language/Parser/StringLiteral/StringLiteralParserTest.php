@@ -22,7 +22,12 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\StringLiteral;
 
+use PackageFactory\ComponentEngine\Language\AST\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
+use PackageFactory\ComponentEngine\Language\Shared\Location\Location;
+use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
+use PackageFactory\ComponentEngine\Parser\Source\Path;
+use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PHPUnit\Framework\TestCase;
@@ -35,17 +40,22 @@ final class StringLiteralParserTest extends TestCase
     public function producesStringLiteralNodeForLiteralString(): void
     {
         $stringLiteralParser = new StringLiteralParser();
-
         $tokens = Tokenizer::fromSource(Source::fromString('"Hello World"'))->getIterator();
-        $stringLiteralNode = $stringLiteralParser->parse($tokens);
 
-        $this->assertEquals('Hello World', $stringLiteralNode->value);
-        $this->assertEquals(':memory:', $stringLiteralNode->location->sourcePath);
-        $this->assertEquals(1, $stringLiteralNode->location->boundaries->start->index);
-        $this->assertEquals(0, $stringLiteralNode->location->boundaries->start->rowIndex);
-        $this->assertEquals(1, $stringLiteralNode->location->boundaries->start->columnIndex);
-        $this->assertEquals(11, $stringLiteralNode->location->boundaries->end->index);
-        $this->assertEquals(0, $stringLiteralNode->location->boundaries->end->rowIndex);
-        $this->assertEquals(11, $stringLiteralNode->location->boundaries->end->columnIndex);
+        $expectedStringLiteralNode = new StringLiteralNode(
+            location: new Location(
+                sourcePath: Path::fromString(':memory:'),
+                boundaries: Boundaries::fromPositions(
+                    Position::create(1, 0, 1),
+                    Position::create(11, 0, 11)
+                )
+            ),
+            value: 'Hello World'
+        );
+
+        $this->assertEquals(
+            $expectedStringLiteralNode,
+            $stringLiteralParser->parse($tokens)
+        );
     }
 }
