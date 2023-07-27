@@ -367,7 +367,103 @@ final class EnumDeclarationParserTest extends TestCase
     /**
      * @test
      */
-    public function oneIntegerValueMember(): void
+    public function oneBinaryIntegerValueMember(): void
+    {
+        $enumDeclarationParser = new EnumDeclarationParser();
+        $tokens = Tokenizer::fromSource(Source::fromString('enum Foo { BAR(0b101) }'))->getIterator();
+
+        $expectedEnumDeclarationNode = new EnumDeclarationNode(
+            attributes: new NodeAttributes(
+                pathToSource: Path::fromString(':memory:'),
+                rangeInSource: Boundaries::fromPositions(
+                    Position::create(0, 0, 0),
+                    Position::create(22, 0, 22)
+                )
+            ),
+            enumName: EnumName::from('Foo'),
+            memberDeclarations: new EnumMemberDeclarationNodes(
+                new EnumMemberDeclarationNode(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
+                            Position::create(11, 0, 11),
+                            Position::create(20, 0, 20)
+                        )
+                    ),
+                    name: EnumMemberName::from('BAR'),
+                    value: new IntegerLiteralNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
+                                Position::create(15, 0, 15),
+                                Position::create(19, 0, 19)
+                            )
+                        ),
+                        format: IntegerFormat::BINARY,
+                        value: '0b101'
+                    )
+                )
+            )
+        );
+
+        $this->assertEquals(
+            $expectedEnumDeclarationNode,
+            $enumDeclarationParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function oneOctalIntegerValueMember(): void
+    {
+        $enumDeclarationParser = new EnumDeclarationParser();
+        $tokens = Tokenizer::fromSource(Source::fromString('enum Foo { BAR(0o644) }'))->getIterator();
+
+        $expectedEnumDeclarationNode = new EnumDeclarationNode(
+            attributes: new NodeAttributes(
+                pathToSource: Path::fromString(':memory:'),
+                rangeInSource: Boundaries::fromPositions(
+                    Position::create(0, 0, 0),
+                    Position::create(22, 0, 22)
+                )
+            ),
+            enumName: EnumName::from('Foo'),
+            memberDeclarations: new EnumMemberDeclarationNodes(
+                new EnumMemberDeclarationNode(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
+                            Position::create(11, 0, 11),
+                            Position::create(20, 0, 20)
+                        )
+                    ),
+                    name: EnumMemberName::from('BAR'),
+                    value: new IntegerLiteralNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
+                                Position::create(15, 0, 15),
+                                Position::create(19, 0, 19)
+                            )
+                        ),
+                        format: IntegerFormat::OCTAL,
+                        value: '0o644'
+                    )
+                )
+            )
+        );
+
+        $this->assertEquals(
+            $expectedEnumDeclarationNode,
+            $enumDeclarationParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function oneDecimalIntegerValueMember(): void
     {
         $enumDeclarationParser = new EnumDeclarationParser();
         $tokens = Tokenizer::fromSource(Source::fromString('enum Foo { BAR(42) }'))->getIterator();
@@ -401,6 +497,54 @@ final class EnumDeclarationParserTest extends TestCase
                         ),
                         format: IntegerFormat::DECIMAL,
                         value: '42'
+                    )
+                )
+            )
+        );
+
+        $this->assertEquals(
+            $expectedEnumDeclarationNode,
+            $enumDeclarationParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function oneHexadecimalIntegerValueMember(): void
+    {
+        $enumDeclarationParser = new EnumDeclarationParser();
+        $tokens = Tokenizer::fromSource(Source::fromString('enum Foo { BAR(0xABC) }'))->getIterator();
+
+        $expectedEnumDeclarationNode = new EnumDeclarationNode(
+            attributes: new NodeAttributes(
+                pathToSource: Path::fromString(':memory:'),
+                rangeInSource: Boundaries::fromPositions(
+                    Position::create(0, 0, 0),
+                    Position::create(22, 0, 22)
+                )
+            ),
+            enumName: EnumName::from('Foo'),
+            memberDeclarations: new EnumMemberDeclarationNodes(
+                new EnumMemberDeclarationNode(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Boundaries::fromPositions(
+                            Position::create(11, 0, 11),
+                            Position::create(20, 0, 20)
+                        )
+                    ),
+                    name: EnumMemberName::from('BAR'),
+                    value: new IntegerLiteralNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Boundaries::fromPositions(
+                                Position::create(15, 0, 15),
+                                Position::create(19, 0, 19)
+                            )
+                        ),
+                        format: IntegerFormat::HEXADECIMAL,
+                        value: '0xABC'
                     )
                 )
             )

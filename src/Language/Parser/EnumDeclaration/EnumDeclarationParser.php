@@ -126,7 +126,10 @@ final class EnumDeclarationParser
             $value = match ($valueToken->type) {
                 TokenType::STRING_QUOTED =>
                     (new StringLiteralParser())->parse($tokens),
-                TokenType::NUMBER_DECIMAL =>
+                TokenType::NUMBER_BINARY,
+                TokenType::NUMBER_OCTAL,
+                TokenType::NUMBER_DECIMAL,
+                TokenType::NUMBER_HEXADECIMAL =>
                     (new IntegerLiteralParser())->parse($tokens),
                 default => throw new \Exception('@TODO: Unexpected Token ' . Scanner::type($tokens)->value)
             };
