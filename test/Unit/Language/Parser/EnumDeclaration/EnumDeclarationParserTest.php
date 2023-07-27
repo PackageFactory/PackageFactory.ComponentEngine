@@ -31,7 +31,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerForma
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\EnumDeclaration\EnumDeclarationParser;
-use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Position;

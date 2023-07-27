@@ -24,7 +24,7 @@ namespace PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
-use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 
 final class EnumMemberDeclarationNode
 {

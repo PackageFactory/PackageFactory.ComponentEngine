@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration;
 
-use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 
 final class EnumDeclarationNode
 {

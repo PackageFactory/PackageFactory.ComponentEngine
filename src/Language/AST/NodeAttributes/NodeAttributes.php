@@ -20,7 +20,7 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\Shared\NodeAttributes;
+namespace PackageFactory\ComponentEngine\Language\AST\NodeAttributes;
 
 use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
 use PackageFactory\ComponentEngine\Parser\Source\Path;

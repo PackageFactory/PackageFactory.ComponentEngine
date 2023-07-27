@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Parser\StringLiteral;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
-use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;

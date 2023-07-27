@@ -29,7 +29,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberN
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumName;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
-use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;

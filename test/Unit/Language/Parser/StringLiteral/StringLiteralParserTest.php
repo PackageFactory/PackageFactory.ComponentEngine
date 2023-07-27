@@ -24,7 +24,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\StringLiteral
 
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
-use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Position;

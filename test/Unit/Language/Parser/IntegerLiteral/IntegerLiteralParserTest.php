@@ -25,7 +25,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\IntegerLitera
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerFormat;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
-use PackageFactory\ComponentEngine\Language\Shared\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
