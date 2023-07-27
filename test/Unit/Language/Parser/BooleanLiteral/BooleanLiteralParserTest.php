@@ -25,7 +25,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\BooleanLitera
 use PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\BooleanLiteral\BooleanLiteralParser;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
-use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
@@ -45,7 +45,7 @@ final class BooleanLiteralParserTest extends TestCase
         $expectedBooleanLiteralNode = new BooleanLiteralNode(
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
-                rangeInSource: Boundaries::from(
+                rangeInSource: Range::from(
                     Position::create(0, 0, 0),
                     Position::create(3, 0, 3)
                 )
@@ -70,7 +70,7 @@ final class BooleanLiteralParserTest extends TestCase
         $expectedBooleanLiteralNode = new BooleanLiteralNode(
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
-                rangeInSource: Boundaries::from(
+                rangeInSource: Range::from(
                     Position::create(0, 0, 0),
                     Position::create(4, 0, 4)
                 )

@@ -25,7 +25,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\NullLiteral;
 use PackageFactory\ComponentEngine\Language\AST\Node\NullLiteral\NullLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\NullLiteral\NullLiteralParser;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
-use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
@@ -45,7 +45,7 @@ final class NullLiteralParserTest extends TestCase
         $expectedNullLiteralNode = new NullLiteralNode(
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
-                rangeInSource: Boundaries::from(
+                rangeInSource: Range::from(
                     Position::create(0, 0, 0),
                     Position::create(3, 0, 3)
                 )

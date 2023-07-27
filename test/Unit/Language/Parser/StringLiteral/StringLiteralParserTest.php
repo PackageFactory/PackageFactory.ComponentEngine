@@ -25,7 +25,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\StringLiteral
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
-use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
@@ -45,7 +45,7 @@ final class StringLiteralParserTest extends TestCase
         $expectedStringLiteralNode = new StringLiteralNode(
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
-                rangeInSource: Boundaries::from(
+                rangeInSource: Range::from(
                     Position::create(1, 0, 1),
                     Position::create(11, 0, 11)
                 )

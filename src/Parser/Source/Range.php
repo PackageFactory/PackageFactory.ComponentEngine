@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Source;
 
-final class Boundaries implements \JsonSerializable
+final class Range implements \JsonSerializable
 {
     private function __construct(
         public readonly Position $start,
@@ -35,12 +35,12 @@ final class Boundaries implements \JsonSerializable
         return new self($start, $end);
     }
 
-    public function expandedTo(Boundaries $other): self
+    public function expandedTo(Range $other): self
     {
         return new self($this->start, $other->end);
     }
 
-    public function equals(Boundaries $other): bool
+    public function equals(Range $other): bool
     {
         return ($this->start->equals($other->start)
             && $this->end->equals($other->end));

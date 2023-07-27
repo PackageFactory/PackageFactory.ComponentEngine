@@ -30,7 +30,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumName;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
-use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
@@ -71,7 +71,7 @@ final class EnumDeclarationParser
         return new EnumDeclarationNode(
             attributes: new NodeAttributes(
                 pathToSource: $enumKeyWordToken->sourcePath,
-                rangeInSource: Boundaries::from(
+                rangeInSource: Range::from(
                     $enumKeyWordToken->boundaries->start,
                     $closingBracketToken->boundaries->end
                 )
@@ -142,7 +142,7 @@ final class EnumDeclarationParser
         return new EnumMemberDeclarationNode(
             attributes: new NodeAttributes(
                 pathToSource: $enumMemberNameToken->sourcePath,
-                rangeInSource: Boundaries::from(
+                rangeInSource: Range::from(
                     $enumMemberNameToken->boundaries->start,
                     $finalToken->boundaries->end
                 )
