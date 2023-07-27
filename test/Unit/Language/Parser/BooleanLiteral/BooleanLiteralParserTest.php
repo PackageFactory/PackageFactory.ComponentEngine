@@ -46,8 +46,8 @@ final class BooleanLiteralParserTest extends TestCase
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
-                    Position::create(0, 0, 0),
-                    Position::create(3, 0, 3)
+                    Position::from(0, 0, 0),
+                    Position::from(3, 0, 3)
                 )
             ),
             value: true
@@ -71,8 +71,8 @@ final class BooleanLiteralParserTest extends TestCase
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
-                    Position::create(0, 0, 0),
-                    Position::create(4, 0, 4)
+                    Position::from(0, 0, 0),
+                    Position::from(4, 0, 4)
                 )
             ),
             value: false

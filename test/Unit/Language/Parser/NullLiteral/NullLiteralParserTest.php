@@ -46,8 +46,8 @@ final class NullLiteralParserTest extends TestCase
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
-                    Position::create(0, 0, 0),
-                    Position::create(3, 0, 3)
+                    Position::from(0, 0, 0),
+                    Position::from(3, 0, 3)
                 )
             )
         );

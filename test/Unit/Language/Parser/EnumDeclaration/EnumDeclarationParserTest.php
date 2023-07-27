@@ -53,8 +53,8 @@ final class EnumDeclarationParserTest extends TestCase
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
-                    Position::create(0, 0, 0),
-                    Position::create(15, 0, 15)
+                    Position::from(0, 0, 0),
+                    Position::from(15, 0, 15)
                 )
             ),
             enumName: EnumName::from('Foo'),
@@ -63,8 +63,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(11, 0, 11),
-                            Position::create(13, 0, 13)
+                            Position::from(11, 0, 11),
+                            Position::from(13, 0, 13)
                         )
                     ),
                     name: EnumMemberName::from('BAR'),
@@ -91,8 +91,8 @@ final class EnumDeclarationParserTest extends TestCase
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
-                    Position::create(0, 0, 0),
-                    Position::create(23, 0, 23)
+                    Position::from(0, 0, 0),
+                    Position::from(23, 0, 23)
                 )
             ),
             enumName: EnumName::from('Foo'),
@@ -101,8 +101,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(11, 0, 11),
-                            Position::create(13, 0, 13)
+                            Position::from(11, 0, 11),
+                            Position::from(13, 0, 13)
                         )
                     ),
                     name: EnumMemberName::from('BAR'),
@@ -112,8 +112,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(15, 0, 15),
-                            Position::create(17, 0, 17)
+                            Position::from(15, 0, 15),
+                            Position::from(17, 0, 17)
                         )
                     ),
                     name: EnumMemberName::from('BAZ'),
@@ -123,8 +123,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(19, 0, 19),
-                            Position::create(21, 0, 21)
+                            Position::from(19, 0, 19),
+                            Position::from(21, 0, 21)
                         )
                     ),
                     name: EnumMemberName::from('QUX'),
@@ -151,8 +151,8 @@ final class EnumDeclarationParserTest extends TestCase
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
-                    Position::create(0, 0, 0),
-                    Position::create(22, 0, 22)
+                    Position::from(0, 0, 0),
+                    Position::from(22, 0, 22)
                 )
             ),
             enumName: EnumName::from('Foo'),
@@ -161,8 +161,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(11, 0, 11),
-                            Position::create(20, 0, 20)
+                            Position::from(11, 0, 11),
+                            Position::from(20, 0, 20)
                         )
                     ),
                     name: EnumMemberName::from('BAR'),
@@ -170,8 +170,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(16, 0, 16),
-                                Position::create(18, 0, 18)
+                                Position::from(16, 0, 16),
+                                Position::from(18, 0, 18)
                             )
                         ),
                         value: 'BAR'
@@ -209,8 +209,8 @@ final class EnumDeclarationParserTest extends TestCase
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
-                    Position::create(0, 0, 0),
-                    Position::create(149, 8, 0)
+                    Position::from(0, 0, 0),
+                    Position::from(149, 8, 0)
                 )
             ),
             enumName: EnumName::from('Weekday'),
@@ -219,8 +219,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(19, 1, 4),
-                            Position::create(31, 1, 16)
+                            Position::from(19, 1, 4),
+                            Position::from(31, 1, 16)
                         )
                     ),
                     name: EnumMemberName::from('MONDAY'),
@@ -228,8 +228,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(27, 1, 12),
-                                Position::create(29, 1, 14)
+                                Position::from(27, 1, 12),
+                                Position::from(29, 1, 14)
                             )
                         ),
                         value: 'mon'
@@ -239,8 +239,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(37, 2, 4),
-                            Position::create(50, 2, 17)
+                            Position::from(37, 2, 4),
+                            Position::from(50, 2, 17)
                         )
                     ),
                     name: EnumMemberName::from('TUESDAY'),
@@ -248,8 +248,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(46, 2, 13),
-                                Position::create(48, 2, 15)
+                                Position::from(46, 2, 13),
+                                Position::from(48, 2, 15)
                             )
                         ),
                         value: 'tue'
@@ -259,8 +259,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(56, 3, 4),
-                            Position::create(71, 3, 19)
+                            Position::from(56, 3, 4),
+                            Position::from(71, 3, 19)
                         )
                     ),
                     name: EnumMemberName::from('WEDNESDAY'),
@@ -268,8 +268,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(67, 3, 15),
-                                Position::create(69, 3, 17)
+                                Position::from(67, 3, 15),
+                                Position::from(69, 3, 17)
                             )
                         ),
                         value: 'wed'
@@ -279,8 +279,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(77, 4, 4),
-                            Position::create(91, 4, 18)
+                            Position::from(77, 4, 4),
+                            Position::from(91, 4, 18)
                         )
                     ),
                     name: EnumMemberName::from('THURSDAY'),
@@ -288,8 +288,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(87, 4, 14),
-                                Position::create(89, 4, 16)
+                                Position::from(87, 4, 14),
+                                Position::from(89, 4, 16)
                             )
                         ),
                         value: 'thu'
@@ -299,8 +299,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(97, 5, 4),
-                            Position::create(109, 5, 16)
+                            Position::from(97, 5, 4),
+                            Position::from(109, 5, 16)
                         )
                     ),
                     name: EnumMemberName::from('FRIDAY'),
@@ -308,8 +308,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(105, 5, 12),
-                                Position::create(107, 5, 14)
+                                Position::from(105, 5, 12),
+                                Position::from(107, 5, 14)
                             )
                         ),
                         value: 'fri'
@@ -319,8 +319,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(115, 6, 4),
-                            Position::create(129, 6, 18)
+                            Position::from(115, 6, 4),
+                            Position::from(129, 6, 18)
                         )
                     ),
                     name: EnumMemberName::from('SATURDAY'),
@@ -328,8 +328,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(125, 6, 14),
-                                Position::create(127, 6, 16)
+                                Position::from(125, 6, 14),
+                                Position::from(127, 6, 16)
                             )
                         ),
                         value: 'sat'
@@ -339,8 +339,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(135, 7, 4),
-                            Position::create(147, 7, 16)
+                            Position::from(135, 7, 4),
+                            Position::from(147, 7, 16)
                         )
                     ),
                     name: EnumMemberName::from('SUNDAY'),
@@ -348,8 +348,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(143, 7, 12),
-                                Position::create(145, 7, 14)
+                                Position::from(143, 7, 12),
+                                Position::from(145, 7, 14)
                             )
                         ),
                         value: 'sun'
@@ -376,8 +376,8 @@ final class EnumDeclarationParserTest extends TestCase
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
-                    Position::create(0, 0, 0),
-                    Position::create(22, 0, 22)
+                    Position::from(0, 0, 0),
+                    Position::from(22, 0, 22)
                 )
             ),
             enumName: EnumName::from('Foo'),
@@ -386,8 +386,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(11, 0, 11),
-                            Position::create(20, 0, 20)
+                            Position::from(11, 0, 11),
+                            Position::from(20, 0, 20)
                         )
                     ),
                     name: EnumMemberName::from('BAR'),
@@ -395,8 +395,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(15, 0, 15),
-                                Position::create(19, 0, 19)
+                                Position::from(15, 0, 15),
+                                Position::from(19, 0, 19)
                             )
                         ),
                         format: IntegerFormat::BINARY,
@@ -424,8 +424,8 @@ final class EnumDeclarationParserTest extends TestCase
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
-                    Position::create(0, 0, 0),
-                    Position::create(22, 0, 22)
+                    Position::from(0, 0, 0),
+                    Position::from(22, 0, 22)
                 )
             ),
             enumName: EnumName::from('Foo'),
@@ -434,8 +434,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(11, 0, 11),
-                            Position::create(20, 0, 20)
+                            Position::from(11, 0, 11),
+                            Position::from(20, 0, 20)
                         )
                     ),
                     name: EnumMemberName::from('BAR'),
@@ -443,8 +443,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(15, 0, 15),
-                                Position::create(19, 0, 19)
+                                Position::from(15, 0, 15),
+                                Position::from(19, 0, 19)
                             )
                         ),
                         format: IntegerFormat::OCTAL,
@@ -472,8 +472,8 @@ final class EnumDeclarationParserTest extends TestCase
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
-                    Position::create(0, 0, 0),
-                    Position::create(19, 0, 19)
+                    Position::from(0, 0, 0),
+                    Position::from(19, 0, 19)
                 )
             ),
             enumName: EnumName::from('Foo'),
@@ -482,8 +482,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(11, 0, 11),
-                            Position::create(17, 0, 17)
+                            Position::from(11, 0, 11),
+                            Position::from(17, 0, 17)
                         )
                     ),
                     name: EnumMemberName::from('BAR'),
@@ -491,8 +491,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(15, 0, 15),
-                                Position::create(16, 0, 16)
+                                Position::from(15, 0, 15),
+                                Position::from(16, 0, 16)
                             )
                         ),
                         format: IntegerFormat::DECIMAL,
@@ -520,8 +520,8 @@ final class EnumDeclarationParserTest extends TestCase
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
-                    Position::create(0, 0, 0),
-                    Position::create(22, 0, 22)
+                    Position::from(0, 0, 0),
+                    Position::from(22, 0, 22)
                 )
             ),
             enumName: EnumName::from('Foo'),
@@ -530,8 +530,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(11, 0, 11),
-                            Position::create(20, 0, 20)
+                            Position::from(11, 0, 11),
+                            Position::from(20, 0, 20)
                         )
                     ),
                     name: EnumMemberName::from('BAR'),
@@ -539,8 +539,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(15, 0, 15),
-                                Position::create(19, 0, 19)
+                                Position::from(15, 0, 15),
+                                Position::from(19, 0, 19)
                             )
                         ),
                         format: IntegerFormat::HEXADECIMAL,
@@ -584,8 +584,8 @@ final class EnumDeclarationParserTest extends TestCase
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
-                    Position::create(0, 0, 0),
-                    Position::create(186, 13, 0)
+                    Position::from(0, 0, 0),
+                    Position::from(186, 13, 0)
                 )
             ),
             enumName: EnumName::from('Month'),
@@ -594,8 +594,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(17, 1, 4),
-                            Position::create(26, 1, 13)
+                            Position::from(17, 1, 4),
+                            Position::from(26, 1, 13)
                         )
                     ),
                     name: EnumMemberName::from('JANUARY'),
@@ -603,8 +603,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(25, 1, 12),
-                                Position::create(25, 1, 12)
+                                Position::from(25, 1, 12),
+                                Position::from(25, 1, 12)
                             )
                         ),
                         format: IntegerFormat::DECIMAL,
@@ -615,8 +615,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(32, 2, 4),
-                            Position::create(42, 2, 14)
+                            Position::from(32, 2, 4),
+                            Position::from(42, 2, 14)
                         )
                     ),
                     name: EnumMemberName::from('FEBRUARY'),
@@ -624,8 +624,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(41, 2, 13),
-                                Position::create(41, 2, 13)
+                                Position::from(41, 2, 13),
+                                Position::from(41, 2, 13)
                             )
                         ),
                         format: IntegerFormat::DECIMAL,
@@ -636,8 +636,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(48, 3, 4),
-                            Position::create(55, 3, 11)
+                            Position::from(48, 3, 4),
+                            Position::from(55, 3, 11)
                         )
                     ),
                     name: EnumMemberName::from('MARCH'),
@@ -645,8 +645,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(54, 3, 10),
-                                Position::create(54, 3, 10)
+                                Position::from(54, 3, 10),
+                                Position::from(54, 3, 10)
                             )
                         ),
                         format: IntegerFormat::DECIMAL,
@@ -657,8 +657,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(61, 4, 4),
-                            Position::create(68, 4, 11)
+                            Position::from(61, 4, 4),
+                            Position::from(68, 4, 11)
                         )
                     ),
                     name: EnumMemberName::from('APRIL'),
@@ -666,8 +666,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(67, 4, 10),
-                                Position::create(67, 4, 10)
+                                Position::from(67, 4, 10),
+                                Position::from(67, 4, 10)
                             )
                         ),
                         format: IntegerFormat::DECIMAL,
@@ -678,8 +678,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(74, 5, 4),
-                            Position::create(79, 5, 9)
+                            Position::from(74, 5, 4),
+                            Position::from(79, 5, 9)
                         )
                     ),
                     name: EnumMemberName::from('MAY'),
@@ -687,8 +687,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(78, 5, 8),
-                                Position::create(78, 5, 8)
+                                Position::from(78, 5, 8),
+                                Position::from(78, 5, 8)
                             )
                         ),
                         format: IntegerFormat::DECIMAL,
@@ -699,8 +699,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(85, 6, 4),
-                            Position::create(91, 6, 10)
+                            Position::from(85, 6, 4),
+                            Position::from(91, 6, 10)
                         )
                     ),
                     name: EnumMemberName::from('JUNE'),
@@ -708,8 +708,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(90, 6, 9),
-                                Position::create(90, 6, 9)
+                                Position::from(90, 6, 9),
+                                Position::from(90, 6, 9)
                             )
                         ),
                         format: IntegerFormat::DECIMAL,
@@ -720,8 +720,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(97, 7, 4),
-                            Position::create(103, 7, 10)
+                            Position::from(97, 7, 4),
+                            Position::from(103, 7, 10)
                         )
                     ),
                     name: EnumMemberName::from('JULY'),
@@ -729,8 +729,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(102, 7, 9),
-                                Position::create(102, 7, 9)
+                                Position::from(102, 7, 9),
+                                Position::from(102, 7, 9)
                             )
                         ),
                         format: IntegerFormat::DECIMAL,
@@ -741,8 +741,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(109, 8, 4),
-                            Position::create(117, 8, 12)
+                            Position::from(109, 8, 4),
+                            Position::from(117, 8, 12)
                         )
                     ),
                     name: EnumMemberName::from('AUGUST'),
@@ -750,8 +750,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(116, 8, 11),
-                                Position::create(116, 8, 11)
+                                Position::from(116, 8, 11),
+                                Position::from(116, 8, 11)
                             )
                         ),
                         format: IntegerFormat::DECIMAL,
@@ -762,8 +762,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(123, 9, 4),
-                            Position::create(134, 9, 15)
+                            Position::from(123, 9, 4),
+                            Position::from(134, 9, 15)
                         )
                     ),
                     name: EnumMemberName::from('SEPTEMBER'),
@@ -771,8 +771,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(133, 9, 14),
-                                Position::create(133, 9, 14)
+                                Position::from(133, 9, 14),
+                                Position::from(133, 9, 14)
                             )
                         ),
                         format: IntegerFormat::DECIMAL,
@@ -783,8 +783,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(140, 10, 4),
-                            Position::create(150, 10, 14)
+                            Position::from(140, 10, 4),
+                            Position::from(150, 10, 14)
                         )
                     ),
                     name: EnumMemberName::from('OCTOBER'),
@@ -792,8 +792,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(148, 10, 12),
-                                Position::create(149, 10, 13)
+                                Position::from(148, 10, 12),
+                                Position::from(149, 10, 13)
                             )
                         ),
                         format: IntegerFormat::DECIMAL,
@@ -804,8 +804,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(156, 11, 4),
-                            Position::create(167, 11, 15)
+                            Position::from(156, 11, 4),
+                            Position::from(167, 11, 15)
                         )
                     ),
                     name: EnumMemberName::from('NOVEMBER'),
@@ -813,8 +813,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(165, 11, 13),
-                                Position::create(166, 11, 14)
+                                Position::from(165, 11, 13),
+                                Position::from(166, 11, 14)
                             )
                         ),
                         format: IntegerFormat::DECIMAL,
@@ -825,8 +825,8 @@ final class EnumDeclarationParserTest extends TestCase
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
-                            Position::create(173, 12, 4),
-                            Position::create(184, 12, 15)
+                            Position::from(173, 12, 4),
+                            Position::from(184, 12, 15)
                         )
                     ),
                     name: EnumMemberName::from('DECEMBER'),
@@ -834,8 +834,8 @@ final class EnumDeclarationParserTest extends TestCase
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                Position::create(182, 12, 13),
-                                Position::create(183, 12, 14)
+                                Position::from(182, 12, 13),
+                                Position::from(183, 12, 14)
                             )
                         ),
                         format: IntegerFormat::DECIMAL,

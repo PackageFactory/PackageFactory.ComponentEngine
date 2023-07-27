@@ -66,8 +66,8 @@ final class Source implements \IteratorAggregate
 
             yield Fragment::create(
                 $character,
-                Position::create($index, $rowIndex, $columnIndex),
-                Position::create($index, $rowIndex, $columnIndex),
+                Position::from($index, $rowIndex, $columnIndex),
+                Position::from($index, $rowIndex, $columnIndex),
                 $this
             );
 

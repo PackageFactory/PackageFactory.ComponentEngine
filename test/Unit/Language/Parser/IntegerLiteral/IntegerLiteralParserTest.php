@@ -47,8 +47,8 @@ final class IntegerLiteralParserTest extends TestCase
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
-                    Position::create(0, 0, 0),
-                    Position::create(11, 0, 11)
+                    Position::from(0, 0, 0),
+                    Position::from(11, 0, 11)
                 )
             ),
             format: IntegerFormat::BINARY,
@@ -73,8 +73,8 @@ final class IntegerLiteralParserTest extends TestCase
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
-                    Position::create(0, 0, 0),
-                    Position::create(4, 0, 4)
+                    Position::from(0, 0, 0),
+                    Position::from(4, 0, 4)
                 )
             ),
             format: IntegerFormat::OCTAL,
@@ -99,8 +99,8 @@ final class IntegerLiteralParserTest extends TestCase
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
-                    Position::create(0, 0, 0),
-                    Position::create(9, 0, 9)
+                    Position::from(0, 0, 0),
+                    Position::from(9, 0, 9)
                 )
             ),
             format: IntegerFormat::DECIMAL,
@@ -125,8 +125,8 @@ final class IntegerLiteralParserTest extends TestCase
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
-                    Position::create(0, 0, 0),
-                    Position::create(16, 0, 16)
+                    Position::from(0, 0, 0),
+                    Position::from(16, 0, 16)
                 )
             ),
             format: IntegerFormat::HEXADECIMAL,

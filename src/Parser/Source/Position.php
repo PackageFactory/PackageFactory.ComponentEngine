@@ -31,7 +31,7 @@ final class Position implements \JsonSerializable
     ) {
     }
 
-    public static function create(
+    public static function from(
         int $index,
         int $rowIndex,
         int $columnIndex
