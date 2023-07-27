@@ -43,30 +43,13 @@ final class EnumDeclarationParser
      */
     public function parse(\Iterator $tokens): EnumDeclarationNode
     {
-        Scanner::assertType($tokens, TokenType::KEYWORD_ENUM);
+        $enumKeyWordToken = $this->extractEnumKeywordToken($tokens);
+        $enumName = $this->parseEnumName($tokens);
 
-        $enumKeyWordToken = $tokens->current();
-
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
-        Scanner::assertType($tokens, TokenType::STRING);
-
-        $enumKeyNameToken = $tokens->current();
-        $enumName = EnumName::from($enumKeyNameToken->value);
-
-        Scanner::skipOne($tokens);
-        Scanner::skipSpace($tokens);
-        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_OPEN);
-        Scanner::skipOne($tokens);
+        $this->skipOpeningBracketToken($tokens);
 
         $enumMemberDeclarations = $this->parseEnumMemberDeclarations($tokens);
-
-        Scanner::skipSpace($tokens);
-        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
-
-        $closingBracketToken = $tokens->current();
-
-        Scanner::skipOne($tokens);
+        $closingBracketToken = $this->extractClosingBracketToken($tokens);
 
         return new EnumDeclarationNode(
             attributes: new NodeAttributes(
@@ -83,6 +66,49 @@ final class EnumDeclarationParser
 
     /**
      * @param \Iterator<mixed,Token> $tokens
+     * @return Token
+     */
+    private function extractEnumKeywordToken(\Iterator $tokens): Token
+    {
+        Scanner::assertType($tokens, TokenType::KEYWORD_ENUM);
+
+        $enumKeyWordToken = $tokens->current();
+
+        Scanner::skipOne($tokens);
+        Scanner::skipSpace($tokens);
+
+        return $enumKeyWordToken;
+    }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
+     * @return EnumName
+     */
+    private function parseEnumName(\Iterator $tokens): EnumName
+    {
+        Scanner::assertType($tokens, TokenType::STRING);
+
+        $enumKeyNameToken = $tokens->current();
+        $enumName = EnumName::from($enumKeyNameToken->value);
+
+        Scanner::skipOne($tokens);
+        Scanner::skipSpace($tokens);
+
+        return $enumName;
+    }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
+     * @return void
+     */
+    private function skipOpeningBracketToken(\Iterator $tokens): void
+    {
+        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_OPEN);
+        Scanner::skipOne($tokens);
+    }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
      * @return EnumMemberDeclarationNodes
      */
     private function parseEnumMemberDeclarations(\Iterator $tokens): EnumMemberDeclarationNodes
@@ -93,7 +119,7 @@ final class EnumDeclarationParser
 
             switch (Scanner::type($tokens)) {
                 case TokenType::STRING:
-                    $items[] = $this->parseEnumMemberDeclarationNode($tokens);
+                    $items[] = $this->parseEnumMemberDeclaration($tokens);
                     break;
                 case TokenType::BRACKET_CURLY_CLOSE:
                     break 2;
@@ -107,11 +133,26 @@ final class EnumDeclarationParser
 
     /**
      * @param \Iterator<mixed,Token> $tokens
+     * @return Token
+     */
+    private function extractClosingBracketToken(\Iterator $tokens): Token
+    {
+        Scanner::skipSpace($tokens);
+        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
+
+        $closingBracketToken = $tokens->current();
+
+        Scanner::skipOne($tokens);
+
+        return $closingBracketToken;
+    }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
      * @return EnumMemberDeclarationNode
      */
-    private function parseEnumMemberDeclarationNode(\Iterator $tokens): EnumMemberDeclarationNode
+    private function parseEnumMemberDeclaration(\Iterator $tokens): EnumMemberDeclarationNode
     {
-        Scanner::skipSpaceAndComments($tokens);
         Scanner::assertType($tokens, TokenType::STRING);
 
         $enumMemberNameToken = $finalToken = $tokens->current();
