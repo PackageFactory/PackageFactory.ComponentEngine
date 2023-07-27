@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Source;
 
-final class Range implements \JsonSerializable
+final class Range
 {
     private function __construct(
         public readonly Position $start,
@@ -33,24 +33,5 @@ final class Range implements \JsonSerializable
     public static function from(Position $start, Position $end): self
     {
         return new self($start, $end);
-    }
-
-    public function expandedTo(Range $other): self
-    {
-        return new self($this->start, $other->end);
-    }
-
-    public function equals(Range $other): bool
-    {
-        return ($this->start->equals($other->start)
-            && $this->end->equals($other->end));
-    }
-
-    public function jsonSerialize(): mixed
-    {
-        return [
-            'start' => $this->start,
-            'end' => $this->end,
-        ];
     }
 }
