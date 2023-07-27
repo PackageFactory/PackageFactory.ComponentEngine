@@ -22,11 +22,12 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\EnumDeclaration;
 
+use PackageFactory\ComponentEngine\Domain\EnumName\EnumName;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberDeclarationNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberName;
-use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumName;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumNameNode;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
@@ -44,7 +45,7 @@ final class EnumDeclarationParser
     public function parse(\Iterator $tokens): EnumDeclarationNode
     {
         $enumKeyWordToken = $this->extractEnumKeywordToken($tokens);
-        $enumName = $this->parseEnumName($tokens);
+        $enumNameNode = $this->parseEnumName($tokens);
 
         $this->skipOpeningBracketToken($tokens);
 
@@ -59,7 +60,7 @@ final class EnumDeclarationParser
                     $closingBracketToken->boundaries->end
                 )
             ),
-            enumName: $enumName,
+            name: $enumNameNode,
             memberDeclarations: $enumMemberDeclarations
         );
     }
@@ -82,19 +83,25 @@ final class EnumDeclarationParser
 
     /**
      * @param \Iterator<mixed,Token> $tokens
-     * @return EnumName
+     * @return EnumNameNode
      */
-    private function parseEnumName(\Iterator $tokens): EnumName
+    private function parseEnumName(\Iterator $tokens): EnumNameNode
     {
         Scanner::assertType($tokens, TokenType::STRING);
 
         $enumKeyNameToken = $tokens->current();
-        $enumName = EnumName::from($enumKeyNameToken->value);
+        $enumNameNode = new EnumNameNode(
+            attributes: new NodeAttributes(
+                pathToSource: $enumKeyNameToken->sourcePath,
+                rangeInSource: $enumKeyNameToken->boundaries
+            ),
+            value: EnumName::from($enumKeyNameToken->value)
+        );
 
         Scanner::skipOne($tokens);
         Scanner::skipSpace($tokens);
 
-        return $enumName;
+        return $enumNameNode;
     }
 
     /**

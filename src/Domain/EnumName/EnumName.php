@@ -20,17 +20,17 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration;
+namespace PackageFactory\ComponentEngine\Domain\EnumName;
 
-use PackageFactory\ComponentEngine\Language\AST\Node\Node;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
-
-final class EnumDeclarationNode extends Node
+final class EnumName
 {
-    public function __construct(
-        public readonly NodeAttributes $attributes,
-        public readonly EnumNameNode $name,
-        public readonly EnumMemberDeclarationNodes $memberDeclarations
+    private function __construct(
+        public readonly string $value
     ) {
+    }
+
+    public static function from(string $string): self
+    {
+        return new self($string);
     }
 }

@@ -22,11 +22,12 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\EnumDeclaration;
 
+use PackageFactory\ComponentEngine\Domain\EnumName\EnumName;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberDeclarationNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberName;
-use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumName;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerFormat;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
@@ -57,7 +58,16 @@ final class EnumDeclarationParserTest extends TestCase
                     new Position(0, 15)
                 )
             ),
-            enumName: EnumName::from('Foo'),
+            name: new EnumNameNode(
+                attributes: new NodeAttributes(
+                    pathToSource: Path::fromString(':memory:'),
+                    rangeInSource: Range::from(
+                        new Position(0, 5),
+                        new Position(0, 7)
+                    )
+                ),
+                value: EnumName::from('Foo')
+            ),
             memberDeclarations: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
@@ -95,7 +105,16 @@ final class EnumDeclarationParserTest extends TestCase
                     new Position(0, 23)
                 )
             ),
-            enumName: EnumName::from('Foo'),
+            name: new EnumNameNode(
+                attributes: new NodeAttributes(
+                    pathToSource: Path::fromString(':memory:'),
+                    rangeInSource: Range::from(
+                        new Position(0, 5),
+                        new Position(0, 7)
+                    )
+                ),
+                value: EnumName::from('Foo')
+            ),
             memberDeclarations: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
@@ -155,7 +174,16 @@ final class EnumDeclarationParserTest extends TestCase
                     new Position(0, 22)
                 )
             ),
-            enumName: EnumName::from('Foo'),
+            name: new EnumNameNode(
+                attributes: new NodeAttributes(
+                    pathToSource: Path::fromString(':memory:'),
+                    rangeInSource: Range::from(
+                        new Position(0, 5),
+                        new Position(0, 7)
+                    )
+                ),
+                value: EnumName::from('Foo')
+            ),
             memberDeclarations: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
@@ -213,7 +241,16 @@ final class EnumDeclarationParserTest extends TestCase
                     new Position(8, 0)
                 )
             ),
-            enumName: EnumName::from('Weekday'),
+            name: new EnumNameNode(
+                attributes: new NodeAttributes(
+                    pathToSource: Path::fromString(':memory:'),
+                    rangeInSource: Range::from(
+                        new Position(0, 5),
+                        new Position(0, 11)
+                    )
+                ),
+                value: EnumName::from('Weekday')
+            ),
             memberDeclarations: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
@@ -380,7 +417,16 @@ final class EnumDeclarationParserTest extends TestCase
                     new Position(0, 22)
                 )
             ),
-            enumName: EnumName::from('Foo'),
+            name: new EnumNameNode(
+                attributes: new NodeAttributes(
+                    pathToSource: Path::fromString(':memory:'),
+                    rangeInSource: Range::from(
+                        new Position(0, 5),
+                        new Position(0, 7)
+                    )
+                ),
+                value: EnumName::from('Foo')
+            ),
             memberDeclarations: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
@@ -428,7 +474,16 @@ final class EnumDeclarationParserTest extends TestCase
                     new Position(0, 22)
                 )
             ),
-            enumName: EnumName::from('Foo'),
+            name: new EnumNameNode(
+                attributes: new NodeAttributes(
+                    pathToSource: Path::fromString(':memory:'),
+                    rangeInSource: Range::from(
+                        new Position(0, 5),
+                        new Position(0, 7)
+                    )
+                ),
+                value: EnumName::from('Foo')
+            ),
             memberDeclarations: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
@@ -476,7 +531,16 @@ final class EnumDeclarationParserTest extends TestCase
                     new Position(0, 19)
                 )
             ),
-            enumName: EnumName::from('Foo'),
+            name: new EnumNameNode(
+                attributes: new NodeAttributes(
+                    pathToSource: Path::fromString(':memory:'),
+                    rangeInSource: Range::from(
+                        new Position(0, 5),
+                        new Position(0, 7)
+                    )
+                ),
+                value: EnumName::from('Foo')
+            ),
             memberDeclarations: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
@@ -524,7 +588,16 @@ final class EnumDeclarationParserTest extends TestCase
                     new Position(0, 22)
                 )
             ),
-            enumName: EnumName::from('Foo'),
+            name: new EnumNameNode(
+                attributes: new NodeAttributes(
+                    pathToSource: Path::fromString(':memory:'),
+                    rangeInSource: Range::from(
+                        new Position(0, 5),
+                        new Position(0, 7)
+                    )
+                ),
+                value: EnumName::from('Foo')
+            ),
             memberDeclarations: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
@@ -588,7 +661,16 @@ final class EnumDeclarationParserTest extends TestCase
                     new Position(13, 0)
                 )
             ),
-            enumName: EnumName::from('Month'),
+            name: new EnumNameNode(
+                attributes: new NodeAttributes(
+                    pathToSource: Path::fromString(':memory:'),
+                    rangeInSource: Range::from(
+                        new Position(0, 5),
+                        new Position(0, 9)
+                    )
+                ),
+                value: EnumName::from('Month')
+            ),
             memberDeclarations: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
