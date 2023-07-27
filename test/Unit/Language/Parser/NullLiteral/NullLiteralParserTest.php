@@ -22,7 +22,12 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\NullLiteral;
 
+use PackageFactory\ComponentEngine\Language\AST\NullLiteral\NullLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\NullLiteral\NullLiteralParser;
+use PackageFactory\ComponentEngine\Language\Shared\Location\Location;
+use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
+use PackageFactory\ComponentEngine\Parser\Source\Path;
+use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PHPUnit\Framework\TestCase;
@@ -35,16 +40,21 @@ final class NullLiteralParserTest extends TestCase
     public function producesAstNodeForNullIfGivenOneNullToken(): void
     {
         $nullLiteralParser = new NullLiteralParser();
-
         $tokens = Tokenizer::fromSource(Source::fromString('null'))->getIterator();
-        $nullLiteralNode = $nullLiteralParser->parse($tokens);
 
-        $this->assertEquals(':memory:', $nullLiteralNode->location->sourcePath);
-        $this->assertEquals(0, $nullLiteralNode->location->boundaries->start->index);
-        $this->assertEquals(0, $nullLiteralNode->location->boundaries->start->rowIndex);
-        $this->assertEquals(0, $nullLiteralNode->location->boundaries->start->columnIndex);
-        $this->assertEquals(3, $nullLiteralNode->location->boundaries->end->index);
-        $this->assertEquals(0, $nullLiteralNode->location->boundaries->end->rowIndex);
-        $this->assertEquals(3, $nullLiteralNode->location->boundaries->end->columnIndex);
+        $expectedNullLiteralNode = new NullLiteralNode(
+            location: new Location(
+                sourcePath: Path::fromString(':memory:'),
+                boundaries: Boundaries::fromPositions(
+                    Position::create(0, 0, 0),
+                    Position::create(3, 0, 3)
+                )
+            )
+        );
+
+        $this->assertEquals(
+            $expectedNullLiteralNode,
+            $nullLiteralParser->parse($tokens)
+        );
     }
 }
