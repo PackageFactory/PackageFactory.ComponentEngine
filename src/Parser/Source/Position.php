@@ -24,22 +24,9 @@ namespace PackageFactory\ComponentEngine\Parser\Source;
 
 final class Position
 {
-    private function __construct(
-        public readonly int $index,
-        public readonly int $rowIndex,
-        public readonly int $columnIndex
+    public function __construct(
+        public readonly int $lineNumber,
+        public readonly int $columnNumber
     ) {
-    }
-
-    public static function from(
-        int $index,
-        int $rowIndex,
-        int $columnIndex
-    ): Position {
-        return new Position(
-            index: $index,
-            rowIndex: $rowIndex,
-            columnIndex: $columnIndex
-        );
     }
 }

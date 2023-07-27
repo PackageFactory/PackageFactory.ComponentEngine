@@ -57,9 +57,9 @@ final class Scanner
             "@TODO: Unexpected token: "
                 . $actualType->value
                 . " at "
-                . ($tokens->current()->boundaries->start->rowIndex + 1)
+                . ($tokens->current()->boundaries->start->lineNumber + 1)
                 . ":"
-                . ($tokens->current()->boundaries->start->columnIndex + 1)
+                . ($tokens->current()->boundaries->start->columnNumber + 1)
         );
     }
 

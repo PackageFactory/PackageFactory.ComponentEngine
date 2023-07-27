@@ -46,8 +46,8 @@ final class StringLiteralParserTest extends TestCase
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
-                    Position::from(1, 0, 1),
-                    Position::from(11, 0, 11)
+                    new Position(0, 1),
+                    new Position(0, 11)
                 )
             ),
             value: 'Hello World'

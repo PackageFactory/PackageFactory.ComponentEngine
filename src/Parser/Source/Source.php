@@ -57,8 +57,8 @@ final class Source implements \IteratorAggregate
      */
     public function getIterator(): \Iterator
     {
-        $rowIndex = 0;
-        $columnIndex = 0;
+        $lineNumber = 0;
+        $columnNumber = 0;
         $length = strlen($this->contents);
 
         for ($index = 0; $index < $length; $index++) {
@@ -66,16 +66,16 @@ final class Source implements \IteratorAggregate
 
             yield Fragment::create(
                 $character,
-                Position::from($index, $rowIndex, $columnIndex),
-                Position::from($index, $rowIndex, $columnIndex),
+                new Position($lineNumber, $columnNumber),
+                new Position($lineNumber, $columnNumber),
                 $this
             );
 
             if ($character === "\n") {
-                $rowIndex++;
-                $columnIndex = 0;
+                $lineNumber++;
+                $columnNumber = 0;
             } else {
-                $columnIndex++;
+                $columnNumber++;
             }
         }
     }
