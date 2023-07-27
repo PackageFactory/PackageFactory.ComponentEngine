@@ -22,7 +22,13 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\IntegerLiteral;
 
+use PackageFactory\ComponentEngine\Language\AST\IntegerLiteral\IntegerFormat;
+use PackageFactory\ComponentEngine\Language\AST\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
+use PackageFactory\ComponentEngine\Language\Shared\Location\Location;
+use PackageFactory\ComponentEngine\Parser\Source\Boundaries;
+use PackageFactory\ComponentEngine\Parser\Source\Path;
+use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PHPUnit\Framework\TestCase;
@@ -35,17 +41,23 @@ final class IntegerLiteralParserTest extends TestCase
     public function producesIntegerLiteralNodeForDecimals(): void
     {
         $integerLiteralParser = new IntegerLiteralParser();
-
         $tokens = Tokenizer::fromSource(Source::fromString('1234567890'))->getIterator();
-        $integerLiteralNode = $integerLiteralParser->parse($tokens);
 
-        $this->assertEquals('1234567890', $integerLiteralNode->value);
-        $this->assertEquals(':memory:', $integerLiteralNode->location->sourcePath);
-        $this->assertEquals(0, $integerLiteralNode->location->boundaries->start->index);
-        $this->assertEquals(0, $integerLiteralNode->location->boundaries->start->rowIndex);
-        $this->assertEquals(0, $integerLiteralNode->location->boundaries->start->columnIndex);
-        $this->assertEquals(9, $integerLiteralNode->location->boundaries->end->index);
-        $this->assertEquals(0, $integerLiteralNode->location->boundaries->end->rowIndex);
-        $this->assertEquals(9, $integerLiteralNode->location->boundaries->end->columnIndex);
+        $expectedIntegerLiteralNode = new IntegerLiteralNode(
+            location: new Location(
+                sourcePath: Path::fromString(':memory:'),
+                boundaries: Boundaries::fromPositions(
+                    Position::create(0, 0, 0),
+                    Position::create(9, 0, 9)
+                )
+            ),
+            format: IntegerFormat::DECIMAL,
+            value: '1234567890'
+        );
+
+        $this->assertEquals(
+            $expectedIntegerLiteralNode,
+            $integerLiteralParser->parse($tokens)
+        );
     }
 }
