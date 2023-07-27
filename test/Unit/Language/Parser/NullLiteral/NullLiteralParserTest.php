@@ -45,7 +45,7 @@ final class NullLiteralParserTest extends TestCase
         $expectedNullLiteralNode = new NullLiteralNode(
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
-                rangeInSource: Boundaries::fromPositions(
+                rangeInSource: Boundaries::from(
                     Position::create(0, 0, 0),
                     Position::create(3, 0, 3)
                 )

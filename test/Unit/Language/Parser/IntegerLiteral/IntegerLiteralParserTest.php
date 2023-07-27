@@ -46,7 +46,7 @@ final class IntegerLiteralParserTest extends TestCase
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
-                rangeInSource: Boundaries::fromPositions(
+                rangeInSource: Boundaries::from(
                     Position::create(0, 0, 0),
                     Position::create(11, 0, 11)
                 )
@@ -72,7 +72,7 @@ final class IntegerLiteralParserTest extends TestCase
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
-                rangeInSource: Boundaries::fromPositions(
+                rangeInSource: Boundaries::from(
                     Position::create(0, 0, 0),
                     Position::create(4, 0, 4)
                 )
@@ -98,7 +98,7 @@ final class IntegerLiteralParserTest extends TestCase
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
-                rangeInSource: Boundaries::fromPositions(
+                rangeInSource: Boundaries::from(
                     Position::create(0, 0, 0),
                     Position::create(9, 0, 9)
                 )
@@ -124,7 +124,7 @@ final class IntegerLiteralParserTest extends TestCase
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
-                rangeInSource: Boundaries::fromPositions(
+                rangeInSource: Boundaries::from(
                     Position::create(0, 0, 0),
                     Position::create(16, 0, 16)
                 )

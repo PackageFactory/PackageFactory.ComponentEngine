@@ -45,7 +45,7 @@ final class BooleanLiteralParserTest extends TestCase
         $expectedBooleanLiteralNode = new BooleanLiteralNode(
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
-                rangeInSource: Boundaries::fromPositions(
+                rangeInSource: Boundaries::from(
                     Position::create(0, 0, 0),
                     Position::create(3, 0, 3)
                 )
@@ -70,7 +70,7 @@ final class BooleanLiteralParserTest extends TestCase
         $expectedBooleanLiteralNode = new BooleanLiteralNode(
             attributes: new NodeAttributes(
                 pathToSource: Path::fromString(':memory:'),
-                rangeInSource: Boundaries::fromPositions(
+                rangeInSource: Boundaries::from(
                     Position::create(0, 0, 0),
                     Position::create(4, 0, 4)
                 )

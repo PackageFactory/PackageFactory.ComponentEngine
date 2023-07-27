@@ -43,7 +43,7 @@ final class Token
         return new Token(
             $type,
             $fragment->value,
-            Boundaries::fromPositions($fragment->start, $fragment->end),
+            Boundaries::from($fragment->start, $fragment->end),
             $fragment->source->path
         );
     }
@@ -56,7 +56,7 @@ final class Token
         return new Token(
             $type,
             '',
-            Boundaries::fromPositions($startFragment->start, $endFragment->end),
+            Boundaries::from($startFragment->start, $endFragment->end),
             $startFragment->source->path
         );
     }

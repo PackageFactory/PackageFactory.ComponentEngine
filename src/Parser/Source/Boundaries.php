@@ -30,7 +30,7 @@ final class Boundaries implements \JsonSerializable
     ) {
     }
 
-    public static function fromPositions(Position $start, Position $end): self
+    public static function from(Position $start, Position $end): self
     {
         return new self($start, $end);
     }

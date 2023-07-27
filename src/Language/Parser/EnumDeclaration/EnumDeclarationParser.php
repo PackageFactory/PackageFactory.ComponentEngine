@@ -71,7 +71,7 @@ final class EnumDeclarationParser
         return new EnumDeclarationNode(
             attributes: new NodeAttributes(
                 pathToSource: $enumKeyWordToken->sourcePath,
-                rangeInSource: Boundaries::fromPositions(
+                rangeInSource: Boundaries::from(
                     $enumKeyWordToken->boundaries->start,
                     $closingBracketToken->boundaries->end
                 )
@@ -142,7 +142,7 @@ final class EnumDeclarationParser
         return new EnumMemberDeclarationNode(
             attributes: new NodeAttributes(
                 pathToSource: $enumMemberNameToken->sourcePath,
-                rangeInSource: Boundaries::fromPositions(
+                rangeInSource: Boundaries::from(
                     $enumMemberNameToken->boundaries->start,
                     $finalToken->boundaries->end
                 )
