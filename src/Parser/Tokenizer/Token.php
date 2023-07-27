@@ -61,15 +61,6 @@ final class Token
         );
     }
 
-    public function equals(Token $other): bool
-    {
-        return ($this->type === $other->type
-            && $this->value === $other->value
-            && $this->boundaries->equals($other->boundaries)
-            && $this->sourcePath->equals($other->sourcePath)
-        );
-    }
-
     public function __toString(): string
     {
         return $this->value;
