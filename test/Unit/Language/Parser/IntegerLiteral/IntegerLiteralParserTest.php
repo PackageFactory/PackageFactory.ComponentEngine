@@ -38,7 +38,59 @@ final class IntegerLiteralParserTest extends TestCase
     /**
      * @test
      */
-    public function producesIntegerLiteralNodeForDecimals(): void
+    public function binaryInteger(): void
+    {
+        $integerLiteralParser = new IntegerLiteralParser();
+        $tokens = Tokenizer::fromSource(Source::fromString('0b1010110101'))->getIterator();
+
+        $expectedIntegerLiteralNode = new IntegerLiteralNode(
+            location: new Location(
+                sourcePath: Path::fromString(':memory:'),
+                boundaries: Boundaries::fromPositions(
+                    Position::create(0, 0, 0),
+                    Position::create(11, 0, 11)
+                )
+            ),
+            format: IntegerFormat::BINARY,
+            value: '0b1010110101'
+        );
+
+        $this->assertEquals(
+            $expectedIntegerLiteralNode,
+            $integerLiteralParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function octalInteger(): void
+    {
+        $integerLiteralParser = new IntegerLiteralParser();
+        $tokens = Tokenizer::fromSource(Source::fromString('0o755'))->getIterator();
+
+        $expectedIntegerLiteralNode = new IntegerLiteralNode(
+            location: new Location(
+                sourcePath: Path::fromString(':memory:'),
+                boundaries: Boundaries::fromPositions(
+                    Position::create(0, 0, 0),
+                    Position::create(4, 0, 4)
+                )
+            ),
+            format: IntegerFormat::OCTAL,
+            value: '0o755'
+        );
+
+        $this->assertEquals(
+            $expectedIntegerLiteralNode,
+            $integerLiteralParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function decimalInteger(): void
     {
         $integerLiteralParser = new IntegerLiteralParser();
         $tokens = Tokenizer::fromSource(Source::fromString('1234567890'))->getIterator();
@@ -53,6 +105,32 @@ final class IntegerLiteralParserTest extends TestCase
             ),
             format: IntegerFormat::DECIMAL,
             value: '1234567890'
+        );
+
+        $this->assertEquals(
+            $expectedIntegerLiteralNode,
+            $integerLiteralParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function hexadecimalInteger(): void
+    {
+        $integerLiteralParser = new IntegerLiteralParser();
+        $tokens = Tokenizer::fromSource(Source::fromString('0x123456789ABCDEF'))->getIterator();
+
+        $expectedIntegerLiteralNode = new IntegerLiteralNode(
+            location: new Location(
+                sourcePath: Path::fromString(':memory:'),
+                boundaries: Boundaries::fromPositions(
+                    Position::create(0, 0, 0),
+                    Position::create(16, 0, 16)
+                )
+            ),
+            format: IntegerFormat::HEXADECIMAL,
+            value: '0x123456789ABCDEF'
         );
 
         $this->assertEquals(
