@@ -22,9 +22,10 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration;
 
+use PackageFactory\ComponentEngine\Language\AST\Node\Node;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 
-final class EnumDeclarationNode
+final class EnumDeclarationNode extends Node
 {
     public function __construct(
         public readonly NodeAttributes $attributes,

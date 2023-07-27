@@ -20,17 +20,14 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral;
+namespace PackageFactory\ComponentEngine\Language\AST\Node;
 
-use PackageFactory\ComponentEngine\Language\AST\Node\Node;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 
-final class BooleanLiteralNode extends Node
+abstract class Node
 {
-    public function __construct(
-        public readonly NodeAttributes $attributes,
-        public readonly bool $value
+    protected function __construct(
+        public readonly NodeAttributes $attributes
     ) {
-        // parent::__construct($attributes);
     }
 }

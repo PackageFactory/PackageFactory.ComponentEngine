@@ -22,9 +22,10 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\AST\Node\NullLiteral;
 
+use PackageFactory\ComponentEngine\Language\AST\Node\Node;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 
-final class NullLiteralNode
+final class NullLiteralNode extends Node
 {
     public function __construct(
         public readonly NodeAttributes $attributes
