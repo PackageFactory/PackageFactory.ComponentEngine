@@ -22,22 +22,15 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\AST\Node\TypeReference;
 
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
 use PackageFactory\ComponentEngine\Language\AST\Node\Node;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 
-final class TypeReferenceNode extends Node
+final class TypeNameNode extends Node
 {
     public function __construct(
         public readonly NodeAttributes $attributes,
-        public readonly TypeNameNode $name,
-        public readonly bool $isArray,
-        public readonly bool $isOptional
+        public readonly TypeName $value
     ) {
-        if ($isArray === true && $isOptional === true) {
-            throw InvalidTypeReferenceNode::becauseItWasOptionalAndArrayAtTheSameTime(
-                affectedTypeName: $name->value,
-                attributesOfAffectedNode: $attributes
-            );
-        }
     }
 }

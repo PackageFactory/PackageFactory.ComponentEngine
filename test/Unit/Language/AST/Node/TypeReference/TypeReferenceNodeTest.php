@@ -24,6 +24,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\AST\Node\TypeReferen
 
 use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeReferenceNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
@@ -33,20 +34,30 @@ use PHPUnit\Framework\TestCase;
 
 final class TypeReferenceNodeTest extends TestCase
 {
+    private NodeAttributes $dummyAttributes;
+
+    public function setUp(): void
+    {
+        $this->dummyAttributes = new NodeAttributes(
+            pathToSource: Path::fromString(':memory:'),
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 0)
+            )
+        );
+    }
+
     /**
      * @test
      */
     public function validSimpleTypeReferenceIsValid(): void
     {
         $typeReferenceNode = new TypeReferenceNode(
-            attributes: new NodeAttributes(
-                pathToSource: Path::fromString(':memory:'),
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 0)
-                )
+            attributes: $this->dummyAttributes,
+            name: new TypeNameNode(
+                attributes: $this->dummyAttributes,
+                value: TypeName::from('Foo')
             ),
-            name: TypeName::from('Foo'),
             isArray: false,
             isOptional: false
         );
@@ -62,14 +73,11 @@ final class TypeReferenceNodeTest extends TestCase
     public function validArrayTypeReferenceIsValid(): void
     {
         $typeReferenceNode = new TypeReferenceNode(
-            attributes: new NodeAttributes(
-                pathToSource: Path::fromString(':memory:'),
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 0)
-                )
+            attributes: $this->dummyAttributes,
+            name: new TypeNameNode(
+                attributes: $this->dummyAttributes,
+                value: TypeName::from('Foo')
             ),
-            name: TypeName::from('Foo'),
             isArray: true,
             isOptional: false
         );
@@ -85,14 +93,11 @@ final class TypeReferenceNodeTest extends TestCase
     public function validOptionalTypeReferenceIsValid(): void
     {
         $typeReferenceNode = new TypeReferenceNode(
-            attributes: new NodeAttributes(
-                pathToSource: Path::fromString(':memory:'),
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 0)
-                )
+            attributes: $this->dummyAttributes,
+            name: new TypeNameNode(
+                attributes: $this->dummyAttributes,
+                value: TypeName::from('Foo')
             ),
-            name: TypeName::from('Foo'),
             isArray: false,
             isOptional: true
         );
@@ -107,25 +112,21 @@ final class TypeReferenceNodeTest extends TestCase
      */
     public function typeReferenceCannotBeArrayAndOptionalSimultaneously(): void
     {
-        $attributes = new NodeAttributes(
-            pathToSource: Path::fromString(':memory:'),
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 0)
-            )
-        );
         $name = TypeName::from('Foo');
 
         $this->expectExceptionObject(
             InvalidTypeReferenceNode::becauseItWasOptionalAndArrayAtTheSameTime(
                 affectedTypeName: $name,
-                attributesOfAffectedNode: $attributes
+                attributesOfAffectedNode: $this->dummyAttributes
             )
         );
 
         new TypeReferenceNode(
-            attributes: $attributes,
-            name: $name,
+            attributes: $this->dummyAttributes,
+            name: new TypeNameNode(
+                attributes: $this->dummyAttributes,
+                value: $name
+            ),
             isArray: true,
             isOptional: true
         );

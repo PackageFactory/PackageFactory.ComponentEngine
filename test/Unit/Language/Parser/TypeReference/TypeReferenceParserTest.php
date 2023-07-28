@@ -24,6 +24,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\TypeReference
 
 use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeReferenceNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
 use PackageFactory\ComponentEngine\Language\Parser\TypeReference\TypeReferenceParser;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
@@ -54,7 +55,16 @@ final class TypeReferenceParserTest extends TestCase
                     new Position(0, 2)
                 )
             ),
-            name: TypeName::from('Foo'),
+            name: new TypeNameNode(
+                attributes: new NodeAttributes(
+                    pathToSource: Path::fromString(':memory:'),
+                    rangeInSource: Range::from(
+                        new Position(0, 0),
+                        new Position(0, 2)
+                    )
+                ),
+                value: TypeName::from('Foo')
+            ),
             isArray: false,
             isOptional: false
         );
@@ -81,7 +91,16 @@ final class TypeReferenceParserTest extends TestCase
                     new Position(0, 4)
                 )
             ),
-            name: TypeName::from('Foo'),
+            name: new TypeNameNode(
+                attributes: new NodeAttributes(
+                    pathToSource: Path::fromString(':memory:'),
+                    rangeInSource: Range::from(
+                        new Position(0, 0),
+                        new Position(0, 2)
+                    )
+                ),
+                value: TypeName::from('Foo')
+            ),
             isArray: true,
             isOptional: false
         );
@@ -108,7 +127,16 @@ final class TypeReferenceParserTest extends TestCase
                     new Position(0, 3)
                 )
             ),
-            name: TypeName::from('Foo'),
+            name: new TypeNameNode(
+                attributes: new NodeAttributes(
+                    pathToSource: Path::fromString(':memory:'),
+                    rangeInSource: Range::from(
+                        new Position(0, 1),
+                        new Position(0, 3)
+                    )
+                ),
+                value: TypeName::from('Foo')
+            ),
             isArray: false,
             isOptional: true
         );

@@ -24,6 +24,7 @@ namespace PackageFactory\ComponentEngine\Language\Parser\TypeReference;
 
 use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeReferenceNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
@@ -73,7 +74,13 @@ final class TypeReferenceParser
                         $finalToken->boundaries->end
                     )
                 ),
-                name: TypeName::from($typeNameToken->value),
+                name: new TypeNameNode(
+                    attributes: new NodeAttributes(
+                        pathToSource: $typeNameToken->sourcePath,
+                        rangeInSource: $typeNameToken->boundaries
+                    ),
+                    value: TypeName::from($typeNameToken->value)
+                ),
                 isArray: $isArray,
                 isOptional: $isOptional
             );
