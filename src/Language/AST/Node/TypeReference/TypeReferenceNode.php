@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,18 +20,25 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Source;
+namespace PackageFactory\ComponentEngine\Language\AST\Node\TypeReference;
 
-final class Position
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Language\AST\Node\Node;
+use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+
+final class TypeReferenceNode extends Node
 {
     public function __construct(
-        public readonly int $lineNumber,
-        public readonly int $columnNumber
+        public readonly NodeAttributes $attributes,
+        public readonly TypeName $name,
+        public readonly bool $isArray,
+        public readonly bool $isOptional
     ) {
-    }
-
-    public function toDebugString(): string
-    {
-        return sprintf('line %s, column %s', $this->lineNumber, $this->columnNumber);
+        if ($isArray === true && $isOptional === true) {
+            throw InvalidTypeReferenceNode::becauseItWasOptionalAndArrayAtTheSameTime(
+                affectedTypeName: $name,
+                attributesOfAffectedNode: $attributes
+            );
+        }
     }
 }

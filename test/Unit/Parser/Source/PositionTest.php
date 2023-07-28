@@ -20,18 +20,19 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Source;
+namespace PackageFactory\ComponentEngine\Test\Unit\Parser\Source;
 
-final class Position
+use PackageFactory\ComponentEngine\Parser\Source\Position;
+use PHPUnit\Framework\TestCase;
+
+final class PositionTest extends TestCase
 {
-    public function __construct(
-        public readonly int $lineNumber,
-        public readonly int $columnNumber
-    ) {
-    }
-
-    public function toDebugString(): string
+    /**
+     * @test
+     */
+    public function providesDebugStringRepresentingItself(): void
     {
-        return sprintf('line %s, column %s', $this->lineNumber, $this->columnNumber);
+        $position = new Position(42, 102);
+        $this->assertEquals('line 42, column 102', $position->toDebugString());
     }
 }

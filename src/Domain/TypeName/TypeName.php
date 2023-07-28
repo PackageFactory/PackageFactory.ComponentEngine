@@ -20,18 +20,17 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Source;
+namespace PackageFactory\ComponentEngine\Domain\TypeName;
 
-final class Position
+final class TypeName
 {
-    public function __construct(
-        public readonly int $lineNumber,
-        public readonly int $columnNumber
+    private function __construct(
+        public readonly string $value
     ) {
     }
 
-    public function toDebugString(): string
+    public static function from(string $string): self
     {
-        return sprintf('line %s, column %s', $this->lineNumber, $this->columnNumber);
+        return new self($string);
     }
 }

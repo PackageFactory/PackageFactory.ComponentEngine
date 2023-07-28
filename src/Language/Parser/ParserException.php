@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,18 +20,24 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Source;
+namespace PackageFactory\ComponentEngine\Language\Parser;
 
-final class Position
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+
+abstract class ParserException extends \Exception
 {
-    public function __construct(
-        public readonly int $lineNumber,
-        public readonly int $columnNumber
+    protected function __construct(
+        int $code,
+        string $message,
+        public readonly Token $affectedToken,
+        ?\Exception $cause = null
     ) {
-    }
+        $message = sprintf(
+            '[%s] %s',
+            $affectedToken->boundaries->start->toDebugString(),
+            $message
+        );
 
-    public function toDebugString(): string
-    {
-        return sprintf('line %s, column %s', $this->lineNumber, $this->columnNumber);
+        parent::__construct($message, $code, $cause);
     }
 }
