@@ -23,29 +23,17 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\AST\Node\TypeReference;
 
 use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeNames;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeReferenceNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
-use PackageFactory\ComponentEngine\Parser\Source\Path;
-use PackageFactory\ComponentEngine\Parser\Source\Position;
-use PackageFactory\ComponentEngine\Parser\Source\Range;
+use PackageFactory\ComponentEngine\Test\Unit\Language\AST\Helpers\DummyAttributes;
 use PHPUnit\Framework\TestCase;
 
 final class TypeReferenceNodeTest extends TestCase
 {
-    private NodeAttributes $dummyAttributes;
-
-    public function setUp(): void
-    {
-        $this->dummyAttributes = new NodeAttributes(
-            pathToSource: Path::fromString(':memory:'),
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 0)
-            )
-        );
-    }
+    use DummyAttributes;
 
     /**
      * @test
@@ -54,15 +42,18 @@ final class TypeReferenceNodeTest extends TestCase
     {
         $typeReferenceNode = new TypeReferenceNode(
             attributes: $this->dummyAttributes,
-            name: new TypeNameNode(
-                attributes: $this->dummyAttributes,
-                value: TypeName::from('Foo')
+            names: new TypeNameNodes(
+                new TypeNameNode(
+                    attributes: $this->dummyAttributes,
+                    value: TypeName::from('Foo')
+                )
             ),
             isArray: false,
             isOptional: false
         );
 
-        $this->assertEquals('Foo', $typeReferenceNode->name->value);
+        $this->assertEquals(1, $typeReferenceNode->names->getSize());
+        $this->assertEquals('Foo', $typeReferenceNode->names->items[0]->value->value);
         $this->assertFalse($typeReferenceNode->isArray);
         $this->assertFalse($typeReferenceNode->isOptional);
     }
@@ -74,15 +65,18 @@ final class TypeReferenceNodeTest extends TestCase
     {
         $typeReferenceNode = new TypeReferenceNode(
             attributes: $this->dummyAttributes,
-            name: new TypeNameNode(
-                attributes: $this->dummyAttributes,
-                value: TypeName::from('Foo')
+            names: new TypeNameNodes(
+                new TypeNameNode(
+                    attributes: $this->dummyAttributes,
+                    value: TypeName::from('Foo')
+                )
             ),
             isArray: true,
             isOptional: false
         );
 
-        $this->assertEquals('Foo', $typeReferenceNode->name->value);
+        $this->assertEquals(1, $typeReferenceNode->names->getSize());
+        $this->assertEquals('Foo', $typeReferenceNode->names->items[0]->value->value);
         $this->assertTrue($typeReferenceNode->isArray);
         $this->assertFalse($typeReferenceNode->isOptional);
     }
@@ -94,15 +88,18 @@ final class TypeReferenceNodeTest extends TestCase
     {
         $typeReferenceNode = new TypeReferenceNode(
             attributes: $this->dummyAttributes,
-            name: new TypeNameNode(
-                attributes: $this->dummyAttributes,
-                value: TypeName::from('Foo')
+            names: new TypeNameNodes(
+                new TypeNameNode(
+                    attributes: $this->dummyAttributes,
+                    value: TypeName::from('Foo')
+                )
             ),
             isArray: false,
             isOptional: true
         );
 
-        $this->assertEquals('Foo', $typeReferenceNode->name->value);
+        $this->assertEquals(1, $typeReferenceNode->names->getSize());
+        $this->assertEquals('Foo', $typeReferenceNode->names->items[0]->value->value);
         $this->assertFalse($typeReferenceNode->isArray);
         $this->assertTrue($typeReferenceNode->isOptional);
     }
@@ -116,16 +113,18 @@ final class TypeReferenceNodeTest extends TestCase
 
         $this->expectExceptionObject(
             InvalidTypeReferenceNode::becauseItWasOptionalAndArrayAtTheSameTime(
-                affectedTypeName: $name,
+                affectedTypeNames: new TypeNames($name),
                 attributesOfAffectedNode: $this->dummyAttributes
             )
         );
 
         new TypeReferenceNode(
             attributes: $this->dummyAttributes,
-            name: new TypeNameNode(
-                attributes: $this->dummyAttributes,
-                value: $name
+            names: new TypeNameNodes(
+                new TypeNameNode(
+                    attributes: $this->dummyAttributes,
+                    value: $name
+                )
             ),
             isArray: true,
             isOptional: true

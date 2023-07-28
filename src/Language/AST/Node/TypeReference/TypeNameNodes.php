@@ -22,22 +22,38 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\AST\Node\TypeReference;
 
-use PackageFactory\ComponentEngine\Language\AST\Node\Node;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeNames;
 
-final class TypeReferenceNode extends Node
+final class TypeNameNodes
 {
-    public function __construct(
-        public readonly NodeAttributes $attributes,
-        public readonly TypeNameNodes $names,
-        public readonly bool $isArray,
-        public readonly bool $isOptional
-    ) {
-        if ($isArray === true && $isOptional === true) {
-            throw InvalidTypeReferenceNode::becauseItWasOptionalAndArrayAtTheSameTime(
-                affectedTypeNames: $names->toTypeNames(),
-                attributesOfAffectedNode: $attributes
+    /**
+     * @var TypeNameNode[]
+     */
+    public readonly array $items;
+
+    private ?TypeNames $cachedTypeNames = null;
+
+    public function __construct(TypeNameNode ...$items)
+    {
+        $this->items = $items;
+    }
+
+    public function getSize(): int
+    {
+        return count($this->items);
+    }
+
+    public function toTypeNames(): TypeNames
+    {
+        if ($this->cachedTypeNames === null) {
+            $typeNamesAsArray = array_map(
+                static fn (TypeNameNode $typeNameNode) => $typeNameNode->value,
+                $this->items
             );
+
+            $this->cachedTypeNames = new TypeNames(...$typeNamesAsArray);
         }
+
+        return $this->cachedTypeNames;
     }
 }

@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,25 +20,28 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\AST\Node\TypeReference;
+namespace PackageFactory\ComponentEngine\Test\Unit\Domain\TypeName;
 
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
 use PackageFactory\ComponentEngine\Domain\TypeName\TypeNames;
-use PackageFactory\ComponentEngine\Language\AST\ASTException;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PHPUnit\Framework\TestCase;
 
-final class InvalidTypeReferenceNode extends ASTException
+final class TypeNamesTest extends TestCase
 {
-    public static function becauseItWasOptionalAndArrayAtTheSameTime(
-        TypeNames $affectedTypeNames,
-        NodeAttributes $attributesOfAffectedNode
-    ): self {
-        return new self(
-            code: 1690538480,
-            message: sprintf(
-                'The type reference to "%s" must not be optional and array at the same time.',
-                $affectedTypeNames->toDebugString()
-            ),
-            attributesOfAffectedNode: $attributesOfAffectedNode
+    /**
+     * @test
+     */
+    public function providesDebugString(): void
+    {
+        $typeNames = new TypeNames(
+            TypeName::from('Foo'),
+            TypeName::from('Bar'),
+            TypeName::from('Baz')
+        );
+
+        $this->assertEquals(
+            'Foo|Bar|Baz',
+            $typeNames->toDebugString()
         );
     }
 }

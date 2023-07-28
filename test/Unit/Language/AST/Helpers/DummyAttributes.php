@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,24 +20,28 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\AST\Node\TypeReference;
+namespace PackageFactory\ComponentEngine\Test\Unit\Language\AST\Helpers;
 
-use PackageFactory\ComponentEngine\Language\AST\Node\Node;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Path;
+use PackageFactory\ComponentEngine\Parser\Source\Position;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
-final class TypeReferenceNode extends Node
+trait DummyAttributes
 {
-    public function __construct(
-        public readonly NodeAttributes $attributes,
-        public readonly TypeNameNodes $names,
-        public readonly bool $isArray,
-        public readonly bool $isOptional
-    ) {
-        if ($isArray === true && $isOptional === true) {
-            throw InvalidTypeReferenceNode::becauseItWasOptionalAndArrayAtTheSameTime(
-                affectedTypeNames: $names->toTypeNames(),
-                attributesOfAffectedNode: $attributes
-            );
-        }
+    protected NodeAttributes $dummyAttributes;
+
+    /**
+     * @before
+     */
+    public function setUpDummyAttributes(): void
+    {
+        $this->dummyAttributes = new NodeAttributes(
+            pathToSource: Path::fromString(':memory:'),
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 0)
+            )
+        );
     }
 }
