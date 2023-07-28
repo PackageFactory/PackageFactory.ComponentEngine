@@ -70,7 +70,7 @@ final class EnumDeclarationParserTest extends TestCase
                 ),
                 value: EnumName::from('Foo')
             ),
-            memberDeclarations: new EnumMemberDeclarationNodes(
+            members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
@@ -126,7 +126,7 @@ final class EnumDeclarationParserTest extends TestCase
                 ),
                 value: EnumName::from('Foo')
             ),
-            memberDeclarations: new EnumMemberDeclarationNodes(
+            members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
@@ -222,7 +222,7 @@ final class EnumDeclarationParserTest extends TestCase
                 ),
                 value: EnumName::from('Foo')
             ),
-            memberDeclarations: new EnumMemberDeclarationNodes(
+            members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
@@ -307,7 +307,7 @@ final class EnumDeclarationParserTest extends TestCase
                 ),
                 value: EnumName::from('Weekday')
             ),
-            memberDeclarations: new EnumMemberDeclarationNodes(
+            members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
@@ -609,7 +609,7 @@ final class EnumDeclarationParserTest extends TestCase
                 ),
                 value: EnumName::from('Foo')
             ),
-            memberDeclarations: new EnumMemberDeclarationNodes(
+            members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
@@ -684,7 +684,7 @@ final class EnumDeclarationParserTest extends TestCase
                 ),
                 value: EnumName::from('Foo')
             ),
-            memberDeclarations: new EnumMemberDeclarationNodes(
+            members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
@@ -759,7 +759,7 @@ final class EnumDeclarationParserTest extends TestCase
                 ),
                 value: EnumName::from('Foo')
             ),
-            memberDeclarations: new EnumMemberDeclarationNodes(
+            members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
@@ -834,7 +834,7 @@ final class EnumDeclarationParserTest extends TestCase
                 ),
                 value: EnumName::from('Foo')
             ),
-            memberDeclarations: new EnumMemberDeclarationNodes(
+            members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),
@@ -925,7 +925,7 @@ final class EnumDeclarationParserTest extends TestCase
                 ),
                 value: EnumName::from('Month')
             ),
-            memberDeclarations: new EnumMemberDeclarationNodes(
+            members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
                     attributes: new NodeAttributes(
                         pathToSource: Path::fromString(':memory:'),

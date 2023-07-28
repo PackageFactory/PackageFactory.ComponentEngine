@@ -30,7 +30,7 @@ final class EnumDeclarationNode extends Node
     public function __construct(
         public readonly NodeAttributes $attributes,
         public readonly EnumNameNode $name,
-        public readonly EnumMemberDeclarationNodes $memberDeclarations
+        public readonly EnumMemberDeclarationNodes $members
     ) {
     }
 }

@@ -72,7 +72,7 @@ final class EnumDeclarationParser
                 )
             ),
             name: $enumNameNode,
-            memberDeclarations: $enumMemberDeclarations
+            members: $enumMemberDeclarations
         );
     }
 
