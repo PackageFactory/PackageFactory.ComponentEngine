@@ -22,21 +22,16 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration;
 
-final class EnumMemberDeclarationNodes
+use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Node;
+use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+
+final class EnumMemberValueNode extends Node
 {
-    /**
-     * @var array<string,EnumMemberDeclarationNode>
-     */
-    public readonly array $items;
-
     public function __construct(
-        EnumMemberDeclarationNode ...$items
+        public readonly NodeAttributes $attributes,
+        public readonly StringLiteralNode|IntegerLiteralNode $value
     ) {
-        $itemsAsHashMap = [];
-        foreach ($items as $item) {
-            $itemsAsHashMap[$item->name->value->value] = $item;
-        }
-
-        $this->items = $itemsAsHashMap;
     }
 }

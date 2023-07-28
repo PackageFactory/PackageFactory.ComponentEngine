@@ -22,15 +22,15 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration;
 
-final class EnumMemberName
-{
-    private function __construct(
-        public readonly string $value
-    ) {
-    }
+use PackageFactory\ComponentEngine\Domain\EnumMemberName\EnumMemberName;
+use PackageFactory\ComponentEngine\Language\AST\Node\Node;
+use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 
-    public static function from(string $string): self
-    {
-        return new self($string);
+final class EnumMemberNameNode extends Node
+{
+    public function __construct(
+        public readonly NodeAttributes $attributes,
+        public readonly EnumMemberName $value
+    ) {
     }
 }

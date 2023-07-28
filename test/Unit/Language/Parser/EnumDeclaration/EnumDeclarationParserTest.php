@@ -22,11 +22,13 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\EnumDeclaration;
 
+use PackageFactory\ComponentEngine\Domain\EnumMemberName\EnumMemberName;
 use PackageFactory\ComponentEngine\Domain\EnumName\EnumName;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberDeclarationNodes;
-use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberName;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberNameNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberValueNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerFormat;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
@@ -77,7 +79,16 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(0, 13)
                         )
                     ),
-                    name: EnumMemberName::from('BAR'),
+                    name: new EnumMemberNameNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(0, 11),
+                                new Position(0, 13)
+                            )
+                        ),
+                        value: EnumMemberName::from('BAR')
+                    ),
                     value: null
                 )
             )
@@ -124,7 +135,16 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(0, 13)
                         )
                     ),
-                    name: EnumMemberName::from('BAR'),
+                    name: new EnumMemberNameNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(0, 11),
+                                new Position(0, 13)
+                            )
+                        ),
+                        value: EnumMemberName::from('BAR')
+                    ),
                     value: null
                 ),
                 new EnumMemberDeclarationNode(
@@ -135,7 +155,16 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(0, 17)
                         )
                     ),
-                    name: EnumMemberName::from('BAZ'),
+                    name: new EnumMemberNameNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(0, 15),
+                                new Position(0, 17)
+                            )
+                        ),
+                        value: EnumMemberName::from('BAZ')
+                    ),
                     value: null
                 ),
                 new EnumMemberDeclarationNode(
@@ -146,7 +175,16 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(0, 21)
                         )
                     ),
-                    name: EnumMemberName::from('QUX'),
+                    name: new EnumMemberNameNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(0, 19),
+                                new Position(0, 21)
+                            )
+                        ),
+                        value: EnumMemberName::from('QUX')
+                    ),
                     value: null
                 )
             )
@@ -193,16 +231,34 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(0, 20)
                         )
                     ),
-                    name: EnumMemberName::from('BAR'),
-                    value: new StringLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(0, 16),
-                                new Position(0, 18)
+                                new Position(0, 11),
+                                new Position(0, 13)
                             )
                         ),
-                        value: 'BAR'
+                        value: EnumMemberName::from('BAR')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(0, 14),
+                                new Position(0, 20)
+                            )
+                        ),
+                        value: new StringLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(0, 16),
+                                    new Position(0, 18)
+                                )
+                            ),
+                            value: 'BAR'
+                        )
                     )
                 )
             )
@@ -260,16 +316,34 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(1, 16)
                         )
                     ),
-                    name: EnumMemberName::from('MONDAY'),
-                    value: new StringLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(1, 12),
-                                new Position(1, 14)
+                                new Position(1, 4),
+                                new Position(1, 9)
                             )
                         ),
-                        value: 'mon'
+                        value: EnumMemberName::from('MONDAY')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(1, 10),
+                                new Position(1, 16)
+                            )
+                        ),
+                        value: new StringLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(1, 12),
+                                    new Position(1, 14)
+                                )
+                            ),
+                            value: 'mon'
+                        )
                     )
                 ),
                 new EnumMemberDeclarationNode(
@@ -280,16 +354,34 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(2, 17)
                         )
                     ),
-                    name: EnumMemberName::from('TUESDAY'),
-                    value: new StringLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(2, 13),
-                                new Position(2, 15)
+                                new Position(2, 4),
+                                new Position(2, 10)
                             )
                         ),
-                        value: 'tue'
+                        value: EnumMemberName::from('TUESDAY')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(2, 11),
+                                new Position(2, 17)
+                            )
+                        ),
+                        value: new StringLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(2, 13),
+                                    new Position(2, 15)
+                                )
+                            ),
+                            value: 'tue'
+                        )
                     )
                 ),
                 new EnumMemberDeclarationNode(
@@ -300,16 +392,34 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(3, 19)
                         )
                     ),
-                    name: EnumMemberName::from('WEDNESDAY'),
-                    value: new StringLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(3, 15),
-                                new Position(3, 17)
+                                new Position(3, 4),
+                                new Position(3, 12)
                             )
                         ),
-                        value: 'wed'
+                        value: EnumMemberName::from('WEDNESDAY')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(3, 13),
+                                new Position(3, 19)
+                            )
+                        ),
+                        value: new StringLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(3, 15),
+                                    new Position(3, 17)
+                                )
+                            ),
+                            value: 'wed'
+                        )
                     )
                 ),
                 new EnumMemberDeclarationNode(
@@ -320,16 +430,34 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(4, 18)
                         )
                     ),
-                    name: EnumMemberName::from('THURSDAY'),
-                    value: new StringLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(4, 14),
-                                new Position(4, 16)
+                                new Position(4, 4),
+                                new Position(4, 11)
                             )
                         ),
-                        value: 'thu'
+                        value: EnumMemberName::from('THURSDAY')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(4, 12),
+                                new Position(4, 18)
+                            )
+                        ),
+                        value: new StringLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(4, 14),
+                                    new Position(4, 16)
+                                )
+                            ),
+                            value: 'thu'
+                        )
                     )
                 ),
                 new EnumMemberDeclarationNode(
@@ -340,16 +468,34 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(5, 16)
                         )
                     ),
-                    name: EnumMemberName::from('FRIDAY'),
-                    value: new StringLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(5, 12),
-                                new Position(5, 14)
+                                new Position(5, 4),
+                                new Position(5, 9)
                             )
                         ),
-                        value: 'fri'
+                        value: EnumMemberName::from('FRIDAY')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(5, 10),
+                                new Position(5, 16)
+                            )
+                        ),
+                        value: new StringLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(5, 12),
+                                    new Position(5, 14)
+                                )
+                            ),
+                            value: 'fri'
+                        )
                     )
                 ),
                 new EnumMemberDeclarationNode(
@@ -360,16 +506,34 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(6, 18)
                         )
                     ),
-                    name: EnumMemberName::from('SATURDAY'),
-                    value: new StringLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(6, 14),
-                                new Position(6, 16)
+                                new Position(6, 4),
+                                new Position(6, 11)
                             )
                         ),
-                        value: 'sat'
+                        value: EnumMemberName::from('SATURDAY')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(6, 12),
+                                new Position(6, 18)
+                            )
+                        ),
+                        value: new StringLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(6, 14),
+                                    new Position(6, 16)
+                                )
+                            ),
+                            value: 'sat'
+                        )
                     )
                 ),
                 new EnumMemberDeclarationNode(
@@ -380,16 +544,34 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(7, 16)
                         )
                     ),
-                    name: EnumMemberName::from('SUNDAY'),
-                    value: new StringLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(7, 12),
-                                new Position(7, 14)
+                                new Position(7, 4),
+                                new Position(7, 9)
                             )
                         ),
-                        value: 'sun'
+                        value: EnumMemberName::from('SUNDAY')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(7, 10),
+                                new Position(7, 16)
+                            )
+                        ),
+                        value: new StringLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(7, 12),
+                                    new Position(7, 14)
+                                )
+                            ),
+                            value: 'sun'
+                        )
                     )
                 )
             )
@@ -436,17 +618,35 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(0, 20)
                         )
                     ),
-                    name: EnumMemberName::from('BAR'),
-                    value: new IntegerLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(0, 15),
-                                new Position(0, 19)
+                                new Position(0, 11),
+                                new Position(0, 13)
                             )
                         ),
-                        format: IntegerFormat::BINARY,
-                        value: '0b101'
+                        value: EnumMemberName::from('BAR')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(0, 14),
+                                new Position(0, 20)
+                            )
+                        ),
+                        value: new IntegerLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(0, 15),
+                                    new Position(0, 19)
+                                )
+                            ),
+                            format: IntegerFormat::BINARY,
+                            value: '0b101'
+                        )
                     )
                 )
             )
@@ -493,17 +693,35 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(0, 20)
                         )
                     ),
-                    name: EnumMemberName::from('BAR'),
-                    value: new IntegerLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(0, 15),
-                                new Position(0, 19)
+                                new Position(0, 11),
+                                new Position(0, 13)
                             )
                         ),
-                        format: IntegerFormat::OCTAL,
-                        value: '0o644'
+                        value: EnumMemberName::from('BAR')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(0, 14),
+                                new Position(0, 20)
+                            )
+                        ),
+                        value: new IntegerLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(0, 15),
+                                    new Position(0, 19)
+                                )
+                            ),
+                            format: IntegerFormat::OCTAL,
+                            value: '0o644'
+                        )
                     )
                 )
             )
@@ -550,17 +768,35 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(0, 17)
                         )
                     ),
-                    name: EnumMemberName::from('BAR'),
-                    value: new IntegerLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(0, 15),
-                                new Position(0, 16)
+                                new Position(0, 11),
+                                new Position(0, 13)
                             )
                         ),
-                        format: IntegerFormat::DECIMAL,
-                        value: '42'
+                        value: EnumMemberName::from('BAR')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(0, 14),
+                                new Position(0, 17)
+                            )
+                        ),
+                        value: new IntegerLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(0, 15),
+                                    new Position(0, 16)
+                                )
+                            ),
+                            format: IntegerFormat::DECIMAL,
+                            value: '42'
+                        )
                     )
                 )
             )
@@ -607,17 +843,35 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(0, 20)
                         )
                     ),
-                    name: EnumMemberName::from('BAR'),
-                    value: new IntegerLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(0, 15),
-                                new Position(0, 19)
+                                new Position(0, 11),
+                                new Position(0, 13)
                             )
                         ),
-                        format: IntegerFormat::HEXADECIMAL,
-                        value: '0xABC'
+                        value: EnumMemberName::from('BAR')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(0, 14),
+                                new Position(0, 20)
+                            )
+                        ),
+                        value: new IntegerLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(0, 15),
+                                    new Position(0, 19)
+                                )
+                            ),
+                            format: IntegerFormat::HEXADECIMAL,
+                            value: '0xABC'
+                        )
                     )
                 )
             )
@@ -680,17 +934,35 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(1, 13)
                         )
                     ),
-                    name: EnumMemberName::from('JANUARY'),
-                    value: new IntegerLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(1, 12),
-                                new Position(1, 12)
+                                new Position(1, 4),
+                                new Position(1, 10)
                             )
                         ),
-                        format: IntegerFormat::DECIMAL,
-                        value: '1'
+                        value: EnumMemberName::from('JANUARY')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(1, 11),
+                                new Position(1, 13)
+                            )
+                        ),
+                        value: new IntegerLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(1, 12),
+                                    new Position(1, 12)
+                                )
+                            ),
+                            format: IntegerFormat::DECIMAL,
+                            value: '1'
+                        )
                     )
                 ),
                 new EnumMemberDeclarationNode(
@@ -701,17 +973,35 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(2, 14)
                         )
                     ),
-                    name: EnumMemberName::from('FEBRUARY'),
-                    value: new IntegerLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(2, 13),
-                                new Position(2, 13)
+                                new Position(2, 4),
+                                new Position(2, 11)
                             )
                         ),
-                        format: IntegerFormat::DECIMAL,
-                        value: '2'
+                        value: EnumMemberName::from('FEBRUARY')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(2, 12),
+                                new Position(2, 14)
+                            )
+                        ),
+                        value: new IntegerLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(2, 13),
+                                    new Position(2, 13)
+                                )
+                            ),
+                            format: IntegerFormat::DECIMAL,
+                            value: '2'
+                        )
                     )
                 ),
                 new EnumMemberDeclarationNode(
@@ -722,17 +1012,35 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(3, 11)
                         )
                     ),
-                    name: EnumMemberName::from('MARCH'),
-                    value: new IntegerLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(3, 10),
-                                new Position(3, 10)
+                                new Position(3, 4),
+                                new Position(3, 8)
                             )
                         ),
-                        format: IntegerFormat::DECIMAL,
-                        value: '3'
+                        value: EnumMemberName::from('MARCH')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(3, 9),
+                                new Position(3, 11)
+                            )
+                        ),
+                        value: new IntegerLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(3, 10),
+                                    new Position(3, 10)
+                                )
+                            ),
+                            format: IntegerFormat::DECIMAL,
+                            value: '3'
+                        )
                     )
                 ),
                 new EnumMemberDeclarationNode(
@@ -743,17 +1051,35 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(4, 11)
                         )
                     ),
-                    name: EnumMemberName::from('APRIL'),
-                    value: new IntegerLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(4, 10),
-                                new Position(4, 10)
+                                new Position(4, 4),
+                                new Position(4, 8)
                             )
                         ),
-                        format: IntegerFormat::DECIMAL,
-                        value: '4'
+                        value: EnumMemberName::from('APRIL')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(4, 9),
+                                new Position(4, 11)
+                            )
+                        ),
+                        value: new IntegerLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(4, 10),
+                                    new Position(4, 10)
+                                )
+                            ),
+                            format: IntegerFormat::DECIMAL,
+                            value: '4'
+                        )
                     )
                 ),
                 new EnumMemberDeclarationNode(
@@ -764,17 +1090,35 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(5, 9)
                         )
                     ),
-                    name: EnumMemberName::from('MAY'),
-                    value: new IntegerLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(5, 8),
-                                new Position(5, 8)
+                                new Position(5, 4),
+                                new Position(5, 6)
                             )
                         ),
-                        format: IntegerFormat::DECIMAL,
-                        value: '5'
+                        value: EnumMemberName::from('MAY')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(5, 7),
+                                new Position(5, 9)
+                            )
+                        ),
+                        value: new IntegerLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(5, 8),
+                                    new Position(5, 8)
+                                )
+                            ),
+                            format: IntegerFormat::DECIMAL,
+                            value: '5'
+                        )
                     )
                 ),
                 new EnumMemberDeclarationNode(
@@ -785,17 +1129,35 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(6, 10)
                         )
                     ),
-                    name: EnumMemberName::from('JUNE'),
-                    value: new IntegerLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(6, 9),
-                                new Position(6, 9)
+                                new Position(6, 4),
+                                new Position(6, 7)
                             )
                         ),
-                        format: IntegerFormat::DECIMAL,
-                        value: '6'
+                        value: EnumMemberName::from('JUNE')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(6, 8),
+                                new Position(6, 10)
+                            )
+                        ),
+                        value: new IntegerLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(6, 9),
+                                    new Position(6, 9)
+                                )
+                            ),
+                            format: IntegerFormat::DECIMAL,
+                            value: '6'
+                        )
                     )
                 ),
                 new EnumMemberDeclarationNode(
@@ -806,17 +1168,35 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(7, 10)
                         )
                     ),
-                    name: EnumMemberName::from('JULY'),
-                    value: new IntegerLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(7, 9),
-                                new Position(7, 9)
+                                new Position(7, 4),
+                                new Position(7, 7)
                             )
                         ),
-                        format: IntegerFormat::DECIMAL,
-                        value: '7'
+                        value: EnumMemberName::from('JULY')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(7, 8),
+                                new Position(7, 10)
+                            )
+                        ),
+                        value: new IntegerLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(7, 9),
+                                    new Position(7, 9)
+                                )
+                            ),
+                            format: IntegerFormat::DECIMAL,
+                            value: '7'
+                        )
                     )
                 ),
                 new EnumMemberDeclarationNode(
@@ -827,17 +1207,35 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(8, 12)
                         )
                     ),
-                    name: EnumMemberName::from('AUGUST'),
-                    value: new IntegerLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(8, 11),
-                                new Position(8, 11)
+                                new Position(8, 4),
+                                new Position(8, 9)
                             )
                         ),
-                        format: IntegerFormat::DECIMAL,
-                        value: '8'
+                        value: EnumMemberName::from('AUGUST')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(8, 10),
+                                new Position(8, 12)
+                            )
+                        ),
+                        value: new IntegerLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(8, 11),
+                                    new Position(8, 11)
+                                )
+                            ),
+                            format: IntegerFormat::DECIMAL,
+                            value: '8'
+                        )
                     )
                 ),
                 new EnumMemberDeclarationNode(
@@ -848,17 +1246,35 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(9, 15)
                         )
                     ),
-                    name: EnumMemberName::from('SEPTEMBER'),
-                    value: new IntegerLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(9, 14),
-                                new Position(9, 14)
+                                new Position(9, 4),
+                                new Position(9, 12)
                             )
                         ),
-                        format: IntegerFormat::DECIMAL,
-                        value: '9'
+                        value: EnumMemberName::from('SEPTEMBER')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(9, 13),
+                                new Position(9, 15)
+                            )
+                        ),
+                        value: new IntegerLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(9, 14),
+                                    new Position(9, 14)
+                                )
+                            ),
+                            format: IntegerFormat::DECIMAL,
+                            value: '9'
+                        )
                     )
                 ),
                 new EnumMemberDeclarationNode(
@@ -869,17 +1285,35 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(10, 14)
                         )
                     ),
-                    name: EnumMemberName::from('OCTOBER'),
-                    value: new IntegerLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(10, 12),
-                                new Position(10, 13)
+                                new Position(10, 4),
+                                new Position(10, 10)
                             )
                         ),
-                        format: IntegerFormat::DECIMAL,
-                        value: '10'
+                        value: EnumMemberName::from('OCTOBER')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(10, 11),
+                                new Position(10, 14)
+                            )
+                        ),
+                        value: new IntegerLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(10, 12),
+                                    new Position(10, 13)
+                                )
+                            ),
+                            format: IntegerFormat::DECIMAL,
+                            value: '10'
+                        )
                     )
                 ),
                 new EnumMemberDeclarationNode(
@@ -890,17 +1324,35 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(11, 15)
                         )
                     ),
-                    name: EnumMemberName::from('NOVEMBER'),
-                    value: new IntegerLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(11, 13),
-                                new Position(11, 14)
+                                new Position(11, 4),
+                                new Position(11, 11)
                             )
                         ),
-                        format: IntegerFormat::DECIMAL,
-                        value: '11'
+                        value: EnumMemberName::from('NOVEMBER')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(11, 12),
+                                new Position(11, 15)
+                            )
+                        ),
+                        value: new IntegerLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(11, 13),
+                                    new Position(11, 14)
+                                )
+                            ),
+                            format: IntegerFormat::DECIMAL,
+                            value: '11'
+                        )
                     )
                 ),
                 new EnumMemberDeclarationNode(
@@ -911,17 +1363,35 @@ final class EnumDeclarationParserTest extends TestCase
                             new Position(12, 15)
                         )
                     ),
-                    name: EnumMemberName::from('DECEMBER'),
-                    value: new IntegerLiteralNode(
+                    name: new EnumMemberNameNode(
                         attributes: new NodeAttributes(
                             pathToSource: Path::fromString(':memory:'),
                             rangeInSource: Range::from(
-                                new Position(12, 13),
-                                new Position(12, 14)
+                                new Position(12, 4),
+                                new Position(12, 11)
                             )
                         ),
-                        format: IntegerFormat::DECIMAL,
-                        value: '12'
+                        value: EnumMemberName::from('DECEMBER')
+                    ),
+                    value: new EnumMemberValueNode(
+                        attributes: new NodeAttributes(
+                            pathToSource: Path::fromString(':memory:'),
+                            rangeInSource: Range::from(
+                                new Position(12, 12),
+                                new Position(12, 15)
+                            )
+                        ),
+                        value: new IntegerLiteralNode(
+                            attributes: new NodeAttributes(
+                                pathToSource: Path::fromString(':memory:'),
+                                rangeInSource: Range::from(
+                                    new Position(12, 13),
+                                    new Position(12, 14)
+                                )
+                            ),
+                            format: IntegerFormat::DECIMAL,
+                            value: '12'
+                        )
                     )
                 )
             )

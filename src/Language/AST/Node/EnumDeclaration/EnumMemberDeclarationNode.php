@@ -22,17 +22,15 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration;
 
-use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Node;
-use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 
 final class EnumMemberDeclarationNode extends Node
 {
     public function __construct(
         public readonly NodeAttributes $attributes,
-        public readonly EnumMemberName $name,
-        public readonly null|StringLiteralNode|IntegerLiteralNode $value
+        public readonly EnumMemberNameNode $name,
+        public readonly ?EnumMemberValueNode $value
     ) {
     }
 }

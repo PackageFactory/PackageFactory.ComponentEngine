@@ -22,12 +22,16 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\EnumDeclaration;
 
+use PackageFactory\ComponentEngine\Domain\EnumMemberName\EnumMemberName;
 use PackageFactory\ComponentEngine\Domain\EnumName\EnumName;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberDeclarationNodes;
-use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberName;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberNameNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberValueNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumNameNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
@@ -160,42 +164,82 @@ final class EnumDeclarationParser
      */
     private function parseEnumMemberDeclaration(\Iterator $tokens): EnumMemberDeclarationNode
     {
-        Scanner::assertType($tokens, TokenType::STRING);
-
-        $enumMemberNameToken = $finalToken = $tokens->current();
-        $enumMemberName = EnumMemberName::from($enumMemberNameToken->value);
-
-        Scanner::skipOne($tokens);
-
-        $value = null;
-        if (Scanner::type($tokens) === TokenType::BRACKET_ROUND_OPEN) {
-            Scanner::skipOne($tokens);
-            $valueToken = $tokens->current();
-            $value = match ($valueToken->type) {
-                TokenType::STRING_QUOTED =>
-                    (new StringLiteralParser())->parse($tokens),
-                TokenType::NUMBER_BINARY,
-                TokenType::NUMBER_OCTAL,
-                TokenType::NUMBER_DECIMAL,
-                TokenType::NUMBER_HEXADECIMAL =>
-                    (new IntegerLiteralParser())->parse($tokens),
-                default => throw new \Exception('@TODO: Unexpected Token ' . Scanner::type($tokens)->value)
-            };
-            Scanner::assertType($tokens, TokenType::BRACKET_ROUND_CLOSE);
-            $finalToken = $tokens->current();
-
-            Scanner::skipOne($tokens);
-        }
+        $enumMemberName = $this->parseEnumMemberName($tokens);
+        $value = $this->parseEnumMemberValue($tokens);
 
         return new EnumMemberDeclarationNode(
             attributes: new NodeAttributes(
-                pathToSource: $enumMemberNameToken->sourcePath,
+                pathToSource: $enumMemberName->attributes->pathToSource,
                 rangeInSource: Range::from(
-                    $enumMemberNameToken->boundaries->start,
-                    $finalToken->boundaries->end
+                    $enumMemberName->attributes->rangeInSource->start,
+                    $value?->attributes->rangeInSource->end
+                        ?? $enumMemberName->attributes->rangeInSource->end
                 )
             ),
             name: $enumMemberName,
+            value: $value
+        );
+    }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
+     * @return EnumMemberNameNode
+     */
+    private function parseEnumMemberName(\Iterator $tokens): EnumMemberNameNode
+    {
+        Scanner::assertType($tokens, TokenType::STRING);
+
+        $enumMemberNameToken = $tokens->current();
+        $enumMemberNameNode = new EnumMemberNameNode(
+            attributes: new NodeAttributes(
+                pathToSource: $enumMemberNameToken->sourcePath,
+                rangeInSource: $enumMemberNameToken->boundaries
+            ),
+            value: EnumMemberName::from($enumMemberNameToken->value)
+        );
+
+        Scanner::skipOne($tokens);
+
+        return $enumMemberNameNode;
+    }
+
+    /**
+     * @param \Iterator $tokens
+     * @return null|EnumMemberValueNode
+     */
+    private function parseEnumMemberValue(\Iterator $tokens): ?EnumMemberValueNode
+    {
+        if (Scanner::type($tokens) !== TokenType::BRACKET_ROUND_OPEN) {
+            return null;
+        }
+
+        $openingBracketToken = $tokens->current();
+        Scanner::skipOne($tokens);
+
+        $valueToken = $tokens->current();
+        $value = match ($valueToken->type) {
+            TokenType::STRING_QUOTED =>
+                (new StringLiteralParser())->parse($tokens),
+            TokenType::NUMBER_BINARY,
+            TokenType::NUMBER_OCTAL,
+            TokenType::NUMBER_DECIMAL,
+            TokenType::NUMBER_HEXADECIMAL =>
+                (new IntegerLiteralParser())->parse($tokens),
+            default => throw new \Exception('@TODO: Unexpected Token ' . Scanner::type($tokens)->value)
+        };
+
+        Scanner::assertType($tokens, TokenType::BRACKET_ROUND_CLOSE);
+        $closingBracketToken = $tokens->current();
+        Scanner::skipOne($tokens);
+
+        return new EnumMemberValueNode(
+            attributes: new NodeAttributes(
+                pathToSource: $valueToken->sourcePath,
+                rangeInSource: Range::from(
+                    $openingBracketToken->boundaries->start,
+                    $closingBracketToken->boundaries->end
+                )
+            ),
             value: $value
         );
     }

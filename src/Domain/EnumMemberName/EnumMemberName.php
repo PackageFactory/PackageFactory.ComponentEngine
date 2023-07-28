@@ -20,23 +20,17 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration;
+namespace PackageFactory\ComponentEngine\Domain\EnumMemberName;
 
-final class EnumMemberDeclarationNodes
+final class EnumMemberName
 {
-    /**
-     * @var array<string,EnumMemberDeclarationNode>
-     */
-    public readonly array $items;
-
-    public function __construct(
-        EnumMemberDeclarationNode ...$items
+    private function __construct(
+        public readonly string $value
     ) {
-        $itemsAsHashMap = [];
-        foreach ($items as $item) {
-            $itemsAsHashMap[$item->name->value->value] = $item;
-        }
+    }
 
-        $this->items = $itemsAsHashMap;
+    public static function from(string $string): self
+    {
+        return new self($string);
     }
 }
