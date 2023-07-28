@@ -30,8 +30,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberD
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberValueNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumNameNode;
-use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
-use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
@@ -42,6 +40,15 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class EnumDeclarationParser
 {
+    private readonly StringLiteralParser $stringLiteralParser;
+    private readonly IntegerLiteralParser $integerLiteralParser;
+
+    public function __construct()
+    {
+        $this->stringLiteralParser = new StringLiteralParser();
+        $this->integerLiteralParser = new IntegerLiteralParser();
+    }
+
     /**
      * @param \Iterator<mixed,Token> $tokens
      * @return EnumDeclarationNode
@@ -219,12 +226,12 @@ final class EnumDeclarationParser
         $valueToken = $tokens->current();
         $value = match ($valueToken->type) {
             TokenType::STRING_QUOTED =>
-                (new StringLiteralParser())->parse($tokens),
+                $this->stringLiteralParser->parse($tokens),
             TokenType::NUMBER_BINARY,
             TokenType::NUMBER_OCTAL,
             TokenType::NUMBER_DECIMAL,
             TokenType::NUMBER_HEXADECIMAL =>
-                (new IntegerLiteralParser())->parse($tokens),
+                $this->integerLiteralParser->parse($tokens),
             default => throw new \Exception('@TODO: Unexpected Token ' . Scanner::type($tokens)->value)
         };
 
