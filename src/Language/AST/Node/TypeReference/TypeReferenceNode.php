@@ -39,5 +39,19 @@ final class TypeReferenceNode extends Node
                 attributesOfAffectedNode: $attributes
             );
         }
+
+        if ($names->getSize() > 1 && $isArray === true) {
+            throw InvalidTypeReferenceNode::becauseItWasUnionAndArrayAtTheSameTime(
+                affectedTypeNames: $names->toTypeNames(),
+                attributesOfAffectedNode: $attributes
+            );
+        }
+
+        if ($names->getSize() > 1 && $isOptional === true) {
+            throw InvalidTypeReferenceNode::becauseItWasUnionAndOptionalAtTheSameTime(
+                affectedTypeNames: $names->toTypeNames(),
+                attributesOfAffectedNode: $attributes
+            );
+        }
     }
 }

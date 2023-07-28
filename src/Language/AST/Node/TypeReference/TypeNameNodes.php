@@ -35,6 +35,21 @@ final class TypeNameNodes
 
     public function __construct(TypeNameNode ...$items)
     {
+        if (count($items) === 0) {
+            throw InvalidTypeNameNodes::becauseTheyWereEmpty();
+        }
+
+        $typeNames = [];
+        foreach ($items as $item) {
+            if (isset($typeNames[$item->value->value])) {
+                throw InvalidTypeNameNodes::becauseTheyContainDuplicates(
+                    duplicateTypeNameNode: $item
+                );
+            }
+
+            $typeNames[$item->value->value] = true;
+        }
+
         $this->items = $items;
     }
 

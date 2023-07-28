@@ -20,17 +20,27 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\AST;
+namespace PackageFactory\ComponentEngine\Language\AST\Node\TypeReference;
 
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Language\AST\ASTException;
 
-abstract class ASTException extends \Exception
+final class InvalidTypeNameNodes extends ASTException
 {
-    protected function __construct(
-        int $code,
-        string $message,
-        public readonly ?NodeAttributes $attributesOfAffectedNode = null
-    ) {
-        parent::__construct($message, $code);
+    public static function becauseTheyWereEmpty(): self
+    {
+        return new self(
+            code: 1690549442,
+            message: 'A type reference must refer to at least one type name.'
+        );
+    }
+
+    public static function becauseTheyContainDuplicates(
+        TypeNameNode $duplicateTypeNameNode
+    ): self {
+        return new self(
+            code: 1690551330,
+            message: 'A type reference must not contain duplicates.',
+            attributesOfAffectedNode: $duplicateTypeNameNode->attributes
+        );
     }
 }

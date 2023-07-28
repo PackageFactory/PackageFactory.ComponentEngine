@@ -107,7 +107,40 @@ final class TypeReferenceNodeTest extends TestCase
     /**
      * @test
      */
-    public function typeReferenceCannotBeArrayAndOptionalSimultaneously(): void
+    public function validUnionTypeReferenceIsValid(): void
+    {
+        $typeReferenceNode = new TypeReferenceNode(
+            attributes: $this->dummyAttributes,
+            names: new TypeNameNodes(
+                new TypeNameNode(
+                    attributes: $this->dummyAttributes,
+                    value: TypeName::from('Foo')
+                ),
+                new TypeNameNode(
+                    attributes: $this->dummyAttributes,
+                    value: TypeName::from('Bar')
+                ),
+                new TypeNameNode(
+                    attributes: $this->dummyAttributes,
+                    value: TypeName::from('Baz')
+                )
+            ),
+            isArray: false,
+            isOptional: false
+        );
+
+        $this->assertEquals(3, $typeReferenceNode->names->getSize());
+        $this->assertEquals('Foo', $typeReferenceNode->names->items[0]->value->value);
+        $this->assertEquals('Bar', $typeReferenceNode->names->items[1]->value->value);
+        $this->assertEquals('Baz', $typeReferenceNode->names->items[2]->value->value);
+        $this->assertFalse($typeReferenceNode->isArray);
+        $this->assertFalse($typeReferenceNode->isOptional);
+    }
+
+    /**
+     * @test
+     */
+    public function mustNotBeArrayAndOptionalSimultaneously(): void
     {
         $name = TypeName::from('Foo');
 
@@ -127,6 +160,76 @@ final class TypeReferenceNodeTest extends TestCase
                 )
             ),
             isArray: true,
+            isOptional: true
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function mustNotBeUnionAndArraySimultaneously(): void
+    {
+        $typeNameNodes = new TypeNameNodes(
+            new TypeNameNode(
+                attributes: $this->dummyAttributes,
+                value: TypeName::from('Foo')
+            ),
+            new TypeNameNode(
+                attributes: $this->dummyAttributes,
+                value: TypeName::from('Bar')
+            ),
+            new TypeNameNode(
+                attributes: $this->dummyAttributes,
+                value: TypeName::from('Baz')
+            )
+        );
+
+        $this->expectExceptionObject(
+            InvalidTypeReferenceNode::becauseItWasUnionAndArrayAtTheSameTime(
+                affectedTypeNames: $typeNameNodes->toTypeNames(),
+                attributesOfAffectedNode: $this->dummyAttributes
+            )
+        );
+
+        new TypeReferenceNode(
+            attributes: $this->dummyAttributes,
+            names: $typeNameNodes,
+            isArray: true,
+            isOptional: false
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function mustNotBeUnionAndOptionalSimultaneously(): void
+    {
+        $typeNameNodes = new TypeNameNodes(
+            new TypeNameNode(
+                attributes: $this->dummyAttributes,
+                value: TypeName::from('Foo')
+            ),
+            new TypeNameNode(
+                attributes: $this->dummyAttributes,
+                value: TypeName::from('Bar')
+            ),
+            new TypeNameNode(
+                attributes: $this->dummyAttributes,
+                value: TypeName::from('Baz')
+            )
+        );
+
+        $this->expectExceptionObject(
+            InvalidTypeReferenceNode::becauseItWasUnionAndOptionalAtTheSameTime(
+                affectedTypeNames: $typeNameNodes->toTypeNames(),
+                attributesOfAffectedNode: $this->dummyAttributes
+            )
+        );
+
+        new TypeReferenceNode(
+            attributes: $this->dummyAttributes,
+            names: $typeNameNodes,
+            isArray: false,
             isOptional: true
         );
     }
