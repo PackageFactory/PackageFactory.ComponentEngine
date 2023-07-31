@@ -44,7 +44,6 @@ final class NullLiteralParser
 
         return new NullLiteralNode(
             attributes: new NodeAttributes(
-                pathToSource: $token->sourcePath,
                 rangeInSource: $token->boundaries
             )
         );

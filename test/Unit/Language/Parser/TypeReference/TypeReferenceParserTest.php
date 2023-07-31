@@ -33,7 +33,6 @@ use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Language\Parser\ParserException;
 use PackageFactory\ComponentEngine\Language\Parser\TypeReference\TypeReferenceCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
@@ -51,7 +50,6 @@ final class TypeReferenceParserTest extends TestCase
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
             attributes: new NodeAttributes(
-                pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
                     new Position(0, 0),
                     new Position(0, 2)
@@ -60,7 +58,6 @@ final class TypeReferenceParserTest extends TestCase
             names: new TypeNameNodes(
                 new TypeNameNode(
                     attributes: new NodeAttributes(
-                        pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
                             new Position(0, 0),
                             new Position(0, 2)
@@ -89,7 +86,6 @@ final class TypeReferenceParserTest extends TestCase
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
             attributes: new NodeAttributes(
-                pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
                     new Position(0, 0),
                     new Position(0, 4)
@@ -98,7 +94,6 @@ final class TypeReferenceParserTest extends TestCase
             names: new TypeNameNodes(
                 new TypeNameNode(
                     attributes: new NodeAttributes(
-                        pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
                             new Position(0, 0),
                             new Position(0, 2)
@@ -127,7 +122,6 @@ final class TypeReferenceParserTest extends TestCase
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
             attributes: new NodeAttributes(
-                pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
                     new Position(0, 0),
                     new Position(0, 3)
@@ -136,7 +130,6 @@ final class TypeReferenceParserTest extends TestCase
             names: new TypeNameNodes(
                 new TypeNameNode(
                     attributes: new NodeAttributes(
-                        pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
                             new Position(0, 1),
                             new Position(0, 3)
@@ -165,7 +158,6 @@ final class TypeReferenceParserTest extends TestCase
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
             attributes: new NodeAttributes(
-                pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
                     new Position(0, 0),
                     new Position(0, 10)
@@ -174,7 +166,6 @@ final class TypeReferenceParserTest extends TestCase
             names: new TypeNameNodes(
                 new TypeNameNode(
                     attributes: new NodeAttributes(
-                        pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
                             new Position(0, 0),
                             new Position(0, 2)
@@ -184,7 +175,6 @@ final class TypeReferenceParserTest extends TestCase
                 ),
                 new TypeNameNode(
                     attributes: new NodeAttributes(
-                        pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
                             new Position(0, 4),
                             new Position(0, 6)
@@ -194,7 +184,6 @@ final class TypeReferenceParserTest extends TestCase
                 ),
                 new TypeNameNode(
                     attributes: new NodeAttributes(
-                        pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
                             new Position(0, 8),
                             new Position(0, 10)
@@ -228,7 +217,6 @@ final class TypeReferenceParserTest extends TestCase
                 cause: InvalidTypeReferenceNode::becauseItWasOptionalAndArrayAtTheSameTime(
                     affectedTypeNames: new TypeNames(TypeName::from('Foo')),
                     attributesOfAffectedNode: new NodeAttributes(
-                        pathToSource: Path::fromString(':memory:'),
                         rangeInSource: Range::from(
                             new Position(0, 0),
                             new Position(0, 4)

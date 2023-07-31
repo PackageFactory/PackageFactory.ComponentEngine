@@ -44,7 +44,6 @@ final class StringLiteralParser
 
         return new StringLiteralNode(
             attributes: new NodeAttributes(
-                pathToSource: $token->sourcePath,
                 rangeInSource: $token->boundaries
             ),
             value: $token->value

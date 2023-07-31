@@ -53,7 +53,6 @@ final class TypeReferenceParser
         try {
             return new TypeReferenceNode(
                 attributes: new NodeAttributes(
-                    pathToSource: $startingToken->sourcePath,
                     rangeInSource: Range::from(
                         $startingToken->boundaries->start,
                         $closingArrayToken?->boundaries->end
@@ -101,7 +100,6 @@ final class TypeReferenceParser
             $typeNameToken = $tokens->current();
             $items[] = new TypeNameNode(
                 attributes: new NodeAttributes(
-                    pathToSource: $typeNameToken->sourcePath,
                     rangeInSource: $typeNameToken->boundaries
                 ),
                 value: TypeName::from($typeNameToken->value)

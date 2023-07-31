@@ -28,7 +28,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeNa
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
-use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Test\Unit\Language\AST\Helpers\DummyAttributes;
@@ -65,7 +64,6 @@ final class TypeNameNodesTest extends TestCase
     {
         $duplicate = new TypeNameNode(
             attributes: new NodeAttributes(
-                pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
                     new Position(1, 1),
                     new Position(1, 1)

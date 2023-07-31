@@ -23,12 +23,10 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\AST\NodeAttributes;
 
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Source\Path;
 
 final class NodeAttributes
 {
     public function __construct(
-        public readonly Path $pathToSource,
         public readonly Range $rangeInSource
     ) {
     }

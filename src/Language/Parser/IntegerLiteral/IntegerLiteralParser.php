@@ -42,7 +42,6 @@ final class IntegerLiteralParser
 
         return new IntegerLiteralNode(
             attributes: new NodeAttributes(
-                pathToSource: $token->sourcePath,
                 rangeInSource: $token->boundaries
             ),
             format: IntegerFormat::fromTokenType($token->type),

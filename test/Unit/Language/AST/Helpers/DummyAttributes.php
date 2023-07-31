@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\AST\Helpers;
 
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
-use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
@@ -37,7 +36,6 @@ trait DummyAttributes
     public function setUpDummyAttributes(): void
     {
         $this->dummyAttributes = new NodeAttributes(
-            pathToSource: Path::fromString(':memory:'),
             rangeInSource: Range::from(
                 new Position(0, 0),
                 new Position(0, 0)

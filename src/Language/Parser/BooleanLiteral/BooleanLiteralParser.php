@@ -45,7 +45,6 @@ final class BooleanLiteralParser
 
         return new BooleanLiteralNode(
             attributes: new NodeAttributes(
-                pathToSource: $token->sourcePath,
                 rangeInSource: $token->boundaries
             ),
             value: $value

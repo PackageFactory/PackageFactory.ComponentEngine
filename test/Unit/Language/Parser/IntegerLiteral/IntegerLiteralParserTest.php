@@ -27,7 +27,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiter
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
 use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
@@ -45,7 +44,6 @@ final class IntegerLiteralParserTest extends TestCase
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
             attributes: new NodeAttributes(
-                pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
                     new Position(0, 0),
                     new Position(0, 11)
@@ -71,7 +69,6 @@ final class IntegerLiteralParserTest extends TestCase
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
             attributes: new NodeAttributes(
-                pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
                     new Position(0, 0),
                     new Position(0, 4)
@@ -97,7 +94,6 @@ final class IntegerLiteralParserTest extends TestCase
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
             attributes: new NodeAttributes(
-                pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
                     new Position(0, 0),
                     new Position(0, 9)
@@ -123,7 +119,6 @@ final class IntegerLiteralParserTest extends TestCase
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
             attributes: new NodeAttributes(
-                pathToSource: Path::fromString(':memory:'),
                 rangeInSource: Range::from(
                     new Position(0, 0),
                     new Position(0, 16)
