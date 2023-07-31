@@ -22,19 +22,19 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser;
 
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 abstract class ParserException extends \Exception
 {
     protected function __construct(
         int $code,
         string $message,
-        public readonly Token $affectedToken,
+        public readonly Range $affectedRangeInSource,
         ?\Exception $cause = null
     ) {
         $message = sprintf(
             '[%s] %s',
-            $affectedToken->boundaries->start->toDebugString(),
+            $affectedRangeInSource->start->toDebugString(),
             $message
         );
 

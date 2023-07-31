@@ -24,13 +24,13 @@ namespace PackageFactory\ComponentEngine\Language\Parser\TypeReference;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeReferenceNode;
 use PackageFactory\ComponentEngine\Language\Parser\ParserException;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class TypeReferenceCouldNotBeParsed extends ParserException
 {
     public static function becauseOfInvalidTypeReferenceNode(
         InvalidTypeReferenceNode $cause,
-        Token $affectedToken
+        Range $affectedRangeInSource
     ): self {
         return new self(
             code: 1690542466,
@@ -38,7 +38,7 @@ final class TypeReferenceCouldNotBeParsed extends ParserException
                 'TypeReferenceNode could not be parsed, because the result would be invalid: %s',
                 $cause->getMessage()
             ),
-            affectedToken: $affectedToken,
+            affectedRangeInSource: $affectedRangeInSource,
             cause: $cause
         );
     }

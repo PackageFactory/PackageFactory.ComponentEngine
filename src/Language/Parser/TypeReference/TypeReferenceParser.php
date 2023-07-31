@@ -50,14 +50,16 @@ final class TypeReferenceParser
         $closingArrayToken = $this->extractClosingArrayToken($tokens);
         $isArray = !is_null($closingArrayToken);
 
+        $rangeInSource = Range::from(
+            $startingToken->boundaries->start,
+            $closingArrayToken?->boundaries->end
+                ?? $typeNameNodes->getLast()->attributes->rangeInSource->end
+        );
+
         try {
             return new TypeReferenceNode(
                 attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        $startingToken->boundaries->start,
-                        $closingArrayToken?->boundaries->end
-                            ?? $typeNameNodes->getLast()->attributes->rangeInSource->end
-                    )
+                    rangeInSource: $rangeInSource
                 ),
                 names: $typeNameNodes,
                 isArray: $isArray,
@@ -66,7 +68,7 @@ final class TypeReferenceParser
         } catch (InvalidTypeReferenceNode $e) {
             throw TypeReferenceCouldNotBeParsed::becauseOfInvalidTypeReferenceNode(
                 cause: $e,
-                affectedToken: $startingToken
+                affectedRangeInSource: $rangeInSource
             );
         }
     }

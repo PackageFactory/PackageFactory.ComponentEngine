@@ -209,7 +209,6 @@ final class TypeReferenceParserTest extends TestCase
     {
         $typeReferenceParser = new TypeReferenceParser();
         $tokens = Tokenizer::fromSource(Source::fromString('?Foo[]'))->getIterator();
-        $startingToken = $tokens->current();
 
         $this->expectException(ParserException::class);
         $this->expectExceptionObject(
@@ -223,7 +222,10 @@ final class TypeReferenceParserTest extends TestCase
                         )
                     ),
                 ),
-                affectedToken: $startingToken
+                affectedRangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 4)
+                )
             )
         );
 
