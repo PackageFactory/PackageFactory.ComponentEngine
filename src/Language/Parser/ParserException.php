@@ -29,15 +29,9 @@ abstract class ParserException extends \Exception
     protected function __construct(
         int $code,
         string $message,
-        public readonly Range $affectedRangeInSource,
+        public readonly ?Range $affectedRangeInSource = null,
         ?\Exception $cause = null
     ) {
-        $message = sprintf(
-            '[%s] %s',
-            $affectedRangeInSource->start->toDebugString(),
-            $message
-        );
-
         parent::__construct($message, $code, $cause);
     }
 }

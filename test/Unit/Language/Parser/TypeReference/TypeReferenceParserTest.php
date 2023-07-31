@@ -24,6 +24,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\TypeReference
 
 use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
 use PackageFactory\ComponentEngine\Domain\TypeName\TypeNames;
+use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeReferenceNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
@@ -221,10 +222,34 @@ final class TypeReferenceParserTest extends TestCase
                             new Position(0, 4)
                         )
                     ),
-                ),
-                affectedRangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 4)
+                )
+            )
+        );
+
+        $typeReferenceParser->parse($tokens);
+    }
+
+    /**
+     * @test
+     */
+    public function throwsParserExceptionWhenDuplicatesOccur(): void
+    {
+        $typeReferenceParser = new TypeReferenceParser();
+        $tokens = Tokenizer::fromSource(Source::fromString('Foo|Bar|Foo|Baz'))->getIterator();
+
+        $this->expectException(ParserException::class);
+        $this->expectExceptionObject(
+            TypeReferenceCouldNotBeParsed::becauseOfInvalidTypeTypeNameNodes(
+                cause: InvalidTypeNameNodes::becauseTheyContainDuplicates(
+                    duplicateTypeNameNode: new TypeNameNode(
+                        attributes: new NodeAttributes(
+                            rangeInSource: Range::from(
+                                new Position(0, 9),
+                                new Position(0, 11)
+                            )
+                        ),
+                        value: TypeName::from('Foo')
+                    )
                 )
             )
         );

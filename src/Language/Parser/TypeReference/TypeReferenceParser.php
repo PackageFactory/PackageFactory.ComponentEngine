@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Parser\TypeReference;
 
 use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeReferenceNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
@@ -66,10 +67,7 @@ final class TypeReferenceParser
                 isOptional: $isOptional
             );
         } catch (InvalidTypeReferenceNode $e) {
-            throw TypeReferenceCouldNotBeParsed::becauseOfInvalidTypeReferenceNode(
-                cause: $e,
-                affectedRangeInSource: $rangeInSource
-            );
+            throw TypeReferenceCouldNotBeParsed::becauseOfInvalidTypeReferenceNode($e);
         }
     }
 
@@ -97,31 +95,40 @@ final class TypeReferenceParser
     {
         $items = [];
         while (true) {
-            Scanner::assertType($tokens, TokenType::STRING);
+            $items[] = $this->parseTypeName($tokens);
 
-            $typeNameToken = $tokens->current();
-            $items[] = new TypeNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: $typeNameToken->boundaries
-                ),
-                value: TypeName::from($typeNameToken->value)
-            );
-
-            Scanner::skipOne($tokens);
-
-            if (Scanner::isEnd($tokens)) {
+            if (Scanner::isEnd($tokens) || Scanner::type($tokens) !== TokenType::PIPE) {
                 break;
             }
 
-            if (Scanner::type($tokens) === TokenType::PIPE) {
-                Scanner::skipOne($tokens);
-                continue;
-            }
-
-            break;
+            Scanner::skipOne($tokens);
         }
 
-        return new TypeNameNodes(...$items);
+        try {
+            return new TypeNameNodes(...$items);
+        } catch (InvalidTypeNameNodes $e) {
+            throw TypeReferenceCouldNotBeParsed::becauseOfInvalidTypeTypeNameNodes($e);
+        }
+    }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
+     * @return TypeNameNode
+     */
+    public function parseTypeName(\Iterator $tokens): TypeNameNode
+    {
+        Scanner::assertType($tokens, TokenType::STRING);
+
+        $typeNameToken = $tokens->current();
+
+        Scanner::skipOne($tokens);
+
+        return new TypeNameNode(
+            attributes: new NodeAttributes(
+                rangeInSource: $typeNameToken->boundaries
+            ),
+            value: TypeName::from($typeNameToken->value)
+        );
     }
 
     /**

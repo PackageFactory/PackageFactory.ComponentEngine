@@ -22,15 +22,14 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\TypeReference;
 
+use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeReferenceNode;
 use PackageFactory\ComponentEngine\Language\Parser\ParserException;
-use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class TypeReferenceCouldNotBeParsed extends ParserException
 {
     public static function becauseOfInvalidTypeReferenceNode(
-        InvalidTypeReferenceNode $cause,
-        Range $affectedRangeInSource
+        InvalidTypeReferenceNode $cause
     ): self {
         return new self(
             code: 1690542466,
@@ -38,7 +37,21 @@ final class TypeReferenceCouldNotBeParsed extends ParserException
                 'TypeReferenceNode could not be parsed, because the result would be invalid: %s',
                 $cause->getMessage()
             ),
-            affectedRangeInSource: $affectedRangeInSource,
+            affectedRangeInSource: $cause->attributesOfAffectedNode?->rangeInSource ?? null,
+            cause: $cause
+        );
+    }
+
+    public static function becauseOfInvalidTypeTypeNameNodes(
+        InvalidTypeNameNodes $cause
+    ): self {
+        return new self(
+            code: 1690833898,
+            message: sprintf(
+                'TypeReferenceNode could not be parsed, because the list of type names was invalid: %s',
+                $cause->getMessage()
+            ),
+            affectedRangeInSource: $cause->attributesOfAffectedNode?->rangeInSource ?? null,
             cause: $cause
         );
     }
