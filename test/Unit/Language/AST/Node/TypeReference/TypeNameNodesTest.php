@@ -118,6 +118,30 @@ final class TypeNameNodesTest extends TestCase
     /**
      * @test
      */
+    public function providesItsLastItemIfTheresOnlyOne(): void
+    {
+        $foo = $this->createTypeNameNode('Foo');
+        $typeNameNodes = new TypeNameNodes($foo);
+
+        $this->assertSame($foo, $typeNameNodes->getLast());
+    }
+
+    /**
+     * @test
+     */
+    public function providesItsLastItemIfTheresMultiple(): void
+    {
+        $foo = $this->createTypeNameNode('Foo');
+        $bar = $this->createTypeNameNode('Bar');
+        $baz = $this->createTypeNameNode('Baz');
+        $typeNameNodes = new TypeNameNodes($foo, $bar, $baz);
+
+        $this->assertSame($baz, $typeNameNodes->getLast());
+    }
+
+    /**
+     * @test
+     */
     public function convertsToTypeNames(): void
     {
         $typeNameNodes = new TypeNameNodes(

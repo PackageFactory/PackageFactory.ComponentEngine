@@ -58,6 +58,11 @@ final class TypeNameNodes
         return count($this->items);
     }
 
+    public function getLast(): TypeNameNode
+    {
+        return $this->items[$this->getSize() - 1];
+    }
+
     public function toTypeNames(): TypeNames
     {
         if ($this->cachedTypeNames === null) {

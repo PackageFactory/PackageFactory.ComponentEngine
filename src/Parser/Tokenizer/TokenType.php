@@ -86,6 +86,7 @@ enum TokenType: string
     case EQUALS = 'EQUALS';
     case SLASH_FORWARD = 'SLASH_FORWARD';
     case DOLLAR = 'DOLLAR';
+    case PIPE = 'PIPE';
 
     case OPTCHAIN = 'OPTCHAIN';
     case NULLISH_COALESCE = 'NULLISH_COALESCE';

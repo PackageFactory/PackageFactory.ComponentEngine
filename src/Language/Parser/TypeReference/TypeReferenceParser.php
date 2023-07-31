@@ -41,30 +41,14 @@ final class TypeReferenceParser
      */
     public function parse(\Iterator $tokens): TypeReferenceNode
     {
-        $isOptional = false;
-        if (Scanner::type($tokens) === TokenType::QUESTIONMARK) {
-            $startingToken = $tokens->current();
-            $isOptional = true;
-            Scanner::skipOne($tokens);
-        }
+        $startingToken = $tokens->current();
+        $questionmarkToken = $this->extractQuestionmarkToken($tokens);
+        $isOptional = !is_null($questionmarkToken);
 
-        Scanner::assertType($tokens, TokenType::STRING);
+        $typeNameNodes = $this->parseTypeNames($tokens);
 
-        $typeNameToken = $finalToken = $tokens->current();
-        $startingToken = $startingToken ?? $typeNameToken;
-
-        Scanner::skipOne($tokens);
-
-        $isArray = false;
-        if (!Scanner::isEnd($tokens) && Scanner::type($tokens) === TokenType::BRACKET_SQUARE_OPEN) {
-            Scanner::skipOne($tokens);
-            Scanner::assertType($tokens, TokenType::BRACKET_SQUARE_CLOSE);
-
-            $finalToken = $tokens->current();
-            $isArray = true;
-
-            Scanner::skipOne($tokens);
-        }
+        $closingArrayToken = $this->extractClosingArrayToken($tokens);
+        $isArray = !is_null($closingArrayToken);
 
         try {
             return new TypeReferenceNode(
@@ -72,18 +56,11 @@ final class TypeReferenceParser
                     pathToSource: $startingToken->sourcePath,
                     rangeInSource: Range::from(
                         $startingToken->boundaries->start,
-                        $finalToken->boundaries->end
+                        $closingArrayToken?->boundaries->end
+                            ?? $typeNameNodes->getLast()->attributes->rangeInSource->end
                     )
                 ),
-                names: new TypeNameNodes(
-                    new TypeNameNode(
-                        attributes: new NodeAttributes(
-                            pathToSource: $typeNameToken->sourcePath,
-                            rangeInSource: $typeNameToken->boundaries
-                        ),
-                        value: TypeName::from($typeNameToken->value)
-                    )
-                ),
+                names: $typeNameNodes,
                 isArray: $isArray,
                 isOptional: $isOptional
             );
@@ -93,5 +70,77 @@ final class TypeReferenceParser
                 affectedToken: $startingToken
             );
         }
+    }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
+     * @return Token
+     */
+    public function extractQuestionmarkToken(\Iterator $tokens): ?Token
+    {
+        if (Scanner::type($tokens) === TokenType::QUESTIONMARK) {
+            $questionmarkToken = $tokens->current();
+            Scanner::skipOne($tokens);
+
+            return $questionmarkToken;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
+     * @return TypeNameNodes
+     */
+    public function parseTypeNames(\Iterator $tokens): TypeNameNodes
+    {
+        $items = [];
+        while (true) {
+            Scanner::assertType($tokens, TokenType::STRING);
+
+            $typeNameToken = $tokens->current();
+            $items[] = new TypeNameNode(
+                attributes: new NodeAttributes(
+                    pathToSource: $typeNameToken->sourcePath,
+                    rangeInSource: $typeNameToken->boundaries
+                ),
+                value: TypeName::from($typeNameToken->value)
+            );
+
+            Scanner::skipOne($tokens);
+
+            if (Scanner::isEnd($tokens)) {
+                break;
+            }
+
+            if (Scanner::type($tokens) === TokenType::PIPE) {
+                Scanner::skipOne($tokens);
+                continue;
+            }
+
+            break;
+        }
+
+        return new TypeNameNodes(...$items);
+    }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
+     * @return Token
+     */
+    public function extractClosingArrayToken(\Iterator $tokens): ?Token
+    {
+        if (!Scanner::isEnd($tokens) && Scanner::type($tokens) === TokenType::BRACKET_SQUARE_OPEN) {
+            Scanner::skipOne($tokens);
+            Scanner::assertType($tokens, TokenType::BRACKET_SQUARE_CLOSE);
+
+            $closingArrayToken = $tokens->current();
+
+            Scanner::skipOne($tokens);
+
+            return $closingArrayToken;
+        }
+
+        return null;
     }
 }

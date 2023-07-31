@@ -158,6 +158,64 @@ final class TypeReferenceParserTest extends TestCase
     /**
      * @test
      */
+    public function producesAstNodeForUnionTypeReference(): void
+    {
+        $typeReferenceParser = new TypeReferenceParser();
+        $tokens = Tokenizer::fromSource(Source::fromString('Foo|Bar|Baz'))->getIterator();
+
+        $expectedTypeReferenceNode = new TypeReferenceNode(
+            attributes: new NodeAttributes(
+                pathToSource: Path::fromString(':memory:'),
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 10)
+                )
+            ),
+            names: new TypeNameNodes(
+                new TypeNameNode(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Range::from(
+                            new Position(0, 0),
+                            new Position(0, 2)
+                        )
+                    ),
+                    value: TypeName::from('Foo')
+                ),
+                new TypeNameNode(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Range::from(
+                            new Position(0, 4),
+                            new Position(0, 6)
+                        )
+                    ),
+                    value: TypeName::from('Bar')
+                ),
+                new TypeNameNode(
+                    attributes: new NodeAttributes(
+                        pathToSource: Path::fromString(':memory:'),
+                        rangeInSource: Range::from(
+                            new Position(0, 8),
+                            new Position(0, 10)
+                        )
+                    ),
+                    value: TypeName::from('Baz')
+                )
+            ),
+            isArray: false,
+            isOptional: false
+        );
+
+        $this->assertEquals(
+            $expectedTypeReferenceNode,
+            $typeReferenceParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
     public function throwsParserExceptionWhenInvalidTypeReferenceOccurs(): void
     {
         $typeReferenceParser = new TypeReferenceParser();
