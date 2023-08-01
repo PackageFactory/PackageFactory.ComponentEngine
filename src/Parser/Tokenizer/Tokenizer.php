@@ -56,6 +56,10 @@ final class Tokenizer implements \IteratorAggregate
      */
     private static function block(\Iterator $fragments): \Iterator
     {
+        if (!$fragments->valid()) {
+            return;
+        }
+
         $bracket = TokenType::tryBracketOpenFromFragment($fragments->current());
         $buffer = Buffer::empty();
 
