@@ -30,6 +30,17 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class TextParser
 {
+    private string $value;
+
+    private ?Token $startingToken;
+    private ?Token $finalToken;
+
+    private bool $trimLeadingSpace;
+    private bool $trimTrailingSpace;
+    private bool $currentlyCapturingSpace;
+    private bool $trailingSpaceContainsLineBreak;
+    private bool $terminated;
+
     /**
      * @param \Iterator<mixed,Token> $tokens
      * @param boolean $preserveLeadingSpace
@@ -37,66 +48,109 @@ final class TextParser
      */
     public function parse(\Iterator $tokens, bool $preserveLeadingSpace = false): ?TextNode
     {
-        $value = '';
-        $startingToken = null;
-        $finalToken = null;
-        $ignoreSpace = false;
-        $keepTrailingSpace = false;
-        $forceTrimTrailingSpace = false;
-        while (!Scanner::isEnd($tokens)) {
-            $startingToken ??= $tokens->current();
-            switch (Scanner::type($tokens)) {
-                case TokenType::BRACKET_CURLY_OPEN:
-                case TokenType::TAG_START_OPENING:
-                    $keepTrailingSpace = true;
-                    break 2;
-                case TokenType::TAG_START_CLOSING:
-                    $value = rtrim($value);
-                    break 2;
-                case TokenType::SPACE:
-                case TokenType::END_OF_LINE:
-                    if (!$ignoreSpace) {
-                        $value .= ' ';
-                    }
-                    $ignoreSpace = true;
-                    if (Scanner::type($tokens) === TokenType::END_OF_LINE) {
-                        $forceTrimTrailingSpace = true;
-                    }
-                    $finalToken = $tokens->current();
-                    Scanner::skipOne($tokens);
-                    break;
-                default:
-                    $value .= Scanner::value($tokens);
-                    $ignoreSpace = false;
-                    $forceTrimTrailingSpace = false;
-                    $finalToken = $tokens->current();
-                    Scanner::skipOne($tokens);
-                    break;
+        $this->reset($preserveLeadingSpace);
+
+        while (!Scanner::isEnd($tokens) && !$this->terminated) {
+            $this->startingToken ??= $tokens->current();
+
+            match (Scanner::type($tokens)) {
+                TokenType::BRACKET_CURLY_OPEN,
+                TokenType::TAG_START_OPENING =>
+                    $this->terminateAtAdjacentChildNode(),
+                TokenType::TAG_START_CLOSING =>
+                    $this->terminateAtClosingTag(),
+                TokenType::SPACE =>
+                    $this->captureSpace($tokens->current()),
+                TokenType::END_OF_LINE =>
+                    $this->captureLineBreak($tokens->current()),
+                default =>
+                    $this->captureText($tokens->current()),
+            };
+
+            if (!$this->terminated) {
+                Scanner::skipOne($tokens);
             }
         }
 
-        if (is_null($startingToken) || is_null($finalToken)) {
+        return $this->build();
+    }
+
+    private function reset(bool $preserveLeadingSpace): void
+    {
+        $this->value = '';
+
+        $this->startingToken = null;
+        $this->finalToken = null;
+
+        $this->trimLeadingSpace = !$preserveLeadingSpace;
+        $this->trimTrailingSpace = true;
+        $this->currentlyCapturingSpace = false;
+        $this->trailingSpaceContainsLineBreak = false;
+        $this->terminated = false;
+    }
+
+    private function terminateAtAdjacentChildNode(): void
+    {
+        $this->terminated = true;
+        $this->trimTrailingSpace = $this->trailingSpaceContainsLineBreak;
+    }
+
+    private function terminateAtClosingTag(): void
+    {
+        $this->terminated = true;
+    }
+
+    private function captureSpace(Token $token): void
+    {
+        $this->finalToken = $token;
+
+        if ($this->currentlyCapturingSpace) {
+            return;
+        }
+
+        $this->currentlyCapturingSpace = true;
+        $this->value .= ' ';
+    }
+
+    private function captureLineBreak(Token $token): void
+    {
+        $this->captureSpace($token);
+        $this->trailingSpaceContainsLineBreak = true;
+    }
+
+    private function captureText(Token $token): void
+    {
+        $this->finalToken = $token;
+        $this->currentlyCapturingSpace = false;
+        $this->trailingSpaceContainsLineBreak = false;
+
+        $this->value .= $token->value;
+    }
+
+    private function build(): ?TextNode
+    {
+        if (is_null($this->startingToken) || is_null($this->finalToken)) {
             return null;
         }
 
-        if (!$preserveLeadingSpace) {
-            $value = ltrim($value);
+        if ($this->trimLeadingSpace) {
+            $this->value = ltrim($this->value);
         }
 
-        if (!$keepTrailingSpace || $forceTrimTrailingSpace) {
-            $value = rtrim($value);
+        if ($this->trimTrailingSpace) {
+            $this->value = rtrim($this->value);
         }
 
-        if ($value === '' || $value === ' ') {
+        if ($this->value === '' || $this->value === ' ') {
             return null;
         }
 
         return new TextNode(
             rangeInSource: Range::from(
-                $startingToken->boundaries->start,
-                $finalToken->boundaries->end
+                $this->startingToken->boundaries->start,
+                $this->finalToken->boundaries->end
             ),
-            value: $value
+            value: $this->value
         );
     }
 }
