@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\Text;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Language\Parser\Text\TextParser;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
@@ -66,11 +65,9 @@ final class TextParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('Hello World'))->getIterator();
 
         $expectedTextNode = new TextNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 10)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 10)
             ),
             value: 'Hello World'
         );
@@ -90,11 +87,9 @@ final class TextParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString("  \t\t  Hello World  \t\t  "))->getIterator();
 
         $expectedTextNode = new TextNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 22)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 22)
             ),
             value: 'Hello World'
         );
@@ -114,11 +109,9 @@ final class TextParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString("\nHello World"))->getIterator();
 
         $expectedTextNode = new TextNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(1, 10)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(1, 10)
             ),
             value: 'Hello World'
         );
@@ -138,11 +131,9 @@ final class TextParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString("\n    Hello World"))->getIterator();
 
         $expectedTextNode = new TextNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(1, 14)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(1, 14)
             ),
             value: 'Hello World'
         );
@@ -162,11 +153,9 @@ final class TextParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString("  \t\t  Hello World  \t\t  "))->getIterator();
 
         $expectedTextNode = new TextNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 22)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 22)
             ),
             value: ' Hello World'
         );
@@ -186,11 +175,9 @@ final class TextParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString("Hello \t \n \t folks   and\t\t\tpeople"))->getIterator();
 
         $expectedTextNode = new TextNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(1, 22)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(1, 22)
             ),
             value: 'Hello folks and people'
         );
@@ -210,11 +197,9 @@ final class TextParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString("    Hello{"))->getIterator();
 
         $expectedTextNode = new TextNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 8)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 8)
             ),
             value: 'Hello'
         );
@@ -234,11 +219,9 @@ final class TextParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString("Hello \t {foo}!"))->getIterator();
 
         $expectedTextNode = new TextNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 7)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 7)
             ),
             value: 'Hello '
         );
@@ -258,11 +241,9 @@ final class TextParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString("Hello \n\t {foo}!"))->getIterator();
 
         $expectedTextNode = new TextNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(1, 1)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(1, 1)
             ),
             value: 'Hello'
         );
@@ -293,11 +274,9 @@ final class TextParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString("    Hello<a>"))->getIterator();
 
         $expectedTextNode = new TextNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 8)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 8)
             ),
             value: 'Hello'
         );
@@ -317,11 +296,9 @@ final class TextParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString("Hello \t <a>World</a>"))->getIterator();
 
         $expectedTextNode = new TextNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 7)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 7)
             ),
             value: 'Hello '
         );
@@ -341,11 +318,9 @@ final class TextParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString("Hello \n\t <a>World</a>"))->getIterator();
 
         $expectedTextNode = new TextNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(1, 1)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(1, 1)
             ),
             value: 'Hello'
         );
@@ -376,11 +351,9 @@ final class TextParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString("World \n\t </a>"))->getIterator();
 
         $expectedTextNode = new TextNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(1, 1)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(1, 1)
             ),
             value: 'World'
         );

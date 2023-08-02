@@ -25,7 +25,6 @@ namespace PackageFactory\ComponentEngine\Language\Parser\PropertyDeclaration;
 use PackageFactory\ComponentEngine\Domain\PropertyName\PropertyName;
 use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\PropertyDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\PropertyNameNode;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Language\Parser\TypeReference\TypeReferenceParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
@@ -60,16 +59,12 @@ final class PropertyDeclarationParser
         $typeReferenceNode = $this->typeReferenceParser->parse($tokens);
 
         return new PropertyDeclarationNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    $propertyNameToken->boundaries->start,
-                    $typeReferenceNode->attributes->rangeInSource->end
-                )
+            rangeInSource: Range::from(
+                $propertyNameToken->boundaries->start,
+                $typeReferenceNode->rangeInSource->end
             ),
             name: new PropertyNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: $propertyNameToken->boundaries
-                ),
+                rangeInSource: $propertyNameToken->boundaries,
                 value: PropertyName::from($propertyNameToken->value)
             ),
             type: $typeReferenceNode

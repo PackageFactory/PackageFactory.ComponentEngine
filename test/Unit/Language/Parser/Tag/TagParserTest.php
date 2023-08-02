@@ -33,7 +33,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
 use PackageFactory\ComponentEngine\Language\Parser\Tag\TagParser;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Language\Parser\ParserException;
 use PackageFactory\ComponentEngine\Language\Parser\Tag\TagCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
@@ -53,18 +52,14 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('<a/>'))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 3)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 3)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 1)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 1)
                 ),
                 value: TagName::from('a')
             ),
@@ -88,35 +83,27 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('<table foo/>'))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 11)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 11)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 5)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 5)
                 ),
                 value: TagName::from('table')
             ),
             tagAttributes: new AttributeNodes(
                 new AttributeNode(
-                    attributes: new NodeAttributes(
+                    rangeInSource: Range::from(
+                        new Position(0, 7),
+                        new Position(0, 9)
+                    ),
+                    name: new AttributeNameNode(
                         rangeInSource: Range::from(
                             new Position(0, 7),
                             new Position(0, 9)
-                        )
-                    ),
-                    name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 7),
-                                new Position(0, 9)
-                            )
                         ),
                         value: AttributeName::from('foo')
                     ),
@@ -142,71 +129,55 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('<table foo bar baz/>'))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 19)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 19)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 5)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 5)
                 ),
                 value: TagName::from('table')
             ),
             tagAttributes: new AttributeNodes(
                 new AttributeNode(
-                    attributes: new NodeAttributes(
+                    rangeInSource: Range::from(
+                        new Position(0, 7),
+                        new Position(0, 9)
+                    ),
+                    name: new AttributeNameNode(
                         rangeInSource: Range::from(
                             new Position(0, 7),
                             new Position(0, 9)
-                        )
-                    ),
-                    name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 7),
-                                new Position(0, 9)
-                            )
                         ),
                         value: AttributeName::from('foo')
                     ),
                     value: null
                 ),
                 new AttributeNode(
-                    attributes: new NodeAttributes(
+                    rangeInSource: Range::from(
+                        new Position(0, 11),
+                        new Position(0, 13)
+                    ),
+                    name: new AttributeNameNode(
                         rangeInSource: Range::from(
                             new Position(0, 11),
                             new Position(0, 13)
-                        )
-                    ),
-                    name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 11),
-                                new Position(0, 13)
-                            )
                         ),
                         value: AttributeName::from('bar')
                     ),
                     value: null
                 ),
                 new AttributeNode(
-                    attributes: new NodeAttributes(
+                    rangeInSource: Range::from(
+                        new Position(0, 15),
+                        new Position(0, 17)
+                    ),
+                    name: new AttributeNameNode(
                         rangeInSource: Range::from(
                             new Position(0, 15),
                             new Position(0, 17)
-                        )
-                    ),
-                    name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 15),
-                                new Position(0, 17)
-                            )
                         ),
                         value: AttributeName::from('baz')
                     ),
@@ -232,44 +203,34 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('<a foo="bar"/>'))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 13)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 13)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 1)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 1)
                 ),
                 value: TagName::from('a')
             ),
             tagAttributes: new AttributeNodes(
                 new AttributeNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 3),
-                            new Position(0, 10)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 3),
+                        new Position(0, 10)
                     ),
                     name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 3),
-                                new Position(0, 5)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 3),
+                            new Position(0, 5)
                         ),
                         value: AttributeName::from('foo')
                     ),
                     value: new StringLiteralNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 8),
-                                new Position(0, 10)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 8),
+                            new Position(0, 10)
                         ),
                         value: 'bar'
                     )
@@ -294,96 +255,74 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('<div foo="bar" baz="qux" quux="corge"/>'))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 38)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 38)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 3)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 3)
                 ),
                 value: TagName::from('div')
             ),
             tagAttributes: new AttributeNodes(
                 new AttributeNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 5),
-                            new Position(0, 12)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 5),
+                        new Position(0, 12)
                     ),
                     name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 5),
-                                new Position(0, 7)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 5),
+                            new Position(0, 7)
                         ),
                         value: AttributeName::from('foo')
                     ),
                     value: new StringLiteralNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 10),
-                                new Position(0, 12)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 10),
+                            new Position(0, 12)
                         ),
                         value: 'bar'
                     )
                 ),
                 new AttributeNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 15),
-                            new Position(0, 22)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 15),
+                        new Position(0, 22)
                     ),
                     name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 15),
-                                new Position(0, 17)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 15),
+                            new Position(0, 17)
                         ),
                         value: AttributeName::from('baz')
                     ),
                     value: new StringLiteralNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 20),
-                                new Position(0, 22)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 20),
+                            new Position(0, 22)
                         ),
                         value: 'qux'
                     )
                 ),
                 new AttributeNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 25),
-                            new Position(0, 35)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 25),
+                        new Position(0, 35)
                     ),
                     name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 25),
-                                new Position(0, 28)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 25),
+                            new Position(0, 28)
                         ),
                         value: AttributeName::from('quux')
                     ),
                     value: new StringLiteralNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 31),
-                                new Position(0, 35)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 31),
+                            new Position(0, 35)
                         ),
                         value: 'corge'
                     )
@@ -408,18 +347,14 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('<a></a>'))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 6)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 6)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 1)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 1)
                 ),
                 value: TagName::from('a')
             ),
@@ -466,35 +401,27 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('<a foo></a>'))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 10)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 10)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 1)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 1)
                 ),
                 value: TagName::from('a')
             ),
             tagAttributes: new AttributeNodes(
                 new AttributeNode(
-                    attributes: new NodeAttributes(
+                    rangeInSource: Range::from(
+                        new Position(0, 3),
+                        new Position(0, 5)
+                    ),
+                    name: new AttributeNameNode(
                         rangeInSource: Range::from(
                             new Position(0, 3),
                             new Position(0, 5)
-                        )
-                    ),
-                    name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 3),
-                                new Position(0, 5)
-                            )
                         ),
                         value: AttributeName::from('foo')
                     ),
@@ -520,71 +447,55 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('<a foo bar baz></a>'))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 18)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 18)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 1)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 1)
                 ),
                 value: TagName::from('a')
             ),
             tagAttributes: new AttributeNodes(
                 new AttributeNode(
-                    attributes: new NodeAttributes(
+                    rangeInSource: Range::from(
+                        new Position(0, 3),
+                        new Position(0, 5)
+                    ),
+                    name: new AttributeNameNode(
                         rangeInSource: Range::from(
                             new Position(0, 3),
                             new Position(0, 5)
-                        )
-                    ),
-                    name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 3),
-                                new Position(0, 5)
-                            )
                         ),
                         value: AttributeName::from('foo')
                     ),
                     value: null
                 ),
                 new AttributeNode(
-                    attributes: new NodeAttributes(
+                    rangeInSource: Range::from(
+                        new Position(0, 7),
+                        new Position(0, 9)
+                    ),
+                    name: new AttributeNameNode(
                         rangeInSource: Range::from(
                             new Position(0, 7),
                             new Position(0, 9)
-                        )
-                    ),
-                    name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 7),
-                                new Position(0, 9)
-                            )
                         ),
                         value: AttributeName::from('bar')
                     ),
                     value: null
                 ),
                 new AttributeNode(
-                    attributes: new NodeAttributes(
+                    rangeInSource: Range::from(
+                        new Position(0, 11),
+                        new Position(0, 13)
+                    ),
+                    name: new AttributeNameNode(
                         rangeInSource: Range::from(
                             new Position(0, 11),
                             new Position(0, 13)
-                        )
-                    ),
-                    name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 11),
-                                new Position(0, 13)
-                            )
                         ),
                         value: AttributeName::from('baz')
                     ),
@@ -610,44 +521,34 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('<audio foo="bar"></audio>'))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 24)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 24)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 5)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 5)
                 ),
                 value: TagName::from('audio')
             ),
             tagAttributes: new AttributeNodes(
                 new AttributeNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 7),
-                            new Position(0, 14)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 7),
+                        new Position(0, 14)
                     ),
                     name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 7),
-                                new Position(0, 9)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 7),
+                            new Position(0, 9)
                         ),
                         value: AttributeName::from('foo')
                     ),
                     value: new StringLiteralNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 12),
-                                new Position(0, 14)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 12),
+                            new Position(0, 14)
                         ),
                         value: 'bar'
                     )
@@ -672,96 +573,74 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('<video foo="bar" baz="qux" quux="corge"></video>'))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 47)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 47)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 5)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 5)
                 ),
                 value: TagName::from('video')
             ),
             tagAttributes: new AttributeNodes(
                 new AttributeNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 7),
-                            new Position(0, 14)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 7),
+                        new Position(0, 14)
                     ),
                     name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 7),
-                                new Position(0, 9)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 7),
+                            new Position(0, 9)
                         ),
                         value: AttributeName::from('foo')
                     ),
                     value: new StringLiteralNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 12),
-                                new Position(0, 14)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 12),
+                            new Position(0, 14)
                         ),
                         value: 'bar'
                     )
                 ),
                 new AttributeNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 17),
-                            new Position(0, 24)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 17),
+                        new Position(0, 24)
                     ),
                     name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 17),
-                                new Position(0, 19)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 17),
+                            new Position(0, 19)
                         ),
                         value: AttributeName::from('baz')
                     ),
                     value: new StringLiteralNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 22),
-                                new Position(0, 24)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 22),
+                            new Position(0, 24)
                         ),
                         value: 'qux'
                     )
                 ),
                 new AttributeNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 27),
-                            new Position(0, 37)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 27),
+                        new Position(0, 37)
                     ),
                     name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 27),
-                                new Position(0, 30)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 27),
+                            new Position(0, 30)
                         ),
                         value: AttributeName::from('quux')
                     ),
                     value: new StringLiteralNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 33),
-                                new Position(0, 37)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 33),
+                            new Position(0, 37)
                         ),
                         value: 'corge'
                     )
@@ -786,29 +665,23 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('<a>Lorem ipsum...</a>'))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 20)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 20)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 1)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 1)
                 ),
                 value: TagName::from('a')
             ),
             tagAttributes: new AttributeNodes(),
             children: new ChildNodes(
                 new TextNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 3),
-                            new Position(0, 16)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 3),
+                        new Position(0, 16)
                     ),
                     value: 'Lorem ipsum...'
                 )
@@ -831,36 +704,28 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('<a><b/></a>'))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 10)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 10)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 1)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 1)
                 ),
                 value: TagName::from('a')
             ),
             tagAttributes: new AttributeNodes(),
             children: new ChildNodes(
                 new TagNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 3),
-                            new Position(0, 6)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 3),
+                        new Position(0, 6)
                     ),
                     name: new TagNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 4),
-                                new Position(0, 4)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 4),
+                            new Position(0, 4)
                         ),
                         value: TagName::from('b')
                     ),
@@ -887,36 +752,28 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('<a><b></b></a>'))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 13)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 13)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 1)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 1)
                 ),
                 value: TagName::from('a')
             ),
             tagAttributes: new AttributeNodes(),
             children: new ChildNodes(
                 new TagNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 3),
-                            new Position(0, 9)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 3),
+                        new Position(0, 9)
                     ),
                     name: new TagNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 4),
-                                new Position(0, 4)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 4),
+                            new Position(0, 4)
                         ),
                         value: TagName::from('b')
                     ),
@@ -943,72 +800,56 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('<a><b><c><d/></c></b></a>'))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 24)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 24)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 1)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 1)
                 ),
                 value: TagName::from('a')
             ),
             tagAttributes: new AttributeNodes(),
             children: new ChildNodes(
                 new TagNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 3),
-                            new Position(0, 20)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 3),
+                        new Position(0, 20)
                     ),
                     name: new TagNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 4),
-                                new Position(0, 4)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 4),
+                            new Position(0, 4)
                         ),
                         value: TagName::from('b')
                     ),
                     tagAttributes: new AttributeNodes(),
                     children: new ChildNodes(
                         new TagNode(
-                            attributes: new NodeAttributes(
-                                rangeInSource: Range::from(
-                                    new Position(0, 6),
-                                    new Position(0, 16)
-                                )
+                            rangeInSource: Range::from(
+                                new Position(0, 6),
+                                new Position(0, 16)
                             ),
                             name: new TagNameNode(
-                                attributes: new NodeAttributes(
-                                    rangeInSource: Range::from(
-                                        new Position(0, 7),
-                                        new Position(0, 7)
-                                    )
+                                rangeInSource: Range::from(
+                                    new Position(0, 7),
+                                    new Position(0, 7)
                                 ),
                                 value: TagName::from('c')
                             ),
                             tagAttributes: new AttributeNodes(),
                             children: new ChildNodes(
                                 new TagNode(
-                                    attributes: new NodeAttributes(
-                                        rangeInSource: Range::from(
-                                            new Position(0, 9),
-                                            new Position(0, 12)
-                                        )
+                                    rangeInSource: Range::from(
+                                        new Position(0, 9),
+                                        new Position(0, 12)
                                     ),
                                     name: new TagNameNode(
-                                        attributes: new NodeAttributes(
-                                            rangeInSource: Range::from(
-                                                new Position(0, 10),
-                                                new Position(0, 10)
-                                            )
+                                        rangeInSource: Range::from(
+                                            new Position(0, 10),
+                                            new Position(0, 10)
                                         ),
                                         value: TagName::from('d')
                                     ),
@@ -1041,36 +882,28 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('<a>   <b></b>   </a>'))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 19)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 19)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 1)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 1)
                 ),
                 value: TagName::from('a')
             ),
             tagAttributes: new AttributeNodes(),
             children: new ChildNodes(
                 new TagNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 6),
-                            new Position(0, 12)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 6),
+                        new Position(0, 12)
                     ),
                     name: new TagNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 7),
-                                new Position(0, 7)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 7),
+                            new Position(0, 7)
                         ),
                         value: TagName::from('b')
                     ),
@@ -1097,56 +930,44 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('<a>Something <b>important</b> happened.</a>'))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 42)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 42)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 1)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 1)
                 ),
                 value: TagName::from('a')
             ),
             tagAttributes: new AttributeNodes(),
             children: new ChildNodes(
                 new TextNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 3),
-                            new Position(0, 12)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 3),
+                        new Position(0, 12)
                     ),
                     value: 'Something '
                 ),
                 new TagNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 13),
-                            new Position(0, 28)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 13),
+                        new Position(0, 28)
                     ),
                     name: new TagNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 14),
-                                new Position(0, 14)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 14),
+                            new Position(0, 14)
                         ),
                         value: TagName::from('b')
                     ),
                     tagAttributes: new AttributeNodes(),
                     children: new ChildNodes(
                         new TextNode(
-                            attributes: new NodeAttributes(
-                                rangeInSource: Range::from(
-                                    new Position(0, 16),
-                                    new Position(0, 24)
-                                )
+                            rangeInSource: Range::from(
+                                new Position(0, 16),
+                                new Position(0, 24)
                             ),
                             value: 'important'
                         )
@@ -1154,11 +975,9 @@ final class TagParserTest extends TestCase
                     isSelfClosing: false
                 ),
                 new TextNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 29),
-                            new Position(0, 38)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 29),
+                        new Position(0, 38)
                     ),
                     value: ' happened.'
                 )
@@ -1181,36 +1000,28 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('<a><b></b><c/><d></d></a>'))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 24)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 24)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 1)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 1)
                 ),
                 value: TagName::from('a')
             ),
             tagAttributes: new AttributeNodes(),
             children: new ChildNodes(
                 new TagNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 3),
-                            new Position(0, 9)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 3),
+                        new Position(0, 9)
                     ),
                     name: new TagNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 4),
-                                new Position(0, 4)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 4),
+                            new Position(0, 4)
                         ),
                         value: TagName::from('b')
                     ),
@@ -1219,18 +1030,14 @@ final class TagParserTest extends TestCase
                     isSelfClosing: false
                 ),
                 new TagNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 10),
-                            new Position(0, 13)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 10),
+                        new Position(0, 13)
                     ),
                     name: new TagNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 11),
-                                new Position(0, 11)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 11),
+                            new Position(0, 11)
                         ),
                         value: TagName::from('c')
                     ),
@@ -1239,18 +1046,14 @@ final class TagParserTest extends TestCase
                     isSelfClosing: true
                 ),
                 new TagNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 14),
-                            new Position(0, 20)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 14),
+                        new Position(0, 20)
                     ),
                     name: new TagNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 15),
-                                new Position(0, 15)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 15),
+                            new Position(0, 15)
                         ),
                         value: TagName::from('d')
                     ),
@@ -1288,61 +1091,47 @@ final class TagParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString($tagAsString))->getIterator();
 
         $expectedTagNode = new TagNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(8, 5)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(8, 5)
             ),
             name: new TagNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 3)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 3)
                 ),
                 value: TagName::from('div')
             ),
             tagAttributes: new AttributeNodes(
                 new AttributeNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 5),
-                            new Position(0, 15)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 5),
+                        new Position(0, 15)
                     ),
                     name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 5),
-                                new Position(0, 9)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 5),
+                            new Position(0, 9)
                         ),
                         value: AttributeName::from('class')
                     ),
                     value: new StringLiteralNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 12),
-                                new Position(0, 15)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 12),
+                            new Position(0, 15)
                         ),
                         value: 'test'
                     )
                 ),
                 new AttributeNode(
-                    attributes: new NodeAttributes(
+                    rangeInSource: Range::from(
+                        new Position(0, 18),
+                        new Position(0, 23)
+                    ),
+                    name: new AttributeNameNode(
                         rangeInSource: Range::from(
                             new Position(0, 18),
                             new Position(0, 23)
-                        )
-                    ),
-                    name: new AttributeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 18),
-                                new Position(0, 23)
-                            )
                         ),
                         value: AttributeName::from('hidden')
                     ),
@@ -1351,38 +1140,30 @@ final class TagParserTest extends TestCase
             ),
             children: new ChildNodes(
                 new TextNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 25),
-                            new Position(2, 3)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 25),
+                        new Position(2, 3)
                     ),
                     value: 'Some opening text'
                 ),
                 new TagNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(2, 4),
-                            new Position(2, 20)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(2, 4),
+                        new Position(2, 20)
                     ),
                     name: new TagNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(2, 5),
-                                new Position(2, 6)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(2, 5),
+                            new Position(2, 6)
                         ),
                         value: TagName::from('h1')
                     ),
                     tagAttributes: new AttributeNodes(),
                     children: new ChildNodes(
                         new TextNode(
-                            attributes: new NodeAttributes(
-                                rangeInSource: Range::from(
-                                    new Position(2, 8),
-                                    new Position(2, 15)
-                                )
+                            rangeInSource: Range::from(
+                                new Position(2, 8),
+                                new Position(2, 15)
                             ),
                             value: 'Headline'
                         ),
@@ -1390,70 +1171,54 @@ final class TagParserTest extends TestCase
                     isSelfClosing: false
                 ),
                 new TagNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(3, 4),
-                            new Position(3, 59)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(3, 4),
+                        new Position(3, 59)
                     ),
                     name: new TagNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(3, 5),
-                                new Position(3, 5)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(3, 5),
+                            new Position(3, 5)
                         ),
                         value: TagName::from('a')
                     ),
                     tagAttributes: new AttributeNodes(
                         new AttributeNode(
-                            attributes: new NodeAttributes(
-                                rangeInSource: Range::from(
-                                    new Position(3, 7),
-                                    new Position(3, 23)
-                                )
+                            rangeInSource: Range::from(
+                                new Position(3, 7),
+                                new Position(3, 23)
                             ),
                             name: new AttributeNameNode(
-                                attributes: new NodeAttributes(
-                                    rangeInSource: Range::from(
-                                        new Position(3, 7),
-                                        new Position(3, 10)
-                                    )
+                                rangeInSource: Range::from(
+                                    new Position(3, 7),
+                                    new Position(3, 10)
                                 ),
                                 value: AttributeName::from('href')
                             ),
                             value: new StringLiteralNode(
-                                attributes: new NodeAttributes(
-                                    rangeInSource: Range::from(
-                                        new Position(3, 13),
-                                        new Position(3, 23)
-                                    )
+                                rangeInSource: Range::from(
+                                    new Position(3, 13),
+                                    new Position(3, 23)
                                 ),
                                 value: 'about:blank'
                             )
                         ),
                         new AttributeNode(
-                            attributes: new NodeAttributes(
-                                rangeInSource: Range::from(
-                                    new Position(3, 26),
-                                    new Position(3, 39)
-                                )
+                            rangeInSource: Range::from(
+                                new Position(3, 26),
+                                new Position(3, 39)
                             ),
                             name: new AttributeNameNode(
-                                attributes: new NodeAttributes(
-                                    rangeInSource: Range::from(
-                                        new Position(3, 26),
-                                        new Position(3, 31)
-                                    )
+                                rangeInSource: Range::from(
+                                    new Position(3, 26),
+                                    new Position(3, 31)
                                 ),
                                 value: AttributeName::from('target')
                             ),
                             value: new StringLiteralNode(
-                                attributes: new NodeAttributes(
-                                    rangeInSource: Range::from(
-                                        new Position(3, 34),
-                                        new Position(3, 39)
-                                    )
+                                rangeInSource: Range::from(
+                                    new Position(3, 34),
+                                    new Position(3, 39)
                                 ),
                                 value: '_blank'
                             )
@@ -1461,11 +1226,9 @@ final class TagParserTest extends TestCase
                     ),
                     children: new ChildNodes(
                         new TextNode(
-                            attributes: new NodeAttributes(
-                                rangeInSource: Range::from(
-                                    new Position(3, 42),
-                                    new Position(3, 55)
-                                )
+                            rangeInSource: Range::from(
+                                new Position(3, 42),
+                                new Position(3, 55)
                             ),
                             value: 'This is a link'
                         ),
@@ -1473,44 +1236,34 @@ final class TagParserTest extends TestCase
                     isSelfClosing: false
                 ),
                 new TagNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(4, 4),
-                            new Position(6, 7)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(4, 4),
+                        new Position(6, 7)
                     ),
                     name: new TagNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(4, 5),
-                                new Position(4, 5)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(4, 5),
+                            new Position(4, 5)
                         ),
                         value: TagName::from('p')
                     ),
                     tagAttributes: new AttributeNodes(
                         new AttributeNode(
-                            attributes: new NodeAttributes(
-                                rangeInSource: Range::from(
-                                    new Position(4, 7),
-                                    new Position(4, 16)
-                                )
+                            rangeInSource: Range::from(
+                                new Position(4, 7),
+                                new Position(4, 16)
                             ),
                             name: new AttributeNameNode(
-                                attributes: new NodeAttributes(
-                                    rangeInSource: Range::from(
-                                        new Position(4, 7),
-                                        new Position(4, 11)
-                                    )
+                                rangeInSource: Range::from(
+                                    new Position(4, 7),
+                                    new Position(4, 11)
                                 ),
                                 value: AttributeName::from('class')
                             ),
                             value: new StringLiteralNode(
-                                attributes: new NodeAttributes(
-                                    rangeInSource: Range::from(
-                                        new Position(4, 14),
-                                        new Position(4, 16)
-                                    )
+                                rangeInSource: Range::from(
+                                    new Position(4, 14),
+                                    new Position(4, 16)
                                 ),
                                 value: 'rte'
                             )
@@ -1518,38 +1271,30 @@ final class TagParserTest extends TestCase
                     ),
                     children: new ChildNodes(
                         new TextNode(
-                            attributes: new NodeAttributes(
-                                rangeInSource: Range::from(
-                                    new Position(4, 19),
-                                    new Position(5, 32)
-                                )
+                            rangeInSource: Range::from(
+                                new Position(4, 19),
+                                new Position(5, 32)
                             ),
                             value: 'This is a paragraph with '
                         ),
                         new TagNode(
-                            attributes: new NodeAttributes(
-                                rangeInSource: Range::from(
-                                    new Position(5, 33),
-                                    new Position(5, 51)
-                                )
+                            rangeInSource: Range::from(
+                                new Position(5, 33),
+                                new Position(5, 51)
                             ),
                             name: new TagNameNode(
-                                attributes: new NodeAttributes(
-                                    rangeInSource: Range::from(
-                                        new Position(5, 34),
-                                        new Position(5, 35)
-                                    )
+                                rangeInSource: Range::from(
+                                    new Position(5, 34),
+                                    new Position(5, 35)
                                 ),
                                 value: TagName::from('em')
                             ),
                             tagAttributes: new AttributeNodes(),
                             children: new ChildNodes(
                                 new TextNode(
-                                    attributes: new NodeAttributes(
-                                        rangeInSource: Range::from(
-                                            new Position(5, 37),
-                                            new Position(5, 46)
-                                        )
+                                    rangeInSource: Range::from(
+                                        new Position(5, 37),
+                                        new Position(5, 46)
                                     ),
                                     value: 'emphasized'
                                 ),
@@ -1557,38 +1302,30 @@ final class TagParserTest extends TestCase
                             isSelfClosing: false
                         ),
                         new TextNode(
-                            attributes: new NodeAttributes(
-                                rangeInSource: Range::from(
-                                    new Position(5, 52),
-                                    new Position(5, 56)
-                                )
+                            rangeInSource: Range::from(
+                                new Position(5, 52),
+                                new Position(5, 56)
                             ),
                             value: ' and '
                         ),
                         new TagNode(
-                            attributes: new NodeAttributes(
-                                rangeInSource: Range::from(
-                                    new Position(5, 57),
-                                    new Position(5, 81)
-                                )
+                            rangeInSource: Range::from(
+                                new Position(5, 57),
+                                new Position(5, 81)
                             ),
                             name: new TagNameNode(
-                                attributes: new NodeAttributes(
-                                    rangeInSource: Range::from(
-                                        new Position(5, 58),
-                                        new Position(5, 63)
-                                    )
+                                rangeInSource: Range::from(
+                                    new Position(5, 58),
+                                    new Position(5, 63)
                                 ),
                                 value: TagName::from('strong')
                             ),
                             tagAttributes: new AttributeNodes(),
                             children: new ChildNodes(
                                 new TextNode(
-                                    attributes: new NodeAttributes(
-                                        rangeInSource: Range::from(
-                                            new Position(5, 65),
-                                            new Position(5, 72)
-                                        )
+                                    rangeInSource: Range::from(
+                                        new Position(5, 65),
+                                        new Position(5, 72)
                                     ),
                                     value: 'boldened'
                                 ),
@@ -1596,11 +1333,9 @@ final class TagParserTest extends TestCase
                             isSelfClosing: false
                         ),
                         new TextNode(
-                            attributes: new NodeAttributes(
-                                rangeInSource: Range::from(
-                                    new Position(5, 82),
-                                    new Position(6, 3)
-                                )
+                            rangeInSource: Range::from(
+                                new Position(5, 82),
+                                new Position(6, 3)
                             ),
                             value: ' text.'
                         )
@@ -1608,11 +1343,9 @@ final class TagParserTest extends TestCase
                     isSelfClosing: false
                 ),
                 new TextNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(6, 8),
-                            new Position(7, 21)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(6, 8),
+                        new Position(7, 21)
                     ),
                     value: 'Some closing text'
                 ),

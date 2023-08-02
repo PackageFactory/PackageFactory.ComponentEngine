@@ -25,7 +25,6 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ValueReferenc
 use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
 use PackageFactory\ComponentEngine\Language\Parser\ValueReference\ValueReferenceParser;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
@@ -43,11 +42,9 @@ final class ValueReferenceParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('foo'))->getIterator();
 
         $expectedValueReferenceNode = new ValueReferenceNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 2)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 2)
             ),
             name: VariableName::from('foo')
         );

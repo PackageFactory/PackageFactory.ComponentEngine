@@ -35,12 +35,12 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLit
 use PackageFactory\ComponentEngine\Language\AST\Node\TernaryOperation\TernaryOperationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class ExpressionNode extends Node
 {
     public function __construct(
-        public readonly NodeAttributes $attributes,
+        public readonly Range $rangeInSource,
         public readonly AccessChainNode | BinaryOperationNode | BooleanLiteralNode | IntegerLiteralNode | MatchNode | NullLiteralNode | StringLiteralNode | TagNode | TemplateLiteralNode | TernaryOperationNode | UnaryOperationNode | ValueReferenceNode $root
     ) {
     }

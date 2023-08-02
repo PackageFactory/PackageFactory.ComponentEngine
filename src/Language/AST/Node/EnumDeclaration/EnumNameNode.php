@@ -24,12 +24,12 @@ namespace PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration;
 
 use PackageFactory\ComponentEngine\Domain\EnumName\EnumName;
 use PackageFactory\ComponentEngine\Language\AST\Node\Node;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class EnumNameNode extends Node
 {
     public function __construct(
-        public readonly NodeAttributes $attributes,
+        public readonly Range $rangeInSource,
         public readonly EnumName $value
     ) {
     }

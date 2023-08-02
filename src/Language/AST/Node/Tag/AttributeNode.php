@@ -25,12 +25,12 @@ namespace PackageFactory\ComponentEngine\Language\AST\Node\Tag;
 use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Node;
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class AttributeNode extends Node
 {
     public function __construct(
-        public readonly NodeAttributes $attributes,
+        public readonly Range $rangeInSource,
         public readonly AttributeNameNode $name,
         public readonly null | ExpressionNode | StringLiteralNode $value
     ) {

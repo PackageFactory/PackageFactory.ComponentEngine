@@ -40,7 +40,7 @@ final class InvalidTypeNameNodes extends ASTException
         return new self(
             code: 1690551330,
             message: 'A type reference must not contain duplicates.',
-            attributesOfAffectedNode: $duplicateTypeNameNode->attributes
+            affectedRangeInSource: $duplicateTypeNameNode->rangeInSource
         );
     }
 }

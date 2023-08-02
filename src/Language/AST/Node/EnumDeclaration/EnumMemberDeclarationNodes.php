@@ -29,9 +29,8 @@ final class EnumMemberDeclarationNodes
      */
     public readonly array $items;
 
-    public function __construct(
-        EnumMemberDeclarationNode ...$items
-    ) {
+    public function __construct(EnumMemberDeclarationNode ...$items)
+    {
         $itemsAsHashMap = [];
         foreach ($items as $item) {
             $itemsAsHashMap[$item->name->value->value] = $item;

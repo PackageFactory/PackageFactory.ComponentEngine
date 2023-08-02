@@ -30,7 +30,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
 use PackageFactory\ComponentEngine\Language\Parser\PropertyDeclaration\PropertyDeclarationParser;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
@@ -48,35 +47,27 @@ final class PropertyDeclarationParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('foo: Bar'))->getIterator();
 
         $expectedPropertyDeclarationNode = new PropertyDeclarationNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 7)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 7)
             ),
             name: new PropertyNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 0),
-                        new Position(0, 2)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 2)
                 ),
                 value: PropertyName::from('foo')
             ),
             type: new TypeReferenceNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 5),
-                        new Position(0, 7)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 5),
+                    new Position(0, 7)
                 ),
                 names: new TypeNameNodes(
                     new TypeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 5),
-                                new Position(0, 7)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 5),
+                            new Position(0, 7)
                         ),
                         value: TypeName::from('Bar')
                     )
@@ -101,35 +92,27 @@ final class PropertyDeclarationParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('foo: ?Bar'))->getIterator();
 
         $expectedPropertyDeclarationNode = new PropertyDeclarationNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 8)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 8)
             ),
             name: new PropertyNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 0),
-                        new Position(0, 2)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 2)
                 ),
                 value: PropertyName::from('foo')
             ),
             type: new TypeReferenceNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 5),
-                        new Position(0, 8)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 5),
+                    new Position(0, 8)
                 ),
                 names: new TypeNameNodes(
                     new TypeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 6),
-                                new Position(0, 8)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 6),
+                            new Position(0, 8)
                         ),
                         value: TypeName::from('Bar')
                     )
@@ -154,35 +137,27 @@ final class PropertyDeclarationParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('foo: Bar[]'))->getIterator();
 
         $expectedPropertyDeclarationNode = new PropertyDeclarationNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 9)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 9)
             ),
             name: new PropertyNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 0),
-                        new Position(0, 2)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 2)
                 ),
                 value: PropertyName::from('foo')
             ),
             type: new TypeReferenceNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 5),
-                        new Position(0, 9)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 5),
+                    new Position(0, 9)
                 ),
                 names: new TypeNameNodes(
                     new TypeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 5),
-                                new Position(0, 7)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 5),
+                            new Position(0, 7)
                         ),
                         value: TypeName::from('Bar')
                     )
@@ -207,53 +182,41 @@ final class PropertyDeclarationParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('foo: Bar|Baz|Qux'))->getIterator();
 
         $expectedPropertyDeclarationNode = new PropertyDeclarationNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 15)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 15)
             ),
             name: new PropertyNameNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 0),
-                        new Position(0, 2)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 2)
                 ),
                 value: PropertyName::from('foo')
             ),
             type: new TypeReferenceNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        new Position(0, 5),
-                        new Position(0, 15)
-                    )
+                rangeInSource: Range::from(
+                    new Position(0, 5),
+                    new Position(0, 15)
                 ),
                 names: new TypeNameNodes(
                     new TypeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 5),
-                                new Position(0, 7)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 5),
+                            new Position(0, 7)
                         ),
                         value: TypeName::from('Bar')
                     ),
                     new TypeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 9),
-                                new Position(0, 11)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 9),
+                            new Position(0, 11)
                         ),
                         value: TypeName::from('Baz')
                     ),
                     new TypeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 13),
-                                new Position(0, 15)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 13),
+                            new Position(0, 15)
                         ),
                         value: TypeName::from('Qux')
                     )

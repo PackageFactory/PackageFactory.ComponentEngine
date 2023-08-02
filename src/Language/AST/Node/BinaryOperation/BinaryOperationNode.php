@@ -24,12 +24,12 @@ namespace PackageFactory\ComponentEngine\Language\AST\Node\BinaryOperation;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Node;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class BinaryOperationNode extends Node
 {
     public function __construct(
-        public readonly NodeAttributes $attributes,
+        public readonly Range $rangeInSource,
         public readonly ExpressionNode $leftOperand,
         public readonly BinaryOperator $operator,
         public readonly ExpressionNode $rightOperand

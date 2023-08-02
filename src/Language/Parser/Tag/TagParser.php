@@ -31,7 +31,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Tag\AttributeNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\ChildNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNode;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\Text\TextParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
@@ -62,11 +61,9 @@ final class TagParser
 
         if ($tagSelfCloseToken = $this->extractTagSelfCloseToken($tokens)) {
             return new TagNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        $tagStartOpeningToken->boundaries->start,
-                        $tagSelfCloseToken->boundaries->end
-                    )
+                rangeInSource: Range::from(
+                    $tagStartOpeningToken->boundaries->start,
+                    $tagSelfCloseToken->boundaries->end
                 ),
                 name: $tagNameNode,
                 tagAttributes: $attributeNodes,
@@ -81,11 +78,9 @@ final class TagParser
             $closingTagEndToken = $this->extractTagEndToken($tokens);
 
             return new TagNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: Range::from(
-                        $tagStartOpeningToken->boundaries->start,
-                        $closingTagEndToken->boundaries->end
-                    )
+                rangeInSource: Range::from(
+                    $tagStartOpeningToken->boundaries->start,
+                    $closingTagEndToken->boundaries->end
                 ),
                 name: $tagNameNode,
                 tagAttributes: $attributeNodes,
@@ -119,9 +114,7 @@ final class TagParser
         Scanner::skipOne($tokens);
 
         return new TagNameNode(
-            attributes: new NodeAttributes(
-                rangeInSource: $tagNameToken->boundaries
-            ),
+            rangeInSource: $tagNameToken->boundaries,
             value: TagName::from($tagNameToken->value)
         );
     }
@@ -166,12 +159,10 @@ final class TagParser
         $attributeValueNode = $this->parseAttributeValue($tokens);
 
         return new AttributeNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    $attributeNameNode->attributes->rangeInSource->start,
-                    $attributeValueNode?->attributes->rangeInSource->end ??
-                        $attributeNameNode->attributes->rangeInSource->end
-                )
+            rangeInSource: Range::from(
+                $attributeNameNode->rangeInSource->start,
+                $attributeValueNode?->rangeInSource->end ??
+                    $attributeNameNode->rangeInSource->end
             ),
             name: $attributeNameNode,
             value: $attributeValueNode
@@ -189,9 +180,7 @@ final class TagParser
         Scanner::skipOne($tokens);
 
         return new AttributeNameNode(
-            attributes: new NodeAttributes(
-                rangeInSource: $attributeNameToken->boundaries
-            ),
+            rangeInSource: $attributeNameToken->boundaries,
             value: AttributeName::from($attributeNameToken->value)
         );
     }

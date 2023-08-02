@@ -37,7 +37,7 @@ final class TypeReferenceCouldNotBeParsed extends ParserException
                 'TypeReferenceNode could not be parsed, because the result would be invalid: %s',
                 $cause->getMessage()
             ),
-            affectedRangeInSource: $cause->attributesOfAffectedNode?->rangeInSource ?? null,
+            affectedRangeInSource: $cause->affectedRangeInSource,
             cause: $cause
         );
     }
@@ -51,7 +51,7 @@ final class TypeReferenceCouldNotBeParsed extends ParserException
                 'TypeReferenceNode could not be parsed, because the list of type names was invalid: %s',
                 $cause->getMessage()
             ),
-            affectedRangeInSource: $cause->attributesOfAffectedNode?->rangeInSource ?? null,
+            affectedRangeInSource: $cause->affectedRangeInSource,
             cause: $cause
         );
     }

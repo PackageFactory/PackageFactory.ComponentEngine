@@ -24,13 +24,13 @@ namespace PackageFactory\ComponentEngine\Language\AST\Node\TypeReference;
 
 use PackageFactory\ComponentEngine\Domain\TypeName\TypeNames;
 use PackageFactory\ComponentEngine\Language\AST\ASTException;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class InvalidTypeReferenceNode extends ASTException
 {
     public static function becauseItWasOptionalAndArrayAtTheSameTime(
         TypeNames $affectedTypeNames,
-        NodeAttributes $attributesOfAffectedNode
+        Range $affectedRangeInSource
     ): self {
         return new self(
             code: 1690538480,
@@ -38,13 +38,13 @@ final class InvalidTypeReferenceNode extends ASTException
                 'The type reference to "%s" must not be optional and array at the same time.',
                 $affectedTypeNames->toDebugString()
             ),
-            attributesOfAffectedNode: $attributesOfAffectedNode
+            affectedRangeInSource: $affectedRangeInSource
         );
     }
 
     public static function becauseItWasUnionAndArrayAtTheSameTime(
         TypeNames $affectedTypeNames,
-        NodeAttributes $attributesOfAffectedNode
+        Range $affectedRangeInSource
     ): self {
         return new self(
             code: 1690552344,
@@ -52,13 +52,13 @@ final class InvalidTypeReferenceNode extends ASTException
                 'The type reference to "%s" must not be union and array at the same time.',
                 $affectedTypeNames->toDebugString()
             ),
-            attributesOfAffectedNode: $attributesOfAffectedNode
+            affectedRangeInSource: $affectedRangeInSource
         );
     }
 
     public static function becauseItWasUnionAndOptionalAtTheSameTime(
         TypeNames $affectedTypeNames,
-        NodeAttributes $attributesOfAffectedNode
+        Range $affectedRangeInSource
     ): self {
         return new self(
             code: 1690552586,
@@ -66,7 +66,7 @@ final class InvalidTypeReferenceNode extends ASTException
                 'The type reference to "%s" must not be union and optional at the same time.',
                 $affectedTypeNames->toDebugString()
             ),
-            attributesOfAffectedNode: $attributesOfAffectedNode
+            affectedRangeInSource: $affectedRangeInSource
         );
     }
 }

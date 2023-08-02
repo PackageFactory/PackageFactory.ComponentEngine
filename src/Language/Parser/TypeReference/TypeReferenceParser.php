@@ -28,7 +28,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeRe
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
@@ -54,14 +53,12 @@ final class TypeReferenceParser
         $rangeInSource = Range::from(
             $startingToken->boundaries->start,
             $closingArrayToken?->boundaries->end
-                ?? $typeNameNodes->getLast()->attributes->rangeInSource->end
+                ?? $typeNameNodes->getLast()->rangeInSource->end
         );
 
         try {
             return new TypeReferenceNode(
-                attributes: new NodeAttributes(
-                    rangeInSource: $rangeInSource
-                ),
+                rangeInSource: $rangeInSource,
                 names: $typeNameNodes,
                 isArray: $isArray,
                 isOptional: $isOptional
@@ -124,9 +121,7 @@ final class TypeReferenceParser
         Scanner::skipOne($tokens);
 
         return new TypeNameNode(
-            attributes: new NodeAttributes(
-                rangeInSource: $typeNameToken->boundaries
-            ),
+            rangeInSource: $typeNameToken->boundaries,
             value: TypeName::from($typeNameToken->value)
         );
     }

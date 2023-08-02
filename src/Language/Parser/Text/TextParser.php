@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Parser\Text;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
@@ -93,11 +92,9 @@ final class TextParser
         }
 
         return new TextNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    $startingToken->boundaries->start,
-                    $finalToken->boundaries->end
-                )
+            rangeInSource: Range::from(
+                $startingToken->boundaries->start,
+                $finalToken->boundaries->end
             ),
             value: $value
         );

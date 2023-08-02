@@ -24,7 +24,6 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\NullLiteral;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\NullLiteral\NullLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\NullLiteral\NullLiteralParser;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
@@ -42,11 +41,9 @@ final class NullLiteralParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('null'))->getIterator();
 
         $expectedNullLiteralNode = new NullLiteralNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 3)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 3)
             )
         );
 

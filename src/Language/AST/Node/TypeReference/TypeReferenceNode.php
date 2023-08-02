@@ -23,12 +23,12 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\AST\Node\TypeReference;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\Node;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class TypeReferenceNode extends Node
 {
     public function __construct(
-        public readonly NodeAttributes $attributes,
+        public readonly Range $rangeInSource,
         public readonly TypeNameNodes $names,
         public readonly bool $isArray,
         public readonly bool $isOptional
@@ -36,21 +36,21 @@ final class TypeReferenceNode extends Node
         if ($isArray === true && $isOptional === true) {
             throw InvalidTypeReferenceNode::becauseItWasOptionalAndArrayAtTheSameTime(
                 affectedTypeNames: $names->toTypeNames(),
-                attributesOfAffectedNode: $attributes
+                affectedRangeInSource: $rangeInSource
             );
         }
 
         if ($names->getSize() > 1 && $isArray === true) {
             throw InvalidTypeReferenceNode::becauseItWasUnionAndArrayAtTheSameTime(
                 affectedTypeNames: $names->toTypeNames(),
-                attributesOfAffectedNode: $attributes
+                affectedRangeInSource: $rangeInSource
             );
         }
 
         if ($names->getSize() > 1 && $isOptional === true) {
             throw InvalidTypeReferenceNode::becauseItWasUnionAndOptionalAtTheSameTime(
                 affectedTypeNames: $names->toTypeNames(),
-                attributesOfAffectedNode: $attributes
+                affectedRangeInSource: $rangeInSource
             );
         }
     }

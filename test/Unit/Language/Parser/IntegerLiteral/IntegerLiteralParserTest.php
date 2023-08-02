@@ -25,7 +25,6 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\IntegerLitera
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerFormat;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
@@ -43,11 +42,9 @@ final class IntegerLiteralParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('0b1010110101'))->getIterator();
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 11)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 11)
             ),
             format: IntegerFormat::BINARY,
             value: '0b1010110101'
@@ -68,11 +65,9 @@ final class IntegerLiteralParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('0o755'))->getIterator();
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 4)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 4)
             ),
             format: IntegerFormat::OCTAL,
             value: '0o755'
@@ -93,11 +88,9 @@ final class IntegerLiteralParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('1234567890'))->getIterator();
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 9)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 9)
             ),
             format: IntegerFormat::DECIMAL,
             value: '1234567890'
@@ -118,11 +111,9 @@ final class IntegerLiteralParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('0x123456789ABCDEF'))->getIterator();
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 16)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 16)
             ),
             format: IntegerFormat::HEXADECIMAL,
             value: '0x123456789ABCDEF'

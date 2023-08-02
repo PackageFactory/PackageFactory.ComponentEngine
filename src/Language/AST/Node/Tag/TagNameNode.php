@@ -24,12 +24,12 @@ namespace PackageFactory\ComponentEngine\Language\AST\Node\Tag;
 
 use PackageFactory\ComponentEngine\Domain\TagName\TagName;
 use PackageFactory\ComponentEngine\Language\AST\Node\Node;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class TagNameNode extends Node
 {
     public function __construct(
-        public readonly NodeAttributes $attributes,
+        public readonly Range $rangeInSource,
         public readonly TagName $value
     ) {
     }

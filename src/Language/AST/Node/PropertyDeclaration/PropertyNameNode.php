@@ -24,12 +24,12 @@ namespace PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration;
 
 use PackageFactory\ComponentEngine\Domain\PropertyName\PropertyName;
 use PackageFactory\ComponentEngine\Language\AST\Node\Node;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class PropertyNameNode extends Node
 {
     public function __construct(
-        public readonly NodeAttributes $attributes,
+        public readonly Range $rangeInSource,
         public readonly PropertyName $value
     ) {
     }

@@ -26,7 +26,6 @@ use PackageFactory\ComponentEngine\Domain\StructName\StructName;
 use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\PropertyDeclarationNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructNameNode;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Language\Parser\PropertyDeclaration\PropertyDeclarationParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
@@ -55,11 +54,9 @@ final class StructDeclarationParser
         $closingBracketToken = $this->extractClosingBracketToken($tokens);
 
         return new StructDeclarationNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    $structKeywordToken->boundaries->start,
-                    $closingBracketToken->boundaries->end
-                )
+            rangeInSource: Range::from(
+                $structKeywordToken->boundaries->start,
+                $closingBracketToken->boundaries->end
             ),
             name: $structNameNode,
             properties: $propertyDeclarationNodes
@@ -96,9 +93,7 @@ final class StructDeclarationParser
         Scanner::skipSpaceAndComments($tokens);
 
         return new StructNameNode(
-            attributes: new NodeAttributes(
-                rangeInSource: $structNameToken->boundaries
-            ),
+            rangeInSource: $structNameToken->boundaries,
             value: StructName::from($structNameToken->value)
         );
     }

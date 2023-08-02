@@ -27,20 +27,19 @@ use PackageFactory\ComponentEngine\Domain\TypeName\TypeNames;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Test\Unit\Language\AST\Helpers\DummyAttributes;
 use PHPUnit\Framework\TestCase;
 
 final class TypeNameNodesTest extends TestCase
 {
-    use DummyAttributes;
-
     protected function createTypeNameNode(string $typeName): TypeNameNode
     {
         return new TypeNameNode(
-            attributes: $this->dummyAttributes,
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 0)
+            ),
             value: TypeName::from($typeName)
         );
     }
@@ -63,11 +62,9 @@ final class TypeNameNodesTest extends TestCase
     public function mustNotContainDuplicates(): void
     {
         $duplicate = new TypeNameNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(1, 1),
-                    new Position(1, 1)
-                )
+            rangeInSource: Range::from(
+                new Position(1, 1),
+                new Position(1, 1)
             ),
             value: TypeName::from('Foo')
         );

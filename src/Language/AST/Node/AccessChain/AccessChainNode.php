@@ -24,12 +24,12 @@ namespace PackageFactory\ComponentEngine\Language\AST\Node\AccessChain;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Node;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class AccessChainNode extends Node
 {
     public function __construct(
-        public readonly NodeAttributes $attributes,
+        public readonly Range $rangeInSource,
         public readonly ExpressionNode $root,
         public readonly AccessChainSegmentNodes $chain
     ) {

@@ -23,14 +23,13 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\Node;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class BooleanLiteralNode extends Node
 {
     public function __construct(
-        public readonly NodeAttributes $attributes,
+        public readonly Range $rangeInSource,
         public readonly bool $value
     ) {
-        // parent::__construct($attributes);
     }
 }

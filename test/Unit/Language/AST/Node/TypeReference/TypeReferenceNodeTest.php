@@ -28,23 +28,28 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeRe
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
-use PackageFactory\ComponentEngine\Test\Unit\Language\AST\Helpers\DummyAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Position;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PHPUnit\Framework\TestCase;
 
 final class TypeReferenceNodeTest extends TestCase
 {
-    use DummyAttributes;
-
     /**
      * @test
      */
     public function validSimpleTypeReferenceIsValid(): void
     {
         $typeReferenceNode = new TypeReferenceNode(
-            attributes: $this->dummyAttributes,
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 0)
+            ),
             names: new TypeNameNodes(
                 new TypeNameNode(
-                    attributes: $this->dummyAttributes,
+                    rangeInSource: Range::from(
+                        new Position(0, 0),
+                        new Position(0, 0)
+                    ),
                     value: TypeName::from('Foo')
                 )
             ),
@@ -64,10 +69,16 @@ final class TypeReferenceNodeTest extends TestCase
     public function validArrayTypeReferenceIsValid(): void
     {
         $typeReferenceNode = new TypeReferenceNode(
-            attributes: $this->dummyAttributes,
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 0)
+            ),
             names: new TypeNameNodes(
                 new TypeNameNode(
-                    attributes: $this->dummyAttributes,
+                    rangeInSource: Range::from(
+                        new Position(0, 0),
+                        new Position(0, 0)
+                    ),
                     value: TypeName::from('Foo')
                 )
             ),
@@ -87,10 +98,16 @@ final class TypeReferenceNodeTest extends TestCase
     public function validOptionalTypeReferenceIsValid(): void
     {
         $typeReferenceNode = new TypeReferenceNode(
-            attributes: $this->dummyAttributes,
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 0)
+            ),
             names: new TypeNameNodes(
                 new TypeNameNode(
-                    attributes: $this->dummyAttributes,
+                    rangeInSource: Range::from(
+                        new Position(0, 0),
+                        new Position(0, 0)
+                    ),
                     value: TypeName::from('Foo')
                 )
             ),
@@ -110,18 +127,30 @@ final class TypeReferenceNodeTest extends TestCase
     public function validUnionTypeReferenceIsValid(): void
     {
         $typeReferenceNode = new TypeReferenceNode(
-            attributes: $this->dummyAttributes,
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 0)
+            ),
             names: new TypeNameNodes(
                 new TypeNameNode(
-                    attributes: $this->dummyAttributes,
+                    rangeInSource: Range::from(
+                        new Position(0, 0),
+                        new Position(0, 0)
+                    ),
                     value: TypeName::from('Foo')
                 ),
                 new TypeNameNode(
-                    attributes: $this->dummyAttributes,
+                    rangeInSource: Range::from(
+                        new Position(0, 0),
+                        new Position(0, 0)
+                    ),
                     value: TypeName::from('Bar')
                 ),
                 new TypeNameNode(
-                    attributes: $this->dummyAttributes,
+                    rangeInSource: Range::from(
+                        new Position(0, 0),
+                        new Position(0, 0)
+                    ),
                     value: TypeName::from('Baz')
                 )
             ),
@@ -147,15 +176,24 @@ final class TypeReferenceNodeTest extends TestCase
         $this->expectExceptionObject(
             InvalidTypeReferenceNode::becauseItWasOptionalAndArrayAtTheSameTime(
                 affectedTypeNames: new TypeNames($name),
-                attributesOfAffectedNode: $this->dummyAttributes
+                affectedRangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 0)
+                )
             )
         );
 
         new TypeReferenceNode(
-            attributes: $this->dummyAttributes,
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 0)
+            ),
             names: new TypeNameNodes(
                 new TypeNameNode(
-                    attributes: $this->dummyAttributes,
+                    rangeInSource: Range::from(
+                        new Position(0, 0),
+                        new Position(0, 0)
+                    ),
                     value: $name
                 )
             ),
@@ -171,15 +209,24 @@ final class TypeReferenceNodeTest extends TestCase
     {
         $typeNameNodes = new TypeNameNodes(
             new TypeNameNode(
-                attributes: $this->dummyAttributes,
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 0)
+                ),
                 value: TypeName::from('Foo')
             ),
             new TypeNameNode(
-                attributes: $this->dummyAttributes,
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 0)
+                ),
                 value: TypeName::from('Bar')
             ),
             new TypeNameNode(
-                attributes: $this->dummyAttributes,
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 0)
+                ),
                 value: TypeName::from('Baz')
             )
         );
@@ -187,12 +234,18 @@ final class TypeReferenceNodeTest extends TestCase
         $this->expectExceptionObject(
             InvalidTypeReferenceNode::becauseItWasUnionAndArrayAtTheSameTime(
                 affectedTypeNames: $typeNameNodes->toTypeNames(),
-                attributesOfAffectedNode: $this->dummyAttributes
+                affectedRangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 0)
+                )
             )
         );
 
         new TypeReferenceNode(
-            attributes: $this->dummyAttributes,
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 0)
+            ),
             names: $typeNameNodes,
             isArray: true,
             isOptional: false
@@ -206,15 +259,24 @@ final class TypeReferenceNodeTest extends TestCase
     {
         $typeNameNodes = new TypeNameNodes(
             new TypeNameNode(
-                attributes: $this->dummyAttributes,
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 0)
+                ),
                 value: TypeName::from('Foo')
             ),
             new TypeNameNode(
-                attributes: $this->dummyAttributes,
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 0)
+                ),
                 value: TypeName::from('Bar')
             ),
             new TypeNameNode(
-                attributes: $this->dummyAttributes,
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 0)
+                ),
                 value: TypeName::from('Baz')
             )
         );
@@ -222,12 +284,18 @@ final class TypeReferenceNodeTest extends TestCase
         $this->expectExceptionObject(
             InvalidTypeReferenceNode::becauseItWasUnionAndOptionalAtTheSameTime(
                 affectedTypeNames: $typeNameNodes->toTypeNames(),
-                attributesOfAffectedNode: $this->dummyAttributes
+                affectedRangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 0)
+                )
             )
         );
 
         new TypeReferenceNode(
-            attributes: $this->dummyAttributes,
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 0)
+            ),
             names: $typeNameNodes,
             isArray: false,
             isOptional: true

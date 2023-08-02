@@ -25,13 +25,13 @@ namespace PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Node;
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class EnumMemberValueNode extends Node
 {
     public function __construct(
-        public readonly NodeAttributes $attributes,
-        public readonly StringLiteralNode|IntegerLiteralNode $value
+        public readonly Range $rangeInSource,
+        public readonly StringLiteralNode | IntegerLiteralNode $value
     ) {
     }
 }

@@ -24,12 +24,12 @@ namespace PackageFactory\ComponentEngine\Language\AST\Node\Match;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Node;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class MatchNode extends Node
 {
     public function __construct(
-        public readonly NodeAttributes $attributes,
+        public readonly Range $rangeInSource,
         public readonly ExpressionNode $subject,
         public readonly MatchArmNodes $arms
     ) {

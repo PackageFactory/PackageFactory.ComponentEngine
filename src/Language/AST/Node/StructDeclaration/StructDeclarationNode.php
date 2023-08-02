@@ -24,12 +24,12 @@ namespace PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\Node;
 use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\PropertyDeclarationNodes;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class StructDeclarationNode extends Node
 {
     public function __construct(
-        public readonly NodeAttributes $attributes,
+        public readonly Range $rangeInSource,
         public readonly StructNameNode $name,
         public readonly PropertyDeclarationNodes $properties
     ) {

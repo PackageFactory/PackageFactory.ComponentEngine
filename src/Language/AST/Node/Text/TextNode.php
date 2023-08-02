@@ -23,12 +23,12 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\AST\Node\Text;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\Node;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class TextNode extends Node
 {
     public function __construct(
-        public readonly NodeAttributes $attributes,
+        public readonly Range $rangeInSource,
         public readonly string $value
     ) {
     }

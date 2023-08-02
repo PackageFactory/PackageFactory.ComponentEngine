@@ -24,7 +24,6 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\BooleanLitera
 
 use PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\BooleanLiteral\BooleanLiteralParser;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
@@ -42,11 +41,9 @@ final class BooleanLiteralParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('true'))->getIterator();
 
         $expectedBooleanLiteralNode = new BooleanLiteralNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 3)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 3)
             ),
             value: true
         );
@@ -66,11 +63,9 @@ final class BooleanLiteralParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('false'))->getIterator();
 
         $expectedBooleanLiteralNode = new BooleanLiteralNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 4)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 4)
             ),
             value: false
         );

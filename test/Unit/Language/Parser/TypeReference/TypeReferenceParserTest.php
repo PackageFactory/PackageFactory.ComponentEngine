@@ -30,7 +30,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
 use PackageFactory\ComponentEngine\Language\Parser\TypeReference\TypeReferenceParser;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Language\Parser\ParserException;
 use PackageFactory\ComponentEngine\Language\Parser\TypeReference\TypeReferenceCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
@@ -50,19 +49,15 @@ final class TypeReferenceParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('Foo'))->getIterator();
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 2)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 2)
             ),
             names: new TypeNameNodes(
                 new TypeNameNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 0),
-                            new Position(0, 2)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 0),
+                        new Position(0, 2)
                     ),
                     value: TypeName::from('Foo')
                 )
@@ -86,19 +81,15 @@ final class TypeReferenceParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('Foo[]'))->getIterator();
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 4)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 4)
             ),
             names: new TypeNameNodes(
                 new TypeNameNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 0),
-                            new Position(0, 2)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 0),
+                        new Position(0, 2)
                     ),
                     value: TypeName::from('Foo')
                 )
@@ -122,19 +113,15 @@ final class TypeReferenceParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('?Foo'))->getIterator();
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 3)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 3)
             ),
             names: new TypeNameNodes(
                 new TypeNameNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 1),
-                            new Position(0, 3)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 1),
+                        new Position(0, 3)
                     ),
                     value: TypeName::from('Foo')
                 )
@@ -158,37 +145,29 @@ final class TypeReferenceParserTest extends TestCase
         $tokens = Tokenizer::fromSource(Source::fromString('Foo|Bar|Baz'))->getIterator();
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 10)
-                )
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 10)
             ),
             names: new TypeNameNodes(
                 new TypeNameNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 0),
-                            new Position(0, 2)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 0),
+                        new Position(0, 2)
                     ),
                     value: TypeName::from('Foo')
                 ),
                 new TypeNameNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 4),
-                            new Position(0, 6)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 4),
+                        new Position(0, 6)
                     ),
                     value: TypeName::from('Bar')
                 ),
                 new TypeNameNode(
-                    attributes: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 8),
-                            new Position(0, 10)
-                        )
+                    rangeInSource: Range::from(
+                        new Position(0, 8),
+                        new Position(0, 10)
                     ),
                     value: TypeName::from('Baz')
                 )
@@ -216,11 +195,9 @@ final class TypeReferenceParserTest extends TestCase
             TypeReferenceCouldNotBeParsed::becauseOfInvalidTypeReferenceNode(
                 cause: InvalidTypeReferenceNode::becauseItWasOptionalAndArrayAtTheSameTime(
                     affectedTypeNames: new TypeNames(TypeName::from('Foo')),
-                    attributesOfAffectedNode: new NodeAttributes(
-                        rangeInSource: Range::from(
-                            new Position(0, 0),
-                            new Position(0, 4)
-                        )
+                    affectedRangeInSource: Range::from(
+                        new Position(0, 0),
+                        new Position(0, 4)
                     ),
                 )
             )
@@ -242,11 +219,9 @@ final class TypeReferenceParserTest extends TestCase
             TypeReferenceCouldNotBeParsed::becauseOfInvalidTypeTypeNameNodes(
                 cause: InvalidTypeNameNodes::becauseTheyContainDuplicates(
                     duplicateTypeNameNode: new TypeNameNode(
-                        attributes: new NodeAttributes(
-                            rangeInSource: Range::from(
-                                new Position(0, 9),
-                                new Position(0, 11)
-                            )
+                        rangeInSource: Range::from(
+                            new Position(0, 9),
+                            new Position(0, 11)
                         ),
                         value: TypeName::from('Foo')
                     )

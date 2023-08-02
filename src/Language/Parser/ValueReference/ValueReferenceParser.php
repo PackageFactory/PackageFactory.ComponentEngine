@@ -24,7 +24,6 @@ namespace PackageFactory\ComponentEngine\Language\Parser\ValueReference;
 
 use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
@@ -44,9 +43,7 @@ final class ValueReferenceParser
         Scanner::skipOne($tokens);
 
         return new ValueReferenceNode(
-            attributes: new NodeAttributes(
-                rangeInSource: $token->boundaries
-            ),
+            rangeInSource: $token->boundaries,
             name: VariableName::from($token->value)
         );
     }

@@ -22,14 +22,14 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\AST;
 
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 abstract class ASTException extends \Exception
 {
     protected function __construct(
         int $code,
         string $message,
-        public readonly ?NodeAttributes $attributesOfAffectedNode = null
+        public readonly ?Range $affectedRangeInSource = null
     ) {
         parent::__construct($message, $code);
     }

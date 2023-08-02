@@ -22,12 +22,12 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\AST\Node;
 
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 abstract class Node
 {
     protected function __construct(
-        public readonly NodeAttributes $attributes
+        public readonly Range $rangeInSource
     ) {
     }
 }

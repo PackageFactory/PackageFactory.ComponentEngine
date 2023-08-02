@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Parser\NullLiteral;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\NullLiteral\NullLiteralNode;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
@@ -43,9 +42,7 @@ final class NullLiteralParser
         Scanner::skipOne($tokens);
 
         return new NullLiteralNode(
-            attributes: new NodeAttributes(
-                rangeInSource: $token->boundaries
-            )
+            rangeInSource: $token->boundaries
         );
     }
 }

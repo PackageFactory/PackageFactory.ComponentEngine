@@ -32,7 +32,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberV
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumNameNode;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
@@ -64,11 +63,9 @@ final class EnumDeclarationParser
         $closingBracketToken = $this->extractClosingBracketToken($tokens);
 
         return new EnumDeclarationNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    $enumKeyWordToken->boundaries->start,
-                    $closingBracketToken->boundaries->end
-                )
+            rangeInSource: Range::from(
+                $enumKeyWordToken->boundaries->start,
+                $closingBracketToken->boundaries->end
             ),
             name: $enumNameNode,
             members: $enumMemberDeclarations
@@ -101,9 +98,7 @@ final class EnumDeclarationParser
 
         $enumKeyNameToken = $tokens->current();
         $enumNameNode = new EnumNameNode(
-            attributes: new NodeAttributes(
-                rangeInSource: $enumKeyNameToken->boundaries
-            ),
+            rangeInSource: $enumKeyNameToken->boundaries,
             value: EnumName::from($enumKeyNameToken->value)
         );
 
@@ -173,12 +168,10 @@ final class EnumDeclarationParser
         $value = $this->parseEnumMemberValue($tokens);
 
         return new EnumMemberDeclarationNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    $enumMemberName->attributes->rangeInSource->start,
-                    $value?->attributes->rangeInSource->end
-                        ?? $enumMemberName->attributes->rangeInSource->end
-                )
+            rangeInSource: Range::from(
+                $enumMemberName->rangeInSource->start,
+                $value?->rangeInSource->end
+                    ?? $enumMemberName->rangeInSource->end
             ),
             name: $enumMemberName,
             value: $value
@@ -195,9 +188,7 @@ final class EnumDeclarationParser
 
         $enumMemberNameToken = $tokens->current();
         $enumMemberNameNode = new EnumMemberNameNode(
-            attributes: new NodeAttributes(
-                rangeInSource: $enumMemberNameToken->boundaries
-            ),
+            rangeInSource: $enumMemberNameToken->boundaries,
             value: EnumMemberName::from($enumMemberNameToken->value)
         );
 
@@ -236,11 +227,9 @@ final class EnumDeclarationParser
         Scanner::skipOne($tokens);
 
         return new EnumMemberValueNode(
-            attributes: new NodeAttributes(
-                rangeInSource: Range::from(
-                    $openingBracketToken->boundaries->start,
-                    $closingBracketToken->boundaries->end
-                )
+            rangeInSource: Range::from(
+                $openingBracketToken->boundaries->start,
+                $closingBracketToken->boundaries->end
             ),
             value: $value
         );
