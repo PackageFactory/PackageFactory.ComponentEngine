@@ -22,14 +22,17 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\AST\Node\Tag;
 
-final class TagContentNodes
+use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
+
+final class ChildNodes
 {
     /**
-     * @var TagContentNode[]
+     * @var (TextNode|ExpressionNode|TagNode)[]
      */
     public readonly array $items;
 
-    public function __construct(TagContentNode ...$items)
+    public function __construct(TextNode | ExpressionNode | TagNode ...$items)
     {
         $this->items = $items;
     }

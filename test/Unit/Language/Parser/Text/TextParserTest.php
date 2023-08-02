@@ -28,7 +28,6 @@ use PackageFactory\ComponentEngine\Language\Parser\Text\TextParser;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PHPUnit\Framework\TestCase;
 
@@ -109,6 +108,54 @@ final class TextParserTest extends TestCase
     /**
      * @test
      */
+    public function trimsLeadingLineBreak(): void
+    {
+        $textParser = new TextParser();
+        $tokens = Tokenizer::fromSource(Source::fromString("\nHello World"))->getIterator();
+
+        $expectedTextNode = new TextNode(
+            attributes: new NodeAttributes(
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(1, 10)
+                )
+            ),
+            value: 'Hello World'
+        );
+
+        $this->assertEquals(
+            $expectedTextNode,
+            $textParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function trimsLeadingLineBreakAndIndentation(): void
+    {
+        $textParser = new TextParser();
+        $tokens = Tokenizer::fromSource(Source::fromString("\n    Hello World"))->getIterator();
+
+        $expectedTextNode = new TextNode(
+            attributes: new NodeAttributes(
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(1, 14)
+                )
+            ),
+            value: 'Hello World'
+        );
+
+        $this->assertEquals(
+            $expectedTextNode,
+            $textParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
     public function preservesLeadingSpaceIfFlagIsSet(): void
     {
         $textParser = new TextParser();
@@ -157,7 +204,55 @@ final class TextParserTest extends TestCase
     /**
      * @test
      */
+    public function terminatesAtEmbeddedExpressionAndTrimsLeadingSpace(): void
+    {
+        $textParser = new TextParser();
+        $tokens = Tokenizer::fromSource(Source::fromString("    Hello{"))->getIterator();
+
+        $expectedTextNode = new TextNode(
+            attributes: new NodeAttributes(
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 8)
+                )
+            ),
+            value: 'Hello'
+        );
+
+        $this->assertEquals(
+            $expectedTextNode,
+            $textParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
     public function terminatesAtEmbeddedExpressionAndKeepsTrailingSpace(): void
+    {
+        $textParser = new TextParser();
+        $tokens = Tokenizer::fromSource(Source::fromString("Hello \t {foo}!"))->getIterator();
+
+        $expectedTextNode = new TextNode(
+            attributes: new NodeAttributes(
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 7)
+                )
+            ),
+            value: 'Hello '
+        );
+
+        $this->assertEquals(
+            $expectedTextNode,
+            $textParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function terminatesAtEmbeddedExpressionAndTrimsTrailingSpaceIfItContainsLineBreaks(): void
     {
         $textParser = new TextParser();
         $tokens = Tokenizer::fromSource(Source::fromString("Hello \n\t {foo}!"))->getIterator();
@@ -169,7 +264,7 @@ final class TextParserTest extends TestCase
                     new Position(1, 1)
                 )
             ),
-            value: 'Hello '
+            value: 'Hello'
         );
 
         $this->assertEquals(
@@ -192,7 +287,55 @@ final class TextParserTest extends TestCase
     /**
      * @test
      */
+    public function terminatesAtOpeningTagAndTrimsLeadingSpace(): void
+    {
+        $textParser = new TextParser();
+        $tokens = Tokenizer::fromSource(Source::fromString("    Hello<a>"))->getIterator();
+
+        $expectedTextNode = new TextNode(
+            attributes: new NodeAttributes(
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 8)
+                )
+            ),
+            value: 'Hello'
+        );
+
+        $this->assertEquals(
+            $expectedTextNode,
+            $textParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
     public function terminatesAtOpeningTagAndKeepsTrailingSpace(): void
+    {
+        $textParser = new TextParser();
+        $tokens = Tokenizer::fromSource(Source::fromString("Hello \t <a>World</a>"))->getIterator();
+
+        $expectedTextNode = new TextNode(
+            attributes: new NodeAttributes(
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    new Position(0, 7)
+                )
+            ),
+            value: 'Hello '
+        );
+
+        $this->assertEquals(
+            $expectedTextNode,
+            $textParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function terminatesAtOpeningTagAndTrimsTrailingSpaceIfItContainsLineBreaks(): void
     {
         $textParser = new TextParser();
         $tokens = Tokenizer::fromSource(Source::fromString("Hello \n\t <a>World</a>"))->getIterator();
@@ -204,7 +347,7 @@ final class TextParserTest extends TestCase
                     new Position(1, 1)
                 )
             ),
-            value: 'Hello '
+            value: 'Hello'
         );
 
         $this->assertEquals(

@@ -31,7 +31,7 @@ final class TagNode extends Node
         public readonly NodeAttributes $attributes,
         public readonly TagNameNode $name,
         public readonly AttributeNodes $tagAttributes,
-        public readonly TagContentNodes $children,
+        public readonly ChildNodes $children,
         public readonly bool $isSelfClosing
     ) {
     }

@@ -26,7 +26,7 @@ use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 abstract class ParserException extends \Exception
 {
-    protected function __construct(
+    final protected function __construct(
         int $code,
         string $message,
         public readonly ?Range $affectedRangeInSource = null,

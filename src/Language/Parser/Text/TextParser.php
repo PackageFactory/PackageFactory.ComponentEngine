@@ -43,6 +43,7 @@ final class TextParser
         $finalToken = null;
         $ignoreSpace = false;
         $keepTrailingSpace = false;
+        $forceTrimTrailingSpace = false;
         while (!Scanner::isEnd($tokens)) {
             $startingToken ??= $tokens->current();
             switch (Scanner::type($tokens)) {
@@ -59,12 +60,16 @@ final class TextParser
                         $value .= ' ';
                     }
                     $ignoreSpace = true;
+                    if (Scanner::type($tokens) === TokenType::END_OF_LINE) {
+                        $forceTrimTrailingSpace = true;
+                    }
                     $finalToken = $tokens->current();
                     Scanner::skipOne($tokens);
                     break;
                 default:
                     $value .= Scanner::value($tokens);
                     $ignoreSpace = false;
+                    $forceTrimTrailingSpace = false;
                     $finalToken = $tokens->current();
                     Scanner::skipOne($tokens);
                     break;
@@ -75,8 +80,12 @@ final class TextParser
             return null;
         }
 
-        if (!$keepTrailingSpace) {
-            $value = $preserveLeadingSpace ? rtrim($value) : trim($value);
+        if (!$preserveLeadingSpace) {
+            $value = ltrim($value);
+        }
+
+        if (!$keepTrailingSpace || $forceTrimTrailingSpace) {
+            $value = rtrim($value);
         }
 
         if ($value === '' || $value === ' ') {

@@ -20,18 +20,27 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\AST\Node\Tag;
+namespace PackageFactory\ComponentEngine\Language\Parser\Tag;
 
-use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
-use PackageFactory\ComponentEngine\Language\AST\Node\Node;
-use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
-use PackageFactory\ComponentEngine\Language\AST\NodeAttributes\NodeAttributes;
+use PackageFactory\ComponentEngine\Domain\TagName\TagName;
+use PackageFactory\ComponentEngine\Language\Parser\ParserException;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
-final class TagContentNode extends Node
+final class TagCouldNotBeParsed extends ParserException
 {
-    public function __construct(
-        public readonly NodeAttributes $attributes,
-        public readonly TextNode | ExpressionNode | TagNode $root
-    ) {
+    public static function becauseOfClosingTagNameMismatch(
+        TagName $expectedTagName,
+        string $actualTagName,
+        Range $affectedRangeInSource
+    ): self {
+        return new self(
+            code: 1690976372,
+            message: sprintf(
+                'TagNode could not be parsed, because the closing tag name "%s" did not match the opening tag name "%s".',
+                $actualTagName,
+                $expectedTagName->value
+            ),
+            affectedRangeInSource: $affectedRangeInSource
+        );
     }
 }
