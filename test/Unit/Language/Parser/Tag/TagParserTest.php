@@ -63,7 +63,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('a')
             ),
-            tagAttributes: new AttributeNodes(),
+            attributes: new AttributeNodes(),
             children: new ChildNodes(),
             isSelfClosing: true
         );
@@ -94,7 +94,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('table')
             ),
-            tagAttributes: new AttributeNodes(
+            attributes: new AttributeNodes(
                 new AttributeNode(
                     rangeInSource: Range::from(
                         new Position(0, 7),
@@ -140,7 +140,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('table')
             ),
-            tagAttributes: new AttributeNodes(
+            attributes: new AttributeNodes(
                 new AttributeNode(
                     rangeInSource: Range::from(
                         new Position(0, 7),
@@ -214,7 +214,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('a')
             ),
-            tagAttributes: new AttributeNodes(
+            attributes: new AttributeNodes(
                 new AttributeNode(
                     rangeInSource: Range::from(
                         new Position(0, 3),
@@ -266,7 +266,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('div')
             ),
-            tagAttributes: new AttributeNodes(
+            attributes: new AttributeNodes(
                 new AttributeNode(
                     rangeInSource: Range::from(
                         new Position(0, 5),
@@ -358,7 +358,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('a')
             ),
-            tagAttributes: new AttributeNodes(),
+            attributes: new AttributeNodes(),
             children: new ChildNodes(),
             isSelfClosing: false
         );
@@ -412,7 +412,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('a')
             ),
-            tagAttributes: new AttributeNodes(
+            attributes: new AttributeNodes(
                 new AttributeNode(
                     rangeInSource: Range::from(
                         new Position(0, 3),
@@ -458,7 +458,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('a')
             ),
-            tagAttributes: new AttributeNodes(
+            attributes: new AttributeNodes(
                 new AttributeNode(
                     rangeInSource: Range::from(
                         new Position(0, 3),
@@ -532,7 +532,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('audio')
             ),
-            tagAttributes: new AttributeNodes(
+            attributes: new AttributeNodes(
                 new AttributeNode(
                     rangeInSource: Range::from(
                         new Position(0, 7),
@@ -584,7 +584,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('video')
             ),
-            tagAttributes: new AttributeNodes(
+            attributes: new AttributeNodes(
                 new AttributeNode(
                     rangeInSource: Range::from(
                         new Position(0, 7),
@@ -676,7 +676,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('a')
             ),
-            tagAttributes: new AttributeNodes(),
+            attributes: new AttributeNodes(),
             children: new ChildNodes(
                 new TextNode(
                     rangeInSource: Range::from(
@@ -715,7 +715,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('a')
             ),
-            tagAttributes: new AttributeNodes(),
+            attributes: new AttributeNodes(),
             children: new ChildNodes(
                 new TagNode(
                     rangeInSource: Range::from(
@@ -729,7 +729,7 @@ final class TagParserTest extends TestCase
                         ),
                         value: TagName::from('b')
                     ),
-                    tagAttributes: new AttributeNodes(),
+                    attributes: new AttributeNodes(),
                     children: new ChildNodes(),
                     isSelfClosing: true
                 )
@@ -763,7 +763,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('a')
             ),
-            tagAttributes: new AttributeNodes(),
+            attributes: new AttributeNodes(),
             children: new ChildNodes(
                 new TagNode(
                     rangeInSource: Range::from(
@@ -777,7 +777,7 @@ final class TagParserTest extends TestCase
                         ),
                         value: TagName::from('b')
                     ),
-                    tagAttributes: new AttributeNodes(),
+                    attributes: new AttributeNodes(),
                     children: new ChildNodes(),
                     isSelfClosing: false
                 )
@@ -811,7 +811,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('a')
             ),
-            tagAttributes: new AttributeNodes(),
+            attributes: new AttributeNodes(),
             children: new ChildNodes(
                 new TagNode(
                     rangeInSource: Range::from(
@@ -825,7 +825,7 @@ final class TagParserTest extends TestCase
                         ),
                         value: TagName::from('b')
                     ),
-                    tagAttributes: new AttributeNodes(),
+                    attributes: new AttributeNodes(),
                     children: new ChildNodes(
                         new TagNode(
                             rangeInSource: Range::from(
@@ -839,7 +839,7 @@ final class TagParserTest extends TestCase
                                 ),
                                 value: TagName::from('c')
                             ),
-                            tagAttributes: new AttributeNodes(),
+                            attributes: new AttributeNodes(),
                             children: new ChildNodes(
                                 new TagNode(
                                     rangeInSource: Range::from(
@@ -853,7 +853,7 @@ final class TagParserTest extends TestCase
                                         ),
                                         value: TagName::from('d')
                                     ),
-                                    tagAttributes: new AttributeNodes(),
+                                    attributes: new AttributeNodes(),
                                     children: new ChildNodes(),
                                     isSelfClosing: true
                                 )
@@ -893,7 +893,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('a')
             ),
-            tagAttributes: new AttributeNodes(),
+            attributes: new AttributeNodes(),
             children: new ChildNodes(
                 new TagNode(
                     rangeInSource: Range::from(
@@ -907,7 +907,7 @@ final class TagParserTest extends TestCase
                         ),
                         value: TagName::from('b')
                     ),
-                    tagAttributes: new AttributeNodes(),
+                    attributes: new AttributeNodes(),
                     children: new ChildNodes(),
                     isSelfClosing: false
                 )
@@ -941,7 +941,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('a')
             ),
-            tagAttributes: new AttributeNodes(),
+            attributes: new AttributeNodes(),
             children: new ChildNodes(
                 new TextNode(
                     rangeInSource: Range::from(
@@ -962,7 +962,7 @@ final class TagParserTest extends TestCase
                         ),
                         value: TagName::from('b')
                     ),
-                    tagAttributes: new AttributeNodes(),
+                    attributes: new AttributeNodes(),
                     children: new ChildNodes(
                         new TextNode(
                             rangeInSource: Range::from(
@@ -1011,7 +1011,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('a')
             ),
-            tagAttributes: new AttributeNodes(),
+            attributes: new AttributeNodes(),
             children: new ChildNodes(
                 new TagNode(
                     rangeInSource: Range::from(
@@ -1025,7 +1025,7 @@ final class TagParserTest extends TestCase
                         ),
                         value: TagName::from('b')
                     ),
-                    tagAttributes: new AttributeNodes(),
+                    attributes: new AttributeNodes(),
                     children: new ChildNodes(),
                     isSelfClosing: false
                 ),
@@ -1041,7 +1041,7 @@ final class TagParserTest extends TestCase
                         ),
                         value: TagName::from('c')
                     ),
-                    tagAttributes: new AttributeNodes(),
+                    attributes: new AttributeNodes(),
                     children: new ChildNodes(),
                     isSelfClosing: true
                 ),
@@ -1057,7 +1057,7 @@ final class TagParserTest extends TestCase
                         ),
                         value: TagName::from('d')
                     ),
-                    tagAttributes: new AttributeNodes(),
+                    attributes: new AttributeNodes(),
                     children: new ChildNodes(),
                     isSelfClosing: false
                 ),
@@ -1102,7 +1102,7 @@ final class TagParserTest extends TestCase
                 ),
                 value: TagName::from('div')
             ),
-            tagAttributes: new AttributeNodes(
+            attributes: new AttributeNodes(
                 new AttributeNode(
                     rangeInSource: Range::from(
                         new Position(0, 5),
@@ -1158,7 +1158,7 @@ final class TagParserTest extends TestCase
                         ),
                         value: TagName::from('h1')
                     ),
-                    tagAttributes: new AttributeNodes(),
+                    attributes: new AttributeNodes(),
                     children: new ChildNodes(
                         new TextNode(
                             rangeInSource: Range::from(
@@ -1182,7 +1182,7 @@ final class TagParserTest extends TestCase
                         ),
                         value: TagName::from('a')
                     ),
-                    tagAttributes: new AttributeNodes(
+                    attributes: new AttributeNodes(
                         new AttributeNode(
                             rangeInSource: Range::from(
                                 new Position(3, 7),
@@ -1247,7 +1247,7 @@ final class TagParserTest extends TestCase
                         ),
                         value: TagName::from('p')
                     ),
-                    tagAttributes: new AttributeNodes(
+                    attributes: new AttributeNodes(
                         new AttributeNode(
                             rangeInSource: Range::from(
                                 new Position(4, 7),
@@ -1289,7 +1289,7 @@ final class TagParserTest extends TestCase
                                 ),
                                 value: TagName::from('em')
                             ),
-                            tagAttributes: new AttributeNodes(),
+                            attributes: new AttributeNodes(),
                             children: new ChildNodes(
                                 new TextNode(
                                     rangeInSource: Range::from(
@@ -1320,7 +1320,7 @@ final class TagParserTest extends TestCase
                                 ),
                                 value: TagName::from('strong')
                             ),
-                            tagAttributes: new AttributeNodes(),
+                            attributes: new AttributeNodes(),
                             children: new ChildNodes(
                                 new TextNode(
                                     rangeInSource: Range::from(

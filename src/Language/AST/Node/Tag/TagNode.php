@@ -30,7 +30,7 @@ final class TagNode extends Node
     public function __construct(
         public readonly Range $rangeInSource,
         public readonly TagNameNode $name,
-        public readonly AttributeNodes $tagAttributes,
+        public readonly AttributeNodes $attributes,
         public readonly ChildNodes $children,
         public readonly bool $isSelfClosing
     ) {

@@ -66,7 +66,7 @@ final class TagParser
                     $tagSelfCloseToken->boundaries->end
                 ),
                 name: $tagNameNode,
-                tagAttributes: $attributeNodes,
+                attributes: $attributeNodes,
                 children: new ChildNodes(),
                 isSelfClosing: true
             );
@@ -83,7 +83,7 @@ final class TagParser
                     $closingTagEndToken->boundaries->end
                 ),
                 name: $tagNameNode,
-                tagAttributes: $attributeNodes,
+                attributes: $attributeNodes,
                 children: $children,
                 isSelfClosing: false
             );
