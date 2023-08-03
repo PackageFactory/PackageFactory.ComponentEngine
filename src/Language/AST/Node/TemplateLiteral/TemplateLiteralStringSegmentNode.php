@@ -25,11 +25,12 @@ namespace PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral;
 use PackageFactory\ComponentEngine\Language\AST\Node\Node;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
-final class TemplateLiteralNode extends Node
+final class TemplateLiteralStringSegmentNode extends Node
 {
+
     public function __construct(
         public readonly Range $rangeInSource,
-        public readonly TemplateLiteralSegments $segments
+        public readonly string $value
     ) {
     }
 }

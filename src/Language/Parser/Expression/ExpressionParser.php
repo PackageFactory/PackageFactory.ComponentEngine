@@ -29,7 +29,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Access\AccessType;
 use PackageFactory\ComponentEngine\Language\AST\Node\BinaryOperation\BinaryOperationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\BinaryOperation\BinaryOperator;
 use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
-use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TernaryOperation\TernaryOperationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperator;
@@ -38,6 +37,7 @@ use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteral
 use PackageFactory\ComponentEngine\Language\Parser\NullLiteral\NullLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\Tag\TagParser;
+use PackageFactory\ComponentEngine\Language\Parser\TemplateLiteral\TemplateLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\ValueReference\ValueReferenceParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
@@ -52,16 +52,19 @@ final class ExpressionParser
     private readonly StringLiteralParser $stringLiteralParser;
     private readonly IntegerLiteralParser $integerLiteralParser;
     private readonly ValueReferenceParser $valueReferenceParser;
+    private readonly TemplateLiteralParser $templateLiteralParser;
     private readonly TagParser $tagParser;
 
     public function __construct(
-        private ?TokenType $stopAt = null
+        private ?TokenType $stopAt = null,
+        private Precedence $precedence = Precedence::SEQUENCE
     ) {
         $this->booleanLiteralParser = new BooleanLiteralParser();
         $this->nullLiteralParser = new NullLiteralParser();
         $this->stringLiteralParser = new StringLiteralParser();
         $this->integerLiteralParser = new IntegerLiteralParser();
         $this->valueReferenceParser = new ValueReferenceParser();
+        $this->templateLiteralParser = new TemplateLiteralParser();
         $this->tagParser = new TagParser();
     }
 
@@ -131,6 +134,8 @@ final class ExpressionParser
                 $this->parseValueReference($tokens),
             TokenType::TAG_START_OPENING =>
                 $this->parseTag($tokens),
+            TokenType::TEMPLATE_LITERAL_START =>
+                $this->parseTemplateLiteral($tokens),
             TokenType::BRACKET_ROUND_OPEN =>
                 $this->parseBracketedExpression($tokens),
             default =>
@@ -146,6 +151,7 @@ final class ExpressionParser
                         TokenType::NUMBER_HEXADECIMAL,
                         TokenType::STRING,
                         TokenType::TAG_START_OPENING,
+                        TokenType::TEMPLATE_LITERAL_START,
                         TokenType::BRACKET_ROUND_OPEN
                     ),
                     actualToken: $tokens->current()
@@ -216,6 +222,14 @@ final class ExpressionParser
         return $newExpressionParser;
     }
 
+    private function withPrecedence(Precedence $precedence): self
+    {
+        $newExpressionParser = clone $this;
+        $newExpressionParser->precedence = $precedence;
+
+        return $newExpressionParser;
+    }
+
     /**
      * @param \Iterator<mixed,Token> $tokens
      * @return boolean
@@ -224,11 +238,21 @@ final class ExpressionParser
     {
         Scanner::skipSpaceAndComments($tokens);
 
-        if (is_null($this->stopAt)) {
-            return Scanner::isEnd($tokens);
+        if (Scanner::isEnd($tokens)) {
+            return true;
         }
 
-        return Scanner::type($tokens) === $this->stopAt;
+        $type = Scanner::type($tokens);
+
+        if ($this->precedence->mustStopAt($type)) {
+            return true;
+        }
+
+        if ($this->stopAt && $type === $this->stopAt) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -312,6 +336,20 @@ final class ExpressionParser
         return new ExpressionNode(
             rangeInSource: $tagNode->rangeInSource,
             root: $tagNode
+        );
+    }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
+     * @return ExpressionNode
+     */
+    private function parseTemplateLiteral(\Iterator &$tokens): ExpressionNode
+    {
+        $templateLiteralNode = $this->templateLiteralParser->parse($tokens);
+
+        return new ExpressionNode(
+            rangeInSource: $templateLiteralNode->rangeInSource,
+            root: $templateLiteralNode
         );
     }
 
@@ -412,7 +450,9 @@ final class ExpressionParser
     private function parseBinaryOperation(\Iterator &$tokens, ExpressionNode $leftOperand): ExpressionNode
     {
         $operator = $this->parseBinaryOperator($tokens);
-        $rightOperand = $this->parse($tokens);
+        $rightOperand = $this
+            ->withPrecedence(Precedence::forBinaryOperator($operator))
+            ->parse($tokens);
         $rangeInSource = Range::from(
             $leftOperand->rangeInSource->start,
             $rightOperand->rangeInSource->end

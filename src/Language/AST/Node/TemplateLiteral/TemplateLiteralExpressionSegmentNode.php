@@ -22,14 +22,16 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral;
 
+use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Node;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
-final class TemplateLiteralNode extends Node
+final class TemplateLiteralExpressionSegmentNode extends Node
 {
+
     public function __construct(
         public readonly Range $rangeInSource,
-        public readonly TemplateLiteralSegments $segments
+        public readonly ExpressionNode $expression
     ) {
     }
 }

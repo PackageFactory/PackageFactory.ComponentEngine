@@ -43,6 +43,10 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Tag\AttributeNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\ChildNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralExpressionSegmentNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralSegments;
+use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralStringSegmentNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TernaryOperation\TernaryOperationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperationNode;
@@ -1040,7 +1044,40 @@ final class ExpressionParserTest extends ParserTestCase
      */
     public function parsesTemplateLiteral(): void
     {
-        $this->markTestSkipped('@TODO: parses TemplateLiteral');
+        $expressionParser = new ExpressionParser();
+        $tokens = $this->createTokenIterator('`Hello ${friend}!`');
+
+        $expectedExpressioNode = new ExpressionNode(
+            rangeInSource: $this->range([0, 0], [0, 17]),
+            root: new TemplateLiteralNode(
+                rangeInSource: $this->range([0, 0], [0, 17]),
+                segments: new TemplateLiteralSegments(
+                    new TemplateLiteralStringSegmentNode(
+                        rangeInSource: $this->range([0, 1], [0, 6]),
+                        value: 'Hello '
+                    ),
+                    new TemplateLiteralExpressionSegmentNode(
+                        rangeInSource: $this->range([0, 7], [0, 15]),
+                        expression: new ExpressionNode(
+                            rangeInSource: $this->range([0, 9], [0, 14]),
+                            root: new ValueReferenceNode(
+                                rangeInSource: $this->range([0, 9], [0, 14]),
+                                name: VariableName::from('friend')
+                            )
+                        )
+                    ),
+                    new TemplateLiteralStringSegmentNode(
+                        rangeInSource: $this->range([0, 16], [0, 16]),
+                        value: '!'
+                    ),
+                )
+            )
+        );
+
+        $this->assertEquals(
+            $expectedExpressioNode,
+            $expressionParser->parse($tokens)
+        );
     }
 
     /**
@@ -1087,7 +1124,7 @@ final class ExpressionParserTest extends ParserTestCase
     /**
      * @test
      */
-    public function parsesNestedTernaryOperation(): void
+    public function parsesNestedBracketedTernaryOperation(): void
     {
         $expressionParser = new ExpressionParser();
         $tokens = $this->createTokenIterator('(a ? b : c) ? (d ? e : f) : (g ? h : i)');
@@ -1169,6 +1206,79 @@ final class ExpressionParserTest extends ParserTestCase
                             root: new ValueReferenceNode(
                                 rangeInSource: $this->range([0, 37], [0, 37]),
                                 name: VariableName::from('i')
+                            )
+                        )
+                    )
+                )
+            )
+        );
+
+        $this->assertEquals(
+            $expectedExpressioNode,
+            $expressionParser->parse($tokens)
+        );
+    }
+    /**
+     * @test
+     */
+    public function parsesNestedUnbracketedTernaryOperation(): void
+    {
+        $expressionParser = new ExpressionParser();
+        $tokens = $this->createTokenIterator('a < b ? "yes" : (foo ? "maybe" : "no")');
+
+        $expectedExpressioNode = new ExpressionNode(
+            rangeInSource: $this->range([0, 0], [0, 37]),
+            root: new TernaryOperationNode(
+                condition: new ExpressionNode(
+                    rangeInSource: $this->range([0, 0], [0, 4]),
+                    root: new BinaryOperationNode(
+                        rangeInSource: $this->range([0, 0], [0, 4]),
+                        leftOperand: new ExpressionNode(
+                            rangeInSource: $this->range([0, 0], [0, 0]),
+                            root: new ValueReferenceNode(
+                                rangeInSource: $this->range([0, 0], [0, 0]),
+                                name: VariableName::from('a')
+                            )
+                        ),
+                        operator: BinaryOperator::LESS_THAN,
+                        rightOperand: new ExpressionNode(
+                            rangeInSource: $this->range([0, 4], [0, 4]),
+                            root: new ValueReferenceNode(
+                                rangeInSource: $this->range([0, 4], [0, 4]),
+                                name: VariableName::from('b')
+                            )
+                        ),
+                    )
+                ),
+                trueBranch: new ExpressionNode(
+                    rangeInSource: $this->range([0, 9], [0, 11]),
+                    root: new StringLiteralNode(
+                        rangeInSource: $this->range([0, 9], [0, 11]),
+                        value: 'yes'
+                    )
+                ),
+                falseBranch: new ExpressionNode(
+                    rangeInSource: $this->range([0, 16], [0, 37]),
+                    root: new TernaryOperationNode(
+                        condition: new ExpressionNode(
+                            rangeInSource: $this->range([0, 17], [0, 19]),
+                            root: new ValueReferenceNode(
+                                rangeInSource: $this->range([0, 17], [0, 19]),
+                                name: VariableName::from('foo')
+                            ),
+                        ),
+                        trueBranch: new ExpressionNode(
+                            rangeInSource: $this->range([0, 24], [0, 28]),
+                            root: new StringLiteralNode(
+                                rangeInSource: $this->range([0, 24], [0, 28]),
+                                value: 'maybe'
+                            )
+                        ),
+                        falseBranch: new ExpressionNode(
+                            rangeInSource: $this->range([0, 34], [0, 35]),
+                            root: new StringLiteralNode(
+                                rangeInSource: $this->range([0, 34], [0, 35]),
+                                value: 'no'
                             )
                         )
                     )
