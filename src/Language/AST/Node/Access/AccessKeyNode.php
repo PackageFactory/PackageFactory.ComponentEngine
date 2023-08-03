@@ -20,10 +20,17 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\AST\Node\AccessChain;
+namespace PackageFactory\ComponentEngine\Language\AST\Node\Access;
 
-enum AccessType: string
+use PackageFactory\ComponentEngine\Domain\PropertyName\PropertyName;
+use PackageFactory\ComponentEngine\Language\AST\Node\Node;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
+
+final class AccessKeyNode extends Node
 {
-    case MANDATORY = 'MANDATORY';
-    case OPTIONAL = 'OPTIONAL';
+    public function __construct(
+        public readonly Range $rangeInSource,
+        public readonly PropertyName $value
+    ) {
+    }
 }

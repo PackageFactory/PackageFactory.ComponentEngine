@@ -20,17 +20,27 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\AST\Node\AccessChain;
+namespace PackageFactory\ComponentEngine\Language\Parser\Expression;
 
-final class AccessChainSegmentNodes
+use PackageFactory\ComponentEngine\Language\Parser\ParserException;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
+
+final class ExpressionCouldNotBeParsed extends ParserException
 {
-    /**
-     * @var AccessChainSegmentNode[]
-     */
-    public readonly array $items;
-
-    public function __construct(AccessChainSegmentNode ...$items)
-    {
-        $this->items = $items;
+    public static function becauseOfUnexpectedToken(
+        TokenTypes $expectedTokenTypes,
+        Token $actualToken
+    ): self {
+        return new self(
+            code: 1691063089,
+            message: sprintf(
+                'Expression could not be parsed because of unexpected token %s. '
+                . 'Expected %s instead.',
+                $actualToken->toDebugString(),
+                $expectedTokenTypes->toDebugString()
+            ),
+            affectedRangeInSource: $actualToken->boundaries
+        );
     }
 }

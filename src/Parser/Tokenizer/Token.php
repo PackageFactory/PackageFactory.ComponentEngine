@@ -28,7 +28,7 @@ use PackageFactory\ComponentEngine\Parser\Source\Path;
 
 final class Token
 {
-    private function __construct(
+    public function __construct(
         public readonly TokenType $type,
         public readonly string $value,
         public readonly Range $boundaries,
@@ -64,5 +64,10 @@ final class Token
     public function __toString(): string
     {
         return $this->value;
+    }
+
+    public function toDebugString(): string
+    {
+        return sprintf('%s ("%s")', $this->type->value, $this->value);
     }
 }

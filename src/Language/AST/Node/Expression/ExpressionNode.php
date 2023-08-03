@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\AST\Node\Expression;
 
-use PackageFactory\ComponentEngine\Language\AST\Node\AccessChain\AccessChainNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Access\AccessNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\BinaryOperation\BinaryOperationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
@@ -41,7 +41,7 @@ final class ExpressionNode extends Node
 {
     public function __construct(
         public readonly Range $rangeInSource,
-        public readonly AccessChainNode | BinaryOperationNode | BooleanLiteralNode | IntegerLiteralNode | MatchNode | NullLiteralNode | StringLiteralNode | TagNode | TemplateLiteralNode | TernaryOperationNode | UnaryOperationNode | ValueReferenceNode $root
+        public readonly AccessNode | BinaryOperationNode | BooleanLiteralNode | IntegerLiteralNode | MatchNode | NullLiteralNode | StringLiteralNode | TagNode | TemplateLiteralNode | TernaryOperationNode | UnaryOperationNode | ValueReferenceNode $root
     ) {
     }
 }

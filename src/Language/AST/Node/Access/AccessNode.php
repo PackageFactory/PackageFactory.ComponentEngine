@@ -20,18 +20,19 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\AST\Node\AccessChain;
+namespace PackageFactory\ComponentEngine\Language\AST\Node\Access;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Node;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
-final class AccessChainNode extends Node
+final class AccessNode extends Node
 {
     public function __construct(
         public readonly Range $rangeInSource,
-        public readonly ExpressionNode $root,
-        public readonly AccessChainSegmentNodes $chain
+        public readonly ExpressionNode $parent,
+        public readonly AccessType $type,
+        public readonly AccessKeyNode $key
     ) {
     }
 }

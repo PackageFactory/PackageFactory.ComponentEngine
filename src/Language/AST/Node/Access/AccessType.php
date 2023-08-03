@@ -20,17 +20,10 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\AST\Node\AccessChain;
+namespace PackageFactory\ComponentEngine\Language\AST\Node\Access;
 
-use PackageFactory\ComponentEngine\Language\AST\Node\Node;
-use PackageFactory\ComponentEngine\Parser\Source\Range;
-
-final class AccessChainSegmentNode extends Node
+enum AccessType: string
 {
-    public function __construct(
-        public readonly Range $rangeInSource,
-        public readonly AccessType $accessType,
-        public readonly AccessChainSegmentKeyNode $key
-    ) {
-    }
+    case MANDATORY = 'MANDATORY';
+    case OPTIONAL = 'OPTIONAL';
 }
