@@ -22,33 +22,26 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\AST\Node\Match;
 
-final class MatchArmNodes
+use PackageFactory\ComponentEngine\Language\AST\ASTException;
+
+final class InvalidMatchArmNodes extends ASTException
 {
-    /**
-     * @var MatchArmNode[]
-     */
-    public readonly array $items;
-
-    private ?MatchArmNode $defaultArm = null;
-
-    public function __construct(MatchArmNode ...$items)
+    public static function becauseTheyWereEmpty(): self
     {
-        if (count($items) === 0) {
-            throw InvalidMatchArmNodes::becauseTheyWereEmpty();
-        }
+        return new self(
+            code: 1691150119,
+            message: 'A match statement must contain at least one match arm.'
+        );
+    }
 
-        foreach ($items as $item) {
-            if ($item->isDefault()) {
-                if (is_null($this->defaultArm)) {
-                    $this->defaultArm = $item;
-                } else {
-                    throw InvalidMatchArmNodes::becauseTheyContainMoreThanOneDefaultMatchArmNode(
-                        secondDefaultMatchArmNode: $item
-                    );
-                }
-            }
-        }
-
-        $this->items = $items;
+    public static function becauseTheyContainMoreThanOneDefaultMatchArmNode(
+        MatchArmNode $secondDefaultMatchArmNode
+    ): self
+    {
+        return new self(
+            code: 1691150238,
+            message: 'A match statement must not contain more than one default match arm.',
+            affectedRangeInSource: $secondDefaultMatchArmNode->rangeInSource
+        );
     }
 }

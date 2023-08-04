@@ -34,6 +34,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperati
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperator;
 use PackageFactory\ComponentEngine\Language\Parser\BooleanLiteral\BooleanLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
+use PackageFactory\ComponentEngine\Language\Parser\Match\MatchParser;
 use PackageFactory\ComponentEngine\Language\Parser\NullLiteral\NullLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\Tag\TagParser;
@@ -54,6 +55,7 @@ final class ExpressionParser
     private readonly ValueReferenceParser $valueReferenceParser;
     private readonly TemplateLiteralParser $templateLiteralParser;
     private readonly TagParser $tagParser;
+    private readonly MatchParser $matchParser;
 
     public function __construct(
         private ?TokenType $stopAt = null,
@@ -66,6 +68,7 @@ final class ExpressionParser
         $this->valueReferenceParser = new ValueReferenceParser();
         $this->templateLiteralParser = new TemplateLiteralParser();
         $this->tagParser = new TagParser();
+        $this->matchParser = new MatchParser();
     }
 
     /**
@@ -113,7 +116,7 @@ final class ExpressionParser
      * @param \Iterator<mixed,Token> $tokens
      * @return ExpressionNode
      */
-    public function parseUnaryStatement(\Iterator &$tokens): ExpressionNode
+    private function parseUnaryStatement(\Iterator &$tokens): ExpressionNode
     {
         $result = match (Scanner::type($tokens)) {
             TokenType::OPERATOR_BOOLEAN_NOT =>
@@ -136,6 +139,8 @@ final class ExpressionParser
                 $this->parseTag($tokens),
             TokenType::TEMPLATE_LITERAL_START =>
                 $this->parseTemplateLiteral($tokens),
+            TokenType::KEYWORD_MATCH =>
+                $this->parseMatch($tokens),
             TokenType::BRACKET_ROUND_OPEN =>
                 $this->parseBracketedExpression($tokens),
             default =>
@@ -152,6 +157,7 @@ final class ExpressionParser
                         TokenType::STRING,
                         TokenType::TAG_START_OPENING,
                         TokenType::TEMPLATE_LITERAL_START,
+                        TokenType::KEYWORD_MATCH,
                         TokenType::BRACKET_ROUND_OPEN
                     ),
                     actualToken: $tokens->current()
@@ -173,7 +179,7 @@ final class ExpressionParser
      * @param \Iterator<mixed,Token> $tokens
      * @return ExpressionNode
      */
-    public function parseUnaryOperation(\Iterator &$tokens): ExpressionNode
+    private function parseUnaryOperation(\Iterator &$tokens): ExpressionNode
     {
         $startingToken = $tokens->current();
 
@@ -350,6 +356,20 @@ final class ExpressionParser
         return new ExpressionNode(
             rangeInSource: $templateLiteralNode->rangeInSource,
             root: $templateLiteralNode
+        );
+    }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
+     * @return ExpressionNode
+     */
+    private function parseMatch(\Iterator &$tokens): ExpressionNode
+    {
+        $matchNode = $this->matchParser->parse($tokens);
+
+        return new ExpressionNode(
+            rangeInSource: $matchNode->rangeInSource,
+            root: $matchNode
         );
     }
 

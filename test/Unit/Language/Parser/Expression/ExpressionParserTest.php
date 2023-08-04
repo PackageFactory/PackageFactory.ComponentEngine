@@ -33,8 +33,12 @@ use PackageFactory\ComponentEngine\Language\AST\Node\BinaryOperation\BinaryOpera
 use PackageFactory\ComponentEngine\Language\AST\Node\BinaryOperation\BinaryOperator;
 use PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerFormat;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Match\MatchArmNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Match\MatchArmNodes;
+use PackageFactory\ComponentEngine\Language\AST\Node\Match\MatchNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\NullLiteral\NullLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\AttributeNameNode;
@@ -52,7 +56,13 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperator;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
+use PackageFactory\ComponentEngine\Language\Parser\Expression\ExpressionCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Language\Parser\Expression\ExpressionParser;
+use PackageFactory\ComponentEngine\Language\Parser\ParserException;
+use PackageFactory\ComponentEngine\Parser\Source\Path;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
 final class ExpressionParserTest extends ParserTestCase
@@ -948,7 +958,147 @@ final class ExpressionParserTest extends ParserTestCase
      */
     public function parsesMatch(): void
     {
-        $this->markTestSkipped('@TODO: parses Match');
+        $expressionParser = new ExpressionParser();
+        $matchAsString = <<<AFX
+        match foo.bar?.baz {
+            Qux.QUUX,
+            Qux.CORGE -> foo
+            null -> foo.bar
+            default -> "N/A"
+        }
+        AFX;
+        $tokens = $this->createTokenIterator($matchAsString);
+
+        $expectedExpressioNode = new ExpressionNode(
+            rangeInSource: $this->range([0, 0], [5, 0]),
+            root: new MatchNode(
+                rangeInSource: $this->range([0, 0], [5, 0]),
+                subject: new ExpressionNode(
+                    rangeInSource: $this->range([0, 6], [0, 17]),
+                    root: new AccessNode(
+                        rangeInSource: $this->range([0, 6], [0, 17]),
+                        parent: new ExpressionNode(
+                            rangeInSource: $this->range([0, 6], [0, 12]),
+                            root: new AccessNode(
+                                rangeInSource: $this->range([0, 6], [0, 12]),
+                                parent: new ExpressionNode(
+                                    rangeInSource: $this->range([0, 6], [0, 8]),
+                                    root: new ValueReferenceNode(
+                                        rangeInSource: $this->range([0, 6], [0, 8]),
+                                        name: VariableName::from('foo')
+                                    )
+                                ),
+                                type: AccessType::MANDATORY,
+                                key: new AccessKeyNode(
+                                    rangeInSource: $this->range([0, 10], [0, 12]),
+                                    value: PropertyName::from('bar')
+                                )
+                            )
+                        ),
+                        type: AccessType::OPTIONAL,
+                        key: new AccessKeyNode(
+                            rangeInSource: $this->range([0, 15], [0, 17]),
+                            value: PropertyName::from('baz')
+                        )
+                    )
+                ),
+                arms: new MatchArmNodes(
+                    new MatchArmNode(
+                        rangeInSource: $this->range([1, 4], [2, 19]),
+                        left: new ExpressionNodes(
+                            new ExpressionNode(
+                                rangeInSource: $this->range([1, 4], [1, 11]),
+                                root: new AccessNode(
+                                    rangeInSource: $this->range([1, 4], [1, 11]),
+                                    parent: new ExpressionNode(
+                                        rangeInSource: $this->range([1, 4], [1, 6]),
+                                        root: new ValueReferenceNode(
+                                            rangeInSource: $this->range([1, 4], [1, 6]),
+                                            name: VariableName::from('Qux')
+                                        )
+                                    ),
+                                    type: AccessType::MANDATORY,
+                                    key: new AccessKeyNode(
+                                        rangeInSource: $this->range([1, 8], [1, 11]),
+                                        value: PropertyName::from('QUUX')
+                                    )
+                                )
+                            ),
+                            new ExpressionNode(
+                                rangeInSource: $this->range([2, 4], [2, 12]),
+                                root: new AccessNode(
+                                    rangeInSource: $this->range([2, 4], [2, 12]),
+                                    parent: new ExpressionNode(
+                                        rangeInSource: $this->range([2, 4], [2, 6]),
+                                        root: new ValueReferenceNode(
+                                            rangeInSource: $this->range([2, 4], [2, 6]),
+                                            name: VariableName::from('Qux')
+                                        )
+                                    ),
+                                    type: AccessType::MANDATORY,
+                                    key: new AccessKeyNode(
+                                        rangeInSource: $this->range([2, 8], [2, 12]),
+                                        value: PropertyName::from('CORGE')
+                                    )
+                                )
+                            ),
+                        ),
+                        right: new ExpressionNode(
+                            rangeInSource: $this->range([2, 17], [2, 19]),
+                            root: new ValueReferenceNode(
+                                rangeInSource: $this->range([2, 17], [2, 19]),
+                                name: VariableName::from('foo')
+                            )
+                        )
+                    ),
+                    new MatchArmNode(
+                        rangeInSource: $this->range([3, 4], [3, 18]),
+                        left: new ExpressionNodes(
+                            new ExpressionNode(
+                                rangeInSource: $this->range([3, 4], [3, 7]),
+                                root: new NullLiteralNode(
+                                    rangeInSource: $this->range([3, 4], [3, 7]),
+                                )
+                            ),
+                        ),
+                        right: new ExpressionNode(
+                            rangeInSource: $this->range([3, 12], [3, 18]),
+                            root: new AccessNode(
+                                rangeInSource: $this->range([3, 12], [3, 18]),
+                                parent: new ExpressionNode(
+                                    rangeInSource: $this->range([3, 12], [3, 14]),
+                                    root: new ValueReferenceNode(
+                                        rangeInSource: $this->range([3, 12], [3, 14]),
+                                        name: VariableName::from('foo')
+                                    )
+                                ),
+                                type: AccessType::MANDATORY,
+                                key: new AccessKeyNode(
+                                    rangeInSource: $this->range([3, 16], [3, 18]),
+                                    value: PropertyName::from('bar')
+                                )
+                            )
+                        )
+                    ),
+                    new MatchArmNode(
+                        rangeInSource: $this->range([4, 4], [4, 18]),
+                        left: null,
+                        right: new ExpressionNode(
+                            rangeInSource: $this->range([4, 16], [4, 18]),
+                            root: new StringLiteralNode(
+                                rangeInSource: $this->range([4, 16], [4, 18]),
+                                value: 'N/A'
+                            )
+                        )
+                    ),
+                )
+            )
+        );
+
+        $this->assertEquals(
+            $expectedExpressioNode,
+            $expressionParser->parse($tokens)
+        );
     }
 
     /**

@@ -20,35 +20,26 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\AST\Node\Match;
+namespace PackageFactory\ComponentEngine\Language\Parser\Match;
 
-final class MatchArmNodes
+use PackageFactory\ComponentEngine\Language\AST\Node\Match\InvalidMatchArmNodes;
+use PackageFactory\ComponentEngine\Language\Parser\ParserException;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
+
+final class MatchCouldNotBeParsed extends ParserException
 {
-    /**
-     * @var MatchArmNode[]
-     */
-    public readonly array $items;
-
-    private ?MatchArmNode $defaultArm = null;
-
-    public function __construct(MatchArmNode ...$items)
-    {
-        if (count($items) === 0) {
-            throw InvalidMatchArmNodes::becauseTheyWereEmpty();
-        }
-
-        foreach ($items as $item) {
-            if ($item->isDefault()) {
-                if (is_null($this->defaultArm)) {
-                    $this->defaultArm = $item;
-                } else {
-                    throw InvalidMatchArmNodes::becauseTheyContainMoreThanOneDefaultMatchArmNode(
-                        secondDefaultMatchArmNode: $item
-                    );
-                }
-            }
-        }
-
-        $this->items = $items;
+    public static function becauseOfInvalidMatchArmNodes(
+        InvalidMatchArmNodes $cause,
+        ?Range $affectedRangeInSource = null
+    ): self {
+        return new self(
+            code: 1691152175,
+            message: sprintf(
+                'Match could not be parsed because of invalid match arm nodes: %s.',
+                $cause->getMessage()
+            ),
+            affectedRangeInSource: $affectedRangeInSource ?? $cause->affectedRangeInSource,
+            cause: $cause
+        );
     }
 }

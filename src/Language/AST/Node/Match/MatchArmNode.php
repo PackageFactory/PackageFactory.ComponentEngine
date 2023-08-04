@@ -29,10 +29,15 @@ use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class MatchArmNode extends Node
 {
-    private function __construct(
+    public function __construct(
         public readonly Range $rangeInSource,
         public readonly null | ExpressionNodes $left,
         public readonly ExpressionNode $right
     ) {
+    }
+
+    public function isDefault(): bool
+    {
+        return is_null($this->left);
     }
 }
