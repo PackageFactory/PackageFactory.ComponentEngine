@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser;
 
+use PackageFactory\ComponentEngine\Language\Parser\ParserException;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
@@ -54,5 +55,17 @@ abstract class ParserTestCase extends TestCase
             new Position(...$startAsArray),
             new Position(...$endAsArray)
         );
+    }
+
+    protected function assertThrowsParserException(callable $fn, ParserException $expectedParserException): void
+    {
+        $this->expectExceptionObject($expectedParserException);
+
+        try {
+            $fn();
+        } catch (ParserException $e) {
+            $this->assertEquals($expectedParserException, $e);
+            throw $e;
+        }
     }
 }
