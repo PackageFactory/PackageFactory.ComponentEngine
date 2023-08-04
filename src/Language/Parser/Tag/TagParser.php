@@ -24,6 +24,7 @@ namespace PackageFactory\ComponentEngine\Language\Parser\Tag;
 
 use PackageFactory\ComponentEngine\Domain\AttributeName\AttributeName;
 use PackageFactory\ComponentEngine\Domain\TagName\TagName;
+use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\AttributeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\AttributeNode;
@@ -31,17 +32,20 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Tag\AttributeNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\ChildNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNode;
+use PackageFactory\ComponentEngine\Language\Parser\Expression\ExpressionParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\Text\TextParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
 
 final class TagParser
 {
     private readonly StringLiteralParser $stringLiteralParser;
     private readonly TextParser $textParser;
+    private ?ExpressionParser $expressionParser;
 
     public function __construct()
     {
@@ -187,18 +191,50 @@ final class TagParser
 
     /**
      * @param \Iterator<mixed,Token> $tokens
-     * @return null|StringLiteralNode
+     * @return null|StringLiteralNode|ExpressionNode
      */
-    private function parseAttributeValue(\Iterator $tokens): null|StringLiteralNode
+    private function parseAttributeValue(\Iterator $tokens): null|StringLiteralNode|ExpressionNode
     {
         if (Scanner::type($tokens) === TokenType::EQUALS) {
             Scanner::skipOne($tokens);
-            Scanner::assertType($tokens, TokenType::STRING_QUOTED);
 
-            return $this->stringLiteralParser->parse($tokens);
+            return match (Scanner::type($tokens)) {
+                TokenType::STRING_QUOTED =>
+                    $this->stringLiteralParser->parse($tokens),
+                TokenType::BRACKET_CURLY_OPEN =>
+                    $this->parseExpression($tokens),
+                default => throw TagCouldNotBeParsed::becauseOfUnexpectedToken(
+                    expectedTokenTypes: TokenTypes::from(
+                        TokenType::STRING_QUOTED,
+                        TokenType::BRACKET_CURLY_OPEN
+                    ),
+                    actualToken: $tokens->current()
+                )
+            };
         }
 
         return null;
+    }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
+     * @return ExpressionNode
+     */
+    private function parseExpression(\Iterator &$tokens): ExpressionNode
+    {
+        $this->expressionParser ??= new ExpressionParser(
+            stopAt: TokenType::BRACKET_CURLY_CLOSE
+        );
+
+        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_OPEN);
+        Scanner::skipOne($tokens);
+
+        $expressionNode =  $this->expressionParser->parse($tokens);
+
+        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
+        Scanner::skipOne($tokens);
+
+        return $expressionNode;
     }
 
     /**
@@ -243,6 +279,24 @@ final class TagParser
             if (Scanner::type($tokens) === TokenType::TAG_START_OPENING) {
                 $items[] = $this->parse($tokens);
                 $preserveLeadingSpace = Scanner::type($tokens) !== TokenType::END_OF_LINE;
+                continue;
+            }
+
+            if (Scanner::type($tokens) === TokenType::BRACKET_CURLY_OPEN) {
+                $items[] = $this->parseExpression($tokens);
+                $preserveLeadingSpace = Scanner::type($tokens) !== TokenType::END_OF_LINE;
+                continue;
+            }
+
+            if (Scanner::type($tokens) !== TokenType::TAG_START_CLOSING) {
+                throw TagCouldNotBeParsed::becauseOfUnexpectedToken(
+                    expectedTokenTypes: TokenTypes::from(
+                        TokenType::TAG_START_OPENING,
+                        TokenType::TAG_START_CLOSING,
+                        TokenType::BRACKET_CURLY_OPEN
+                    ),
+                    actualToken: $tokens->current()
+                );
             }
         }
 

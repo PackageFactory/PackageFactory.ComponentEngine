@@ -86,7 +86,7 @@ final class Scanner
      * @param \Iterator<mixed,Token> $tokens
      * @return \Iterator<mixed,Token>
      */
-    public static function skipOne(\Iterator $tokens): \Iterator
+    public static function skipOne(\Iterator &$tokens): \Iterator
     {
         $tokens->next();
         return $tokens;

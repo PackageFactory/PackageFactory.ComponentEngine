@@ -24,6 +24,8 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\Tag;
 
 use PackageFactory\ComponentEngine\Domain\AttributeName\AttributeName;
 use PackageFactory\ComponentEngine\Domain\TagName\TagName;
+use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
+use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\AttributeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\AttributeNode;
@@ -32,6 +34,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Tag\ChildNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
 use PackageFactory\ComponentEngine\Language\Parser\Tag\TagParser;
 use PackageFactory\ComponentEngine\Language\Parser\ParserException;
 use PackageFactory\ComponentEngine\Language\Parser\Tag\TagCouldNotBeParsed;
@@ -39,9 +42,9 @@ use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
-use PHPUnit\Framework\TestCase;
+use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
-final class TagParserTest extends TestCase
+final class TagParserTest extends ParserTestCase
 {
     /**
      * @test
@@ -325,6 +328,126 @@ final class TagParserTest extends TestCase
                             new Position(0, 35)
                         ),
                         value: 'corge'
+                    )
+                )
+            ),
+            children: new ChildNodes(),
+            isSelfClosing: true
+        );
+
+        $this->assertEquals(
+            $expectedTagNode,
+            $tagParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function parsesSelfClosingTagWithExpressionAttribute(): void
+    {
+        $tagParser = new TagParser();
+        $tokens = Tokenizer::fromSource(Source::fromString('<a foo={bar}/>'))->getIterator();
+
+        $expectedTagNode = new TagNode(
+            rangeInSource: Range::from(
+                new Position(0, 0),
+                new Position(0, 13)
+            ),
+            name: new TagNameNode(
+                rangeInSource: Range::from(
+                    new Position(0, 1),
+                    new Position(0, 1)
+                ),
+                value: TagName::from('a')
+            ),
+            attributes: new AttributeNodes(
+                new AttributeNode(
+                    rangeInSource: Range::from(
+                        new Position(0, 3),
+                        new Position(0, 10)
+                    ),
+                    name: new AttributeNameNode(
+                        rangeInSource: Range::from(
+                            new Position(0, 3),
+                            new Position(0, 5)
+                        ),
+                        value: AttributeName::from('foo')
+                    ),
+                    value: new ExpressionNode(
+                        rangeInSource: $this->range([0, 8], [0, 10]),
+                        root: new ValueReferenceNode(
+                            rangeInSource: $this->range([0, 8], [0, 10]),
+                            name: VariableName::from('bar')
+                        )
+                    )
+                )
+            ),
+            children: new ChildNodes(),
+            isSelfClosing: true
+        );
+
+        $this->assertEquals(
+            $expectedTagNode,
+            $tagParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function parsesSelfClosingTagWithMultipleExpressionAttributes(): void
+    {
+        $tagParser = new TagParser();
+        $tokens = Tokenizer::fromSource(Source::fromString('<div foo={bar} baz={qux} quux={corge}/>'))->getIterator();
+
+        $expectedTagNode = new TagNode(
+            rangeInSource: $this->range([0, 0], [0, 38]),
+            name: new TagNameNode(
+                rangeInSource: $this->range([0, 1], [0, 3]),
+                value: TagName::from('div')
+            ),
+            attributes: new AttributeNodes(
+                new AttributeNode(
+                    rangeInSource: $this->range([0, 5], [0, 12]),
+                    name: new AttributeNameNode(
+                        rangeInSource: $this->range([0, 5], [0, 7]),
+                        value: AttributeName::from('foo')
+                    ),
+                    value: new ExpressionNode(
+                        rangeInSource: $this->range([0, 10], [0, 12]),
+                        root: new ValueReferenceNode(
+                            rangeInSource: $this->range([0, 10], [0, 12]),
+                            name: VariableName::from('bar')
+                        )
+                    )
+                ),
+                new AttributeNode(
+                    rangeInSource: $this->range([0, 15], [0, 22]),
+                    name: new AttributeNameNode(
+                        rangeInSource: $this->range([0, 15], [0, 17]),
+                        value: AttributeName::from('baz')
+                    ),
+                    value: new ExpressionNode(
+                        rangeInSource: $this->range([0, 20], [0, 22]),
+                        root: new ValueReferenceNode(
+                            rangeInSource: $this->range([0, 20], [0, 22]),
+                            name: VariableName::from('qux')
+                        )
+                    )
+                ),
+                new AttributeNode(
+                    rangeInSource: $this->range([0, 25], [0, 35]),
+                    name: new AttributeNameNode(
+                        rangeInSource: $this->range([0, 25], [0, 28]),
+                        value: AttributeName::from('quux')
+                    ),
+                    value: new ExpressionNode(
+                        rangeInSource: $this->range([0, 31], [0, 35]),
+                        root: new ValueReferenceNode(
+                            rangeInSource: $this->range([0, 31], [0, 35]),
+                            name: VariableName::from('corge')
+                        )
                     )
                 )
             ),
@@ -659,6 +782,114 @@ final class TagParserTest extends TestCase
     /**
      * @test
      */
+    public function parsesTagWithEmptyContentAndExpressionAttribute(): void
+    {
+        $tagParser = new TagParser();
+        $tokens = Tokenizer::fromSource(Source::fromString('<audio foo={bar}></audio>'))->getIterator();
+
+        $expectedTagNode = new TagNode(
+            rangeInSource: $this->range([0, 0], [0, 24]),
+            name: new TagNameNode(
+                rangeInSource: $this->range([0, 1], [0, 5]),
+                value: TagName::from('audio')
+            ),
+            attributes: new AttributeNodes(
+                new AttributeNode(
+                    rangeInSource: $this->range([0, 7], [0, 14]),
+                    name: new AttributeNameNode(
+                        rangeInSource: $this->range([0, 7], [0, 9]),
+                        value: AttributeName::from('foo')
+                    ),
+                    value: new ExpressionNode(
+                        rangeInSource: $this->range([0, 12], [0, 14]),
+                        root: new ValueReferenceNode(
+                            rangeInSource: $this->range([0, 12], [0, 14]),
+                            name: VariableName::from('bar')
+                        )
+                    )
+                ),
+            ),
+            children: new ChildNodes(),
+            isSelfClosing: false
+        );
+
+        $this->assertEquals(
+            $expectedTagNode,
+            $tagParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function parsesTagWithEmptyContentAndMultipleExpressionAttributes(): void
+    {
+        $tagParser = new TagParser();
+        $tokens = Tokenizer::fromSource(Source::fromString('<video foo={bar} baz={qux} quux={corge}></video>'))->getIterator();
+
+        $expectedTagNode = new TagNode(
+            rangeInSource: $this->range([0, 0], [0, 47]),
+            name: new TagNameNode(
+                rangeInSource: $this->range([0, 1], [0, 5]),
+                value: TagName::from('video')
+            ),
+            attributes: new AttributeNodes(
+                new AttributeNode(
+                    rangeInSource: $this->range([0, 7], [0, 14]),
+                    name: new AttributeNameNode(
+                        rangeInSource: $this->range([0, 7], [0, 9]),
+                        value: AttributeName::from('foo')
+                    ),
+                    value: new ExpressionNode(
+                        rangeInSource: $this->range([0, 12], [0, 14]),
+                        root: new ValueReferenceNode(
+                            rangeInSource: $this->range([0, 12], [0, 14]),
+                            name: VariableName::from('bar')
+                        )
+                    )
+                ),
+                new AttributeNode(
+                    rangeInSource: $this->range([0, 17], [0, 24]),
+                    name: new AttributeNameNode(
+                        rangeInSource: $this->range([0, 17], [0, 19]),
+                        value: AttributeName::from('baz')
+                    ),
+                    value: new ExpressionNode(
+                        rangeInSource: $this->range([0, 22], [0, 24]),
+                        root: new ValueReferenceNode(
+                            rangeInSource: $this->range([0, 22], [0, 24]),
+                            name: VariableName::from('qux')
+                        )
+                    )
+                ),
+                new AttributeNode(
+                    rangeInSource: $this->range([0, 27], [0, 37]),
+                    name: new AttributeNameNode(
+                        rangeInSource: $this->range([0, 27], [0, 30]),
+                        value: AttributeName::from('quux')
+                    ),
+                    value: new ExpressionNode(
+                        rangeInSource: $this->range([0, 33], [0, 37]),
+                        root: new ValueReferenceNode(
+                            rangeInSource: $this->range([0, 33], [0, 37]),
+                            name: VariableName::from('corge')
+                        )
+                    )
+                ),
+            ),
+            children: new ChildNodes(),
+            isSelfClosing: false
+        );
+
+        $this->assertEquals(
+            $expectedTagNode,
+            $tagParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
     public function parsesTagWithTextContentAndWithoutAttributes(): void
     {
         $tagParser = new TagParser();
@@ -684,6 +915,39 @@ final class TagParserTest extends TestCase
                         new Position(0, 16)
                     ),
                     value: 'Lorem ipsum...'
+                )
+            ),
+            isSelfClosing: false
+        );
+
+        $this->assertEquals(
+            $expectedTagNode,
+            $tagParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function parsesTagWithExpressionContentAndWithoutAttributes(): void
+    {
+        $tagParser = new TagParser();
+        $tokens = $this->createTokenIterator('<a>{someExpression}</a>');
+
+        $expectedTagNode = new TagNode(
+            rangeInSource: $this->range([0, 0], [0, 22]),
+            name: new TagNameNode(
+                rangeInSource: $this->range([0, 1], [0, 1]),
+                value: TagName::from('a')
+            ),
+            attributes: new AttributeNodes(),
+            children: new ChildNodes(
+                new ExpressionNode(
+                    rangeInSource: $this->range([0, 4], [0, 17]),
+                    root: new ValueReferenceNode(
+                        rangeInSource: $this->range([0, 4], [0, 17]),
+                        name: VariableName::from('someExpression')
+                    )
                 )
             ),
             isSelfClosing: false
@@ -994,6 +1258,47 @@ final class TagParserTest extends TestCase
     /**
      * @test
      */
+    public function parsesTagWithExpressionInBetweenTextContentPreservingSpaceAroundTheExpression(): void
+    {
+        $tagParser = new TagParser();
+        $tokens = $this->createTokenIterator('<a>Something {variable} happened.</a>');
+
+        $expectedTagNode = new TagNode(
+            rangeInSource: $this->range([0, 0], [0, 36]),
+            name: new TagNameNode(
+                rangeInSource: $this->range([0, 1], [0, 1]),
+                value: TagName::from('a')
+            ),
+            attributes: new AttributeNodes(),
+            children: new ChildNodes(
+                new TextNode(
+                    rangeInSource: $this->range([0, 3], [0, 12]),
+                    value: 'Something '
+                ),
+                new ExpressionNode(
+                    rangeInSource: $this->range([0, 14], [0, 21]),
+                    root: new ValueReferenceNode(
+                        rangeInSource: $this->range([0, 14], [0, 21]),
+                        name: VariableName::from('variable')
+                    )
+                ),
+                new TextNode(
+                    rangeInSource: $this->range([0, 23], [0, 32]),
+                    value: ' happened.'
+                )
+            ),
+            isSelfClosing: false
+        );
+
+        $this->assertEquals(
+            $expectedTagNode,
+            $tagParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
     public function parsesTagWithMultipleNestedTagsAsImmediateChildren(): void
     {
         $tagParser = new TagParser();
@@ -1082,8 +1387,8 @@ final class TagParserTest extends TestCase
             Some opening text
             <h1>Headline</h1>
             <a href="about:blank" target="_blank">This is a link</a>
-            <p class="rte">
-                This is a paragraph with <em>emphasized</em> and <strong>boldened</strong> text.
+            <p class={rte}>
+                This is a {paragraph} with <em>emphasized</em> and <strong>boldened</strong> text.
             </p>
             Some closing text
         </div>
@@ -1260,12 +1565,12 @@ final class TagParserTest extends TestCase
                                 ),
                                 value: AttributeName::from('class')
                             ),
-                            value: new StringLiteralNode(
-                                rangeInSource: Range::from(
-                                    new Position(4, 14),
-                                    new Position(4, 16)
-                                ),
-                                value: 'rte'
+                            value: new ExpressionNode(
+                                rangeInSource: $this->range([4, 14], [4, 16]),
+                                root: new ValueReferenceNode(
+                                    rangeInSource: $this->range([4, 14], [4, 16]),
+                                    name: VariableName::from('rte')
+                                )
                             )
                         ),
                     ),
@@ -1273,19 +1578,39 @@ final class TagParserTest extends TestCase
                         new TextNode(
                             rangeInSource: Range::from(
                                 new Position(4, 19),
-                                new Position(5, 32)
+                                new Position(5, 17)
                             ),
-                            value: 'This is a paragraph with '
+                            value: 'This is a '
+                        ),
+                        new ExpressionNode(
+                            rangeInSource: Range::from(
+                                new Position(5, 19),
+                                new Position(5, 27)
+                            ),
+                            root: new ValueReferenceNode(
+                                rangeInSource: Range::from(
+                                    new Position(5, 19),
+                                    new Position(5, 27)
+                                ),
+                                name: VariableName::from('paragraph')
+                            )
+                        ),
+                        new TextNode(
+                            rangeInSource: Range::from(
+                                new Position(5, 29),
+                                new Position(5, 34)
+                            ),
+                            value: ' with '
                         ),
                         new TagNode(
                             rangeInSource: Range::from(
-                                new Position(5, 33),
-                                new Position(5, 51)
+                                new Position(5, 35),
+                                new Position(5, 53)
                             ),
                             name: new TagNameNode(
                                 rangeInSource: Range::from(
-                                    new Position(5, 34),
-                                    new Position(5, 35)
+                                    new Position(5, 36),
+                                    new Position(5, 37)
                                 ),
                                 value: TagName::from('em')
                             ),
@@ -1293,8 +1618,8 @@ final class TagParserTest extends TestCase
                             children: new ChildNodes(
                                 new TextNode(
                                     rangeInSource: Range::from(
-                                        new Position(5, 37),
-                                        new Position(5, 46)
+                                        new Position(5, 39),
+                                        new Position(5, 48)
                                     ),
                                     value: 'emphasized'
                                 ),
@@ -1303,20 +1628,20 @@ final class TagParserTest extends TestCase
                         ),
                         new TextNode(
                             rangeInSource: Range::from(
-                                new Position(5, 52),
-                                new Position(5, 56)
+                                new Position(5, 54),
+                                new Position(5, 58)
                             ),
                             value: ' and '
                         ),
                         new TagNode(
                             rangeInSource: Range::from(
-                                new Position(5, 57),
-                                new Position(5, 81)
+                                new Position(5, 59),
+                                new Position(5, 83)
                             ),
                             name: new TagNameNode(
                                 rangeInSource: Range::from(
-                                    new Position(5, 58),
-                                    new Position(5, 63)
+                                    new Position(5, 60),
+                                    new Position(5, 65)
                                 ),
                                 value: TagName::from('strong')
                             ),
@@ -1324,8 +1649,8 @@ final class TagParserTest extends TestCase
                             children: new ChildNodes(
                                 new TextNode(
                                     rangeInSource: Range::from(
-                                        new Position(5, 65),
-                                        new Position(5, 72)
+                                        new Position(5, 67),
+                                        new Position(5, 74)
                                     ),
                                     value: 'boldened'
                                 ),
@@ -1334,7 +1659,7 @@ final class TagParserTest extends TestCase
                         ),
                         new TextNode(
                             rangeInSource: Range::from(
-                                new Position(5, 82),
+                                new Position(5, 84),
                                 new Position(6, 3)
                             ),
                             value: ' text.'

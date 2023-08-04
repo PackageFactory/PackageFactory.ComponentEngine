@@ -43,18 +43,4 @@ final class ExpressionCouldNotBeParsed extends ParserException
             affectedRangeInSource: $actualToken->boundaries
         );
     }
-
-    public static function becauseOfUnexpectedExceedingToken(
-        Token $exceedingToken
-    ): self {
-        return new self(
-            code: 1691141293,
-            message: sprintf(
-                'Expression could not be parsed because token stream was expected to end, '
-                . 'but continued with %s instead.',
-                $exceedingToken->toDebugString()
-            ),
-            affectedRangeInSource: $exceedingToken->boundaries
-        );
-    }
 }
