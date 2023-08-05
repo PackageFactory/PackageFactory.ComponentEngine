@@ -285,7 +285,7 @@ final class ModuleParserTest extends ParserTestCase
     /**
      * @test
      */
-    public function exceedingTokensAreNotAllowed(): void
+    public function throwsIfExceedingTokensOccur(): void
     {
         $this->assertThrowsParserException(
             function () {

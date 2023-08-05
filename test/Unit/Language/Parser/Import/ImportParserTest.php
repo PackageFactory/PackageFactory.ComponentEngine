@@ -30,7 +30,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Import\InvalidImportedNameN
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\Import\ImportCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Language\Parser\Import\ImportParser;
-use PackageFactory\ComponentEngine\Language\Parser\ParserException;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
 final class ImportParserTest extends ParserTestCase
@@ -106,7 +105,7 @@ final class ImportParserTest extends ParserTestCase
     /**
      * @test
      */
-    public function emptyImportIsNotAllowed(): void
+    public function throwsIfEmptyImportOccurs(): void
     {
         $this->assertThrowsParserException(
             function () {
@@ -127,7 +126,7 @@ final class ImportParserTest extends ParserTestCase
     /**
      * @test
      */
-    public function duplicateImportsAreNotAllowed(): void
+    public function throwsIfDuplicateImportsOccur(): void
     {
         $this->assertThrowsParserException(
             function () {

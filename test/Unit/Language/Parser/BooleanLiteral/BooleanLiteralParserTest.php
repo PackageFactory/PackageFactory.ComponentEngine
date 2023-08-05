@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,27 +24,20 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\BooleanLitera
 
 use PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\BooleanLiteral\BooleanLiteralParser;
-use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Source\Position;
-use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
-use PHPUnit\Framework\TestCase;
+use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
-final class BooleanLiteralParserTest extends TestCase
+final class BooleanLiteralParserTest extends ParserTestCase
 {
     /**
      * @test
      */
-    public function producesAstNodeForTrueIfGivenOneTrueToken(): void
+    public function parsesTrue(): void
     {
         $booleanLiteralParser = new BooleanLiteralParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('true'))->getIterator();
+        $tokens = $this->createTokenIterator('true');
 
         $expectedBooleanLiteralNode = new BooleanLiteralNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 3)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 3]),
             value: true
         );
 
@@ -57,16 +50,13 @@ final class BooleanLiteralParserTest extends TestCase
     /**
      * @test
      */
-    public function producesAstNodeForFalseIfGivenOneFalseToken(): void
+    public function parsesFalse(): void
     {
         $booleanLiteralParser = new BooleanLiteralParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('false'))->getIterator();
+        $tokens = $this->createTokenIterator('false');
 
         $expectedBooleanLiteralNode = new BooleanLiteralNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 4)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 4]),
             value: false
         );
 

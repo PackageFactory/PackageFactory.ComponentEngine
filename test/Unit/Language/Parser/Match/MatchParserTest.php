@@ -32,7 +32,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Match\MatchNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
 use PackageFactory\ComponentEngine\Language\Parser\Match\MatchCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Language\Parser\Match\MatchParser;
-use PackageFactory\ComponentEngine\Language\Parser\ParserException;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
 final class MatchParserTest extends ParserTestCase
@@ -1111,41 +1110,43 @@ final class MatchParserTest extends ParserTestCase
     /**
      * @test
      */
-    public function emptyMatchArmsAreNotAllowed(): void
+    public function throwsIfMatchArmsAreEmpty(): void
     {
-        $matchParser = new MatchParser();
-        $tokens = $this->createTokenIterator('match (a) {}');
+        $this->assertThrowsParserException(
+            function () {
+                $matchParser = new MatchParser();
+                $tokens = $this->createTokenIterator('match (a) {}');
 
-        $this->expectException(ParserException::class);
-        $this->expectExceptionObject(
+                $matchParser->parse($tokens);
+            },
             MatchCouldNotBeParsed::becauseOfInvalidMatchArmNodes(
                 cause: InvalidMatchArmNodes::becauseTheyWereEmpty(),
                 affectedRangeInSource: $this->range([0, 0], [0, 4])
             )
         );
-
-        $matchParser->parse($tokens);
     }
 
     /**
      * @test
      */
-    public function multipleDefaultArmsAreNotAllowed(): void
+    public function throwsIfMultipleDefaultArmsOccur(): void
     {
-        $matchParser = new MatchParser();
-        $matchAsString = <<<AFX
-        match (a) {
-            b, c -> d
-            default -> e
-            f, g -> h
-            default -> i
-            j -> k
-        }
-        AFX;
-        $tokens = $this->createTokenIterator($matchAsString);
+        $this->assertThrowsParserException(
+            function () {
+                $matchParser = new MatchParser();
+                $matchAsString = <<<AFX
+                match (a) {
+                    b, c -> d
+                    default -> e
+                    f, g -> h
+                    default -> i
+                    j -> k
+                }
+                AFX;
+                $tokens = $this->createTokenIterator($matchAsString);
 
-        $this->expectException(ParserException::class);
-        $this->expectExceptionObject(
+                $matchParser->parse($tokens);
+            },
             MatchCouldNotBeParsed::becauseOfInvalidMatchArmNodes(
                 cause: InvalidMatchArmNodes::becauseTheyContainMoreThanOneDefaultMatchArmNode(
                     secondDefaultMatchArmNode: new MatchArmNode(
@@ -1162,7 +1163,5 @@ final class MatchParserTest extends ParserTestCase
                 )
             )
         );
-
-        $matchParser->parse($tokens);
     }
 }

@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,27 +24,20 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\NullLiteral;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\NullLiteral\NullLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\NullLiteral\NullLiteralParser;
-use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Source\Position;
-use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
-use PHPUnit\Framework\TestCase;
+use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
-final class NullLiteralParserTest extends TestCase
+final class NullLiteralParserTest extends ParserTestCase
 {
     /**
      * @test
      */
-    public function producesAstNodeForNullIfGivenOneNullToken(): void
+    public function parsesNull(): void
     {
         $nullLiteralParser = new NullLiteralParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('null'))->getIterator();
+        $tokens = $this->createTokenIterator('null');
 
         $expectedNullLiteralNode = new NullLiteralNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 3)
-            )
+            rangeInSource: $this->range([0, 0], [0, 3])
         );
 
         $this->assertEquals(

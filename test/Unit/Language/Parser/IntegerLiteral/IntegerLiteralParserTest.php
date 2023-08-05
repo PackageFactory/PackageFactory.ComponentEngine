@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
     /**
      * @test
      */
-    public function binaryInteger(): void
+    public function parsesBinaryInteger(): void
     {
         $integerLiteralParser = new IntegerLiteralParser();
         $tokens = $this->createTokenIterator('0b1010110101');
@@ -57,7 +57,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
     /**
      * @test
      */
-    public function octalInteger(): void
+    public function parsesOctalInteger(): void
     {
         $integerLiteralParser = new IntegerLiteralParser();
         $tokens = $this->createTokenIterator('0o755');
@@ -77,7 +77,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
     /**
      * @test
      */
-    public function decimalInteger(): void
+    public function parsesDecimalInteger(): void
     {
         $integerLiteralParser = new IntegerLiteralParser();
         $tokens = $this->createTokenIterator('1234567890');
@@ -97,7 +97,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
     /**
      * @test
      */
-    public function hexadecimalInteger(): void
+    public function parsesHexadecimalInteger(): void
     {
         $integerLiteralParser = new IntegerLiteralParser();
         $tokens = $this->createTokenIterator('0x123456789ABCDEF');
@@ -117,7 +117,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
     /**
      * @test
      */
-    public function throwsIfTokenStreamsEndsUnexpectedly(): void
+    public function throwsIfTokenStreamEndsUnexpectedly(): void
     {
         $this->assertThrowsParserException(
             function () {

@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -56,13 +56,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperator;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
-use PackageFactory\ComponentEngine\Language\Parser\Expression\ExpressionCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Language\Parser\Expression\ExpressionParser;
-use PackageFactory\ComponentEngine\Language\Parser\ParserException;
-use PackageFactory\ComponentEngine\Parser\Source\Path;
-use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
 final class ExpressionParserTest extends ParserTestCase

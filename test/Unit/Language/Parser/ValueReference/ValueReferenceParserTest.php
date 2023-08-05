@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,13 +25,9 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ValueReferenc
 use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
 use PackageFactory\ComponentEngine\Language\Parser\ValueReference\ValueReferenceParser;
-use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Source\Position;
-use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
-use PHPUnit\Framework\TestCase;
+use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
-final class ValueReferenceParserTest extends TestCase
+final class ValueReferenceParserTest extends ParserTestCase
 {
     /**
      * @test
@@ -39,13 +35,10 @@ final class ValueReferenceParserTest extends TestCase
     public function parsesValueReference(): void
     {
         $valueReferenceParser = new ValueReferenceParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('foo'))->getIterator();
+        $tokens = $this->createTokenIterator('foo');
 
         $expectedValueReferenceNode = new ValueReferenceNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 2)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 2]),
             name: VariableName::from('foo')
         );
 

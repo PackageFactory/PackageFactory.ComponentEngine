@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,45 +34,29 @@ use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerForma
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\EnumDeclaration\EnumDeclarationParser;
-use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Source\Position;
-use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
-use PHPUnit\Framework\TestCase;
+use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
-final class EnumDeclarationParserTest extends TestCase
+final class EnumDeclarationParserTest extends ParserTestCase
 {
     /**
      * @test
      */
-    public function oneValuelessMember(): void
+    public function parsesEnumDeclarationWithOneValuelessMember(): void
     {
         $enumDeclarationParser = new EnumDeclarationParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('enum Foo { BAR }'))->getIterator();
+        $tokens = $this->createTokenIterator('enum Foo { BAR }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 15)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 15]),
             name: new EnumNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 5),
-                    new Position(0, 7)
-                ),
+                rangeInSource: $this->range([0, 5], [0, 7]),
                 value: EnumName::from('Foo')
             ),
             members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 11),
-                        new Position(0, 13)
-                    ),
+                    rangeInSource: $this->range([0, 11], [0, 13]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 11),
-                            new Position(0, 13)
-                        ),
+                        rangeInSource: $this->range([0, 11], [0, 13]),
                         value: EnumMemberName::from('BAR')
                     ),
                     value: null
@@ -89,62 +73,38 @@ final class EnumDeclarationParserTest extends TestCase
     /**
      * @test
      */
-    public function threeValuelessMembers(): void
+    public function parsesEnumDeclarationWithThreeValuelessMembers(): void
     {
         $enumDeclarationParser = new EnumDeclarationParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('enum Foo { BAR BAZ QUX }'))->getIterator();
+        $tokens = $this->createTokenIterator('enum Foo { BAR BAZ QUX }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 23)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 23]),
             name: new EnumNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 5),
-                    new Position(0, 7)
-                ),
+                rangeInSource: $this->range([0, 5], [0, 7]),
                 value: EnumName::from('Foo')
             ),
             members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 11),
-                        new Position(0, 13)
-                    ),
+                    rangeInSource: $this->range([0, 11], [0, 13]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 11),
-                            new Position(0, 13)
-                        ),
+                        rangeInSource: $this->range([0, 11], [0, 13]),
                         value: EnumMemberName::from('BAR')
                     ),
                     value: null
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 15),
-                        new Position(0, 17)
-                    ),
+                    rangeInSource: $this->range([0, 15], [0, 17]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 15),
-                            new Position(0, 17)
-                        ),
+                        rangeInSource: $this->range([0, 15], [0, 17]),
                         value: EnumMemberName::from('BAZ')
                     ),
                     value: null
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 19),
-                        new Position(0, 21)
-                    ),
+                    rangeInSource: $this->range([0, 19], [0, 21]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 19),
-                            new Position(0, 21)
-                        ),
+                        rangeInSource: $this->range([0, 19], [0, 21]),
                         value: EnumMemberName::from('QUX')
                     ),
                     value: null
@@ -161,46 +121,28 @@ final class EnumDeclarationParserTest extends TestCase
     /**
      * @test
      */
-    public function oneStringValueMember(): void
+    public function parsesEnumDeclarationWithOneStringValueMember(): void
     {
         $enumDeclarationParser = new EnumDeclarationParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('enum Foo { BAR("BAR") }'))->getIterator();
+        $tokens = $this->createTokenIterator('enum Foo { BAR("BAR") }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 22)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 22]),
             name: new EnumNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 5),
-                    new Position(0, 7)
-                ),
+                rangeInSource: $this->range([0, 5], [0, 7]),
                 value: EnumName::from('Foo')
             ),
             members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 11),
-                        new Position(0, 20)
-                    ),
+                    rangeInSource: $this->range([0, 11], [0, 20]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 11),
-                            new Position(0, 13)
-                        ),
+                        rangeInSource: $this->range([0, 11], [0, 13]),
                         value: EnumMemberName::from('BAR')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 14),
-                            new Position(0, 20)
-                        ),
+                        rangeInSource: $this->range([0, 14], [0, 20]),
                         value: new StringLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(0, 16),
-                                new Position(0, 18)
-                            ),
+                            rangeInSource: $this->range([0, 16], [0, 18]),
                             value: 'BAR'
                         )
                     )
@@ -217,7 +159,7 @@ final class EnumDeclarationParserTest extends TestCase
     /**
      * @test
      */
-    public function sevenStringValueMembers(): void
+    public function parsesEnumDeclarationWithSevenStringValueMembers(): void
     {
         $enumDeclarationParser = new EnumDeclarationParser();
         $enumAsString = <<<AFX
@@ -231,199 +173,109 @@ final class EnumDeclarationParserTest extends TestCase
             SUNDAY("sun")
         }
         AFX;
-        $tokens = Tokenizer::fromSource(Source::fromString($enumAsString))->getIterator();
+        $tokens = $this->createTokenIterator($enumAsString);
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(8, 0)
-            ),
+            rangeInSource: $this->range([0, 0], [8, 0]),
             name: new EnumNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 5),
-                    new Position(0, 11)
-                ),
+                rangeInSource: $this->range([0, 5], [0, 11]),
                 value: EnumName::from('Weekday')
             ),
             members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(1, 4),
-                        new Position(1, 16)
-                    ),
+                    rangeInSource: $this->range([1, 4], [1, 16]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(1, 4),
-                            new Position(1, 9)
-                        ),
+                        rangeInSource: $this->range([1, 4], [1, 9]),
                         value: EnumMemberName::from('MONDAY')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(1, 10),
-                            new Position(1, 16)
-                        ),
+                        rangeInSource: $this->range([1, 10], [1, 16]),
                         value: new StringLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(1, 12),
-                                new Position(1, 14)
-                            ),
+                            rangeInSource: $this->range([1, 12], [1, 14]),
                             value: 'mon'
                         )
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(2, 4),
-                        new Position(2, 17)
-                    ),
+                    rangeInSource: $this->range([2, 4], [2, 17]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(2, 4),
-                            new Position(2, 10)
-                        ),
+                        rangeInSource: $this->range([2, 4], [2, 10]),
                         value: EnumMemberName::from('TUESDAY')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(2, 11),
-                            new Position(2, 17)
-                        ),
+                        rangeInSource: $this->range([2, 11], [2, 17]),
                         value: new StringLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(2, 13),
-                                new Position(2, 15)
-                            ),
+                            rangeInSource: $this->range([2, 13], [2, 15]),
                             value: 'tue'
                         )
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(3, 4),
-                        new Position(3, 19)
-                    ),
+                    rangeInSource: $this->range([3, 4], [3, 19]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(3, 4),
-                            new Position(3, 12)
-                        ),
+                        rangeInSource: $this->range([3, 4], [3, 12]),
                         value: EnumMemberName::from('WEDNESDAY')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(3, 13),
-                            new Position(3, 19)
-                        ),
+                        rangeInSource: $this->range([3, 13], [3, 19]),
                         value: new StringLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(3, 15),
-                                new Position(3, 17)
-                            ),
+                            rangeInSource: $this->range([3, 15], [3, 17]),
                             value: 'wed'
                         )
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(4, 4),
-                        new Position(4, 18)
-                    ),
+                    rangeInSource: $this->range([4, 4], [4, 18]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(4, 4),
-                            new Position(4, 11)
-                        ),
+                        rangeInSource: $this->range([4, 4], [4, 11]),
                         value: EnumMemberName::from('THURSDAY')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(4, 12),
-                            new Position(4, 18)
-                        ),
+                        rangeInSource: $this->range([4, 12], [4, 18]),
                         value: new StringLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(4, 14),
-                                new Position(4, 16)
-                            ),
+                            rangeInSource: $this->range([4, 14], [4, 16]),
                             value: 'thu'
                         )
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(5, 4),
-                        new Position(5, 16)
-                    ),
+                    rangeInSource: $this->range([5, 4], [5, 16]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(5, 4),
-                            new Position(5, 9)
-                        ),
+                        rangeInSource: $this->range([5, 4], [5, 9]),
                         value: EnumMemberName::from('FRIDAY')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(5, 10),
-                            new Position(5, 16)
-                        ),
+                        rangeInSource: $this->range([5, 10], [5, 16]),
                         value: new StringLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(5, 12),
-                                new Position(5, 14)
-                            ),
+                            rangeInSource: $this->range([5, 12], [5, 14]),
                             value: 'fri'
                         )
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(6, 4),
-                        new Position(6, 18)
-                    ),
+                    rangeInSource: $this->range([6, 4], [6, 18]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(6, 4),
-                            new Position(6, 11)
-                        ),
+                        rangeInSource: $this->range([6, 4], [6, 11]),
                         value: EnumMemberName::from('SATURDAY')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(6, 12),
-                            new Position(6, 18)
-                        ),
+                        rangeInSource: $this->range([6, 12], [6, 18]),
                         value: new StringLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(6, 14),
-                                new Position(6, 16)
-                            ),
+                            rangeInSource: $this->range([6, 14], [6, 16]),
                             value: 'sat'
                         )
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(7, 4),
-                        new Position(7, 16)
-                    ),
+                    rangeInSource: $this->range([7, 4], [7, 16]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(7, 4),
-                            new Position(7, 9)
-                        ),
+                        rangeInSource: $this->range([7, 4], [7, 9]),
                         value: EnumMemberName::from('SUNDAY')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(7, 10),
-                            new Position(7, 16)
-                        ),
+                        rangeInSource: $this->range([7, 10], [7, 16]),
                         value: new StringLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(7, 12),
-                                new Position(7, 14)
-                            ),
+                            rangeInSource: $this->range([7, 12], [7, 14]),
                             value: 'sun'
                         )
                     )
@@ -440,46 +292,28 @@ final class EnumDeclarationParserTest extends TestCase
     /**
      * @test
      */
-    public function oneBinaryIntegerValueMember(): void
+    public function parsesEnumDeclarationWithOneBinaryIntegerValueMember(): void
     {
         $enumDeclarationParser = new EnumDeclarationParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('enum Foo { BAR(0b101) }'))->getIterator();
+        $tokens = $this->createTokenIterator('enum Foo { BAR(0b101) }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 22)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 22]),
             name: new EnumNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 5),
-                    new Position(0, 7)
-                ),
+                rangeInSource: $this->range([0, 5], [0, 7]),
                 value: EnumName::from('Foo')
             ),
             members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 11),
-                        new Position(0, 20)
-                    ),
+                    rangeInSource: $this->range([0, 11], [0, 20]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 11),
-                            new Position(0, 13)
-                        ),
+                        rangeInSource: $this->range([0, 11], [0, 13]),
                         value: EnumMemberName::from('BAR')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 14),
-                            new Position(0, 20)
-                        ),
+                        rangeInSource: $this->range([0, 14], [0, 20]),
                         value: new IntegerLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(0, 15),
-                                new Position(0, 19)
-                            ),
+                            rangeInSource: $this->range([0, 15], [0, 19]),
                             format: IntegerFormat::BINARY,
                             value: '0b101'
                         )
@@ -497,46 +331,28 @@ final class EnumDeclarationParserTest extends TestCase
     /**
      * @test
      */
-    public function oneOctalIntegerValueMember(): void
+    public function parsesEnumDeclarationWithOneOctalIntegerValueMember(): void
     {
         $enumDeclarationParser = new EnumDeclarationParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('enum Foo { BAR(0o644) }'))->getIterator();
+        $tokens = $this->createTokenIterator('enum Foo { BAR(0o644) }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 22)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 22]),
             name: new EnumNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 5),
-                    new Position(0, 7)
-                ),
+                rangeInSource: $this->range([0, 5], [0, 7]),
                 value: EnumName::from('Foo')
             ),
             members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 11),
-                        new Position(0, 20)
-                    ),
+                    rangeInSource: $this->range([0, 11], [0, 20]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 11),
-                            new Position(0, 13)
-                        ),
+                        rangeInSource: $this->range([0, 11], [0, 13]),
                         value: EnumMemberName::from('BAR')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 14),
-                            new Position(0, 20)
-                        ),
+                        rangeInSource: $this->range([0, 14], [0, 20]),
                         value: new IntegerLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(0, 15),
-                                new Position(0, 19)
-                            ),
+                            rangeInSource: $this->range([0, 15], [0, 19]),
                             format: IntegerFormat::OCTAL,
                             value: '0o644'
                         )
@@ -554,46 +370,28 @@ final class EnumDeclarationParserTest extends TestCase
     /**
      * @test
      */
-    public function oneDecimalIntegerValueMember(): void
+    public function parsesEnumDeclarationWithOneDecimalIntegerValueMember(): void
     {
         $enumDeclarationParser = new EnumDeclarationParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('enum Foo { BAR(42) }'))->getIterator();
+        $tokens = $this->createTokenIterator('enum Foo { BAR(42) }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 19)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 19]),
             name: new EnumNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 5),
-                    new Position(0, 7)
-                ),
+                rangeInSource: $this->range([0, 5], [0, 7]),
                 value: EnumName::from('Foo')
             ),
             members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 11),
-                        new Position(0, 17)
-                    ),
+                    rangeInSource: $this->range([0, 11], [0, 17]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 11),
-                            new Position(0, 13)
-                        ),
+                        rangeInSource: $this->range([0, 11], [0, 13]),
                         value: EnumMemberName::from('BAR')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 14),
-                            new Position(0, 17)
-                        ),
+                        rangeInSource: $this->range([0, 14], [0, 17]),
                         value: new IntegerLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(0, 15),
-                                new Position(0, 16)
-                            ),
+                            rangeInSource: $this->range([0, 15], [0, 16]),
                             format: IntegerFormat::DECIMAL,
                             value: '42'
                         )
@@ -611,46 +409,28 @@ final class EnumDeclarationParserTest extends TestCase
     /**
      * @test
      */
-    public function oneHexadecimalIntegerValueMember(): void
+    public function parsesEnumDeclarationWithOneHexadecimalIntegerValueMember(): void
     {
         $enumDeclarationParser = new EnumDeclarationParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('enum Foo { BAR(0xABC) }'))->getIterator();
+        $tokens = $this->createTokenIterator('enum Foo { BAR(0xABC) }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 22)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 22]),
             name: new EnumNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 5),
-                    new Position(0, 7)
-                ),
+                rangeInSource: $this->range([0, 5], [0, 7]),
                 value: EnumName::from('Foo')
             ),
             members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 11),
-                        new Position(0, 20)
-                    ),
+                    rangeInSource: $this->range([0, 11], [0, 20]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 11),
-                            new Position(0, 13)
-                        ),
+                        rangeInSource: $this->range([0, 11], [0, 13]),
                         value: EnumMemberName::from('BAR')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 14),
-                            new Position(0, 20)
-                        ),
+                        rangeInSource: $this->range([0, 14], [0, 20]),
                         value: new IntegerLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(0, 15),
-                                new Position(0, 19)
-                            ),
+                            rangeInSource: $this->range([0, 15], [0, 19]),
                             format: IntegerFormat::HEXADECIMAL,
                             value: '0xABC'
                         )
@@ -668,7 +448,7 @@ final class EnumDeclarationParserTest extends TestCase
     /**
      * @test
      */
-    public function twelveIntegerValueMembers(): void
+    public function parsesEnumDeclarationWithwelveIntegerValueMembers(): void
     {
         $enumDeclarationParser = new EnumDeclarationParser();
         $enumAsString = <<<AFX
@@ -687,340 +467,190 @@ final class EnumDeclarationParserTest extends TestCase
             DECEMBER(12)
         }
         AFX;
-        $tokens = Tokenizer::fromSource(Source::fromString($enumAsString))->getIterator();
+        $tokens = $this->createTokenIterator($enumAsString);
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(13, 0)
-            ),
+            rangeInSource: $this->range([0, 0], [13, 0]),
             name: new EnumNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 5),
-                    new Position(0, 9)
-                ),
+                rangeInSource: $this->range([0, 5], [0, 9]),
                 value: EnumName::from('Month')
             ),
             members: new EnumMemberDeclarationNodes(
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(1, 4),
-                        new Position(1, 13)
-                    ),
+                    rangeInSource: $this->range([1, 4], [1, 13]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(1, 4),
-                            new Position(1, 10)
-                        ),
+                        rangeInSource: $this->range([1, 4], [1, 10]),
                         value: EnumMemberName::from('JANUARY')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(1, 11),
-                            new Position(1, 13)
-                        ),
+                        rangeInSource: $this->range([1, 11], [1, 13]),
                         value: new IntegerLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(1, 12),
-                                new Position(1, 12)
-                            ),
+                            rangeInSource: $this->range([1, 12], [1, 12]),
                             format: IntegerFormat::DECIMAL,
                             value: '1'
                         )
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(2, 4),
-                        new Position(2, 14)
-                    ),
+                    rangeInSource: $this->range([2, 4], [2, 14]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(2, 4),
-                            new Position(2, 11)
-                        ),
+                        rangeInSource: $this->range([2, 4], [2, 11]),
                         value: EnumMemberName::from('FEBRUARY')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(2, 12),
-                            new Position(2, 14)
-                        ),
+                        rangeInSource: $this->range([2, 12], [2, 14]),
                         value: new IntegerLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(2, 13),
-                                new Position(2, 13)
-                            ),
+                            rangeInSource: $this->range([2, 13], [2, 13]),
                             format: IntegerFormat::DECIMAL,
                             value: '2'
                         )
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(3, 4),
-                        new Position(3, 11)
-                    ),
+                    rangeInSource: $this->range([3, 4], [3, 11]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(3, 4),
-                            new Position(3, 8)
-                        ),
+                        rangeInSource: $this->range([3, 4], [3, 8]),
                         value: EnumMemberName::from('MARCH')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(3, 9),
-                            new Position(3, 11)
-                        ),
+                        rangeInSource: $this->range([3, 9], [3, 11]),
                         value: new IntegerLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(3, 10),
-                                new Position(3, 10)
-                            ),
+                            rangeInSource: $this->range([3, 10], [3, 10]),
                             format: IntegerFormat::DECIMAL,
                             value: '3'
                         )
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(4, 4),
-                        new Position(4, 11)
-                    ),
+                    rangeInSource: $this->range([4, 4], [4, 11]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(4, 4),
-                            new Position(4, 8)
-                        ),
+                        rangeInSource: $this->range([4, 4], [4, 8]),
                         value: EnumMemberName::from('APRIL')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(4, 9),
-                            new Position(4, 11)
-                        ),
+                        rangeInSource: $this->range([4, 9], [4, 11]),
                         value: new IntegerLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(4, 10),
-                                new Position(4, 10)
-                            ),
+                            rangeInSource: $this->range([4, 10], [4, 10]),
                             format: IntegerFormat::DECIMAL,
                             value: '4'
                         )
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(5, 4),
-                        new Position(5, 9)
-                    ),
+                    rangeInSource: $this->range([5, 4], [5, 9]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(5, 4),
-                            new Position(5, 6)
-                        ),
+                        rangeInSource: $this->range([5, 4], [5, 6]),
                         value: EnumMemberName::from('MAY')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(5, 7),
-                            new Position(5, 9)
-                        ),
+                        rangeInSource: $this->range([5, 7], [5, 9]),
                         value: new IntegerLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(5, 8),
-                                new Position(5, 8)
-                            ),
+                            rangeInSource: $this->range([5, 8], [5, 8]),
                             format: IntegerFormat::DECIMAL,
                             value: '5'
                         )
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(6, 4),
-                        new Position(6, 10)
-                    ),
+                    rangeInSource: $this->range([6, 4], [6, 10]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(6, 4),
-                            new Position(6, 7)
-                        ),
+                        rangeInSource: $this->range([6, 4], [6, 7]),
                         value: EnumMemberName::from('JUNE')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(6, 8),
-                            new Position(6, 10)
-                        ),
+                        rangeInSource: $this->range([6, 8], [6, 10]),
                         value: new IntegerLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(6, 9),
-                                new Position(6, 9)
-                            ),
+                            rangeInSource: $this->range([6, 9], [6, 9]),
                             format: IntegerFormat::DECIMAL,
                             value: '6'
                         )
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(7, 4),
-                        new Position(7, 10)
-                    ),
+                    rangeInSource: $this->range([7, 4], [7, 10]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(7, 4),
-                            new Position(7, 7)
-                        ),
+                        rangeInSource: $this->range([7, 4], [7, 7]),
                         value: EnumMemberName::from('JULY')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(7, 8),
-                            new Position(7, 10)
-                        ),
+                        rangeInSource: $this->range([7, 8], [7, 10]),
                         value: new IntegerLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(7, 9),
-                                new Position(7, 9)
-                            ),
+                            rangeInSource: $this->range([7, 9], [7, 9]),
                             format: IntegerFormat::DECIMAL,
                             value: '7'
                         )
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(8, 4),
-                        new Position(8, 12)
-                    ),
+                    rangeInSource: $this->range([8, 4], [8, 12]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(8, 4),
-                            new Position(8, 9)
-                        ),
+                        rangeInSource: $this->range([8, 4], [8, 9]),
                         value: EnumMemberName::from('AUGUST')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(8, 10),
-                            new Position(8, 12)
-                        ),
+                        rangeInSource: $this->range([8, 10], [8, 12]),
                         value: new IntegerLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(8, 11),
-                                new Position(8, 11)
-                            ),
+                            rangeInSource: $this->range([8, 11], [8, 11]),
                             format: IntegerFormat::DECIMAL,
                             value: '8'
                         )
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(9, 4),
-                        new Position(9, 15)
-                    ),
+                    rangeInSource: $this->range([9, 4], [9, 15]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(9, 4),
-                            new Position(9, 12)
-                        ),
+                        rangeInSource: $this->range([9, 4], [9, 12]),
                         value: EnumMemberName::from('SEPTEMBER')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(9, 13),
-                            new Position(9, 15)
-                        ),
+                        rangeInSource: $this->range([9, 13], [9, 15]),
                         value: new IntegerLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(9, 14),
-                                new Position(9, 14)
-                            ),
+                            rangeInSource: $this->range([9, 14], [9, 14]),
                             format: IntegerFormat::DECIMAL,
                             value: '9'
                         )
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(10, 4),
-                        new Position(10, 14)
-                    ),
+                    rangeInSource: $this->range([10, 4], [10, 14]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(10, 4),
-                            new Position(10, 10)
-                        ),
+                        rangeInSource: $this->range([10, 4], [10, 10]),
                         value: EnumMemberName::from('OCTOBER')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(10, 11),
-                            new Position(10, 14)
-                        ),
+                        rangeInSource: $this->range([10, 11], [10, 14]),
                         value: new IntegerLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(10, 12),
-                                new Position(10, 13)
-                            ),
+                            rangeInSource: $this->range([10, 12], [10, 13]),
                             format: IntegerFormat::DECIMAL,
                             value: '10'
                         )
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(11, 4),
-                        new Position(11, 15)
-                    ),
+                    rangeInSource: $this->range([11, 4], [11, 15]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(11, 4),
-                            new Position(11, 11)
-                        ),
+                        rangeInSource: $this->range([11, 4], [11, 11]),
                         value: EnumMemberName::from('NOVEMBER')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(11, 12),
-                            new Position(11, 15)
-                        ),
+                        rangeInSource: $this->range([11, 12], [11, 15]),
                         value: new IntegerLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(11, 13),
-                                new Position(11, 14)
-                            ),
+                            rangeInSource: $this->range([11, 13], [11, 14]),
                             format: IntegerFormat::DECIMAL,
                             value: '11'
                         )
                     )
                 ),
                 new EnumMemberDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(12, 4),
-                        new Position(12, 15)
-                    ),
+                    rangeInSource: $this->range([12, 4], [12, 15]),
                     name: new EnumMemberNameNode(
-                        rangeInSource: Range::from(
-                            new Position(12, 4),
-                            new Position(12, 11)
-                        ),
+                        rangeInSource: $this->range([12, 4], [12, 11]),
                         value: EnumMemberName::from('DECEMBER')
                     ),
                     value: new EnumMemberValueNode(
-                        rangeInSource: Range::from(
-                            new Position(12, 12),
-                            new Position(12, 15)
-                        ),
+                        rangeInSource: $this->range([12, 12], [12, 15]),
                         value: new IntegerLiteralNode(
-                            rangeInSource: Range::from(
-                                new Position(12, 13),
-                                new Position(12, 14)
-                            ),
+                            rangeInSource: $this->range([12, 13], [12, 14]),
                             format: IntegerFormat::DECIMAL,
                             value: '12'
                         )

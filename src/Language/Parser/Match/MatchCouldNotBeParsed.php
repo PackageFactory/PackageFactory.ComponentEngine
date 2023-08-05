@@ -38,7 +38,7 @@ final class MatchCouldNotBeParsed extends ParserException
                 'Match could not be parsed because of invalid match arm nodes: %s.',
                 $cause->getMessage()
             ),
-            affectedRangeInSource: $affectedRangeInSource ?? $cause->affectedRangeInSource,
+            affectedRangeInSource: $cause->affectedRangeInSource ?? $affectedRangeInSource,
             cause: $cause
         );
     }

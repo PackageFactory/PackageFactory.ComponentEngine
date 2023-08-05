@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,58 +34,36 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
 use PackageFactory\ComponentEngine\Language\Parser\StructDeclaration\StructDeclarationParser;
-use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Source\Position;
-use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
-use PHPUnit\Framework\TestCase;
+use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
-final class StructDeclarationParserTest extends TestCase
+final class StructDeclarationParserTest extends ParserTestCase
 {
     /**
      * @test
      */
-    public function parsesStructDeclarationOnSingleLineWithOneProperty(): void
+    public function parsesStructDeclarationWithOneProperty(): void
     {
         $structDeclarationParser = new StructDeclarationParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('struct Foo { bar: Baz }'))->getIterator();
+        $tokens = $this->createTokenIterator('struct Foo { bar: Baz }');
 
         $expectedStructDeclarationNode = new StructDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 22)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 22]),
             name: new StructNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 7),
-                    new Position(0, 9)
-                ),
+                rangeInSource: $this->range([0, 7], [0, 9]),
                 value: StructName::from('Foo')
             ),
             properties: new PropertyDeclarationNodes(
                 new PropertyDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 13),
-                        new Position(0, 20)
-                    ),
+                    rangeInSource: $this->range([0, 13], [0, 20]),
                     name: new PropertyNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 13),
-                            new Position(0, 15)
-                        ),
+                        rangeInSource: $this->range([0, 13], [0, 15]),
                         value: PropertyName::from('bar')
                     ),
                     type: new TypeReferenceNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 18),
-                            new Position(0, 20)
-                        ),
+                        rangeInSource: $this->range([0, 18], [0, 20]),
                         names: new TypeNameNodes(
                             new TypeNameNode(
-                                rangeInSource: Range::from(
-                                    new Position(0, 18),
-                                    new Position(0, 20)
-                                ),
+                                rangeInSource: $this->range([0, 18], [0, 20]),
                                 value: TypeName::from('Baz')
                             )
                         ),
@@ -105,47 +83,29 @@ final class StructDeclarationParserTest extends TestCase
     /**
      * @test
      */
-    public function parsesStructDeclarationOnSingleLineWithMultipleProperties(): void
+    public function parsesStructDeclarationWithMultipleProperties(): void
     {
         $structDeclarationParser = new StructDeclarationParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('struct Foo { bar: Baz qux: Quux corge: Grault }'))->getIterator();
+        $tokens = $this->createTokenIterator('struct Foo { bar: Baz qux: Quux corge: Grault }');
 
         $expectedStructDeclarationNode = new StructDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 46)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 46]),
             name: new StructNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 7),
-                    new Position(0, 9)
-                ),
+                rangeInSource: $this->range([0, 7], [0, 9]),
                 value: StructName::from('Foo')
             ),
             properties: new PropertyDeclarationNodes(
                 new PropertyDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 13),
-                        new Position(0, 20)
-                    ),
+                    rangeInSource: $this->range([0, 13], [0, 20]),
                     name: new PropertyNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 13),
-                            new Position(0, 15)
-                        ),
+                        rangeInSource: $this->range([0, 13], [0, 15]),
                         value: PropertyName::from('bar')
                     ),
                     type: new TypeReferenceNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 18),
-                            new Position(0, 20)
-                        ),
+                        rangeInSource: $this->range([0, 18], [0, 20]),
                         names: new TypeNameNodes(
                             new TypeNameNode(
-                                rangeInSource: Range::from(
-                                    new Position(0, 18),
-                                    new Position(0, 20)
-                                ),
+                                rangeInSource: $this->range([0, 18], [0, 20]),
                                 value: TypeName::from('Baz')
                             )
                         ),
@@ -154,28 +114,16 @@ final class StructDeclarationParserTest extends TestCase
                     )
                 ),
                 new PropertyDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 22),
-                        new Position(0, 30)
-                    ),
+                    rangeInSource: $this->range([0, 22], [0, 30]),
                     name: new PropertyNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 22),
-                            new Position(0, 24)
-                        ),
+                        rangeInSource: $this->range([0, 22], [0, 24]),
                         value: PropertyName::from('qux')
                     ),
                     type: new TypeReferenceNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 27),
-                            new Position(0, 30)
-                        ),
+                        rangeInSource: $this->range([0, 27], [0, 30]),
                         names: new TypeNameNodes(
                             new TypeNameNode(
-                                rangeInSource: Range::from(
-                                    new Position(0, 27),
-                                    new Position(0, 30)
-                                ),
+                                rangeInSource: $this->range([0, 27], [0, 30]),
                                 value: TypeName::from('Quux')
                             )
                         ),
@@ -184,28 +132,16 @@ final class StructDeclarationParserTest extends TestCase
                     )
                 ),
                 new PropertyDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 32),
-                        new Position(0, 44)
-                    ),
+                    rangeInSource: $this->range([0, 32], [0, 44]),
                     name: new PropertyNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 32),
-                            new Position(0, 36)
-                        ),
+                        rangeInSource: $this->range([0, 32], [0, 36]),
                         value: PropertyName::from('corge')
                     ),
                     type: new TypeReferenceNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 39),
-                            new Position(0, 44)
-                        ),
+                        rangeInSource: $this->range([0, 39], [0, 44]),
                         names: new TypeNameNodes(
                             new TypeNameNode(
-                                rangeInSource: Range::from(
-                                    new Position(0, 39),
-                                    new Position(0, 44)
-                                ),
+                                rangeInSource: $this->range([0, 39], [0, 44]),
                                 value: TypeName::from('Grault')
                             )
                         ),
@@ -225,103 +161,7 @@ final class StructDeclarationParserTest extends TestCase
     /**
      * @test
      */
-    public function parsesStructDeclarationOnMultipleLinesWithMultipleProperties(): void
-    {
-        $structDeclarationParser = new StructDeclarationParser();
-        $structAsString = <<<AFX
-        struct Link {
-            href: string
-            target: string
-        }
-        AFX;
-        $tokens = Tokenizer::fromSource(Source::fromString($structAsString))->getIterator();
-
-        $expectedStructDeclarationNode = new StructDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(3, 0)
-            ),
-            name: new StructNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 7),
-                    new Position(0, 10)
-                ),
-                value: StructName::from('Link')
-            ),
-            properties: new PropertyDeclarationNodes(
-                new PropertyDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(1, 4),
-                        new Position(1, 15)
-                    ),
-                    name: new PropertyNameNode(
-                        rangeInSource: Range::from(
-                            new Position(1, 4),
-                            new Position(1, 7)
-                        ),
-                        value: PropertyName::from('href')
-                    ),
-                    type: new TypeReferenceNode(
-                        rangeInSource: Range::from(
-                            new Position(1, 10),
-                            new Position(1, 15)
-                        ),
-                        names: new TypeNameNodes(
-                            new TypeNameNode(
-                                rangeInSource: Range::from(
-                                    new Position(1, 10),
-                                    new Position(1, 15)
-                                ),
-                                value: TypeName::from('string')
-                            )
-                        ),
-                        isArray: false,
-                        isOptional: false
-                    )
-                ),
-                new PropertyDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(2, 4),
-                        new Position(2, 17)
-                    ),
-                    name: new PropertyNameNode(
-                        rangeInSource: Range::from(
-                            new Position(2, 4),
-                            new Position(2, 9)
-                        ),
-                        value: PropertyName::from('target')
-                    ),
-                    type: new TypeReferenceNode(
-                        rangeInSource: Range::from(
-                            new Position(2, 12),
-                            new Position(2, 17)
-                        ),
-                        names: new TypeNameNodes(
-                            new TypeNameNode(
-                                rangeInSource: Range::from(
-                                    new Position(2, 12),
-                                    new Position(2, 17)
-                                ),
-                                value: TypeName::from('string')
-                            )
-                        ),
-                        isArray: false,
-                        isOptional: false
-                    )
-                )
-            )
-        );
-
-        $this->assertEquals(
-            $expectedStructDeclarationNode,
-            $structDeclarationParser->parse($tokens)
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function parsesStructDeclarationOnMultipleLinesWithMultiplePropertiesAndSpaceAndComments(): void
+    public function parsesStructDeclarationWithMultiplePropertiesAndSpaceAndComments(): void
     {
         $structDeclarationParser = new StructDeclarationParser();
         $structAsString = <<<AFX
@@ -335,44 +175,26 @@ final class StructDeclarationParserTest extends TestCase
 
         }
         AFX;
-        $tokens = Tokenizer::fromSource(Source::fromString($structAsString))->getIterator();
+        $tokens = $this->createTokenIterator($structAsString);
 
         $expectedStructDeclarationNode = new StructDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(8, 0)
-            ),
+            rangeInSource: $this->range([0, 0], [8, 0]),
             name: new StructNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 7),
-                    new Position(0, 10)
-                ),
+                rangeInSource: $this->range([0, 7], [0, 10]),
                 value: StructName::from('Link')
             ),
             properties: new PropertyDeclarationNodes(
                 new PropertyDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(3, 4),
-                        new Position(3, 15)
-                    ),
+                    rangeInSource: $this->range([3, 4], [3, 15]),
                     name: new PropertyNameNode(
-                        rangeInSource: Range::from(
-                            new Position(3, 4),
-                            new Position(3, 7)
-                        ),
+                        rangeInSource: $this->range([3, 4], [3, 7]),
                         value: PropertyName::from('href')
                     ),
                     type: new TypeReferenceNode(
-                        rangeInSource: Range::from(
-                            new Position(3, 10),
-                            new Position(3, 15)
-                        ),
+                        rangeInSource: $this->range([3, 10], [3, 15]),
                         names: new TypeNameNodes(
                             new TypeNameNode(
-                                rangeInSource: Range::from(
-                                    new Position(3, 10),
-                                    new Position(3, 15)
-                                ),
+                                rangeInSource: $this->range([3, 10], [3, 15]),
                                 value: TypeName::from('string')
                             )
                         ),
@@ -381,28 +203,16 @@ final class StructDeclarationParserTest extends TestCase
                     )
                 ),
                 new PropertyDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(6, 4),
-                        new Position(6, 17)
-                    ),
+                    rangeInSource: $this->range([6, 4], [6, 17]),
                     name: new PropertyNameNode(
-                        rangeInSource: Range::from(
-                            new Position(6, 4),
-                            new Position(6, 9)
-                        ),
+                        rangeInSource: $this->range([6, 4], [6, 9]),
                         value: PropertyName::from('target')
                     ),
                     type: new TypeReferenceNode(
-                        rangeInSource: Range::from(
-                            new Position(6, 12),
-                            new Position(6, 17)
-                        ),
+                        rangeInSource: $this->range([6, 12], [6, 17]),
                         names: new TypeNameNodes(
                             new TypeNameNode(
-                                rangeInSource: Range::from(
-                                    new Position(6, 12),
-                                    new Position(6, 17)
-                                ),
+                                rangeInSource: $this->range([6, 12], [6, 17]),
                                 value: TypeName::from('string')
                             )
                         ),
@@ -422,7 +232,7 @@ final class StructDeclarationParserTest extends TestCase
     /**
      * @test
      */
-    public function parsesStructDeclarationOnMultipleLinesWitOptionalArrayAndUnionProperties(): void
+    public function parsesStructDeclarationWitOptionalArrayAndUnionProperties(): void
     {
         $structDeclarationParser = new StructDeclarationParser();
         $structAsString = <<<AFX
@@ -432,44 +242,26 @@ final class StructDeclarationParserTest extends TestCase
             title: ?string
         }
         AFX;
-        $tokens = Tokenizer::fromSource(Source::fromString($structAsString))->getIterator();
+        $tokens = $this->createTokenIterator($structAsString);
 
         $expectedStructDeclarationNode = new StructDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(4, 0)
-            ),
+            rangeInSource: $this->range([0, 0], [4, 0]),
             name: new StructNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 7),
-                    new Position(0, 13)
-                ),
+                rangeInSource: $this->range([0, 7], [0, 13]),
                 value: StructName::from('Picture')
             ),
             properties: new PropertyDeclarationNodes(
                 new PropertyDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(1, 4),
-                        new Position(1, 16)
-                    ),
+                    rangeInSource: $this->range([1, 4], [1, 16]),
                     name: new PropertyNameNode(
-                        rangeInSource: Range::from(
-                            new Position(1, 4),
-                            new Position(1, 6)
-                        ),
+                        rangeInSource: $this->range([1, 4], [1, 6]),
                         value: PropertyName::from('src')
                     ),
                     type: new TypeReferenceNode(
-                        rangeInSource: Range::from(
-                            new Position(1, 9),
-                            new Position(1, 16)
-                        ),
+                        rangeInSource: $this->range([1, 9], [1, 16]),
                         names: new TypeNameNodes(
                             new TypeNameNode(
-                                rangeInSource: Range::from(
-                                    new Position(1, 9),
-                                    new Position(1, 14)
-                                ),
+                                rangeInSource: $this->range([1, 9], [1, 14]),
                                 value: TypeName::from('string')
                             )
                         ),
@@ -478,42 +270,24 @@ final class StructDeclarationParserTest extends TestCase
                     )
                 ),
                 new PropertyDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(2, 4),
-                        new Position(2, 39)
-                    ),
+                    rangeInSource: $this->range([2, 4], [2, 39]),
                     name: new PropertyNameNode(
-                        rangeInSource: Range::from(
-                            new Position(2, 4),
-                            new Position(2, 14)
-                        ),
+                        rangeInSource: $this->range([2, 4], [2, 14]),
                         value: PropertyName::from('description')
                     ),
                     type: new TypeReferenceNode(
-                        rangeInSource: Range::from(
-                            new Position(2, 17),
-                            new Position(2, 39)
-                        ),
+                        rangeInSource: $this->range([2, 17], [2, 39]),
                         names: new TypeNameNodes(
                             new TypeNameNode(
-                                rangeInSource: Range::from(
-                                    new Position(2, 17),
-                                    new Position(2, 22)
-                                ),
+                                rangeInSource: $this->range([2, 17], [2, 22]),
                                 value: TypeName::from('string')
                             ),
                             new TypeNameNode(
-                                rangeInSource: Range::from(
-                                    new Position(2, 24),
-                                    new Position(2, 27)
-                                ),
+                                rangeInSource: $this->range([2, 24], [2, 27]),
                                 value: TypeName::from('slot')
                             ),
                             new TypeNameNode(
-                                rangeInSource: Range::from(
-                                    new Position(2, 29),
-                                    new Position(2, 39)
-                                ),
+                                rangeInSource: $this->range([2, 29], [2, 39]),
                                 value: TypeName::from('Description')
                             )
                         ),
@@ -522,28 +296,16 @@ final class StructDeclarationParserTest extends TestCase
                     )
                 ),
                 new PropertyDeclarationNode(
-                    rangeInSource: Range::from(
-                        new Position(3, 4),
-                        new Position(3, 17)
-                    ),
+                    rangeInSource: $this->range([3, 4], [3, 17]),
                     name: new PropertyNameNode(
-                        rangeInSource: Range::from(
-                            new Position(3, 4),
-                            new Position(3, 8)
-                        ),
+                        rangeInSource: $this->range([3, 4], [3, 8]),
                         value: PropertyName::from('title')
                     ),
                     type: new TypeReferenceNode(
-                        rangeInSource: Range::from(
-                            new Position(3, 11),
-                            new Position(3, 17)
-                        ),
+                        rangeInSource: $this->range([3, 11], [3, 17]),
                         names: new TypeNameNodes(
                             new TypeNameNode(
-                                rangeInSource: Range::from(
-                                    new Position(3, 12),
-                                    new Position(3, 17)
-                                ),
+                                rangeInSource: $this->range([3, 12], [3, 17]),
                                 value: TypeName::from('string')
                             )
                         ),

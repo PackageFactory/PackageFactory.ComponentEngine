@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,27 +24,20 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\StringLiteral
 
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
-use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Source\Position;
-use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
-use PHPUnit\Framework\TestCase;
+use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
-final class StringLiteralParserTest extends TestCase
+final class StringLiteralParserTest extends ParserTestCase
 {
     /**
      * @test
      */
-    public function producesStringLiteralNodeForLiteralString(): void
+    public function parsesString(): void
     {
         $stringLiteralParser = new StringLiteralParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('"Hello World"'))->getIterator();
+        $tokens = $this->createTokenIterator('"Hello World"');
 
         $expectedStringLiteralNode = new StringLiteralNode(
-            rangeInSource: Range::from(
-                new Position(0, 1),
-                new Position(0, 11)
-            ),
+            rangeInSource: $this->range([0, 1], [0, 11]),
             value: 'Hello World'
         );
 

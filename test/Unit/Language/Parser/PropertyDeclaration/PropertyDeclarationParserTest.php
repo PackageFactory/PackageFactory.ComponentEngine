@@ -30,13 +30,9 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
 use PackageFactory\ComponentEngine\Language\Parser\PropertyDeclaration\PropertyDeclarationParser;
-use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Source\Position;
-use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
-use PHPUnit\Framework\TestCase;
+use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
-final class PropertyDeclarationParserTest extends TestCase
+final class PropertyDeclarationParserTest extends ParserTestCase
 {
     /**
      * @test
@@ -44,31 +40,19 @@ final class PropertyDeclarationParserTest extends TestCase
     public function parsesPropertyDeclarationWithSimpleType(): void
     {
         $propertyDeclarationParser = new PropertyDeclarationParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('foo: Bar'))->getIterator();
+        $tokens = $this->createTokenIterator('foo: Bar');
 
         $expectedPropertyDeclarationNode = new PropertyDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 7)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 7]),
             name: new PropertyNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 2)
-                ),
+                rangeInSource: $this->range([0, 0], [0, 2]),
                 value: PropertyName::from('foo')
             ),
             type: new TypeReferenceNode(
-                rangeInSource: Range::from(
-                    new Position(0, 5),
-                    new Position(0, 7)
-                ),
+                rangeInSource: $this->range([0, 5], [0, 7]),
                 names: new TypeNameNodes(
                     new TypeNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 5),
-                            new Position(0, 7)
-                        ),
+                        rangeInSource: $this->range([0, 5], [0, 7]),
                         value: TypeName::from('Bar')
                     )
                 ),
@@ -89,31 +73,19 @@ final class PropertyDeclarationParserTest extends TestCase
     public function parsesPropertyDeclarationWithOptionalType(): void
     {
         $propertyDeclarationParser = new PropertyDeclarationParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('foo: ?Bar'))->getIterator();
+        $tokens = $this->createTokenIterator('foo: ?Bar');
 
         $expectedPropertyDeclarationNode = new PropertyDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 8)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 8]),
             name: new PropertyNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 2)
-                ),
+                rangeInSource: $this->range([0, 0], [0, 2]),
                 value: PropertyName::from('foo')
             ),
             type: new TypeReferenceNode(
-                rangeInSource: Range::from(
-                    new Position(0, 5),
-                    new Position(0, 8)
-                ),
+                rangeInSource: $this->range([0, 5], [0, 8]),
                 names: new TypeNameNodes(
                     new TypeNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 6),
-                            new Position(0, 8)
-                        ),
+                        rangeInSource: $this->range([0, 6], [0, 8]),
                         value: TypeName::from('Bar')
                     )
                 ),
@@ -134,31 +106,19 @@ final class PropertyDeclarationParserTest extends TestCase
     public function parsesPropertyDeclarationWithArrayType(): void
     {
         $propertyDeclarationParser = new PropertyDeclarationParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('foo: Bar[]'))->getIterator();
+        $tokens = $this->createTokenIterator('foo: Bar[]');
 
         $expectedPropertyDeclarationNode = new PropertyDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 9)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 9]),
             name: new PropertyNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 2)
-                ),
+                rangeInSource: $this->range([0, 0], [0, 2]),
                 value: PropertyName::from('foo')
             ),
             type: new TypeReferenceNode(
-                rangeInSource: Range::from(
-                    new Position(0, 5),
-                    new Position(0, 9)
-                ),
+                rangeInSource: $this->range([0, 5], [0, 9]),
                 names: new TypeNameNodes(
                     new TypeNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 5),
-                            new Position(0, 7)
-                        ),
+                        rangeInSource: $this->range([0, 5], [0, 7]),
                         value: TypeName::from('Bar')
                     )
                 ),
@@ -179,45 +139,27 @@ final class PropertyDeclarationParserTest extends TestCase
     public function parsesPropertyDeclarationWithUnionType(): void
     {
         $propertyDeclarationParser = new PropertyDeclarationParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('foo: Bar|Baz|Qux'))->getIterator();
+        $tokens = $this->createTokenIterator('foo: Bar|Baz|Qux');
 
         $expectedPropertyDeclarationNode = new PropertyDeclarationNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 15)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 15]),
             name: new PropertyNameNode(
-                rangeInSource: Range::from(
-                    new Position(0, 0),
-                    new Position(0, 2)
-                ),
+                rangeInSource: $this->range([0, 0], [0, 2]),
                 value: PropertyName::from('foo')
             ),
             type: new TypeReferenceNode(
-                rangeInSource: Range::from(
-                    new Position(0, 5),
-                    new Position(0, 15)
-                ),
+                rangeInSource: $this->range([0, 5], [0, 15]),
                 names: new TypeNameNodes(
                     new TypeNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 5),
-                            new Position(0, 7)
-                        ),
+                        rangeInSource: $this->range([0, 5], [0, 7]),
                         value: TypeName::from('Bar')
                     ),
                     new TypeNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 9),
-                            new Position(0, 11)
-                        ),
+                        rangeInSource: $this->range([0, 9], [0, 11]),
                         value: TypeName::from('Baz')
                     ),
                     new TypeNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 13),
-                            new Position(0, 15)
-                        ),
+                        rangeInSource: $this->range([0, 13], [0, 15]),
                         value: TypeName::from('Qux')
                     )
                 ),

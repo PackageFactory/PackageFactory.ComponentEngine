@@ -32,33 +32,23 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReference
 use PackageFactory\ComponentEngine\Language\Parser\TypeReference\TypeReferenceParser;
 use PackageFactory\ComponentEngine\Language\Parser\ParserException;
 use PackageFactory\ComponentEngine\Language\Parser\TypeReference\TypeReferenceCouldNotBeParsed;
-use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Source\Position;
-use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
-use PHPUnit\Framework\TestCase;
+use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
-final class TypeReferenceParserTest extends TestCase
+final class TypeReferenceParserTest extends ParserTestCase
 {
     /**
      * @test
      */
-    public function producesAstNodeForSimpleTypeReference(): void
+    public function parsesSimpleTypeReference(): void
     {
         $typeReferenceParser = new TypeReferenceParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('Foo'))->getIterator();
+        $tokens = $this->createTokenIterator('Foo');
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 2)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 2]),
             names: new TypeNameNodes(
                 new TypeNameNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 0),
-                        new Position(0, 2)
-                    ),
+                    rangeInSource: $this->range([0, 0], [0, 2]),
                     value: TypeName::from('Foo')
                 )
             ),
@@ -75,22 +65,16 @@ final class TypeReferenceParserTest extends TestCase
     /**
      * @test
      */
-    public function producesAstNodeForArrayTypeReference(): void
+    public function parsesArrayTypeReference(): void
     {
         $typeReferenceParser = new TypeReferenceParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('Foo[]'))->getIterator();
+        $tokens = $this->createTokenIterator('Foo[]');
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 4)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 4]),
             names: new TypeNameNodes(
                 new TypeNameNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 0),
-                        new Position(0, 2)
-                    ),
+                    rangeInSource: $this->range([0, 0], [0, 2]),
                     value: TypeName::from('Foo')
                 )
             ),
@@ -107,22 +91,16 @@ final class TypeReferenceParserTest extends TestCase
     /**
      * @test
      */
-    public function producesAstNodeForOptionalTypeReference(): void
+    public function parsesOptionalTypeReference(): void
     {
         $typeReferenceParser = new TypeReferenceParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('?Foo'))->getIterator();
+        $tokens = $this->createTokenIterator('?Foo');
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 3)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 3]),
             names: new TypeNameNodes(
                 new TypeNameNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 1),
-                        new Position(0, 3)
-                    ),
+                    rangeInSource: $this->range([0, 1], [0, 3]),
                     value: TypeName::from('Foo')
                 )
             ),
@@ -139,36 +117,24 @@ final class TypeReferenceParserTest extends TestCase
     /**
      * @test
      */
-    public function producesAstNodeForUnionTypeReference(): void
+    public function parsesUnionTypeReference(): void
     {
         $typeReferenceParser = new TypeReferenceParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('Foo|Bar|Baz'))->getIterator();
+        $tokens = $this->createTokenIterator('Foo|Bar|Baz');
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 10)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 10]),
             names: new TypeNameNodes(
                 new TypeNameNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 0),
-                        new Position(0, 2)
-                    ),
+                    rangeInSource: $this->range([0, 0], [0, 2]),
                     value: TypeName::from('Foo')
                 ),
                 new TypeNameNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 4),
-                        new Position(0, 6)
-                    ),
+                    rangeInSource: $this->range([0, 4], [0, 6]),
                     value: TypeName::from('Bar')
                 ),
                 new TypeNameNode(
-                    rangeInSource: Range::from(
-                        new Position(0, 8),
-                        new Position(0, 10)
-                    ),
+                    rangeInSource: $this->range([0, 8], [0, 10]),
                     value: TypeName::from('Baz')
                 )
             ),
@@ -185,20 +151,17 @@ final class TypeReferenceParserTest extends TestCase
     /**
      * @test
      */
-    public function throwsParserExceptionWhenInvalidTypeReferenceOccurs(): void
+    public function throwsIfInvalidTypeReferenceOccurs(): void
     {
         $typeReferenceParser = new TypeReferenceParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('?Foo[]'))->getIterator();
+        $tokens = $this->createTokenIterator('?Foo[]');
 
         $this->expectException(ParserException::class);
         $this->expectExceptionObject(
             TypeReferenceCouldNotBeParsed::becauseOfInvalidTypeReferenceNode(
                 cause: InvalidTypeReferenceNode::becauseItWasOptionalAndArrayAtTheSameTime(
                     affectedTypeNames: new TypeNames(TypeName::from('Foo')),
-                    affectedRangeInSource: Range::from(
-                        new Position(0, 0),
-                        new Position(0, 4)
-                    ),
+                    affectedRangeInSource: $this->range([0, 0], [0, 4]),
                 )
             )
         );
@@ -209,20 +172,17 @@ final class TypeReferenceParserTest extends TestCase
     /**
      * @test
      */
-    public function throwsParserExceptionWhenDuplicatesOccur(): void
+    public function throwsIfDuplicatesOccurInUnionTypeReference(): void
     {
         $typeReferenceParser = new TypeReferenceParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('Foo|Bar|Foo|Baz'))->getIterator();
+        $tokens = $this->createTokenIterator('Foo|Bar|Foo|Baz');
 
         $this->expectException(ParserException::class);
         $this->expectExceptionObject(
             TypeReferenceCouldNotBeParsed::becauseOfInvalidTypeTypeNameNodes(
                 cause: InvalidTypeNameNodes::becauseTheyContainDuplicates(
                     duplicateTypeNameNode: new TypeNameNode(
-                        rangeInSource: Range::from(
-                            new Position(0, 9),
-                            new Position(0, 11)
-                        ),
+                        rangeInSource: $this->range([0, 9], [0, 11]),
                         value: TypeName::from('Foo')
                     )
                 )
