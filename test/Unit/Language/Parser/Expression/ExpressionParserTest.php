@@ -1362,6 +1362,7 @@ final class ExpressionParserTest extends ParserTestCase
             $expressionParser->parse($tokens)
         );
     }
+
     /**
      * @test
      */
@@ -1426,6 +1427,62 @@ final class ExpressionParserTest extends ParserTestCase
                             )
                         )
                     )
+                )
+            )
+        );
+
+        $this->assertEquals(
+            $expectedExpressioNode,
+            $expressionParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function parsesTernaryOperationWithComplexParentheses(): void
+    {
+        $expressionParser = new ExpressionParser();
+        $tokens = $this->createTokenIterator('(((foo)) === ((null))) ? 1 : (((0)))');
+
+        $expectedExpressioNode = new ExpressionNode(
+            rangeInSource: $this->range([0, 0], [0, 35]),
+            root: new TernaryOperationNode(
+                condition: new ExpressionNode(
+                    rangeInSource: $this->range([0, 0], [0, 21]),
+                    root: new BinaryOperationNode(
+                        rangeInSource: $this->range([0, 1], [0, 20]),
+                        leftOperand: new ExpressionNode(
+                            rangeInSource: $this->range([0, 1], [0, 7]),
+                            root: new ValueReferenceNode(
+                                rangeInSource: $this->range([0, 3], [0, 5]),
+                                name: VariableName::from('foo')
+                            )
+                        ),
+                        operator: BinaryOperator::EQUAL,
+                        rightOperand: new ExpressionNode(
+                            rangeInSource: $this->range([0, 13], [0, 20]),
+                            root: new NullLiteralNode(
+                                rangeInSource: $this->range([0, 15], [0, 18])
+                            )
+                        ),
+                    )
+                ),
+                trueBranch: new ExpressionNode(
+                    rangeInSource: $this->range([0, 25], [0, 25]),
+                    root: new IntegerLiteralNode(
+                        rangeInSource: $this->range([0, 25], [0, 25]),
+                        format: IntegerFormat::DECIMAL,
+                        value: '1'
+                    )
+                ),
+                falseBranch: new ExpressionNode(
+                    rangeInSource: $this->range([0, 29], [0, 35]),
+                    root: new IntegerLiteralNode(
+                        rangeInSource: $this->range([0, 32], [0, 32]),
+                        format: IntegerFormat::DECIMAL,
+                        value: '0'
+                    ),
                 )
             )
         );
@@ -1605,6 +1662,50 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
+            $expressionParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function parsesMultipleParenthesesAroundValureReferenceCorrecly(): void
+    {
+        $expressionParser = new ExpressionParser();
+
+        $tokens = $this->createTokenIterator('(foo)');
+        $this->assertEquals(
+            new ExpressionNode(
+                rangeInSource: $this->range([0, 0], [0, 4]),
+                root: new ValueReferenceNode(
+                    rangeInSource: $this->range([0, 1], [0, 3]),
+                    name: VariableName::from('foo')
+                )
+            ),
+            $expressionParser->parse($tokens)
+        );
+
+        $tokens = $this->createTokenIterator('((foo))');
+        $this->assertEquals(
+            new ExpressionNode(
+                rangeInSource: $this->range([0, 0], [0, 6]),
+                root: new ValueReferenceNode(
+                    rangeInSource: $this->range([0, 2], [0, 4]),
+                    name: VariableName::from('foo')
+                )
+            ),
+            $expressionParser->parse($tokens)
+        );
+
+        $tokens = $this->createTokenIterator('(((foo)))');
+        $this->assertEquals(
+            new ExpressionNode(
+                rangeInSource: $this->range([0, 0], [0, 8]),
+                root: new ValueReferenceNode(
+                    rangeInSource: $this->range([0, 3], [0, 5]),
+                    name: VariableName::from('foo')
+                )
+            ),
             $expressionParser->parse($tokens)
         );
     }
