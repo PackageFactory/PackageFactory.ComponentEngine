@@ -27,7 +27,6 @@ use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
 use PackageFactory\ComponentEngine\Test\Unit\Module\Loader\Fixtures\DummyLoader;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Scope\ModuleScope\ModuleScope;
-use PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope\GlobalScope;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -55,7 +54,7 @@ final class ModuleScopeTest extends TestCase
                 ],
             ]),
             moduleNode: $moduleNode,
-            parentScope: null
+            parentScope: new DummyScope()
         );
 
         $this->assertSame(

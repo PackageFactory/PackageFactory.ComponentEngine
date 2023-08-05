@@ -20,41 +20,34 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\EnumType;
+namespace PackageFactory\ComponentEngine\Test\Unit\Definition;
 
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
+use PackageFactory\ComponentEngine\Definition\AccessType;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 use PHPUnit\Framework\TestCase;
 
-final class EnumTypeTest extends TestCase
+final class AccessTypeTest extends TestCase
 {
     /**
-     * @test
-     * @return void
+     * @return array<string,mixed>
      */
-    public function canBeCreatedFromEnumDeclarationNode(): void
+    public static function tokenTypeToAccessTypeExamples(): array
     {
-        $enumDeclarationNode = EnumDeclarationNode::fromString(
-            'enum Foo { BAR BAZ }'
-        );
-        $enumType = EnumType::fromEnumDeclarationNode($enumDeclarationNode);
-
-        $this->assertInstanceOf(EnumType::class, $enumType);
+        return [
+            TokenType::PERIOD->name => [TokenType::PERIOD, AccessType::MANDATORY],
+            TokenType::OPTCHAIN->name => [TokenType::OPTCHAIN, AccessType::OPTIONAL],
+        ];
     }
 
     /**
      * @test
+     * @dataProvider tokenTypeToAccessTypeExamples
+     * @param TokenType $givenTokenType
+     * @param AccessType $expectedAccessType
      * @return void
      */
-    public function providesNameOfTheEnum(): void
+    public function canBeCreatedFromTokenType(TokenType $givenTokenType, AccessType $expectedAccessType): void
     {
-        $enumDeclarationNode = EnumDeclarationNode::fromString(
-            'enum SomeEnum {}'
-        );
-        $enumType = EnumType::fromEnumDeclarationNode(
-            $enumDeclarationNode
-        );
-
-        $this->assertEquals('SomeEnum', $enumType->enumName);
+        $this->assertSame($expectedAccessType, AccessType::fromTokenType($givenTokenType));
     }
 }

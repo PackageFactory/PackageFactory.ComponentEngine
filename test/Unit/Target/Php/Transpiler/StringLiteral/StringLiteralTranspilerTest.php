@@ -31,7 +31,7 @@ final class StringLiteralTranspilerTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function stringExamples(): array
+    public static function stringExamples(): array
     {
         return [
             '"Hello World!"' => [
@@ -82,7 +82,7 @@ final class StringLiteralTranspilerTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function stringExamplesWithAddedQuotes(): array
+    public static function stringExamplesWithAddedQuotes(): array
     {
         return [
             '"Hello World!"' => [

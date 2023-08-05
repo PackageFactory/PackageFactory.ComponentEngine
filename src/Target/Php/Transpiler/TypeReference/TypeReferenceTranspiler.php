@@ -26,7 +26,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
@@ -49,7 +49,7 @@ final class TypeReferenceTranspiler
             BooleanType::class => 'bool',
             SlotType::class => $this->strategy->getPhpTypeReferenceForSlotType($type, $typeReferenceNode),
             ComponentType::class => $this->strategy->getPhpTypeReferenceForComponentType($type, $typeReferenceNode),
-            EnumType::class => $this->strategy->getPhpTypeReferenceForEnumType($type, $typeReferenceNode),
+            EnumStaticType::class => $this->strategy->getPhpTypeReferenceForEnumType($type, $typeReferenceNode),
             StructType::class => $this->strategy->getPhpTypeReferenceForStructType($type, $typeReferenceNode),
             default => $this->strategy->getPhpTypeReferenceForCustomType($type, $typeReferenceNode)
         };

@@ -37,6 +37,7 @@ final class IdentifierTranspiler
         $typeOfIdentifiedValue = $this->scope->lookupTypeFor($identifierNode->value);
 
         return match (true) {
+            // @TODO: Generate Name via TypeReferenceStrategyInterface Dynamically
             $typeOfIdentifiedValue instanceof EnumStaticType => $identifierNode->value,
             default => '$this->' . $identifierNode->value
         };

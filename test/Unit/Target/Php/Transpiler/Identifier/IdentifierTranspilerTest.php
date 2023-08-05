@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Identifier;
 
+use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
@@ -64,7 +65,8 @@ final class IdentifierTranspilerTest extends TestCase
     {
         $identifierTranspiler = new IdentifierTranspiler(
             scope: new DummyScope([
-                'SomeEnum' => EnumStaticType::fromEnumDeclarationNode(
+                'SomeEnum' => EnumStaticType::fromModuleIdAndDeclaration(
+                    ModuleId::fromString("module-a"),
                     EnumDeclarationNode::fromString(
                         'enum SomeEnum { A B C }'
                     )
@@ -84,8 +86,7 @@ final class IdentifierTranspilerTest extends TestCase
         );
     }
 
-
-    public function identifierInParenthesisExamples(): mixed
+    public static function identifierInParenthesisExamples(): mixed
     {
         // @todo find a better place for these tests, as we actually test the ExpressionNode
         return [

@@ -30,7 +30,7 @@ final class PathTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function relatedPathExamples(): array
+    public static function relatedPathExamples(): array
     {
         return [
             '(UNIX) Two unrelated, absolute paths' => [

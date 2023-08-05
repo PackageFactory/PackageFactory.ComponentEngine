@@ -60,7 +60,7 @@ final class ComponentDeclarationTranspiler
         }
 
         foreach ($this->module->imports->items as $importNode) {
-            // @TODO: Generate Namespaces Dynamically
+            // @TODO: Generate Namespaces + Name via TypeReferenceStrategyInterface Dynamically
             $lines[] = 'use Vendor\\Project\\Component\\' . $importNode->name->value . ';';
         }
 

@@ -59,4 +59,20 @@ final class ComponentTypeTest extends TestCase
 
         $this->assertEquals('SomeComponent', $componentType->componentName);
     }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function isEquivalentToItself(): void
+    {
+        $componentDeclarationNode = ComponentDeclarationNode::fromString(
+            'component SomeComponent { return "" }'
+        );
+        $componentType = ComponentType::fromComponentDeclarationNode(
+            $componentDeclarationNode
+        );
+
+        $this->assertTrue($componentType->is($componentType));
+    }
 }

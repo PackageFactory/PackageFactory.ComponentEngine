@@ -20,26 +20,19 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Type\EnumType;
+namespace PackageFactory\ComponentEngine\Definition;
 
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
-use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
-final class EnumType implements TypeInterface
+enum UnaryOperator: string
 {
-    private function __construct(public readonly string $enumName)
-    {
-    }
+    case NOT = 'NOT';
 
-    public static function fromEnumDeclarationNode(EnumDeclarationNode $enumDeclarationNode): self
+    public static function fromTokenType(TokenType $tokenType): self
     {
-        return new self(
-            enumName: $enumDeclarationNode->enumName
-        );
-    }
-
-    public function is(TypeInterface $other): bool
-    {
-        return false;
+        return match ($tokenType) {
+            TokenType::OPERATOR_BOOLEAN_NOT => self::NOT,
+            default => throw new \Exception('@TODO: Unknown Unary Operator')
+        };
     }
 }
