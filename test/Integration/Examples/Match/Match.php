@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Vendor\Project\Component;
 
 use Vendor\Project\BaseClass;
+use Vendor\Project\Component\ButtonType;
 
 final class Button extends BaseClass
 {

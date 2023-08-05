@@ -25,7 +25,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\TypeRef
 use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference\TypeReferenceStrategyInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
@@ -42,7 +42,7 @@ final class TypeReferenceTestStrategy implements TypeReferenceStrategyInterface
         return $componentType->componentName . 'Component';
     }
 
-    public function getPhpTypeReferenceForEnumType(EnumType $enumType, TypeReferenceNode $typeReferenceNode): string
+    public function getPhpTypeReferenceForEnumType(EnumStaticType $enumType, TypeReferenceNode $typeReferenceNode): string
     {
         return $enumType->enumName . 'Enum';
     }

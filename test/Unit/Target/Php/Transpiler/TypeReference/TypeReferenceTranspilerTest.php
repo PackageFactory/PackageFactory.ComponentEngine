@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\TypeReference;
 
+use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
@@ -30,7 +31,7 @@ use PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference\TypeRefer
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
@@ -49,7 +50,8 @@ final class TypeReferenceTranspilerTest extends TestCase
                 'Button' => ComponentType::fromComponentDeclarationNode(
                     ComponentDeclarationNode::fromString('component Button { return "" }')
                 ),
-                'DayOfWeek' => EnumType::fromEnumDeclarationNode(
+                'DayOfWeek' => EnumStaticType::fromModuleIdAndDeclaration(
+                    ModuleId::fromString("module-a"),
                     EnumDeclarationNode::fromString('enum DayOfWeek {}')
                 ),
                 'Link' => StructType::fromStructDeclarationNode(

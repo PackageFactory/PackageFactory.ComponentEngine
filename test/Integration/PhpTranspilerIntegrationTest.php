@@ -23,19 +23,12 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Integration;
 
 use PackageFactory\ComponentEngine\Module\Loader\ModuleFile\ModuleFileLoader;
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Module\ModuleTranspiler;
 use PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Module\ModuleTestStrategy;
-use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
+use PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope\GlobalScope;
 use PHPUnit\Framework\TestCase;
 
 final class PhpTranspilerIntegrationTest extends TestCase
@@ -79,24 +72,7 @@ final class PhpTranspilerIntegrationTest extends TestCase
 
         $transpiler = new ModuleTranspiler(
             loader: new ModuleFileLoader(),
-            // Add some assumed types to the global scope
-            globalScope: new DummyScope([
-                'ButtonType' => EnumStaticType::fromEnumDeclarationNode(
-                    EnumDeclarationNode::fromString(
-                        'enum ButtonType { LINK BUTTON SUBMIT NONE }'
-                    )
-                )
-            ], [
-                'string' => StringType::get(),
-                'slot' => SlotType::get(),
-                'number' => NumberType::get(),
-                'boolean' => BooleanType::get(),
-                'ButtonType' => EnumType::fromEnumDeclarationNode(
-                    EnumDeclarationNode::fromString(
-                        'enum ButtonType { LINK BUTTON SUBMIT NONE }'
-                    )
-                )
-            ]),
+            globalScope: GlobalScope::get(),
             strategy: new ModuleTestStrategy()
         );
 

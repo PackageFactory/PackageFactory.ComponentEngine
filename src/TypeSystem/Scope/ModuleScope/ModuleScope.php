@@ -39,6 +39,9 @@ final class ModuleScope implements ScopeInterface
 
     public function lookupTypeFor(string $name): ?TypeInterface
     {
+        if ($importNode = $this->moduleNode->imports->get($name)) {
+            return $this->loader->resolveTypeOfImport($importNode);
+        }
         return $this->parentScope->lookupTypeFor($name);
     }
 

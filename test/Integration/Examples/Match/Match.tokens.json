@@ -1,4 +1,17 @@
 [
+  { "type": "KEYWORD_FROM", "value": "from" },
+  { "type": "SPACE", "value": " " },
+  { "type": "STRING_QUOTED", "value": "./ButtonType.afx" },
+  { "type": "SPACE", "value": " " },
+  { "type": "KEYWORD_IMPORT", "value": "import" },
+  { "type": "SPACE", "value": " " },
+  { "type": "BRACKET_CURLY_OPEN", "value": "{" },
+  { "type": "SPACE", "value": " " },
+  { "type": "STRING", "value": "ButtonType" },
+  { "type": "SPACE", "value": " " },
+  { "type": "BRACKET_CURLY_CLOSE", "value": "}" },
+  { "type": "END_OF_LINE", "value": "\n" },
+  { "type": "END_OF_LINE", "value": "\n" },
   {
     "type": "KEYWORD_EXPORT",
     "value": "export"

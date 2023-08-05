@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Identifier;
 
+use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
@@ -61,7 +62,8 @@ final class IdentifierTranspilerTest extends TestCase
     {
         $identifierTranspiler = new IdentifierTranspiler(
             scope: new DummyScope([
-                'SomeEnum' => EnumStaticType::fromEnumDeclarationNode(
+                'SomeEnum' => EnumStaticType::fromModuleIdAndDeclaration(
+                    ModuleId::fromString("module-a"),
                     EnumDeclarationNode::fromString(
                         'enum SomeEnum { A B C }'
                     )

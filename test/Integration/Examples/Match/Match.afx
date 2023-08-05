@@ -1,3 +1,5 @@
+from "./ButtonType.afx" import { ButtonType }
+
 export component Button {
   type: ButtonType
   content: slot
