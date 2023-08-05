@@ -24,10 +24,13 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Identif
 
 use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
+use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
+use PackageFactory\ComponentEngine\Target\Php\Transpiler\Expression\ExpressionTranspiler;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Identifier\IdentifierTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
 
 final class IdentifierTranspilerTest extends TestCase
@@ -75,6 +78,38 @@ final class IdentifierTranspilerTest extends TestCase
         $expectedTranspilationResult = 'SomeEnum';
         $actualTranspilationResult = $identifierTranspiler->transpile(
             $identifierNode
+        );
+
+        $this->assertEquals(
+            $expectedTranspilationResult,
+            $actualTranspilationResult
+        );
+    }
+
+    public static function identifierInParenthesisExamples(): mixed
+    {
+        // @todo find a better place for these tests, as we actually test the ExpressionNode
+        return [
+            '(foo)' => ['(foo)', '$this->foo'],
+            '((foo))' => ['((foo))', '$this->foo'],
+            '(((foo)))' => ['(((foo)))', '$this->foo']
+        ];
+    }
+
+    /**
+     * @dataProvider identifierInParenthesisExamples
+     * @test
+     */
+    public function identifierInParenthesis(string $expression, string $expectedTranspilationResult): void
+    {
+        $expressionTranspiler = new ExpressionTranspiler(
+            scope: new DummyScope([
+                "foo" => StringType::get()
+            ])
+        );
+
+        $actualTranspilationResult = $expressionTranspiler->transpile(
+            ExpressionNode::fromString($expression)
         );
 
         $this->assertEquals(

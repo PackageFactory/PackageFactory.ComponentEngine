@@ -44,7 +44,10 @@ final class Tokenizer implements \IteratorAggregate
      */
     public function getIterator(): \Iterator
     {
-        yield from self::block($this->source->getIterator());
+        $fragments = $this->source->getIterator();
+        while ($fragments->valid()) {
+            yield from self::block($fragments);
+        }
     }
 
     /**

@@ -39,10 +39,11 @@ final class ExpressionNode implements \JsonSerializable
 
     public static function fromString(string $expressionAsString): self
     {
+        $tokens = Tokenizer::fromSource(
+            Source::fromString($expressionAsString)
+        )->getIterator();
         return self::fromTokens(
-            Tokenizer::fromSource(
-                Source::fromString($expressionAsString)
-            )->getIterator()
+            $tokens
         );
     }
 
@@ -51,7 +52,7 @@ final class ExpressionNode implements \JsonSerializable
      * @param Precedence $precedence
      * @return self
      */
-    public static function fromTokens(\Iterator $tokens, Precedence $precedence = Precedence::SEQUENCE): self
+    public static function fromTokens(\Iterator &$tokens, Precedence $precedence = Precedence::SEQUENCE): self
     {
         Scanner::skipSpaceAndComments($tokens);
 
@@ -122,8 +123,14 @@ final class ExpressionNode implements \JsonSerializable
         }
 
         Scanner::skipSpaceAndComments($tokens);
+        if (Scanner::isEnd($tokens) || $precedence->mustStopAt(Scanner::type($tokens))) {
+            return new self(
+                root: $root
+            );
+        }
 
         while (!Scanner::isEnd($tokens) && !$precedence->mustStopAt(Scanner::type($tokens))) {
+            Scanner::skipSpaceAndComments($tokens);
             switch (Scanner::type($tokens)) {
                 case TokenType::OPERATOR_BOOLEAN_AND:
                 case TokenType::OPERATOR_BOOLEAN_OR:
