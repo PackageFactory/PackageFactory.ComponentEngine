@@ -66,7 +66,7 @@ final class TypeReferenceTranspilerTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function primitiveTypeReferenceExamples(): array
+    public static function primitiveTypeReferenceExamples(): array
     {
         return [
             'string' => ['string', 'string'],
@@ -104,7 +104,7 @@ final class TypeReferenceTranspilerTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function optionalTypeReferenceExamples(): array
+    public static function optionalTypeReferenceExamples(): array
     {
         return [
             'string' => ['?string', '?string'],

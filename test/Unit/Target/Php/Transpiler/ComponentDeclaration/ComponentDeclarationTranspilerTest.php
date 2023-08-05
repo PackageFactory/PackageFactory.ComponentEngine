@@ -52,25 +52,25 @@ final class ComponentDeclarationTranspilerTest extends TestCase
         $componentDeclarationNode = $moduleNode->exports->get('Greeter')?->declaration;
         assert($componentDeclarationNode instanceof ComponentDeclarationNode);
 
-        $expectedTranspilationResult = <<<PHP
+        $expectedTranspilationResult = <<<'PHP'
         <?php
 
         declare(strict_types=1);
 
-        namespace Vendor\\Project\\Component;
+        namespace Vendor\Project\Component;
 
-        use Vendor\\Project\\BaseClass;
-        
+        use Vendor\Project\BaseClass;
+
         final class Greeter extends BaseClass
         {
             public function __construct(
-                public readonly string \$name
+                public readonly string $name
             ) {
             }
 
             public function render(): string
             {
-                return '<h1>Hello, ' . \$this->name . '</h1>';
+                return '<h1>Hello, ' . $this->name . '</h1>';
             }
         }
 

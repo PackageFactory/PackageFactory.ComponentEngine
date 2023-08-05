@@ -41,11 +41,11 @@ final class MatchTypeResolverTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function matchExamples(): array
+    public static function matchExamples(): array
     {
         return [
             'match (true) { true -> 42 false -> "foo" }' => [
-                'match (true) { true -> 42 false -> "foo" }', 
+                'match (true) { true -> 42 false -> "foo" }',
                 NumberType::get()
             ],
             'match (false) { true -> 42 false -> "foo" }' => [

@@ -38,12 +38,15 @@ final class AccessTranspilerTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function accessExamples(): array
+    public static function accessExamples(): array
     {
         return [
             'a.b' => ['a.b', '$this->a->b'],
             'a.b.c' => ['a.b.c', '$this->a->b->c'],
             'SomeEnum.A' => ['SomeEnum.A', 'SomeEnum::A'],
+            'someStruct.foo' => ['someStruct.foo', '$this->someStruct->foo'],
+            'someStruct?.foo' => ['someStruct?.foo', '$this->someStruct?->foo'],
+            'someStruct.deep?.foo' => ['someStruct.deep?.foo', '$this->someStruct->deep?->foo']
         ];
     }
 
@@ -67,6 +70,15 @@ final class AccessTranspilerTest extends TestCase
                     ModuleId::fromString("module-a"),
                     EnumDeclarationNode::fromString(
                         'enum SomeEnum { A B C }'
+                    )
+                ),
+                'someStruct' => StructType::fromStructDeclarationNode(
+                    StructDeclarationNode::fromString(<<<'AFX'
+                        struct SomeStruct {
+                            foo: string
+                            deep: ?SomeStruct
+                        }
+                        AFX
                     )
                 )
             ])

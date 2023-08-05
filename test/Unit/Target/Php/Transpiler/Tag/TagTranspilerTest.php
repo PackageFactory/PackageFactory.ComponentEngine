@@ -34,20 +34,20 @@ final class TagTranspilerTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function tagExamples(): array
+    public static function tagExamples(): array
     {
         return [
             '<div>Just some text.</div>' => [
-                '<div>Just some text.</div>', 
-                '<div>Just some text.</div>', 
+                '<div>Just some text.</div>',
+                '<div>Just some text.</div>',
             ],
             '<div>Interpolation: {someValue}? Works.</div>' => [
                 '<div>Interpolation: {someValue}? Works.</div>',
-                '<div>Interpolation: \' . $this->someValue . \'? Works.</div>', 
+                '<div>Interpolation: \' . $this->someValue . \'? Works.</div>',
             ],
             '<div>Tag with <strong>inline</strong> markup</div>' => [
                 '<div>Tag with <strong>inline</strong> markup</div>',
-                '<div>Tag with <strong>inline</strong> markup</div>', 
+                '<div>Tag with <strong>inline</strong> markup</div>',
             ],
         ];
     }

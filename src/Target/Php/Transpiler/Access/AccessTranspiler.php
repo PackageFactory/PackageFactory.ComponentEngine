@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\Access;
 
+use PackageFactory\ComponentEngine\Definition\AccessType;
 use PackageFactory\ComponentEngine\Parser\Ast\AccessNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Expression\ExpressionTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
@@ -44,11 +45,13 @@ final class AccessTranspiler
         );
         $typeOfRoot = $expressionTypeResolver->resolveTypeOf($accessNode->root);
         $result = $expressionTranspiler->transpile($accessNode->root);
-        
+
         $isFirstElement = true;
         foreach ($accessNode->chain->items as $accessChainNode) {
             if ($typeOfRoot instanceof EnumStaticType && $isFirstElement) {
                 $result .= '::';
+            } elseif ($accessChainNode->accessType === AccessType::OPTIONAL) {
+                $result .= '?->';
             } else {
                 $result .= '->';
             }

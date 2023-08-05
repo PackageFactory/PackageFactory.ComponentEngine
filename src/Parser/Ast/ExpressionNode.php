@@ -33,7 +33,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 final class ExpressionNode implements \JsonSerializable
 {
     private function __construct(
-        public readonly IdentifierNode | NumberLiteralNode | BinaryOperationNode | AccessNode | TernaryOperationNode | TagNode | StringLiteralNode | MatchNode | TemplateLiteralNode | BooleanLiteralNode | NullLiteralNode $root
+        public readonly IdentifierNode | NumberLiteralNode | BinaryOperationNode | UnaryOperationNode | AccessNode | TernaryOperationNode | TagNode | StringLiteralNode | MatchNode | TemplateLiteralNode | BooleanLiteralNode | NullLiteralNode $root
     ) {
     }
 
@@ -109,6 +109,9 @@ final class ExpressionNode implements \JsonSerializable
             case TokenType::TEMPLATE_LITERAL_START:
                 $root = TemplateLiteralNode::fromTokens($tokens);
                 break;
+            case TokenType::OPERATOR_BOOLEAN_NOT:
+                $root = UnaryOperationNode::fromTokens($tokens);
+                break;
             default:
                 $root = IdentifierNode::fromTokens($tokens);
                 break;
@@ -119,15 +122,8 @@ final class ExpressionNode implements \JsonSerializable
         }
 
         Scanner::skipSpaceAndComments($tokens);
-        if (Scanner::isEnd($tokens) || $precedence->mustStopAt(Scanner::type($tokens))) {
-            return new self(
-                root: $root
-            );
-        }
 
-        while ($tokens->valid()) {
-            Scanner::skipSpaceAndComments($tokens);
-
+        while (!Scanner::isEnd($tokens) && !$precedence->mustStopAt(Scanner::type($tokens))) {
             switch (Scanner::type($tokens)) {
                 case TokenType::OPERATOR_BOOLEAN_AND:
                 case TokenType::OPERATOR_BOOLEAN_OR:
@@ -145,6 +141,7 @@ final class ExpressionNode implements \JsonSerializable
                     $root = BinaryOperationNode::fromTokens(new self(root: $root), $tokens);
                     break;
                 case TokenType::PERIOD:
+                case TokenType::OPTCHAIN:
                     $root = AccessNode::fromTokens(new self(root: $root), $tokens);
                     break;
                 case TokenType::QUESTIONMARK:
@@ -154,6 +151,8 @@ final class ExpressionNode implements \JsonSerializable
                 default:
                     break 2;
             }
+
+            Scanner::skipSpaceAndComments($tokens);
         }
 
         return new self(

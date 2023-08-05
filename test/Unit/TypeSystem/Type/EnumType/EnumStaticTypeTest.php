@@ -104,7 +104,7 @@ final class EnumStaticTypeTest extends TestCase
     public function canOnlyAccessValidMemberType(): void
     {
         $this->expectExceptionMessage('@TODO cannot access member NonExistent of enum SomeEnum');
-        
+
         $enumStaticType = EnumStaticType::fromModuleIdAndDeclaration(
             ModuleId::fromString("module-a"),
             EnumDeclarationNode::fromString(
@@ -134,7 +134,7 @@ final class EnumStaticTypeTest extends TestCase
         $this->assertInstanceOf(EnumInstanceType::class, $enumInstanceType);
 
         $this->assertInstanceOf(EnumStaticType::class, $enumInstanceType->enumStaticType);
-        
+
         $this->assertTrue($enumInstanceType->isUnspecified());
     }
 
@@ -142,7 +142,7 @@ final class EnumStaticTypeTest extends TestCase
      * @test
      * @return void
      */
-    public function canBeComparedToOther(): void
+    public function isEquivalentToItself(): void
     {
         $enumDeclarationNode = EnumDeclarationNode::fromString(
             'enum SomeEnum { A }'
@@ -153,13 +153,30 @@ final class EnumStaticTypeTest extends TestCase
         );
 
         $this->assertTrue($enumStaticType->is($enumStaticType));
+    }
 
+    /**
+     * @test
+     * @return void
+     */
+    public function canBeComparedToOther(): void
+    {
+        $enumDeclarationNode1 = EnumDeclarationNode::fromString(
+            'enum SomeEnum { A }'
+        );
+        $enumStaticType1 = EnumStaticType::fromModuleIdAndDeclaration(
+            ModuleId::fromString("module-a"),
+            $enumDeclarationNode1
+        );
+        $enumDeclarationNode2 = EnumDeclarationNode::fromString(
+            'enum SomeEnum { A }'
+        );
         $enumStaticType2 = EnumStaticType::fromModuleIdAndDeclaration(
             ModuleId::fromString("module-a"),
-            $enumDeclarationNode
+            $enumDeclarationNode2
         );
 
-        $this->assertTrue($enumStaticType->is($enumStaticType2));
-        $this->assertTrue($enumStaticType2->is($enumStaticType));
+        $this->assertTrue($enumStaticType1->is($enumStaticType2));
+        $this->assertTrue($enumStaticType2->is($enumStaticType1));
     }
 }

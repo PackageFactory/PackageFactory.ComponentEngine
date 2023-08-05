@@ -32,7 +32,7 @@ final class AttributeTranspilerTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function attributeExamples(): array
+    public static function attributeExamples(): array
     {
         return [
             'foo="bar"' => ['foo="bar"', 'foo="bar"'],

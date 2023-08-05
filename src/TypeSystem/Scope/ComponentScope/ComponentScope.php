@@ -32,7 +32,7 @@ final class ComponentScope implements ScopeInterface
 {
     public function __construct(
         private readonly ComponentDeclarationNode $componentDeclarationNode,
-        private readonly ?ScopeInterface $parentScope
+        private readonly ScopeInterface $parentScope
     ) {
     }
 
@@ -48,15 +48,11 @@ final class ComponentScope implements ScopeInterface
             return $type;
         }
 
-        return $this->parentScope?->lookupTypeFor($name) ?? null;
+        return $this->parentScope->lookupTypeFor($name);
     }
 
     public function resolveTypeReference(TypeReferenceNode $typeReferenceNode): TypeInterface
     {
-        if ($this->parentScope) {
-            return $this->parentScope->resolveTypeReference($typeReferenceNode);
-        }
-
-        throw new \Exception('@TODO: Unknown Type ' . $typeReferenceNode->name);
+        return $this->parentScope->resolveTypeReference($typeReferenceNode);
     }
 }

@@ -1,118 +1,233 @@
 {
   "type": "ModuleNode",
   "payload": {
-    "imports": {},
+    "imports": [],
     "exports": [
       {
         "type": "ComponentDeclarationNode",
         "payload": {
           "componentName": "Numbers",
-          "propertyDeclarations": {},
+          "propertyDeclarations": [],
           "returnExpression": {
             "type": "BinaryOperationNode",
             "payload": {
               "operator": "PLUS",
               "operands": [
                 {
-                  "type": "NumberLiteralNode",
-                  "payload": { "value": "0", "format": "DECIMAL" }
-                },
-                {
-                  "type": "NumberLiteralNode",
+                  "type": "BinaryOperationNode",
                   "payload": {
-                    "value": "1234567890",
-                    "format": "DECIMAL"
-                  }
-                },
-                {
-                  "type": "NumberLiteralNode",
-                  "payload": {
-                    "value": "42",
-                    "format": "DECIMAL"
-                  }
-                },
-                {
-                  "type": "NumberLiteralNode",
-                  "payload": {
-                    "value": "0b10000000000000000000000000000000",
-                    "format": "BINARY"
-                  }
-                },
-                {
-                  "type": "NumberLiteralNode",
-                  "payload": {
-                    "value": "0b01111111100000000000000000000000",
-                    "format": "BINARY"
-                  }
-                },
-                {
-                  "type": "NumberLiteralNode",
-                  "payload": {
-                    "value": "0B00000000011111111111111111111111",
-                    "format": "BINARY"
-                  }
-                },
-                {
-                  "type": "NumberLiteralNode",
-                  "payload": {
-                    "value": "0o755",
-                    "format": "OCTAL"
-                  }
-                },
-                {
-                  "type": "NumberLiteralNode",
-                  "payload": {
-                    "value": "0o644",
-                    "format": "OCTAL"
-                  }
-                },
-                {
-                  "type": "NumberLiteralNode",
-                  "payload": {
-                    "value": "0xFFFFFFFFFFFFFFFFF",
-                    "format": "HEXADECIMAL"
-                  }
-                },
-                {
-                  "type": "NumberLiteralNode",
-                  "payload": {
-                    "value": "0x123456789ABCDEF",
-                    "format": "HEXADECIMAL"
-                  }
-                },
-                {
-                  "type": "NumberLiteralNode",
-                  "payload": {
-                    "value": "0xA",
-                    "format": "HEXADECIMAL"
-                  }
-                },
-                {
-                  "type": "NumberLiteralNode",
-                  "payload": {
-                    "value": "1E3",
-                    "format": "DECIMAL"
-                  }
-                },
-                {
-                  "type": "NumberLiteralNode",
-                  "payload": {
-                    "value": "2e6",
-                    "format": "DECIMAL"
-                  }
-                },
-                {
-                  "type": "NumberLiteralNode",
-                  "payload": {
-                    "value": "123.456",
-                    "format": "DECIMAL"
-                  }
-                },
-                {
-                  "type": "NumberLiteralNode",
-                  "payload": {
-                    "value": "0.1e2",
-                    "format": "DECIMAL"
+                    "operator": "PLUS",
+                    "operands": [
+                      {
+                        "type": "BinaryOperationNode",
+                        "payload": {
+                          "operator": "PLUS",
+                          "operands": [
+                            {
+                              "type": "BinaryOperationNode",
+                              "payload": {
+                                "operator": "PLUS",
+                                "operands": [
+                                  {
+                                    "type": "BinaryOperationNode",
+                                    "payload": {
+                                      "operator": "PLUS",
+                                      "operands": [
+                                        {
+                                          "type": "BinaryOperationNode",
+                                          "payload": {
+                                            "operator": "PLUS",
+                                            "operands": [
+                                              {
+                                                "type": "BinaryOperationNode",
+                                                "payload": {
+                                                  "operator": "PLUS",
+                                                  "operands": [
+                                                    {
+                                                      "type": "BinaryOperationNode",
+                                                      "payload": {
+                                                        "operator": "PLUS",
+                                                        "operands": [
+                                                          {
+                                                            "type": "BinaryOperationNode",
+                                                            "payload": {
+                                                              "operator": "PLUS",
+                                                              "operands": [
+                                                                {
+                                                                  "type": "BinaryOperationNode",
+                                                                  "payload": {
+                                                                    "operator": "PLUS",
+                                                                    "operands": [
+                                                                      {
+                                                                        "type": "BinaryOperationNode",
+                                                                        "payload": {
+                                                                          "operator": "PLUS",
+                                                                          "operands": [
+                                                                            {
+                                                                              "type": "BinaryOperationNode",
+                                                                              "payload": {
+                                                                                "operator": "PLUS",
+                                                                                "operands": [
+                                                                                  {
+                                                                                    "type": "BinaryOperationNode",
+                                                                                    "payload": {
+                                                                                      "operator": "PLUS",
+                                                                                      "operands": [
+                                                                                        {
+                                                                                          "type": "BinaryOperationNode",
+                                                                                          "payload": {
+                                                                                            "operator": "PLUS",
+                                                                                            "operands": [
+                                                                                              {
+                                                                                                "type": "BinaryOperationNode",
+                                                                                                "payload": {
+                                                                                                  "operator": "PLUS",
+                                                                                                  "operands": [
+                                                                                                    {
+                                                                                                      "type": "NumberLiteralNode",
+                                                                                                      "payload": {
+                                                                                                        "value": "0",
+                                                                                                        "format": "DECIMAL"
+                                                                                                      }
+                                                                                                    },
+                                                                                                    {
+                                                                                                      "type": "NumberLiteralNode",
+                                                                                                      "payload": {
+                                                                                                        "value": "1234567890",
+                                                                                                        "format": "DECIMAL"
+                                                                                                      }
+                                                                                                    }
+                                                                                                  ]
+                                                                                                }
+                                                                                              },
+                                                                                              {
+                                                                                                "type": "NumberLiteralNode",
+                                                                                                "payload": {
+                                                                                                  "value": "42",
+                                                                                                  "format": "DECIMAL"
+                                                                                                }
+                                                                                              }
+                                                                                            ]
+                                                                                          }
+                                                                                        },
+                                                                                        {
+                                                                                          "type": "NumberLiteralNode",
+                                                                                          "payload": {
+                                                                                            "value": "0b10000000000000000000000000000000",
+                                                                                            "format": "BINARY"
+                                                                                          }
+                                                                                        }
+                                                                                      ]
+                                                                                    }
+                                                                                  },
+                                                                                  {
+                                                                                    "type": "NumberLiteralNode",
+                                                                                    "payload": {
+                                                                                      "value": "0b01111111100000000000000000000000",
+                                                                                      "format": "BINARY"
+                                                                                    }
+                                                                                  }
+                                                                                ]
+                                                                              }
+                                                                            },
+                                                                            {
+                                                                              "type": "NumberLiteralNode",
+                                                                              "payload": {
+                                                                                "value": "0B00000000011111111111111111111111",
+                                                                                "format": "BINARY"
+                                                                              }
+                                                                            }
+                                                                          ]
+                                                                        }
+                                                                      },
+                                                                      {
+                                                                        "type": "NumberLiteralNode",
+                                                                        "payload": {
+                                                                          "value": "0o755",
+                                                                          "format": "OCTAL"
+                                                                        }
+                                                                      }
+                                                                    ]
+                                                                  }
+                                                                },
+                                                                {
+                                                                  "type": "NumberLiteralNode",
+                                                                  "payload": {
+                                                                    "value": "0o644",
+                                                                    "format": "OCTAL"
+                                                                  }
+                                                                }
+                                                              ]
+                                                            }
+                                                          },
+                                                          {
+                                                            "type": "NumberLiteralNode",
+                                                            "payload": {
+                                                              "value": "0xFFFFFFFFFFFFFFFFF",
+                                                              "format": "HEXADECIMAL"
+                                                            }
+                                                          }
+                                                        ]
+                                                      }
+                                                    },
+                                                    {
+                                                      "type": "NumberLiteralNode",
+                                                      "payload": {
+                                                        "value": "0x123456789ABCDEF",
+                                                        "format": "HEXADECIMAL"
+                                                      }
+                                                    }
+                                                  ]
+                                                }
+                                              },
+                                              {
+                                                "type": "NumberLiteralNode",
+                                                "payload": {
+                                                  "value": "0xA",
+                                                  "format": "HEXADECIMAL"
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        {
+                                          "type": "NumberLiteralNode",
+                                          "payload": {
+                                            "value": "1E3",
+                                            "format": "DECIMAL"
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "type": "NumberLiteralNode",
+                                    "payload": {
+                                      "value": "2e6",
+                                      "format": "DECIMAL"
+                                    }
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "type": "NumberLiteralNode",
+                              "payload": {
+                                "value": "123.456",
+                                "format": "DECIMAL"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "type": "NumberLiteralNode",
+                        "payload": {
+                          "value": "0.1e2",
+                          "format": "DECIMAL"
+                        }
+                      }
+                    ]
                   }
                 },
                 {

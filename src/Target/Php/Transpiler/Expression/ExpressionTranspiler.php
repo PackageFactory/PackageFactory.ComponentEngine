@@ -34,6 +34,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TemplateLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
+use PackageFactory\ComponentEngine\Parser\Ast\UnaryOperationNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Access\AccessTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\BinaryOperation\BinaryOperationTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\BooleanLiteral\BooleanLiteralTranspiler;
@@ -45,12 +46,13 @@ use PackageFactory\ComponentEngine\Target\Php\Transpiler\StringLiteral\StringLit
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Tag\TagTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\TemplateLiteral\TemplateLiteralTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\TernaryOperation\TernaryOperationTranspiler;
+use PackageFactory\ComponentEngine\Target\Php\Transpiler\UnaryOperation\UnaryOperationTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 
 final class ExpressionTranspiler
 {
     public function __construct(
-        private readonly ScopeInterface $scope, 
+        private readonly ScopeInterface $scope,
         private readonly bool $shouldAddQuotesIfNecessary = false
     ) {
     }
@@ -68,6 +70,9 @@ final class ExpressionTranspiler
                 scope: $this->scope
             ),
             BinaryOperationNode::class => new BinaryOperationTranspiler(
+                scope: $this->scope
+            ),
+            UnaryOperationNode::class => new UnaryOperationTranspiler(
                 scope: $this->scope
             ),
             BooleanLiteralNode::class => new BooleanLiteralTranspiler(),

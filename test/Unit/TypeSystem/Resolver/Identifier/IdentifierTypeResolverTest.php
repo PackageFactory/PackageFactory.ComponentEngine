@@ -50,4 +50,20 @@ final class IdentifierTypeResolverTest extends TestCase
             sprintf('Expected %s, got %s', $expectedType::class, $actualType::class)
         );
     }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function throwsIfGivenIdentifierIsUnknown(): void
+    {
+        $scope = new DummyScope();
+        $identifierTypeResolver = new IdentifierTypeResolver(scope: $scope);
+        $identifierNode = ExpressionNode::fromString('foo')->root;
+        assert($identifierNode instanceof IdentifierNode);
+
+        $this->expectExceptionMessageMatches('/unknown identifier/i');
+
+        $identifierTypeResolver->resolveTypeOf($identifierNode);
+    }
 }

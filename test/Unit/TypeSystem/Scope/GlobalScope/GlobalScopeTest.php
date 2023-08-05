@@ -45,7 +45,7 @@ final class GlobalScopeTest extends TestCase
     /**
      * @return array<string,mixed>
      */
-    public function primitiveTypeExamples(): array
+    public static function primitiveTypeExamples(): array
     {
         return [
             'string' => ['string', StringType::get()]
@@ -70,5 +70,16 @@ final class GlobalScopeTest extends TestCase
             $expectedType->is($actualType),
             sprintf('Expected %s, got %s', $expectedType::class, $actualType::class)
         );
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function knowsNoLocalNames(): void
+    {
+        $globalScope = GlobalScope::get();
+
+        $this->assertNull($globalScope->lookupTypeFor('someVariable'));
     }
 }

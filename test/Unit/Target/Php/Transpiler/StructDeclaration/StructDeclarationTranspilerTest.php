@@ -48,20 +48,20 @@ final class StructDeclarationTranspilerTest extends TestCase
         );
         $structDeclarationNode = StructDeclarationNode::fromString($structDeclarationAsString);
 
-        $expectedTranspilationResult = <<<PHP
+        $expectedTranspilationResult = <<<'PHP'
         <?php
 
         declare(strict_types=1);
 
-        namespace Vendor\\Project\\Component;
+        namespace Vendor\Project\Component;
 
-        use Vendor\\Project\\BaseClass;
-        
+        use Vendor\Project\BaseClass;
+
         final class Link extends BaseClass
         {
             public function __construct(
-                public readonly string \$href,
-                public readonly string \$target
+                public readonly string $href,
+                public readonly string $target
             ) {
             }
         }
