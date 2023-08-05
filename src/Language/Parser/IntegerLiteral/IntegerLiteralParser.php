@@ -26,6 +26,8 @@ use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerForma
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
 
 final class IntegerLiteralParser
 {
@@ -35,14 +37,38 @@ final class IntegerLiteralParser
      */
     public function parse(\Iterator &$tokens): IntegerLiteralNode
     {
+        if (Scanner::isEnd($tokens)) {
+            throw IntegerLiteralCouldNotBeParsed::becauseOfUnexpectedEndOfFile();
+        }
+
         $token = $tokens->current();
 
         Scanner::skipOne($tokens);
 
         return new IntegerLiteralNode(
             rangeInSource: $token->boundaries,
-            format: IntegerFormat::fromTokenType($token->type),
+            format: $this->getIntegerFormatFromToken($token),
             value: $token->value
         );
+    }
+
+    private function getIntegerFormatFromToken(Token $token): IntegerFormat
+    {
+        return match ($token->type) {
+            TokenType::NUMBER_BINARY => IntegerFormat::BINARY,
+            TokenType::NUMBER_OCTAL => IntegerFormat::OCTAL,
+            TokenType::NUMBER_DECIMAL => IntegerFormat::DECIMAL,
+            TokenType::NUMBER_HEXADECIMAL => IntegerFormat::HEXADECIMAL,
+
+            default => throw IntegerLiteralCouldNotBeParsed::becauseOfUnexpectedToken(
+                expectedTokenTypes: TokenTypes::from(
+                    TokenType::NUMBER_BINARY,
+                    TokenType::NUMBER_OCTAL,
+                    TokenType::NUMBER_DECIMAL,
+                    TokenType::NUMBER_HEXADECIMAL
+                ),
+                actualToken: $token
+            )
+        };
     }
 }

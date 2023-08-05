@@ -24,14 +24,15 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\IntegerLitera
 
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerFormat;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
+use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
-use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Source\Position;
-use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
-use PHPUnit\Framework\TestCase;
+use PackageFactory\ComponentEngine\Parser\Source\Path;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
+use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
-final class IntegerLiteralParserTest extends TestCase
+final class IntegerLiteralParserTest extends ParserTestCase
 {
     /**
      * @test
@@ -39,13 +40,10 @@ final class IntegerLiteralParserTest extends TestCase
     public function binaryInteger(): void
     {
         $integerLiteralParser = new IntegerLiteralParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('0b1010110101'))->getIterator();
+        $tokens = $this->createTokenIterator('0b1010110101');
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 11)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 11]),
             format: IntegerFormat::BINARY,
             value: '0b1010110101'
         );
@@ -62,13 +60,10 @@ final class IntegerLiteralParserTest extends TestCase
     public function octalInteger(): void
     {
         $integerLiteralParser = new IntegerLiteralParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('0o755'))->getIterator();
+        $tokens = $this->createTokenIterator('0o755');
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 4)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 4]),
             format: IntegerFormat::OCTAL,
             value: '0o755'
         );
@@ -85,13 +80,10 @@ final class IntegerLiteralParserTest extends TestCase
     public function decimalInteger(): void
     {
         $integerLiteralParser = new IntegerLiteralParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('1234567890'))->getIterator();
+        $tokens = $this->createTokenIterator('1234567890');
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 9)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 9]),
             format: IntegerFormat::DECIMAL,
             value: '1234567890'
         );
@@ -108,13 +100,10 @@ final class IntegerLiteralParserTest extends TestCase
     public function hexadecimalInteger(): void
     {
         $integerLiteralParser = new IntegerLiteralParser();
-        $tokens = Tokenizer::fromSource(Source::fromString('0x123456789ABCDEF'))->getIterator();
+        $tokens = $this->createTokenIterator('0x123456789ABCDEF');
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                new Position(0, 16)
-            ),
+            rangeInSource: $this->range([0, 0], [0, 16]),
             format: IntegerFormat::HEXADECIMAL,
             value: '0x123456789ABCDEF'
         );
@@ -122,6 +111,51 @@ final class IntegerLiteralParserTest extends TestCase
         $this->assertEquals(
             $expectedIntegerLiteralNode,
             $integerLiteralParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function throwsIfTokenStreamsEndsUnexpectedly(): void
+    {
+        $this->assertThrowsParserException(
+            function () {
+                $integerLiteralParser = new IntegerLiteralParser();
+                $tokens = $this->createTokenIterator('');
+
+                $integerLiteralParser->parse($tokens);
+            },
+            IntegerLiteralCouldNotBeParsed::becauseOfUnexpectedEndOfFile()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function throwsIfUnexpectedTokenIsEncountered(): void
+    {
+        $this->assertThrowsParserException(
+            function () {
+                $integerLiteralParser = new IntegerLiteralParser();
+                $tokens = $this->createTokenIterator('foo1234');
+
+                $integerLiteralParser->parse($tokens);
+            },
+            IntegerLiteralCouldNotBeParsed::becauseOfUnexpectedToken(
+                expectedTokenTypes: TokenTypes::from(
+                    TokenType::NUMBER_BINARY,
+                    TokenType::NUMBER_OCTAL,
+                    TokenType::NUMBER_DECIMAL,
+                    TokenType::NUMBER_HEXADECIMAL
+                ),
+                actualToken: new Token(
+                    type: TokenType::STRING,
+                    value: 'foo1234',
+                    boundaries: $this->range([0, 0], [0, 6]),
+                    sourcePath: Path::createMemory()
+                )
+            )
         );
     }
 }

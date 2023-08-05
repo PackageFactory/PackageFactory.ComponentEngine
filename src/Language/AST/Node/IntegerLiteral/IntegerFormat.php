@@ -30,16 +30,4 @@ enum IntegerFormat: string
     case OCTAL = 'OCTAL';
     case DECIMAL = 'DECIMAL';
     case HEXADECIMAL = 'HEXADECIMAL';
-
-    public static function fromTokenType(TokenType $tokenType): self
-    {
-        return match ($tokenType) {
-            TokenType::NUMBER_BINARY => self::BINARY,
-            TokenType::NUMBER_OCTAL => self::OCTAL,
-            TokenType::NUMBER_DECIMAL => self::DECIMAL,
-            TokenType::NUMBER_HEXADECIMAL => self::HEXADECIMAL,
-
-            default => throw new \Exception('@TODO: Unknown Integer Format: ' . $tokenType->value)
-        };
-    }
 }
