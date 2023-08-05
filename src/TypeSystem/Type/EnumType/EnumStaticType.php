@@ -28,6 +28,11 @@ use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class EnumStaticType implements TypeInterface
 {
+    /**
+     * @param string $enumName
+     * @param ModuleId $moduleId
+     * @param array<string,bool> $memberNameHashMap
+     */
     public function __construct(
         public readonly string $enumName,
         private readonly ModuleId $moduleId,
@@ -49,6 +54,9 @@ final class EnumStaticType implements TypeInterface
         );
     }
 
+    /**
+     * @return string[]
+     */
     public function getMemberNames(): array
     {
         return array_keys($this->memberNameHashMap);

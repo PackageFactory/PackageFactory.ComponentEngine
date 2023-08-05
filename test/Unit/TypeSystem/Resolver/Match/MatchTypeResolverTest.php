@@ -119,7 +119,9 @@ final class MatchTypeResolverTest extends TestCase
         );
     }
 
-
+    /**
+     * @return iterable<mixed>
+     */
     public static function malformedEnumExamples(): iterable
     {
         yield "Multiple default keys" => [

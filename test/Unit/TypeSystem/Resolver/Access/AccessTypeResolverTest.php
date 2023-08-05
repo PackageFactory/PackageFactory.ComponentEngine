@@ -37,6 +37,9 @@ use PHPUnit\Framework\TestCase;
 
 final class AccessTypeResolverTest extends TestCase
 {
+    /**
+     * @return iterable<mixed>
+     */
     public static function invalidAccessExamples(): iterable
     {
         yield 'access property on primitive string' => [
@@ -87,6 +90,7 @@ final class AccessTypeResolverTest extends TestCase
         );
 
         $this->assertInstanceOf(EnumInstanceType::class, $accessType);
+        assert($accessType instanceof EnumInstanceType);
 
         $this->assertTrue($accessType->enumStaticType->is($someEnum));
 
