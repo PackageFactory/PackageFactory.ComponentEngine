@@ -37,7 +37,7 @@ use PHPUnit\Framework\TestCase;
 
 final class AccessTypeResolverTest extends TestCase
 {
-    public function invalidAccessExamples(): iterable
+    public static function invalidAccessExamples(): iterable
     {
         yield 'access property on primitive string' => [
             'someString.bar',
@@ -54,7 +54,7 @@ final class AccessTypeResolverTest extends TestCase
             "@TODO Error: Cannot access on type PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumInstanceType"
         ];
     }
-    
+
     private function resolveAccessType(string $accessAsString, ScopeInterface $scope): TypeInterface
     {
         $accessTypeResolver = new AccessTypeResolver(
@@ -76,11 +76,11 @@ final class AccessTypeResolverTest extends TestCase
                 'enum SomeEnum { A("Hi") }'
             )
         );
-        
+
         $scope = new DummyScope([
             'SomeEnum' => $someEnum
         ]);
-        
+
         $accessType = $this->resolveAccessType(
             'SomeEnum.A',
             $scope

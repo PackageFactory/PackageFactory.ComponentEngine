@@ -118,9 +118,9 @@ final class MatchTypeResolverTest extends TestCase
             sprintf('Expected %s, got %s', $expectedType::class, $actualType::class)
         );
     }
-    
 
-    public function malformedEnumExamples(): iterable
+
+    public static function malformedEnumExamples(): iterable
     {
         yield "Multiple default keys" => [
             <<<'EOF'
@@ -154,7 +154,7 @@ final class MatchTypeResolverTest extends TestCase
             EOF,
             "@TODO cannot access member NonExistent of enum SomeEnum"
         ];
-        
+
         yield "Duplicate match 1" => [
             <<<'EOF'
             match (someEnumValue) {
