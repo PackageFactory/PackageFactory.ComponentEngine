@@ -33,7 +33,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function parsesEmptyStringToNull(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator('');
 
         $this->assertNull(
@@ -46,7 +46,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function parsesTextWithSpacesOnlyToNull(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator(" \t \n \t ");
 
         $this->assertNull($textParser->parse($tokens));
@@ -57,7 +57,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function parsesTrivialText(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator('Hello World');
 
         $expectedTextNode = new TextNode(
@@ -76,7 +76,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function trimsLeadingAndTrailingSpaces(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator("  \t\t  Hello World  \t\t  ");
 
         $expectedTextNode = new TextNode(
@@ -95,7 +95,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function trimsLeadingLineBreak(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator("\nHello World");
 
         $expectedTextNode = new TextNode(
@@ -114,7 +114,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function trimsLeadingLineBreakAndIndentation(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator("\n    Hello World");
 
         $expectedTextNode = new TextNode(
@@ -133,7 +133,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function preservesLeadingSpaceIfFlagIsSet(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator("  \t\t  Hello World  \t\t  ");
 
         $expectedTextNode = new TextNode(
@@ -152,7 +152,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function reducesInnerSpacesToSingleSpaceCharacterEach(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator("Hello \t \n \t folks   and\t\t\tpeople");
 
         $expectedTextNode = new TextNode(
@@ -171,7 +171,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function terminatesAtEmbeddedExpressionAndTrimsLeadingSpace(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator("    Hello{");
 
         $expectedTextNode = new TextNode(
@@ -190,7 +190,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function terminatesAtEmbeddedExpressionAndKeepsTrailingSpace(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator("Hello \t {foo}!");
 
         $expectedTextNode = new TextNode(
@@ -209,7 +209,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function terminatesAtEmbeddedExpressionAndTrimsTrailingSpaceIfItContainsLineBreaks(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator("Hello \n\t {foo}!");
 
         $expectedTextNode = new TextNode(
@@ -228,7 +228,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function returnsNullAtEmbeddedExpressionIfTheresOnlySpace(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator(" \n\t {foo}!");
 
         $this->assertNull($textParser->parse($tokens));
@@ -239,7 +239,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function terminatesAtOpeningTagAndTrimsLeadingSpace(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator("    Hello<a>");
 
         $expectedTextNode = new TextNode(
@@ -258,7 +258,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function terminatesAtOpeningTagAndKeepsTrailingSpace(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator("Hello \t <a>World</a>");
 
         $expectedTextNode = new TextNode(
@@ -277,7 +277,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function terminatesAtOpeningTagAndTrimsTrailingSpaceIfItContainsLineBreaks(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator("Hello \n\t <a>World</a>");
 
         $expectedTextNode = new TextNode(
@@ -296,7 +296,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function returnsNullAtOpeningTagIfTheresOnlySpace(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator(" \n\t <a>");
 
         $this->assertNull($textParser->parse($tokens));
@@ -307,7 +307,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function terminatesAtClosingTagAndTrimsTrailingSpace(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator("World \n\t </a>");
 
         $expectedTextNode = new TextNode(
@@ -326,7 +326,7 @@ final class TextParserTest extends ParserTestCase
      */
     public function returnsNullAtClosingTagIfTheresOnlySpace(): void
     {
-        $textParser = new TextParser();
+        $textParser = TextParser::singleton();
         $tokens = $this->createTokenIterator(" \n\t </a>");
 
         $this->assertNull($textParser->parse($tokens));

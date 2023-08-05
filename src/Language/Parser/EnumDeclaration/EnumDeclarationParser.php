@@ -24,12 +24,15 @@ namespace PackageFactory\ComponentEngine\Language\Parser\EnumDeclaration;
 
 use PackageFactory\ComponentEngine\Domain\EnumMemberName\EnumMemberName;
 use PackageFactory\ComponentEngine\Domain\EnumName\EnumName;
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberDeclarationNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberValueNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumNameNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
@@ -39,14 +42,10 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class EnumDeclarationParser
 {
-    private readonly StringLiteralParser $stringLiteralParser;
-    private readonly IntegerLiteralParser $integerLiteralParser;
+    use Singleton;
 
-    public function __construct()
-    {
-        $this->stringLiteralParser = new StringLiteralParser();
-        $this->integerLiteralParser = new IntegerLiteralParser();
-    }
+    private ?StringLiteralParser $stringLiteralParser = null;
+    private ?IntegerLiteralParser $integerLiteralParser = null;
 
     /**
      * @param \Iterator<mixed,Token> $tokens
@@ -213,12 +212,12 @@ final class EnumDeclarationParser
         $valueToken = $tokens->current();
         $value = match ($valueToken->type) {
             TokenType::STRING_QUOTED =>
-                $this->stringLiteralParser->parse($tokens),
+                $this->parseStringLiteral($tokens),
             TokenType::NUMBER_BINARY,
             TokenType::NUMBER_OCTAL,
             TokenType::NUMBER_DECIMAL,
             TokenType::NUMBER_HEXADECIMAL =>
-                $this->integerLiteralParser->parse($tokens),
+                $this->parseIntegerLiteral($tokens),
             default => throw new \Exception('@TODO: Unexpected Token ' . Scanner::type($tokens)->value)
         };
 
@@ -233,5 +232,25 @@ final class EnumDeclarationParser
             ),
             value: $value
         );
+    }
+
+    /**
+     * @param \Iterator $tokens
+     * @return StringLiteralNode
+     */
+    private function parseStringLiteral(\Iterator &$tokens): StringLiteralNode
+    {
+        $this->stringLiteralParser ??= StringLiteralParser::singleton();
+        return $this->stringLiteralParser->parse($tokens);
+    }
+
+    /**
+     * @param \Iterator $tokens
+     * @return IntegerLiteralNode
+     */
+    private function parseIntegerLiteral(\Iterator &$tokens): IntegerLiteralNode
+    {
+        $this->integerLiteralParser ??= IntegerLiteralParser::singleton();
+        return $this->integerLiteralParser->parse($tokens);
     }
 }

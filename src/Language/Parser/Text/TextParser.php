@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\Text;
 
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
@@ -30,6 +31,8 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class TextParser
 {
+    use Singleton;
+
     private string $value;
 
     private ?Token $startingToken;

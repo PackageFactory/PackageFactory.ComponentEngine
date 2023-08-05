@@ -33,7 +33,7 @@ final class BooleanLiteralParserTest extends ParserTestCase
      */
     public function parsesTrue(): void
     {
-        $booleanLiteralParser = new BooleanLiteralParser();
+        $booleanLiteralParser = BooleanLiteralParser::singleton();
         $tokens = $this->createTokenIterator('true');
 
         $expectedBooleanLiteralNode = new BooleanLiteralNode(
@@ -52,7 +52,7 @@ final class BooleanLiteralParserTest extends ParserTestCase
      */
     public function parsesFalse(): void
     {
-        $booleanLiteralParser = new BooleanLiteralParser();
+        $booleanLiteralParser = BooleanLiteralParser::singleton();
         $tokens = $this->createTokenIterator('false');
 
         $expectedBooleanLiteralNode = new BooleanLiteralNode(

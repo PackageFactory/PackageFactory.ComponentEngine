@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Parser\PropertyDeclaration;
 
 use PackageFactory\ComponentEngine\Domain\PropertyName\PropertyName;
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\PropertyDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\PropertyNameNode;
 use PackageFactory\ComponentEngine\Language\Parser\TypeReference\TypeReferenceParser;
@@ -33,12 +34,9 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class PropertyDeclarationParser
 {
-    private readonly TypeReferenceParser $typeReferenceParser;
+    use Singleton;
 
-    public function __construct()
-    {
-        $this->typeReferenceParser = new TypeReferenceParser();
-    }
+    private ?TypeReferenceParser $typeReferenceParser = null;
 
     /**
      * @param \Iterator<mixed,Token> $tokens
@@ -56,6 +54,7 @@ final class PropertyDeclarationParser
 
         Scanner::skipSpace($tokens);
 
+        $this->typeReferenceParser ??= TypeReferenceParser::singleton();
         $typeReferenceNode = $this->typeReferenceParser->parse($tokens);
 
         return new PropertyDeclarationNode(

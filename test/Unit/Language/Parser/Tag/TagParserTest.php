@@ -46,7 +46,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesSelfClosingTagWithoutAttributes(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<a/>');
 
         $expectedTagNode = new TagNode(
@@ -71,7 +71,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesSelfClosingTagWithValuelessAttribute(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<table foo/>');
 
         $expectedTagNode = new TagNode(
@@ -105,7 +105,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesSelfClosingTagWithMultipleValuelessAttributes(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<table foo bar baz/>');
 
         $expectedTagNode = new TagNode(
@@ -155,7 +155,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesSelfClosingTagWithStringAttribute(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<a foo="bar"/>');
 
         $expectedTagNode = new TagNode(
@@ -192,7 +192,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesSelfClosingTagWithMultipleStringAttributes(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<div foo="bar" baz="qux" quux="corge"/>');
 
         $expectedTagNode = new TagNode(
@@ -251,7 +251,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesSelfClosingTagWithExpressionAttribute(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<a foo={bar}/>');
 
         $expectedTagNode = new TagNode(
@@ -291,7 +291,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesSelfClosingTagWithMultipleExpressionAttributes(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<div foo={bar} baz={qux} quux={corge}/>');
 
         $expectedTagNode = new TagNode(
@@ -359,7 +359,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesTagWithEmptyContentAndWithoutAttributes(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<a></a>');
 
         $expectedTagNode = new TagNode(
@@ -386,7 +386,7 @@ final class TagParserTest extends ParserTestCase
     {
         $this->assertThrowsParserException(
             function () {
-                $tagParser = new TagParser();
+                $tagParser = TagParser::singleton();
                 $tokens = $this->createTokenIterator('<a></b>');
 
                 $tagParser->parse($tokens);
@@ -404,7 +404,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesTagWithEmptyContentAndValuelessAttribute(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<a foo></a>');
 
         $expectedTagNode = new TagNode(
@@ -438,7 +438,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesTagWithEmptyContentAndMultipleValuelessAttributes(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<a foo bar baz></a>');
 
         $expectedTagNode = new TagNode(
@@ -488,7 +488,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesTagWithEmptyContentAndStringAttribute(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<audio foo="bar"></audio>');
 
         $expectedTagNode = new TagNode(
@@ -525,7 +525,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesTagWithEmptyContentAndMultipleStringAttributes(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<video foo="bar" baz="qux" quux="corge"></video>');
 
         $expectedTagNode = new TagNode(
@@ -584,7 +584,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesTagWithEmptyContentAndExpressionAttribute(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<audio foo={bar}></audio>');
 
         $expectedTagNode = new TagNode(
@@ -624,7 +624,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesTagWithEmptyContentAndMultipleExpressionAttributes(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<video foo={bar} baz={qux} quux={corge}></video>');
 
         $expectedTagNode = new TagNode(
@@ -692,7 +692,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesTagWithTextContentAndWithoutAttributes(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<a>Lorem ipsum...</a>');
 
         $expectedTagNode = new TagNode(
@@ -722,7 +722,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesTagWithExpressionContentAndWithoutAttributes(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<a>{someExpression}</a>');
 
         $expectedTagNode = new TagNode(
@@ -755,7 +755,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesTagWithNestedSelfClosingTagContentAndWithoutAttributes(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<a><b/></a>');
 
         $expectedTagNode = new TagNode(
@@ -791,7 +791,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesTagWithNestedTagAndWithoutAttributes(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<a><b></b></a>');
 
         $expectedTagNode = new TagNode(
@@ -827,7 +827,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesTagWithNestedTagsOnMultipleLevelsAndWithoutAttributes(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<a><b><c><d/></c></b></a>');
 
         $expectedTagNode = new TagNode(
@@ -885,7 +885,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesTagWithNestedTagInBetweenSpacesAndWithoutAttributes(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<a>   <b></b>   </a>');
 
         $expectedTagNode = new TagNode(
@@ -921,7 +921,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesTagWithNestedTagInBetweenTextContentPreservingSpaceAroundTheNestedTag(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<a>Something <b>important</b> happened.</a>');
 
         $expectedTagNode = new TagNode(
@@ -970,7 +970,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesTagWithExpressionInBetweenTextContentPreservingSpaceAroundTheExpression(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<a>Something {variable} happened.</a>');
 
         $expectedTagNode = new TagNode(
@@ -1011,7 +1011,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesTagWithMultipleNestedTagsAsImmediateChildren(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tokens = $this->createTokenIterator('<a><b></b><c/><d></d></a>');
 
         $expectedTagNode = new TagNode(
@@ -1067,7 +1067,7 @@ final class TagParserTest extends ParserTestCase
      */
     public function parsesTagWithMultipleNestedTagsOnMultipleLevelsAllHavingAttributesAndContentsThemselves(): void
     {
-        $tagParser = new TagParser();
+        $tagParser = TagParser::singleton();
         $tagAsString = <<<AFX
         <div class="test" hidden>
             Some opening text

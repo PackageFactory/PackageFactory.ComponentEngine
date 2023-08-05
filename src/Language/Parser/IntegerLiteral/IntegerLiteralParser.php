@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral;
 
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerFormat;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
@@ -31,6 +32,8 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
 
 final class IntegerLiteralParser
 {
+    use Singleton;
+
     /**
      * @param \Iterator<mixed,Token> $tokens
      * @return IntegerLiteralNode

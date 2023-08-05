@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\TemplateLiteral;
 
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralExpressionSegmentNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralSegments;
@@ -34,14 +35,9 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class TemplateLiteralParser
 {
-    private ?ExpressionParser $expressionParser = null;
+    use Singleton;
 
-    private function initializeExpressionParser(): void
-    {
-        $this->expressionParser ??= new ExpressionParser(
-            stopAt: TokenType::BRACKET_CURLY_CLOSE
-        );
-    }
+    private ?ExpressionParser $expressionParser = null;
 
     /**
      * @param \Iterator<mixed,Token> $tokens
@@ -108,7 +104,9 @@ final class TemplateLiteralParser
      */
     public function parseExpressionSegment(\Iterator &$tokens): TemplateLiteralExpressionSegmentNode
     {
-        $this->initializeExpressionParser();
+        $this->expressionParser ??= new ExpressionParser(
+            stopAt: TokenType::BRACKET_CURLY_CLOSE
+        );
 
         Scanner::assertType($tokens, TokenType::DOLLAR);
         $dollarToken = $tokens->current();
@@ -117,7 +115,6 @@ final class TemplateLiteralParser
         Scanner::assertType($tokens, TokenType::BRACKET_CURLY_OPEN);
         Scanner::skipOne($tokens);
 
-        assert($this->expressionParser !== null);
         $expression = $this->expressionParser->parse($tokens);
 
         Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);

@@ -48,27 +48,19 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
 
 final class ExpressionParser
 {
-    private readonly BooleanLiteralParser $booleanLiteralParser;
-    private readonly NullLiteralParser $nullLiteralParser;
-    private readonly StringLiteralParser $stringLiteralParser;
-    private readonly IntegerLiteralParser $integerLiteralParser;
-    private readonly ValueReferenceParser $valueReferenceParser;
-    private readonly TemplateLiteralParser $templateLiteralParser;
-    private readonly TagParser $tagParser;
-    private readonly MatchParser $matchParser;
+    private ?BooleanLiteralParser $booleanLiteralParser = null;
+    private ?IntegerLiteralParser $integerLiteralParser = null;
+    private ?MatchParser $matchParser = null;
+    private ?NullLiteralParser $nullLiteralParser = null;
+    private ?StringLiteralParser $stringLiteralParser = null;
+    private ?TagParser $tagParser = null;
+    private ?TemplateLiteralParser $templateLiteralParser = null;
+    private ?ValueReferenceParser $valueReferenceParser = null;
 
     public function __construct(
         private ?TokenType $stopAt = null,
         private Precedence $precedence = Precedence::SEQUENCE
     ) {
-        $this->booleanLiteralParser = new BooleanLiteralParser();
-        $this->nullLiteralParser = new NullLiteralParser();
-        $this->stringLiteralParser = new StringLiteralParser();
-        $this->integerLiteralParser = new IntegerLiteralParser();
-        $this->valueReferenceParser = new ValueReferenceParser();
-        $this->templateLiteralParser = new TemplateLiteralParser();
-        $this->tagParser = new TagParser();
-        $this->matchParser = new MatchParser();
     }
 
     /**
@@ -267,6 +259,8 @@ final class ExpressionParser
      */
     private function parseBooleanLiteral(\Iterator &$tokens): ExpressionNode
     {
+        $this->booleanLiteralParser ??= BooleanLiteralParser::singleton();
+
         $booleanLiteralNode = $this->booleanLiteralParser->parse($tokens);
 
         return new ExpressionNode(
@@ -281,6 +275,9 @@ final class ExpressionParser
      */
     private function parseNullLiteral(\Iterator &$tokens): ExpressionNode
     {
+
+        $this->nullLiteralParser ??= NullLiteralParser::singleton();
+
         $nullLiteralNode = $this->nullLiteralParser->parse($tokens);
 
         return new ExpressionNode(
@@ -295,6 +292,8 @@ final class ExpressionParser
      */
     private function parseStringLiteral(\Iterator &$tokens): ExpressionNode
     {
+        $this->stringLiteralParser ??= StringLiteralParser::singleton();
+
         $stringLiteralNode = $this->stringLiteralParser->parse($tokens);
 
         return new ExpressionNode(
@@ -309,6 +308,8 @@ final class ExpressionParser
      */
     private function parseIntegerLiteral(\Iterator &$tokens): ExpressionNode
     {
+        $this->integerLiteralParser ??= IntegerLiteralParser::singleton();
+
         $integerLiteralNode = $this->integerLiteralParser->parse($tokens);
 
         return new ExpressionNode(
@@ -323,6 +324,8 @@ final class ExpressionParser
      */
     private function parseValueReference(\Iterator &$tokens): ExpressionNode
     {
+        $this->valueReferenceParser ??= ValueReferenceParser::singleton();
+
         $valueReferenceNode = $this->valueReferenceParser->parse($tokens);
 
         return new ExpressionNode(
@@ -337,6 +340,8 @@ final class ExpressionParser
      */
     private function parseTag(\Iterator &$tokens): ExpressionNode
     {
+        $this->tagParser ??= TagParser::singleton();
+
         $tagNode = $this->tagParser->parse($tokens);
 
         return new ExpressionNode(
@@ -351,6 +356,8 @@ final class ExpressionParser
      */
     private function parseTemplateLiteral(\Iterator &$tokens): ExpressionNode
     {
+        $this->templateLiteralParser ??= TemplateLiteralParser::singleton();
+
         $templateLiteralNode = $this->templateLiteralParser->parse($tokens);
 
         return new ExpressionNode(
@@ -365,6 +372,8 @@ final class ExpressionParser
      */
     private function parseMatch(\Iterator &$tokens): ExpressionNode
     {
+        $this->matchParser ??= MatchParser::singleton();
+
         $matchNode = $this->matchParser->parse($tokens);
 
         return new ExpressionNode(

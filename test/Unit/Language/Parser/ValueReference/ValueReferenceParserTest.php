@@ -34,7 +34,7 @@ final class ValueReferenceParserTest extends ParserTestCase
      */
     public function parsesValueReference(): void
     {
-        $valueReferenceParser = new ValueReferenceParser();
+        $valueReferenceParser = ValueReferenceParser::singleton();
         $tokens = $this->createTokenIterator('foo');
 
         $expectedValueReferenceNode = new ValueReferenceNode(

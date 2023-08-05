@@ -24,6 +24,7 @@ namespace PackageFactory\ComponentEngine\Language\Parser\Tag;
 
 use PackageFactory\ComponentEngine\Domain\AttributeName\AttributeName;
 use PackageFactory\ComponentEngine\Domain\TagName\TagName;
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\AttributeNameNode;
@@ -43,15 +44,11 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
 
 final class TagParser
 {
-    private readonly StringLiteralParser $stringLiteralParser;
-    private readonly TextParser $textParser;
-    private ?ExpressionParser $expressionParser;
+    use Singleton;
 
-    public function __construct()
-    {
-        $this->stringLiteralParser = new StringLiteralParser();
-        $this->textParser = new TextParser();
-    }
+    private ?StringLiteralParser $stringLiteralParser = null;
+    private ?TextParser $textParser = null;
+    private ?ExpressionParser $expressionParser = null;
 
     /**
      * @param \Iterator<mixed,Token> $tokens
@@ -200,7 +197,7 @@ final class TagParser
 
             return match (Scanner::type($tokens)) {
                 TokenType::STRING_QUOTED =>
-                    $this->stringLiteralParser->parse($tokens),
+                    $this->parseString($tokens),
                 TokenType::BRACKET_CURLY_OPEN =>
                     $this->parseExpression($tokens),
                 default => throw TagCouldNotBeParsed::becauseOfUnexpectedToken(
@@ -214,6 +211,16 @@ final class TagParser
         }
 
         return null;
+    }
+
+    /**
+     * @param \Iterator<mixed,Token> $tokens
+     * @return StringLiteralNode
+     */
+    private function parseString(\Iterator &$tokens): StringLiteralNode
+    {
+        $this->stringLiteralParser ??= StringLiteralParser::singleton();
+        return $this->stringLiteralParser->parse($tokens);
     }
 
     /**
@@ -272,6 +279,7 @@ final class TagParser
         $items = [];
         $preserveLeadingSpace = false;
         while (Scanner::type($tokens) !== TokenType::TAG_START_CLOSING) {
+            $this->textParser ??= TextParser::singleton();
             if ($textNode = $this->textParser->parse($tokens, $preserveLeadingSpace)) {
                 $items[] = $textNode;
             }

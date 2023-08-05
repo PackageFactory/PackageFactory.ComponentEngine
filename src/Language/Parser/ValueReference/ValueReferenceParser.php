@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Parser\ValueReference;
 
 use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
@@ -30,6 +31,8 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class ValueReferenceParser
 {
+    use Singleton;
+
     /**
      * @param \Iterator<mixed,Token> $tokens
      * @return ValueReferenceNode

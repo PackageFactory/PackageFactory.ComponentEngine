@@ -39,7 +39,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
      */
     public function parsesBinaryInteger(): void
     {
-        $integerLiteralParser = new IntegerLiteralParser();
+        $integerLiteralParser = IntegerLiteralParser::singleton();
         $tokens = $this->createTokenIterator('0b1010110101');
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
@@ -59,7 +59,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
      */
     public function parsesOctalInteger(): void
     {
-        $integerLiteralParser = new IntegerLiteralParser();
+        $integerLiteralParser = IntegerLiteralParser::singleton();
         $tokens = $this->createTokenIterator('0o755');
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
@@ -79,7 +79,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
      */
     public function parsesDecimalInteger(): void
     {
-        $integerLiteralParser = new IntegerLiteralParser();
+        $integerLiteralParser = IntegerLiteralParser::singleton();
         $tokens = $this->createTokenIterator('1234567890');
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
@@ -99,7 +99,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
      */
     public function parsesHexadecimalInteger(): void
     {
-        $integerLiteralParser = new IntegerLiteralParser();
+        $integerLiteralParser = IntegerLiteralParser::singleton();
         $tokens = $this->createTokenIterator('0x123456789ABCDEF');
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
@@ -121,7 +121,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
     {
         $this->assertThrowsParserException(
             function () {
-                $integerLiteralParser = new IntegerLiteralParser();
+                $integerLiteralParser = IntegerLiteralParser::singleton();
                 $tokens = $this->createTokenIterator('');
 
                 $integerLiteralParser->parse($tokens);
@@ -137,7 +137,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
     {
         $this->assertThrowsParserException(
             function () {
-                $integerLiteralParser = new IntegerLiteralParser();
+                $integerLiteralParser = IntegerLiteralParser::singleton();
                 $tokens = $this->createTokenIterator('foo1234');
 
                 $integerLiteralParser->parse($tokens);

@@ -39,7 +39,7 @@ final class PropertyDeclarationParserTest extends ParserTestCase
      */
     public function parsesPropertyDeclarationWithSimpleType(): void
     {
-        $propertyDeclarationParser = new PropertyDeclarationParser();
+        $propertyDeclarationParser = PropertyDeclarationParser::singleton();
         $tokens = $this->createTokenIterator('foo: Bar');
 
         $expectedPropertyDeclarationNode = new PropertyDeclarationNode(
@@ -72,7 +72,7 @@ final class PropertyDeclarationParserTest extends ParserTestCase
      */
     public function parsesPropertyDeclarationWithOptionalType(): void
     {
-        $propertyDeclarationParser = new PropertyDeclarationParser();
+        $propertyDeclarationParser = PropertyDeclarationParser::singleton();
         $tokens = $this->createTokenIterator('foo: ?Bar');
 
         $expectedPropertyDeclarationNode = new PropertyDeclarationNode(
@@ -105,7 +105,7 @@ final class PropertyDeclarationParserTest extends ParserTestCase
      */
     public function parsesPropertyDeclarationWithArrayType(): void
     {
-        $propertyDeclarationParser = new PropertyDeclarationParser();
+        $propertyDeclarationParser = PropertyDeclarationParser::singleton();
         $tokens = $this->createTokenIterator('foo: Bar[]');
 
         $expectedPropertyDeclarationNode = new PropertyDeclarationNode(
@@ -138,7 +138,7 @@ final class PropertyDeclarationParserTest extends ParserTestCase
      */
     public function parsesPropertyDeclarationWithUnionType(): void
     {
-        $propertyDeclarationParser = new PropertyDeclarationParser();
+        $propertyDeclarationParser = PropertyDeclarationParser::singleton();
         $tokens = $this->createTokenIterator('foo: Bar|Baz|Qux');
 
         $expectedPropertyDeclarationNode = new PropertyDeclarationNode(

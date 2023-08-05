@@ -43,7 +43,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
      */
     public function parsesEnumDeclarationWithOneValuelessMember(): void
     {
-        $enumDeclarationParser = new EnumDeclarationParser();
+        $enumDeclarationParser = EnumDeclarationParser::singleton();
         $tokens = $this->createTokenIterator('enum Foo { BAR }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
@@ -75,7 +75,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
      */
     public function parsesEnumDeclarationWithThreeValuelessMembers(): void
     {
-        $enumDeclarationParser = new EnumDeclarationParser();
+        $enumDeclarationParser = EnumDeclarationParser::singleton();
         $tokens = $this->createTokenIterator('enum Foo { BAR BAZ QUX }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
@@ -123,7 +123,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
      */
     public function parsesEnumDeclarationWithOneStringValueMember(): void
     {
-        $enumDeclarationParser = new EnumDeclarationParser();
+        $enumDeclarationParser = EnumDeclarationParser::singleton();
         $tokens = $this->createTokenIterator('enum Foo { BAR("BAR") }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
@@ -161,7 +161,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
      */
     public function parsesEnumDeclarationWithSevenStringValueMembers(): void
     {
-        $enumDeclarationParser = new EnumDeclarationParser();
+        $enumDeclarationParser = EnumDeclarationParser::singleton();
         $enumAsString = <<<AFX
         enum Weekday {
             MONDAY("mon")
@@ -294,7 +294,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
      */
     public function parsesEnumDeclarationWithOneBinaryIntegerValueMember(): void
     {
-        $enumDeclarationParser = new EnumDeclarationParser();
+        $enumDeclarationParser = EnumDeclarationParser::singleton();
         $tokens = $this->createTokenIterator('enum Foo { BAR(0b101) }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
@@ -333,7 +333,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
      */
     public function parsesEnumDeclarationWithOneOctalIntegerValueMember(): void
     {
-        $enumDeclarationParser = new EnumDeclarationParser();
+        $enumDeclarationParser = EnumDeclarationParser::singleton();
         $tokens = $this->createTokenIterator('enum Foo { BAR(0o644) }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
@@ -372,7 +372,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
      */
     public function parsesEnumDeclarationWithOneDecimalIntegerValueMember(): void
     {
-        $enumDeclarationParser = new EnumDeclarationParser();
+        $enumDeclarationParser = EnumDeclarationParser::singleton();
         $tokens = $this->createTokenIterator('enum Foo { BAR(42) }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
@@ -411,7 +411,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
      */
     public function parsesEnumDeclarationWithOneHexadecimalIntegerValueMember(): void
     {
-        $enumDeclarationParser = new EnumDeclarationParser();
+        $enumDeclarationParser = EnumDeclarationParser::singleton();
         $tokens = $this->createTokenIterator('enum Foo { BAR(0xABC) }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
@@ -450,7 +450,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
      */
     public function parsesEnumDeclarationWithwelveIntegerValueMembers(): void
     {
-        $enumDeclarationParser = new EnumDeclarationParser();
+        $enumDeclarationParser = EnumDeclarationParser::singleton();
         $enumAsString = <<<AFX
         enum Month {
             JANUARY(1)

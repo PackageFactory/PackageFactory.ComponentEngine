@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Parser\TypeReference;
 
 use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeReferenceNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
@@ -35,6 +36,8 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class TypeReferenceParser
 {
+    use Singleton;
+
     /**
      * @param \Iterator<mixed,Token> $tokens
      * @return TypeReferenceNode

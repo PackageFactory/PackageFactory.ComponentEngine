@@ -43,7 +43,7 @@ final class StructDeclarationParserTest extends ParserTestCase
      */
     public function parsesStructDeclarationWithOneProperty(): void
     {
-        $structDeclarationParser = new StructDeclarationParser();
+        $structDeclarationParser = StructDeclarationParser::singleton();
         $tokens = $this->createTokenIterator('struct Foo { bar: Baz }');
 
         $expectedStructDeclarationNode = new StructDeclarationNode(
@@ -85,7 +85,7 @@ final class StructDeclarationParserTest extends ParserTestCase
      */
     public function parsesStructDeclarationWithMultipleProperties(): void
     {
-        $structDeclarationParser = new StructDeclarationParser();
+        $structDeclarationParser = StructDeclarationParser::singleton();
         $tokens = $this->createTokenIterator('struct Foo { bar: Baz qux: Quux corge: Grault }');
 
         $expectedStructDeclarationNode = new StructDeclarationNode(
@@ -163,7 +163,7 @@ final class StructDeclarationParserTest extends ParserTestCase
      */
     public function parsesStructDeclarationWithMultiplePropertiesAndSpaceAndComments(): void
     {
-        $structDeclarationParser = new StructDeclarationParser();
+        $structDeclarationParser = StructDeclarationParser::singleton();
         $structAsString = <<<AFX
         struct Link {
 
@@ -234,7 +234,7 @@ final class StructDeclarationParserTest extends ParserTestCase
      */
     public function parsesStructDeclarationWitOptionalArrayAndUnionProperties(): void
     {
-        $structDeclarationParser = new StructDeclarationParser();
+        $structDeclarationParser = StructDeclarationParser::singleton();
         $structAsString = <<<AFX
         struct Picture {
             src: string[]

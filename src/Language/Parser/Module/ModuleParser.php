@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\Module;
 
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\Export\ExportNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Import\ImportNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Import\ImportNodes;
@@ -36,14 +37,10 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class ModuleParser
 {
-    private readonly ImportParser $importParser;
-    private readonly ExportParser $exportParser;
+    use Singleton;
 
-    public function __construct()
-    {
-        $this->importParser = new ImportParser();
-        $this->exportParser = new ExportParser();
-    }
+    private ?ImportParser $importParser = null;
+    private ?ExportParser $exportParser = null;
 
     /**
      * @param \Iterator<mixed,Token> $tokens
@@ -92,6 +89,8 @@ final class ModuleParser
      */
     private function parseImport(\Iterator &$tokens): ImportNode
     {
+        $this->importParser ??= ImportParser::singleton();
+
         $import = $this->importParser->parse($tokens);
         Scanner::skipSpaceAndComments($tokens);
 
@@ -104,6 +103,8 @@ final class ModuleParser
      */
     private function parseExport(\Iterator &$tokens): ExportNode
     {
+        $this->exportParser ??= ExportParser::singleton();
+
         $export = $this->exportParser->parse($tokens);
         Scanner::skipSpaceAndComments($tokens);
 

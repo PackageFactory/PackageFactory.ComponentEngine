@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\BooleanLiteral;
 
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
@@ -29,6 +30,8 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class BooleanLiteralParser
 {
+    use Singleton;
+
     /**
      * @param \Iterator<mixed,Token> $tokens
      * @return BooleanLiteralNode

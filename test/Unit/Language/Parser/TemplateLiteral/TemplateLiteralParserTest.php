@@ -43,7 +43,7 @@ final class TemplateLiteralParserTest extends ParserTestCase
      */
     public function parsesTemplateLiteralWithoutEmbeddedExpressions(): void
     {
-        $templateLiteralParser = new TemplateLiteralParser();
+        $templateLiteralParser = TemplateLiteralParser::singleton();
         $tokens = $this->createTokenIterator('`Hello World`');
 
         $expectedTemplateLiteralNode = new TemplateLiteralNode(
@@ -67,7 +67,7 @@ final class TemplateLiteralParserTest extends ParserTestCase
      */
     public function parsesTemplateLiteralWithOnlyEmbeddedExpression(): void
     {
-        $templateLiteralParser = new TemplateLiteralParser();
+        $templateLiteralParser = TemplateLiteralParser::singleton();
         $tokens = $this->createTokenIterator('`${foo}`');
 
         $expectedTemplateLiteralNode = new TemplateLiteralNode(
@@ -97,7 +97,7 @@ final class TemplateLiteralParserTest extends ParserTestCase
      */
     public function parsesTemplateLiteralWithLeadingAndTrailingStringSegments(): void
     {
-        $templateLiteralParser = new TemplateLiteralParser();
+        $templateLiteralParser = TemplateLiteralParser::singleton();
         $tokens = $this->createTokenIterator('`Hello ${friend}!`');
 
         $expectedTemplateLiteralNode = new TemplateLiteralNode(
@@ -135,7 +135,7 @@ final class TemplateLiteralParserTest extends ParserTestCase
      */
     public function parsesTemplateLiteralWithLeadingAndTrailingExpressionSegments(): void
     {
-        $templateLiteralParser = new TemplateLiteralParser();
+        $templateLiteralParser = TemplateLiteralParser::singleton();
         $tokens = $this->createTokenIterator('`${greeting} to you, ${friend}`');
 
         $expectedTemplateLiteralNode = new TemplateLiteralNode(
@@ -179,7 +179,7 @@ final class TemplateLiteralParserTest extends ParserTestCase
      */
     public function parsesTemplateLiteralWithComplexExpression(): void
     {
-        $templateLiteralParser = new TemplateLiteralParser();
+        $templateLiteralParser = TemplateLiteralParser::singleton();
         $tokens = $this->createTokenIterator(
             '`The result is: ${a < b ? "yes" : (foo ? "maybe" : "no")}`'
         );
@@ -267,7 +267,7 @@ final class TemplateLiteralParserTest extends ParserTestCase
      */
     public function parsesTemplateLiteralWithEmbeddedTemplateLiteral(): void
     {
-        $templateLiteralParser = new TemplateLiteralParser();
+        $templateLiteralParser = TemplateLiteralParser::singleton();
         $tokens = $this->createTokenIterator('`Lorem ${`ipsum ${foo} sit`} amet`');
 
         $expectedTemplateLiteralNode = new TemplateLiteralNode(
@@ -326,7 +326,7 @@ final class TemplateLiteralParserTest extends ParserTestCase
     {
         $this->markTestSkipped('@TODO: This will require significant redesign of the tokenizer.');
 
-        // $templateLiteralParser = new TemplateLiteralParser();
+        // $templateLiteralParser = TemplateLiteralParser::singleton();
         // $tokens = $this->createTokenIterator('`$$$$$$$$`');
 
         // $expectedTemplateLiteralNode = new TemplateLiteralNode(

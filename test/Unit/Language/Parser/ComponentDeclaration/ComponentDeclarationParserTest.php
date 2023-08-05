@@ -55,7 +55,7 @@ final class ComponentDeclarationParserTest extends ParserTestCase
      */
     public function parsesComponentDeclarationWithNoProps(): void
     {
-        $componentDeclarationParser = new ComponentDeclarationParser();
+        $componentDeclarationParser = ComponentDeclarationParser::singleton();
         $tokens = $this->createTokenIterator('component Foo { return "bar" }');
 
         $expectedComponentDeclarationNode = new ComponentDeclarationNode(
@@ -85,7 +85,7 @@ final class ComponentDeclarationParserTest extends ParserTestCase
      */
     public function parsesComponentDeclarationWithOneProp(): void
     {
-        $componentDeclarationParser = new ComponentDeclarationParser();
+        $componentDeclarationParser = ComponentDeclarationParser::singleton();
         $tokens = $this->createTokenIterator('component Foo { bar: string return bar }');
 
         $expectedComponentDeclarationNode = new ComponentDeclarationNode(
@@ -134,7 +134,7 @@ final class ComponentDeclarationParserTest extends ParserTestCase
      */
     public function parsesComponentDeclarationWithMultiplePropsAndComplexReturnStatement(): void
     {
-        $componentDeclarationParser = new ComponentDeclarationParser();
+        $componentDeclarationParser = ComponentDeclarationParser::singleton();
         $componentAsString = <<<AFX
         component Link {
             href: string|Uri

@@ -33,7 +33,7 @@ final class StringLiteralParserTest extends ParserTestCase
      */
     public function parsesString(): void
     {
-        $stringLiteralParser = new StringLiteralParser();
+        $stringLiteralParser = StringLiteralParser::singleton();
         $tokens = $this->createTokenIterator('"Hello World"');
 
         $expectedStringLiteralNode = new StringLiteralNode(

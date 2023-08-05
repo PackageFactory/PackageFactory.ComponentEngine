@@ -41,7 +41,7 @@ final class TypeReferenceParserTest extends ParserTestCase
      */
     public function parsesSimpleTypeReference(): void
     {
-        $typeReferenceParser = new TypeReferenceParser();
+        $typeReferenceParser = TypeReferenceParser::singleton();
         $tokens = $this->createTokenIterator('Foo');
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
@@ -67,7 +67,7 @@ final class TypeReferenceParserTest extends ParserTestCase
      */
     public function parsesArrayTypeReference(): void
     {
-        $typeReferenceParser = new TypeReferenceParser();
+        $typeReferenceParser = TypeReferenceParser::singleton();
         $tokens = $this->createTokenIterator('Foo[]');
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
@@ -93,7 +93,7 @@ final class TypeReferenceParserTest extends ParserTestCase
      */
     public function parsesOptionalTypeReference(): void
     {
-        $typeReferenceParser = new TypeReferenceParser();
+        $typeReferenceParser = TypeReferenceParser::singleton();
         $tokens = $this->createTokenIterator('?Foo');
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
@@ -119,7 +119,7 @@ final class TypeReferenceParserTest extends ParserTestCase
      */
     public function parsesUnionTypeReference(): void
     {
-        $typeReferenceParser = new TypeReferenceParser();
+        $typeReferenceParser = TypeReferenceParser::singleton();
         $tokens = $this->createTokenIterator('Foo|Bar|Baz');
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
@@ -153,7 +153,7 @@ final class TypeReferenceParserTest extends ParserTestCase
      */
     public function throwsIfInvalidTypeReferenceOccurs(): void
     {
-        $typeReferenceParser = new TypeReferenceParser();
+        $typeReferenceParser = TypeReferenceParser::singleton();
         $tokens = $this->createTokenIterator('?Foo[]');
 
         $this->expectException(ParserException::class);
@@ -174,7 +174,7 @@ final class TypeReferenceParserTest extends ParserTestCase
      */
     public function throwsIfDuplicatesOccurInUnionTypeReference(): void
     {
-        $typeReferenceParser = new TypeReferenceParser();
+        $typeReferenceParser = TypeReferenceParser::singleton();
         $tokens = $this->createTokenIterator('Foo|Bar|Foo|Baz');
 
         $this->expectException(ParserException::class);

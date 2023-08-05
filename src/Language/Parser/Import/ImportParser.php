@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Parser\Import;
 
 use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\Import\ImportedNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Import\ImportedNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Import\ImportNode;
@@ -36,12 +37,9 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class ImportParser
 {
-    private readonly StringLiteralParser $pathParser;
+    use Singleton;
 
-    public function __construct()
-    {
-        $this->pathParser = new StringLiteralParser();
-    }
+    private ?StringLiteralParser $pathParser = null;
 
     /**
      * @param \Iterator<mixed,Token> $tokens
@@ -108,6 +106,8 @@ final class ImportParser
      */
     private function parsePath(\Iterator &$tokens): StringLiteralNode
     {
+        $this->pathParser ??= StringLiteralParser::singleton();
+
         $path = $this->pathParser->parse($tokens);
         Scanner::skipSpace($tokens);
 

@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Parser\ComponentDeclaration;
 
 use PackageFactory\ComponentEngine\Domain\ComponentName\ComponentName;
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\ComponentDeclaration\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\ComponentDeclaration\ComponentNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
@@ -36,13 +37,10 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class ComponentDeclarationParser
 {
-    private readonly PropertyDeclarationParser $propertyDeclarationParser;
-    private ?ExpressionParser $returnParser = null;
+    use Singleton;
 
-    public function __construct()
-    {
-        $this->propertyDeclarationParser = new PropertyDeclarationParser();
-    }
+    private ?PropertyDeclarationParser $propertyDeclarationParser = null;
+    private ?ExpressionParser $returnParser = null;
 
     /**
      * @param \Iterator<mixed,Token> $tokens
@@ -125,8 +123,11 @@ final class ComponentDeclarationParser
      */
     private function parseProps(\Iterator &$tokens): PropertyDeclarationNodes
     {
+        $this->propertyDeclarationParser ??= PropertyDeclarationParser::singleton();
+
         $items = [];
         while (Scanner::type($tokens) !== TokenType::KEYWORD_RETURN) {
+            assert($this->propertyDeclarationParser !== null);
             $items[] = $this->propertyDeclarationParser->parse($tokens);
 
             Scanner::skipSpaceAndComments($tokens);

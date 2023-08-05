@@ -48,7 +48,7 @@ final class ModuleParserTest extends ParserTestCase
      */
     public function parsesModuleWithNoImports(): void
     {
-        $moduleParser = new ModuleParser();
+        $moduleParser = ModuleParser::singleton();
         $moduleAsString = <<<AFX
         export struct Foo {}
         AFX;
@@ -81,7 +81,7 @@ final class ModuleParserTest extends ParserTestCase
      */
     public function parsesModuleWithOneImport(): void
     {
-        $moduleParser = new ModuleParser();
+        $moduleParser = ModuleParser::singleton();
         $moduleAsString = <<<AFX
         from "/some/where" import { Foo, Bar }
 
@@ -134,7 +134,7 @@ final class ModuleParserTest extends ParserTestCase
      */
     public function parsesModuleWithMultipleImports(): void
     {
-        $moduleParser = new ModuleParser();
+        $moduleParser = ModuleParser::singleton();
         $moduleAsString = <<<AFX
         from "/some/where" import { Foo, Bar }
         from "/some/where/else" import { Baz }
@@ -220,7 +220,7 @@ final class ModuleParserTest extends ParserTestCase
      */
     public function toleratesCommentsAndSpacesInBetweenStatements(): void
     {
-        $moduleParser = new ModuleParser();
+        $moduleParser = ModuleParser::singleton();
         $moduleAsString = <<<AFX
 
         #
@@ -289,7 +289,7 @@ final class ModuleParserTest extends ParserTestCase
     {
         $this->assertThrowsParserException(
             function () {
-                $moduleParser = new ModuleParser();
+                $moduleParser = ModuleParser::singleton();
                 $moduleAsString = <<<AFX
                 from "/some/where" import { Foo, Bar }
                 from "/some/where/else" import { Baz }

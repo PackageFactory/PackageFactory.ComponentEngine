@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\Match;
 
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Match\InvalidMatchArmNodes;
@@ -36,6 +37,8 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class MatchParser
 {
+    use Singleton;
+
     private ?ExpressionParser $subjectParser = null;
     private ?ExpressionParser $matchArmLeftParser = null;
     private ?ExpressionParser $matchArmRightParser = null;

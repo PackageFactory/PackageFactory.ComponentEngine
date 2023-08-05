@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Parser\StructDeclaration;
 
 use PackageFactory\ComponentEngine\Domain\StructName\StructName;
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\PropertyDeclarationNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructNameNode;
@@ -34,12 +35,9 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class StructDeclarationParser
 {
-    private readonly PropertyDeclarationParser $propertyDeclarationParser;
+    use Singleton;
 
-    public function __construct()
-    {
-        $this->propertyDeclarationParser = new PropertyDeclarationParser();
-    }
+    private ?PropertyDeclarationParser $propertyDeclarationParser = null;
 
     /**
      * @param \Iterator<mixed,Token> $tokens
@@ -115,8 +113,11 @@ final class StructDeclarationParser
      */
     public function parsePropertyDeclarations(\Iterator &$tokens): PropertyDeclarationNodes
     {
+        $this->propertyDeclarationParser ??= PropertyDeclarationParser::singleton();
+
         $items = [];
         while (Scanner::type($tokens) === TokenType::STRING) {
+            assert($this->propertyDeclarationParser !== null);
             $items[] = $this->propertyDeclarationParser->parse($tokens);
             Scanner::skipSpaceAndComments($tokens);
         }

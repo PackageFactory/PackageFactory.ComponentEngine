@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\Export;
 
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\ComponentDeclaration\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Export\ExportNode;
@@ -37,16 +38,11 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
 
 final class ExportParser
 {
-    private readonly ComponentDeclarationParser $componentDeclarationParser;
-    private readonly EnumDeclarationParser $enumDeclarationParser;
-    private readonly StructDeclarationParser $structDeclarationParser;
+    use Singleton;
 
-    public function __construct()
-    {
-        $this->componentDeclarationParser = new ComponentDeclarationParser();
-        $this->enumDeclarationParser = new EnumDeclarationParser();
-        $this->structDeclarationParser = new StructDeclarationParser();
-    }
+    private ?ComponentDeclarationParser $componentDeclarationParser = null;
+    private ?EnumDeclarationParser $enumDeclarationParser = null;
+    private ?StructDeclarationParser $structDeclarationParser = null;
 
     /**
      * @param \Iterator<mixed,Token> $tokens
@@ -99,6 +95,7 @@ final class ExportParser
      */
     private function parseComponentDeclaration(\Iterator &$tokens): ComponentDeclarationNode
     {
+        $this->componentDeclarationParser ??= ComponentDeclarationParser::singleton();
         return $this->componentDeclarationParser->parse($tokens);
     }
 
@@ -108,6 +105,7 @@ final class ExportParser
      */
     private function parseEnumDeclaration(\Iterator &$tokens): EnumDeclarationNode
     {
+        $this->enumDeclarationParser ??= EnumDeclarationParser::singleton();
         return $this->enumDeclarationParser->parse($tokens);
     }
 
@@ -117,6 +115,7 @@ final class ExportParser
      */
     private function parseStructDeclaration(\Iterator &$tokens): StructDeclarationNode
     {
+        $this->structDeclarationParser ??= StructDeclarationParser::singleton();
         return $this->structDeclarationParser->parse($tokens);
     }
 }

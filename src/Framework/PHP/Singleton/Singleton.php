@@ -20,32 +20,28 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\Parser\NullLiteral;
+namespace PackageFactory\ComponentEngine\Framework\PHP\Singleton;
 
-use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
-use PackageFactory\ComponentEngine\Language\AST\Node\NullLiteral\NullLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
-
-final class NullLiteralParser
+trait Singleton
 {
-    use Singleton;
+    private static ?self $instance = null;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return NullLiteralNode
-     */
-    public function parse(\Iterator &$tokens): NullLiteralNode
+    private function __construct()
     {
-        Scanner::assertType($tokens, TokenType::KEYWORD_NULL);
+    }
 
-        $token = $tokens->current();
+    final public static function singleton(): static
+    {
+        return static::$instance ??= new static();
+    }
 
-        Scanner::skipOne($tokens);
+    final public function __clone()
+    {
+        trigger_error('Cloning ' . __CLASS__ . ' is not allowed.', E_USER_ERROR);
+    }
 
-        return new NullLiteralNode(
-            rangeInSource: $token->boundaries
-        );
+    final public function __wakeup()
+    {
+        trigger_error('Unserializing ' . __CLASS__ . ' is not allowed.', E_USER_ERROR);
     }
 }

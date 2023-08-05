@@ -39,7 +39,7 @@ final class ImportParserTest extends ParserTestCase
      */
     public function parsesImportWithOneName(): void
     {
-        $importParser = new ImportParser();
+        $importParser = ImportParser::singleton();
         $tokens = $this->createTokenIterator(
             'from "/some/where/in/the/filesystem" import { Foo }'
         );
@@ -69,7 +69,7 @@ final class ImportParserTest extends ParserTestCase
      */
     public function parsesImportWithMultipleNames(): void
     {
-        $importParser = new ImportParser();
+        $importParser = ImportParser::singleton();
         $tokens = $this->createTokenIterator(
             'from "./some/other.component" import { Foo, Bar, Baz }'
         );
@@ -109,7 +109,7 @@ final class ImportParserTest extends ParserTestCase
     {
         $this->assertThrowsParserException(
             function () {
-                $importParser = new ImportParser();
+                $importParser = ImportParser::singleton();
                 $tokens = $this->createTokenIterator(
                     'from "/some/where" import {}'
                 );
@@ -130,7 +130,7 @@ final class ImportParserTest extends ParserTestCase
     {
         $this->assertThrowsParserException(
             function () {
-                $importParser = new ImportParser();
+                $importParser = ImportParser::singleton();
                 $tokens = $this->createTokenIterator(
                     'from "/some/where" import { Foo, Bar, Baz, Bar, Qux }'
                 );

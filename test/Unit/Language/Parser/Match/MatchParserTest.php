@@ -41,7 +41,7 @@ final class MatchParserTest extends ParserTestCase
      */
     public function parsesMatchWithOneArm(): void
     {
-        $matchParser = new MatchParser();
+        $matchParser = MatchParser::singleton();
         $tokens = $this->createTokenIterator(
             'match (a) { b -> c }'
         );
@@ -89,7 +89,7 @@ final class MatchParserTest extends ParserTestCase
      */
     public function parsesMatchWithMultipleArms(): void
     {
-        $matchParser = new MatchParser();
+        $matchParser = MatchParser::singleton();
         $tokens = $this->createTokenIterator(
             'match (a) { b -> c d -> e f -> g }'
         );
@@ -175,7 +175,7 @@ final class MatchParserTest extends ParserTestCase
      */
     public function parsesMatchWithOneSummarizedArm(): void
     {
-        $matchParser = new MatchParser();
+        $matchParser = MatchParser::singleton();
         $tokens = $this->createTokenIterator(
             'match (a) { b, c, d -> e }'
         );
@@ -237,7 +237,7 @@ final class MatchParserTest extends ParserTestCase
      */
     public function parsesMatchWithMultipleSummarizedArms(): void
     {
-        $matchParser = new MatchParser();
+        $matchParser = MatchParser::singleton();
         $tokens = $this->createTokenIterator(
             'match (a) { b, c, d -> e f, g, h -> i j, k, l -> m }'
         );
@@ -365,7 +365,7 @@ final class MatchParserTest extends ParserTestCase
      */
     public function parsesMatchWithOnlyDefaultArm(): void
     {
-        $matchParser = new MatchParser();
+        $matchParser = MatchParser::singleton();
         $tokens = $this->createTokenIterator(
             'match (a) { default -> b }'
         );
@@ -405,7 +405,7 @@ final class MatchParserTest extends ParserTestCase
      */
     public function parsesMatchWithOneArmAndDefaultArm(): void
     {
-        $matchParser = new MatchParser();
+        $matchParser = MatchParser::singleton();
         $tokens = $this->createTokenIterator(
             'match (a) { b -> c default -> d }'
         );
@@ -464,7 +464,7 @@ final class MatchParserTest extends ParserTestCase
      */
     public function parsesMatchWithOneSummarizedArmAndDefaultArm(): void
     {
-        $matchParser = new MatchParser();
+        $matchParser = MatchParser::singleton();
         $tokens = $this->createTokenIterator(
             'match (a) { b, c, d -> e default -> f }'
         );
@@ -537,7 +537,7 @@ final class MatchParserTest extends ParserTestCase
      */
     public function parsesMatchWithMixedArms(): void
     {
-        $matchParser = new MatchParser();
+        $matchParser = MatchParser::singleton();
         $matchAsString = <<<AFX
         match (a) {
             b -> c
@@ -681,7 +681,7 @@ final class MatchParserTest extends ParserTestCase
      */
     public function parsesNestedMatchAsSubject(): void
     {
-        $matchParser = new MatchParser();
+        $matchParser = MatchParser::singleton();
         $matchAsString = <<<AFX
         match (match (a) { b, c -> d default -> e }) {
             d, e -> f
@@ -796,7 +796,7 @@ final class MatchParserTest extends ParserTestCase
      */
     public function parsesNestedMatchAsArmLeft(): void
     {
-        $matchParser = new MatchParser();
+        $matchParser = MatchParser::singleton();
         $matchAsString = <<<AFX
         match (a) {
             match (b) { c, d -> e default -> f } -> g
@@ -1004,7 +1004,7 @@ final class MatchParserTest extends ParserTestCase
      */
     public function parsesNestedMatchAsArmRight(): void
     {
-        $matchParser = new MatchParser();
+        $matchParser = MatchParser::singleton();
         $matchAsString = <<<AFX
         match (a) {
             b -> match (c) { d, e -> f default -> g }
@@ -1114,7 +1114,7 @@ final class MatchParserTest extends ParserTestCase
     {
         $this->assertThrowsParserException(
             function () {
-                $matchParser = new MatchParser();
+                $matchParser = MatchParser::singleton();
                 $tokens = $this->createTokenIterator('match (a) {}');
 
                 $matchParser->parse($tokens);
@@ -1133,7 +1133,7 @@ final class MatchParserTest extends ParserTestCase
     {
         $this->assertThrowsParserException(
             function () {
-                $matchParser = new MatchParser();
+                $matchParser = MatchParser::singleton();
                 $matchAsString = <<<AFX
                 match (a) {
                     b, c -> d

@@ -33,7 +33,7 @@ final class NullLiteralParserTest extends ParserTestCase
      */
     public function parsesNull(): void
     {
-        $nullLiteralParser = new NullLiteralParser();
+        $nullLiteralParser = NullLiteralParser::singleton();
         $tokens = $this->createTokenIterator('null');
 
         $expectedNullLiteralNode = new NullLiteralNode(

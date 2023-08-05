@@ -62,7 +62,7 @@ final class ExportParserTest extends ParserTestCase
      */
     public function parsesComponentExport(): void
     {
-        $exportParser = new ExportParser();
+        $exportParser = ExportParser::singleton();
         $tokens = $this->createTokenIterator(
             'export component Foo { return bar }'
         );
@@ -97,7 +97,7 @@ final class ExportParserTest extends ParserTestCase
      */
     public function parsesEnumExport(): void
     {
-        $exportParser = new ExportParser();
+        $exportParser = ExportParser::singleton();
         $tokens = $this->createTokenIterator(
             'export enum Foo { BAR }'
         );
@@ -134,7 +134,7 @@ final class ExportParserTest extends ParserTestCase
      */
     public function parsesStructExport(): void
     {
-        $exportParser = new ExportParser();
+        $exportParser = ExportParser::singleton();
         $tokens = $this->createTokenIterator(
             'export struct Foo { bar: baz }'
         );
@@ -183,7 +183,7 @@ final class ExportParserTest extends ParserTestCase
     {
         $this->assertThrowsParserException(
             function () {
-                $exportParser = new ExportParser();
+                $exportParser = ExportParser::singleton();
                 $tokens = $this->createTokenIterator('export null');
 
                 $exportParser->parse($tokens);
