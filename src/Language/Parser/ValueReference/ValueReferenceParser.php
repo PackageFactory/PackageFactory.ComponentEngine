@@ -34,7 +34,7 @@ final class ValueReferenceParser
      * @param \Iterator<mixed,Token> $tokens
      * @return ValueReferenceNode
      */
-    public function parse(\Iterator $tokens): ValueReferenceNode
+    public function parse(\Iterator &$tokens): ValueReferenceNode
     {
         Scanner::assertType($tokens, TokenType::STRING);
 

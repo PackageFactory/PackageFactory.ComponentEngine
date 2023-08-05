@@ -45,7 +45,7 @@ final class StructDeclarationParser
      * @param \Iterator<mixed,Token> $tokens
      * @return StructDeclarationNode
      */
-    public function parse(\Iterator $tokens): StructDeclarationNode
+    public function parse(\Iterator &$tokens): StructDeclarationNode
     {
         $structKeywordToken = $this->extractStructKeywordToken($tokens);
         $structNameNode = $this->parseStructName($tokens);
@@ -67,7 +67,7 @@ final class StructDeclarationParser
      * @param \Iterator<mixed,Token> $tokens
      * @return Token
      */
-    public function extractStructKeywordToken(\Iterator $tokens): Token
+    public function extractStructKeywordToken(\Iterator &$tokens): Token
     {
         Scanner::assertType($tokens, TokenType::KEYWORD_STRUCT);
 
@@ -83,7 +83,7 @@ final class StructDeclarationParser
      * @param \Iterator<mixed,Token> $tokens
      * @return StructNameNode
      */
-    public function parseStructName(\Iterator $tokens): StructNameNode
+    public function parseStructName(\Iterator &$tokens): StructNameNode
     {
         Scanner::assertType($tokens, TokenType::STRING);
 
@@ -102,7 +102,7 @@ final class StructDeclarationParser
      * @param \Iterator<mixed,Token> $tokens
      * @return void
      */
-    public function skipOpeningBracketToken(\Iterator $tokens): void
+    public function skipOpeningBracketToken(\Iterator &$tokens): void
     {
         Scanner::assertType($tokens, TokenType::BRACKET_CURLY_OPEN);
         Scanner::skipOne($tokens);
@@ -113,7 +113,7 @@ final class StructDeclarationParser
      * @param \Iterator<mixed,Token> $tokens
      * @return PropertyDeclarationNodes
      */
-    public function parsePropertyDeclarations(\Iterator $tokens): PropertyDeclarationNodes
+    public function parsePropertyDeclarations(\Iterator &$tokens): PropertyDeclarationNodes
     {
         $items = [];
         while (Scanner::type($tokens) === TokenType::STRING) {
@@ -128,7 +128,7 @@ final class StructDeclarationParser
      * @param \Iterator<mixed,Token> $tokens
      * @return Token
      */
-    public function extractClosingBracketToken(\Iterator $tokens): Token
+    public function extractClosingBracketToken(\Iterator &$tokens): Token
     {
         Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
 

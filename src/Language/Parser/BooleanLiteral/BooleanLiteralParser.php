@@ -33,7 +33,7 @@ final class BooleanLiteralParser
      * @param \Iterator<mixed,Token> $tokens
      * @return BooleanLiteralNode
      */
-    public function parse(\Iterator $tokens): BooleanLiteralNode
+    public function parse(\Iterator &$tokens): BooleanLiteralNode
     {
         Scanner::assertType($tokens, TokenType::KEYWORD_TRUE, TokenType::KEYWORD_FALSE);
 

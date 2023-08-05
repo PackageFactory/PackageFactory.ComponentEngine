@@ -44,7 +44,7 @@ final class PropertyDeclarationParser
      * @param \Iterator<mixed,Token> $tokens
      * @return PropertyDeclarationNode
      */
-    public function parse(\Iterator $tokens): PropertyDeclarationNode
+    public function parse(\Iterator &$tokens): PropertyDeclarationNode
     {
         Scanner::assertType($tokens, TokenType::STRING);
         $propertyNameToken = $tokens->current();

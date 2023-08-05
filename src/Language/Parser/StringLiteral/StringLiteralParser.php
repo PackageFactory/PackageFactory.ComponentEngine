@@ -33,7 +33,7 @@ final class StringLiteralParser
      * @param \Iterator<mixed,Token> $tokens
      * @return StringLiteralNode
      */
-    public function parse(\Iterator $tokens): StringLiteralNode
+    public function parse(\Iterator &$tokens): StringLiteralNode
     {
         Scanner::assertType($tokens, TokenType::STRING_QUOTED);
 

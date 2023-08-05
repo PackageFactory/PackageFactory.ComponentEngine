@@ -39,7 +39,7 @@ final class TypeReferenceParser
      * @param \Iterator<mixed,Token> $tokens
      * @return TypeReferenceNode
      */
-    public function parse(\Iterator $tokens): TypeReferenceNode
+    public function parse(\Iterator &$tokens): TypeReferenceNode
     {
         $startingToken = $tokens->current();
         $questionmarkToken = $this->extractQuestionmarkToken($tokens);
@@ -72,7 +72,7 @@ final class TypeReferenceParser
      * @param \Iterator<mixed,Token> $tokens
      * @return Token
      */
-    public function extractQuestionmarkToken(\Iterator $tokens): ?Token
+    public function extractQuestionmarkToken(\Iterator &$tokens): ?Token
     {
         if (Scanner::type($tokens) === TokenType::QUESTIONMARK) {
             $questionmarkToken = $tokens->current();
@@ -88,7 +88,7 @@ final class TypeReferenceParser
      * @param \Iterator<mixed,Token> $tokens
      * @return TypeNameNodes
      */
-    public function parseTypeNames(\Iterator $tokens): TypeNameNodes
+    public function parseTypeNames(\Iterator &$tokens): TypeNameNodes
     {
         $items = [];
         while (true) {
@@ -112,7 +112,7 @@ final class TypeReferenceParser
      * @param \Iterator<mixed,Token> $tokens
      * @return TypeNameNode
      */
-    public function parseTypeName(\Iterator $tokens): TypeNameNode
+    public function parseTypeName(\Iterator &$tokens): TypeNameNode
     {
         Scanner::assertType($tokens, TokenType::STRING);
 
@@ -130,7 +130,7 @@ final class TypeReferenceParser
      * @param \Iterator<mixed,Token> $tokens
      * @return Token
      */
-    public function extractClosingArrayToken(\Iterator $tokens): ?Token
+    public function extractClosingArrayToken(\Iterator &$tokens): ?Token
     {
         if (!Scanner::isEnd($tokens) && Scanner::type($tokens) === TokenType::BRACKET_SQUARE_OPEN) {
             Scanner::skipOne($tokens);

@@ -57,7 +57,7 @@ final class TagParser
      * @param \Iterator<mixed,Token> $tokens
      * @return TagNode
      */
-    public function parse(\Iterator $tokens): TagNode
+    public function parse(\Iterator &$tokens): TagNode
     {
         $tagStartOpeningToken = $this->extractTagStartOpeningToken($tokens);
         $tagNameNode = $this->parseTagName($tokens);
@@ -98,7 +98,7 @@ final class TagParser
      * @param \Iterator<mixed,Token> $tokens
      * @return Token
      */
-    private function extractTagStartOpeningToken(\Iterator $tokens): Token
+    private function extractTagStartOpeningToken(\Iterator &$tokens): Token
     {
         Scanner::assertType($tokens, TokenType::TAG_START_OPENING);
         $tagStartOpeningToken = $tokens->current();
@@ -111,7 +111,7 @@ final class TagParser
      * @param \Iterator<mixed,Token> $tokens
      * @return TagNameNode
      */
-    private function parseTagName(\Iterator $tokens): TagNameNode
+    private function parseTagName(\Iterator &$tokens): TagNameNode
     {
         Scanner::assertType($tokens, TokenType::STRING);
         $tagNameToken = $tokens->current();
@@ -127,7 +127,7 @@ final class TagParser
      * @param \Iterator<mixed,Token> $tokens
      * @return AttributeNodes
      */
-    private function parseAttributes(\Iterator $tokens): AttributeNodes
+    private function parseAttributes(\Iterator &$tokens): AttributeNodes
     {
         $items = [];
         while (!$this->isTagEnd($tokens)) {
@@ -145,7 +145,7 @@ final class TagParser
      * @param \Iterator<mixed,Token> $tokens
      * @return boolean
      */
-    private function isTagEnd($tokens): bool
+    private function isTagEnd(\Iterator $tokens): bool
     {
         return (
             Scanner::type($tokens) === TokenType::TAG_END ||
@@ -157,7 +157,7 @@ final class TagParser
      * @param \Iterator<mixed,Token> $tokens
      * @return AttributeNode
      */
-    private function parseAttribute(\Iterator $tokens): AttributeNode
+    private function parseAttribute(\Iterator &$tokens): AttributeNode
     {
         $attributeNameNode = $this->parseAttributeName($tokens);
         $attributeValueNode = $this->parseAttributeValue($tokens);
@@ -177,7 +177,7 @@ final class TagParser
      * @param \Iterator<mixed,Token> $tokens
      * @return AttributeNameNode
      */
-    private function parseAttributeName(\Iterator $tokens): AttributeNameNode
+    private function parseAttributeName(\Iterator &$tokens): AttributeNameNode
     {
         Scanner::assertType($tokens, TokenType::STRING);
         $attributeNameToken = $tokens->current();
@@ -193,7 +193,7 @@ final class TagParser
      * @param \Iterator<mixed,Token> $tokens
      * @return null|StringLiteralNode|ExpressionNode
      */
-    private function parseAttributeValue(\Iterator $tokens): null|StringLiteralNode|ExpressionNode
+    private function parseAttributeValue(\Iterator &$tokens): null|StringLiteralNode|ExpressionNode
     {
         if (Scanner::type($tokens) === TokenType::EQUALS) {
             Scanner::skipOne($tokens);
@@ -241,7 +241,7 @@ final class TagParser
      * @param \Iterator<mixed,Token> $tokens
      * @return null|Token
      */
-    private function extractTagSelfCloseToken(\Iterator $tokens): ?Token
+    private function extractTagSelfCloseToken(\Iterator &$tokens): ?Token
     {
         if (Scanner::type($tokens) === TokenType::TAG_SELF_CLOSE) {
             $tagSelfCloseToken = $tokens->current();
@@ -257,7 +257,7 @@ final class TagParser
      * @param \Iterator<mixed,Token> $tokens
      * @return void
      */
-    private function skipTagEndToken(\Iterator $tokens): void
+    private function skipTagEndToken(\Iterator &$tokens): void
     {
         Scanner::assertType($tokens, TokenType::TAG_END);
         Scanner::skipOne($tokens);
@@ -267,7 +267,7 @@ final class TagParser
      * @param \Iterator<mixed,Token> $tokens
      * @return ChildNodes
      */
-    private function parseChildren(\Iterator $tokens): ChildNodes
+    private function parseChildren(\Iterator &$tokens): ChildNodes
     {
         $items = [];
         $preserveLeadingSpace = false;
@@ -307,7 +307,7 @@ final class TagParser
      * @param \Iterator<mixed,Token> $tokens
      * @return void
      */
-    private function skipTagStartClosingToken(\Iterator $tokens): void
+    private function skipTagStartClosingToken(\Iterator &$tokens): void
     {
         Scanner::assertType($tokens, TokenType::TAG_START_CLOSING);
         Scanner::skipOne($tokens);
@@ -318,7 +318,7 @@ final class TagParser
      * @param TagNameNode $openingTagNameNode
      * @return void
      */
-    private function assertAndSkipClosingTagName(\Iterator $tokens, TagNameNode $openingTagNameNode): void
+    private function assertAndSkipClosingTagName(\Iterator &$tokens, TagNameNode $openingTagNameNode): void
     {
         Scanner::assertType($tokens, TokenType::STRING);
         $tagNameToken = $tokens->current();
@@ -337,7 +337,7 @@ final class TagParser
      * @param \Iterator<mixed,Token> $tokens
      * @return Token
      */
-    private function extractTagEndToken(\Iterator $tokens): Token
+    private function extractTagEndToken(\Iterator &$tokens): Token
     {
         Scanner::assertType($tokens, TokenType::TAG_END);
         $tagEndToken = $tokens->current();

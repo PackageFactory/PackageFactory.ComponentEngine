@@ -33,7 +33,7 @@ final class NullLiteralParser
      * @param \Iterator<mixed,Token> $tokens
      * @return NullLiteralNode
      */
-    public function parse(\Iterator $tokens): NullLiteralNode
+    public function parse(\Iterator &$tokens): NullLiteralNode
     {
         Scanner::assertType($tokens, TokenType::KEYWORD_NULL);
 

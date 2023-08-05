@@ -46,7 +46,7 @@ final class TextParser
      * @param boolean $preserveLeadingSpace
      * @return null|TextNode
      */
-    public function parse(\Iterator $tokens, bool $preserveLeadingSpace = false): ?TextNode
+    public function parse(\Iterator &$tokens, bool $preserveLeadingSpace = false): ?TextNode
     {
         $this->reset($preserveLeadingSpace);
 

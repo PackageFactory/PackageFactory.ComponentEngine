@@ -33,7 +33,7 @@ final class IntegerLiteralParser
      * @param \Iterator<mixed,Token> $tokens
      * @return IntegerLiteralNode
      */
-    public function parse(\Iterator $tokens): IntegerLiteralNode
+    public function parse(\Iterator &$tokens): IntegerLiteralNode
     {
         $token = $tokens->current();
 

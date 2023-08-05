@@ -530,7 +530,7 @@ final class ExpressionParser
      * @param ExpressionNode $condition
      * @return ExpressionNode
      */
-    private function parseTernaryOperation(\Iterator $tokens, ExpressionNode $condition): ExpressionNode
+    private function parseTernaryOperation(\Iterator &$tokens, ExpressionNode $condition): ExpressionNode
     {
         Scanner::assertType($tokens, TokenType::QUESTIONMARK);
         Scanner::skipOne($tokens);
