@@ -138,7 +138,7 @@ final class MatchTypeResolver
         );
 
         return match (true) {
-            BooleanType::get()->is($typeOfSubject) => $this->resolveTypeOfBooleanMatch($matchNode),
+            BooleanType::singleton()->is($typeOfSubject) => $this->resolveTypeOfBooleanMatch($matchNode),
             $typeOfSubject instanceof EnumInstanceType => $this->resolveTypeOfEnumMatch($matchNode, $typeOfSubject),
             default => throw new \Exception('@TODO: Not handled ' . $typeOfSubject::class)
         };

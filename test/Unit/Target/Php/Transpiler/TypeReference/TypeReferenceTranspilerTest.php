@@ -65,9 +65,9 @@ final class TypeReferenceTranspilerTest extends TestCase
     {
         return new TypeReferenceTranspiler(
             scope: new DummyScope([
-                StringType::get(),
-                BooleanType::get(),
-                IntegerType::get(),
+                StringType::singleton(),
+                BooleanType::singleton(),
+                IntegerType::singleton(),
                 ComponentType::fromComponentDeclarationNode(
                     ASTNodeFixtures::ComponentDeclaration('component Button { return "" }')
                 ),

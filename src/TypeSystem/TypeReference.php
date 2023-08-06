@@ -40,7 +40,7 @@ final class TypeReference
         $types = [];
 
         if ($this->isOptional) {
-            $types[] = NullType::get();
+            $types[] = NullType::singleton();
         }
 
         foreach ($this->names->items as $name) {

@@ -35,13 +35,13 @@ final class UnionTypeTest extends TestCase
      */
     public function staticOfResolvesToGivenTypeIfOnlyOneTypeIsGiven(): void
     {
-        $unionType = UnionType::of(StringType::get());
-        $this->assertTrue($unionType->is(StringType::get()));
-        $this->assertTrue(StringType::get()->is($unionType));
+        $unionType = UnionType::of(StringType::singleton());
+        $this->assertTrue($unionType->is(StringType::singleton()));
+        $this->assertTrue(StringType::singleton()->is($unionType));
 
-        $unionType = UnionType::of(IntegerType::get());
-        $this->assertTrue($unionType->is(IntegerType::get()));
-        $this->assertTrue(IntegerType::get()->is($unionType));
+        $unionType = UnionType::of(IntegerType::singleton());
+        $this->assertTrue($unionType->is(IntegerType::singleton()));
+        $this->assertTrue(IntegerType::singleton()->is($unionType));
     }
 
     /**
@@ -49,9 +49,9 @@ final class UnionTypeTest extends TestCase
      */
     public function staticOfResolvesToGivenTypeIfAllGivenTypesAreIdentical(): void
     {
-        $unionType = UnionType::of(StringType::get(), StringType::get(), StringType::get());
-        $this->assertTrue($unionType->is(StringType::get()));
-        $this->assertTrue(StringType::get()->is($unionType));
+        $unionType = UnionType::of(StringType::singleton(), StringType::singleton(), StringType::singleton());
+        $this->assertTrue($unionType->is(StringType::singleton()));
+        $this->assertTrue(StringType::singleton()->is($unionType));
     }
 
     /**
@@ -59,8 +59,8 @@ final class UnionTypeTest extends TestCase
      */
     public function isReturnsTrueIfGivenTypeIsCongruentUnionType(): void
     {
-        $unionType = UnionType::of(StringType::get(), IntegerType::get());
-        $otherUnionType = UnionType::of(IntegerType::get(), StringType::get());
+        $unionType = UnionType::of(StringType::singleton(), IntegerType::singleton());
+        $otherUnionType = UnionType::of(IntegerType::singleton(), StringType::singleton());
 
         $this->assertTrue($unionType->is($otherUnionType));
     }
@@ -70,8 +70,8 @@ final class UnionTypeTest extends TestCase
      */
     public function isReturnsTrueIfGivenTypeIsCongruentUnionTypeWithRedundantMembers(): void
     {
-        $unionType = UnionType::of(StringType::get(), IntegerType::get());
-        $otherUnionType = UnionType::of(IntegerType::get(), StringType::get(), IntegerType::get(), StringType::get());
+        $unionType = UnionType::of(StringType::singleton(), IntegerType::singleton());
+        $otherUnionType = UnionType::of(IntegerType::singleton(), StringType::singleton(), IntegerType::singleton(), StringType::singleton());
 
         $this->assertTrue($unionType->is($otherUnionType));
     }
@@ -81,10 +81,10 @@ final class UnionTypeTest extends TestCase
      */
     public function isReturnsFalseIfGivenTypeIsNotAUnionType(): void
     {
-        $unionType = UnionType::of(StringType::get(), IntegerType::get());
+        $unionType = UnionType::of(StringType::singleton(), IntegerType::singleton());
 
-        $this->assertFalse($unionType->is(IntegerType::get()));
-        $this->assertFalse($unionType->is(StringType::get()));
+        $this->assertFalse($unionType->is(IntegerType::singleton()));
+        $this->assertFalse($unionType->is(StringType::singleton()));
     }
 
     /**
@@ -92,8 +92,8 @@ final class UnionTypeTest extends TestCase
      */
     public function isReturnsFalseIfGivenTypeIsANonCongruentUnionType(): void
     {
-        $unionType = UnionType::of(StringType::get(), IntegerType::get());
-        $otherUnionType = UnionType::of(StringType::get(), BooleanType::get());
+        $unionType = UnionType::of(StringType::singleton(), IntegerType::singleton());
+        $otherUnionType = UnionType::of(StringType::singleton(), BooleanType::singleton());
 
         $this->assertFalse($unionType->is($otherUnionType));
     }

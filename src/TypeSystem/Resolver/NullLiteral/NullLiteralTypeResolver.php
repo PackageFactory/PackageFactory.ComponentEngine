@@ -30,6 +30,6 @@ final class NullLiteralTypeResolver
 {
     public function resolveTypeOf(NullLiteralNode $nullLiteralNode): TypeInterface
     {
-        return NullType::get();
+        return NullType::singleton();
     }
 }

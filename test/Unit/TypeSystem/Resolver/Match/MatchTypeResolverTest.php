@@ -44,19 +44,19 @@ final class MatchTypeResolverTest extends TestCase
         return [
             'match (true) { true -> 42 false -> "foo" }' => [
                 'match (true) { true -> 42 false -> "foo" }',
-                IntegerType::get()
+                IntegerType::singleton()
             ],
             'match (false) { true -> 42 false -> "foo" }' => [
                 'match (false) { true -> 42 false -> "foo" }',
-                StringType::get()
+                StringType::singleton()
             ],
             'match (variableOfTypeBoolean) { true -> 42 false -> "foo" }' => [
                 'match (variableOfTypeBoolean) { true -> 42 false -> "foo" }',
-                UnionType::of(IntegerType::get(), StringType::get())
+                UnionType::of(IntegerType::singleton(), StringType::singleton())
             ],
             'match (variableOfTypeBoolean) { true -> variableOfTypeNumber false -> variableOfTypeString }' => [
                 'match (variableOfTypeBoolean) { true -> variableOfTypeNumber false -> variableOfTypeString }',
-                UnionType::of(IntegerType::get(), StringType::get())
+                UnionType::of(IntegerType::singleton(), StringType::singleton())
             ],
             'match enum with all declared members' => [
                 <<<EOF
@@ -66,7 +66,7 @@ final class MatchTypeResolverTest extends TestCase
                     SomeEnum.C -> variableOfTypeBoolean
                 }
                 EOF,
-                UnionType::of(IntegerType::get(), StringType::get(), BooleanType::get())
+                UnionType::of(IntegerType::singleton(), StringType::singleton(), BooleanType::singleton())
             ],
             'match enum with some declared members and default' => [
                 <<<EOF
@@ -76,7 +76,7 @@ final class MatchTypeResolverTest extends TestCase
                     default -> variableOfTypeBoolean
                 }
                 EOF,
-                UnionType::of(IntegerType::get(), StringType::get(), BooleanType::get())
+                UnionType::of(IntegerType::singleton(), StringType::singleton(), BooleanType::singleton())
             ],
         ];
     }
@@ -92,9 +92,9 @@ final class MatchTypeResolverTest extends TestCase
     {
         $scope = new DummyScope(
             [
-                BooleanType::get(),
-                StringType::get(),
-                IntegerType::get(),
+                BooleanType::singleton(),
+                StringType::singleton(),
+                IntegerType::singleton(),
                 $someStaticEnumType = EnumStaticType::fromModuleIdAndDeclaration(
                     ModuleId::fromString("module-a"),
                     ASTNodeFixtures::EnumDeclaration(
@@ -103,9 +103,9 @@ final class MatchTypeResolverTest extends TestCase
                 )
             ],
             [
-                'variableOfTypeBoolean' => BooleanType::get(),
-                'variableOfTypeString' => StringType::get(),
-                'variableOfTypeNumber' => IntegerType::get(),
+                'variableOfTypeBoolean' => BooleanType::singleton(),
+                'variableOfTypeString' => StringType::singleton(),
+                'variableOfTypeNumber' => IntegerType::singleton(),
                 'someEnumValue' => $someStaticEnumType->toEnumInstanceType(),
                 'SomeEnum' => $someStaticEnumType
             ]

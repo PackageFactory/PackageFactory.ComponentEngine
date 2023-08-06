@@ -23,21 +23,13 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType;
 
 use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class BooleanType implements AtomicTypeInterface
 {
-    private static null|self $instance = null;
-
-    private function __construct()
-    {
-    } // @codeCoverageIgnore
-
-    public static function get(): self
-    {
-        return self::$instance ??= new self();
-    }
+    use Singleton;
 
     public function getName(): TypeName
     {

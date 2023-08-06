@@ -30,6 +30,6 @@ final class IntegerLiteralTypeResolver
 {
     public function resolveTypeOf(IntegerLiteralNode $IntegerLiteralNode): TypeInterface
     {
-        return IntegerType::get();
+        return IntegerType::singleton();
     }
 }

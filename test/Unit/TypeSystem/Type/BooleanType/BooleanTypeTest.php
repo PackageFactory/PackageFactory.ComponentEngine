@@ -35,7 +35,7 @@ final class BooleanTypeTest extends TestCase
      */
     public function providesItsTypeName(): void
     {
-        $this->assertEquals(TypeName::from('boolean'), BooleanType::get()->getName());
+        $this->assertEquals(TypeName::from('boolean'), BooleanType::singleton()->getName());
     }
 
     /**
@@ -43,7 +43,7 @@ final class BooleanTypeTest extends TestCase
      */
     public function booleanTypeIsSingleton(): void
     {
-        $this->assertSame(BooleanType::get(), BooleanType::get());
+        $this->assertSame(BooleanType::singleton(), BooleanType::singleton());
     }
 
     /**
@@ -51,7 +51,7 @@ final class BooleanTypeTest extends TestCase
      */
     public function isReturnsTrueIfGivenTypeIsBooleanType(): void
     {
-        $this->assertTrue(BooleanType::get()->is(BooleanType::get()));
+        $this->assertTrue(BooleanType::singleton()->is(BooleanType::singleton()));
     }
 
     /**
@@ -59,6 +59,6 @@ final class BooleanTypeTest extends TestCase
      */
     public function isReturnsFalseIfGivenTypeIsNotBooleanType(): void
     {
-        $this->assertFalse(BooleanType::get()->is(StringType::get()));
+        $this->assertFalse(BooleanType::singleton()->is(StringType::singleton()));
     }
 }

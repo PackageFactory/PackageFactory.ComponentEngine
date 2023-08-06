@@ -37,7 +37,7 @@ final class GlobalScopeTest extends TestCase
     public static function primitiveTypeExamples(): array
     {
         return [
-            'string' => ['string', StringType::get()]
+            'string' => ['string', StringType::singleton()]
         ];
     }
 
@@ -50,7 +50,7 @@ final class GlobalScopeTest extends TestCase
      */
     public function resolvesPrimitiveTypes(string $typeNameAsString, TypeInterface $expectedType): void
     {
-        $globalScope = GlobalScope::get();
+        $globalScope = GlobalScope::singleton();
         $actualType = $globalScope->getType(TypeName::from($typeNameAsString));
 
         $this->assertTrue(
@@ -65,7 +65,7 @@ final class GlobalScopeTest extends TestCase
      */
     public function knowsNoLocalNames(): void
     {
-        $globalScope = GlobalScope::get();
+        $globalScope = GlobalScope::singleton();
 
         $this->assertNull($globalScope->getTypeOf(VariableName::from('someVariable')));
     }

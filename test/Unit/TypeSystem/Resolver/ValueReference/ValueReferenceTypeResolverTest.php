@@ -36,11 +36,11 @@ final class ValueReferenceTypeResolverTest extends TestCase
      */
     public function resolvesKnownValueReferenceToItsType(): void
     {
-        $scope = new DummyScope([StringType::get()], ['foo' => StringType::get()]);
+        $scope = new DummyScope([StringType::singleton()], ['foo' => StringType::singleton()]);
         $identifierTypeResolver = new ValueReferenceTypeResolver(scope: $scope);
         $identifierNode = ASTNodeFixtures::ValueReference('foo');
 
-        $expectedType = StringType::get();
+        $expectedType = StringType::singleton();
         $actualType = $identifierTypeResolver->resolveTypeOf($identifierNode);
 
         $this->assertTrue(

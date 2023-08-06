@@ -30,6 +30,6 @@ final class StringLiteralTypeResolver
 {
     public function resolveTypeOf(StringLiteralNode $stringLiteralNode): TypeInterface
     {
-        return StringType::get();
+        return StringType::singleton();
     }
 }

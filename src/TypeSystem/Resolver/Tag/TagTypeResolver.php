@@ -30,6 +30,6 @@ final class TagTypeResolver
 {
     public function resolveTypeOf(TagNode $tagNode): TypeInterface
     {
-        return StringType::get();
+        return StringType::singleton();
     }
 }

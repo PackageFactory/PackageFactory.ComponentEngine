@@ -54,10 +54,10 @@ final class ComponentScopeTest extends TestCase
         );
         $componentScope = new ComponentScope(
             componentDeclarationNode: $componentDeclarationNode,
-            parentScope: GlobalScope::get()
+            parentScope: GlobalScope::singleton()
         );
 
-        $expectedType = StringType::get();
+        $expectedType = StringType::singleton();
         $actualType = $componentScope->getTypeOf(VariableName::from('foo'));
 
         $this->assertNotNull($actualType);
@@ -123,12 +123,12 @@ final class ComponentScopeTest extends TestCase
         $componentScope = new ComponentScope(
             componentDeclarationNode: $componentDeclarationNode,
             parentScope: new DummyScope(
-                [IntegerType::get()],
-                ['bar' => IntegerType::get()]
+                [IntegerType::singleton()],
+                ['bar' => IntegerType::singleton()]
             )
         );
 
-        $expectedType = IntegerType::get();
+        $expectedType = IntegerType::singleton();
         $actualType = $componentScope->getTypeOf(VariableName::from('bar'));
 
         $this->assertNotNull($actualType);
@@ -157,10 +157,10 @@ final class ComponentScopeTest extends TestCase
         );
         $componentScope = new ComponentScope(
             componentDeclarationNode: $componentDeclarationNode,
-            parentScope: new DummyScope([StringType::get()])
+            parentScope: new DummyScope([StringType::singleton()])
         );
 
-        $expectedType = StringType::get();
+        $expectedType = StringType::singleton();
         $actualType = $componentScope->getType(TypeName::from('string'));
 
         $this->assertTrue(

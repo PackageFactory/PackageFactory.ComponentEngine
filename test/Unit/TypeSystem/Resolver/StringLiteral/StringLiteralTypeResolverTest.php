@@ -38,7 +38,7 @@ final class StringLiteralTypeResolverTest extends TestCase
         $stringLiteralTypeResolver = new StringLiteralTypeResolver();
         $stringLiteralNode = ASTNodeFixtures::StringLiteral('"foo"');
 
-        $expectedType = StringType::get();
+        $expectedType = StringType::singleton();
         $actualType = $stringLiteralTypeResolver->resolveTypeOf($stringLiteralNode);
 
         $this->assertTrue(

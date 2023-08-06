@@ -50,7 +50,7 @@ final class UnaryOperationTranspilerTest extends TestCase
     public function transpilesUnaryOperationNodes(string $unaryOperationAsString, string $expectedTranspilationResult): void
     {
         $transpiler = new UnaryOperationTranspiler(
-            scope: new DummyScope([StringType::get()], ['foo' => StringType::get()])
+            scope: new DummyScope([StringType::singleton()], ['foo' => StringType::singleton()])
         );
         $node = ASTNodeFixtures::UnaryOperation($unaryOperationAsString);
 

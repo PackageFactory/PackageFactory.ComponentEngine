@@ -44,7 +44,7 @@ final class ModuleTranspilerTest extends TestCase
         EOT;
         $moduleTranspiler = new ModuleTranspiler(
             loader: new DummyLoader(),
-            globalScope: GlobalScope::get(),
+            globalScope: GlobalScope::singleton(),
             strategy: new ModuleTestStrategy()
         );
         $moduleNode = ASTNodeFixtures::Module($moduleNodeAsString);
@@ -92,7 +92,7 @@ final class ModuleTranspilerTest extends TestCase
         EOT;
         $moduleTranspiler = new ModuleTranspiler(
             loader: new DummyLoader(),
-            globalScope: GlobalScope::get(),
+            globalScope: GlobalScope::singleton(),
             strategy: new ModuleTestStrategy()
         );
         $moduleNode = ASTNodeFixtures::Module($moduleNodeAsString);
@@ -137,7 +137,7 @@ final class ModuleTranspilerTest extends TestCase
         EOT;
         $moduleTranspiler = new ModuleTranspiler(
             loader: new DummyLoader(),
-            globalScope: GlobalScope::get(),
+            globalScope: GlobalScope::singleton(),
             strategy: new ModuleTestStrategy()
         );
         $moduleNode = ASTNodeFixtures::Module($moduleNodeAsString);

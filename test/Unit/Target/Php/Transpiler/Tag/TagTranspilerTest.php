@@ -61,7 +61,7 @@ final class TagTranspilerTest extends TestCase
     public function transpilesTagNodes(string $tagAsString, string $expectedTranspilationResult): void
     {
         $tagTranspiler = new TagTranspiler(
-            scope: new DummyScope([StringType::get()], ['someValue' => StringType::get()])
+            scope: new DummyScope([StringType::singleton()], ['someValue' => StringType::singleton()])
         );
         $tagNode = ASTNodeFixtures::Tag($tagAsString);
 

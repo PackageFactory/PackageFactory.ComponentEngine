@@ -124,7 +124,7 @@ final class ComponentDeclarationTranspiler
         );
 
         $returnExpression = $componentDeclarationNode->return;
-        $returnTypeIsString = StringType::get()->is(
+        $returnTypeIsString = StringType::singleton()->is(
             $expressionTypeResolver->resolveTypeOf($returnExpression)
         );
         $transpiledReturnExpression = $expressionTranspiler->transpile($returnExpression);

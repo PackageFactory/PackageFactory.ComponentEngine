@@ -35,7 +35,7 @@ final class NullTypeTest extends TestCase
      */
     public function providesItsTypeName(): void
     {
-        $this->assertEquals(TypeName::from('null'), NullType::get()->getName());
+        $this->assertEquals(TypeName::from('null'), NullType::singleton()->getName());
     }
 
     /**
@@ -43,7 +43,7 @@ final class NullTypeTest extends TestCase
      */
     public function nullTypeIsSingleton(): void
     {
-        $this->assertSame(NullType::get(), NullType::get());
+        $this->assertSame(NullType::singleton(), NullType::singleton());
     }
 
     /**
@@ -51,7 +51,7 @@ final class NullTypeTest extends TestCase
      */
     public function isReturnsTrueIfGivenTypeIsNullType(): void
     {
-        $this->assertTrue(NullType::get()->is(NullType::get()));
+        $this->assertTrue(NullType::singleton()->is(NullType::singleton()));
     }
 
     /**
@@ -59,6 +59,6 @@ final class NullTypeTest extends TestCase
      */
     public function isReturnsFalseIfGivenTypeIsNotNullType(): void
     {
-        $this->assertFalse(NullType::get()->is(StringType::get()));
+        $this->assertFalse(NullType::singleton()->is(StringType::singleton()));
     }
 }

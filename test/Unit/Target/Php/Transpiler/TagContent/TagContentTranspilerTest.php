@@ -62,7 +62,7 @@ final class TagContentTranspilerTest extends TestCase
     public function transpilesTagContentNodes(string $tagContentAsString, string $expectedTranspilationResult): void
     {
         $tagContentTranspiler = new TagContentTranspiler(
-            scope: new DummyScope([StringType::get()], ['someValue' => StringType::get()])
+            scope: new DummyScope([StringType::singleton()], ['someValue' => StringType::singleton()])
         );
         $tagContentNode = ASTNodeFixtures::TagContent($tagContentAsString);
         assert($tagContentNode !== null);

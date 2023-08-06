@@ -53,7 +53,7 @@ final class TemplateLiteralTypeResolverTest extends TestCase
         $templateLiteralTypeResolver = new TemplateLiteralTypeResolver();
         $templateLiteralNode = ASTNodeFixtures::TemplateLiteral($templateLiteralAsString);
 
-        $expectedType = StringType::get();
+        $expectedType = StringType::singleton();
         $actualType = $templateLiteralTypeResolver->resolveTypeOf($templateLiteralNode);
 
         $this->assertTrue(

@@ -35,7 +35,7 @@ final class StringTypeTest extends TestCase
      */
     public function providesItsTypeName(): void
     {
-        $this->assertEquals(TypeName::from('string'), StringType::get()->getName());
+        $this->assertEquals(TypeName::from('string'), StringType::singleton()->getName());
     }
 
     /**
@@ -43,7 +43,7 @@ final class StringTypeTest extends TestCase
      */
     public function stringTypeIsSingleton(): void
     {
-        $this->assertSame(StringType::get(), StringType::get());
+        $this->assertSame(StringType::singleton(), StringType::singleton());
     }
 
     /**
@@ -51,7 +51,7 @@ final class StringTypeTest extends TestCase
      */
     public function isReturnsTrueIfGivenTypeIsStringType(): void
     {
-        $this->assertTrue(StringType::get()->is(StringType::get()));
+        $this->assertTrue(StringType::singleton()->is(StringType::singleton()));
     }
 
     /**
@@ -59,6 +59,6 @@ final class StringTypeTest extends TestCase
      */
     public function isReturnsFalseIfGivenTypeIsNotStringType(): void
     {
-        $this->assertFalse(StringType::get()->is(IntegerType::get()));
+        $this->assertFalse(StringType::singleton()->is(IntegerType::singleton()));
     }
 }

@@ -83,7 +83,7 @@ final class TernaryOperationTranspilerTest extends TestCase
         $ternaryOperationTranspiler = new TernaryOperationTranspiler(
             scope: new DummyScope(
                 [
-                    StringType::get(),
+                    StringType::singleton(),
                     $someStructType = new StructType(
                         name: StructName::from('SomeStruct'),
                         properties: new Properties(
@@ -107,7 +107,7 @@ final class TernaryOperationTranspilerTest extends TestCase
                     )
                 ],
                 [
-                    'someString' => StringType::get(),
+                    'someString' => StringType::singleton(),
                     'someStruct' => $someStructType
                 ]
             )

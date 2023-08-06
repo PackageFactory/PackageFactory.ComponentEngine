@@ -38,7 +38,7 @@ final class TagTypeResolverTest extends TestCase
         $tagTypeResolver = new TagTypeResolver();
         $tagNode = ASTNodeFixtures::Tag('<div></div>');
 
-        $expectedType = StringType::get();
+        $expectedType = StringType::singleton();
         $actualType = $tagTypeResolver->resolveTypeOf($tagNode);
 
         $this->assertTrue(

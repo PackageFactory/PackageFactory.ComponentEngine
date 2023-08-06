@@ -105,7 +105,7 @@ final class AccessTypeResolverTest extends TestCase
 
         $scope = new DummyScope(
             [
-                StringType::get(),
+                StringType::singleton(),
                 $someEnum = EnumStaticType::fromModuleIdAndDeclaration(
                     ModuleId::fromString("module-a"),
                     ASTNodeFixtures::EnumDeclaration(
@@ -114,7 +114,7 @@ final class AccessTypeResolverTest extends TestCase
                 )
             ],
             [
-                'someString' => StringType::get(),
+                'someString' => StringType::singleton(),
                 'SomeEnum' => $someEnum,
                 'someEnumValue' => $someEnum->toEnumInstanceType()
             ]

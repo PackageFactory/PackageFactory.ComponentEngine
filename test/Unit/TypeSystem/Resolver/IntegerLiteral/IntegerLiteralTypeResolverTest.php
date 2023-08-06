@@ -37,7 +37,7 @@ final class IntegerLiteralTypeResolverTest extends TestCase
         $integerLiteralTypeResolver = new IntegerLiteralTypeResolver();
         $integerLiteralNode = ASTNodeFixtures::IntegerLiteral('42');
 
-        $expectedType = IntegerType::get();
+        $expectedType = IntegerType::singleton();
         $actualType = $integerLiteralTypeResolver->resolveTypeOf($integerLiteralNode);
 
         $this->assertTrue(

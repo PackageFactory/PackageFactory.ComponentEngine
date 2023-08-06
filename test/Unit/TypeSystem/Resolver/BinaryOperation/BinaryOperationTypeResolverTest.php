@@ -40,22 +40,22 @@ final class BinaryOperationTypeResolverTest extends TestCase
     public static function binaryOperationExamples(): array
     {
         return [
-            'true && false' => ['true && false', BooleanType::get()],
-            'true || false' => ['true || false', BooleanType::get()],
-            'true && "foo"' => ['true && "foo"', UnionType::of(BooleanType::get(), StringType::get())],
-            'true || "foo"' => ['true || "foo"', UnionType::of(BooleanType::get(), StringType::get())],
-            'true && 42' => ['true && 42', UnionType::of(BooleanType::get(), IntegerType::get())],
-            'true || 42' => ['true || 42', UnionType::of(BooleanType::get(), IntegerType::get())],
+            'true && false' => ['true && false', BooleanType::singleton()],
+            'true || false' => ['true || false', BooleanType::singleton()],
+            'true && "foo"' => ['true && "foo"', UnionType::of(BooleanType::singleton(), StringType::singleton())],
+            'true || "foo"' => ['true || "foo"', UnionType::of(BooleanType::singleton(), StringType::singleton())],
+            'true && 42' => ['true && 42', UnionType::of(BooleanType::singleton(), IntegerType::singleton())],
+            'true || 42' => ['true || 42', UnionType::of(BooleanType::singleton(), IntegerType::singleton())],
 
-            '4 === 2' => ['4 === 2', BooleanType::get()],
-            '4 !== 2' => ['4 !== 2', BooleanType::get()],
-            '4 > 2' => ['4 > 2', BooleanType::get()],
-            '4 >= 2' => ['4 >= 2', BooleanType::get()],
-            '4 < 2' => ['4 < 2', BooleanType::get()],
-            '4 <= 2' => ['4 <= 2', BooleanType::get()],
+            '4 === 2' => ['4 === 2', BooleanType::singleton()],
+            '4 !== 2' => ['4 !== 2', BooleanType::singleton()],
+            '4 > 2' => ['4 > 2', BooleanType::singleton()],
+            '4 >= 2' => ['4 >= 2', BooleanType::singleton()],
+            '4 < 2' => ['4 < 2', BooleanType::singleton()],
+            '4 <= 2' => ['4 <= 2', BooleanType::singleton()],
 
-            'true && true && true' => ['true && true && true', BooleanType::get()],
-            '1 === 1 === true' => ['1 === 1 === true', BooleanType::get()],
+            'true && true && true' => ['true && true && true', BooleanType::singleton()],
+            '1 === 1 === true' => ['1 === 1 === true', BooleanType::singleton()],
         ];
     }
 

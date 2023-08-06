@@ -45,7 +45,7 @@ final class ComponentDeclarationTranspilerTest extends TestCase
         EOT;
         $moduleNode = ASTNodeFixtures::Module($componentModuleAsString);
         $componentDeclarationTranspiler = new ComponentDeclarationTranspiler(
-            scope: GlobalScope::get(),
+            scope: GlobalScope::singleton(),
             module: $moduleNode,
             strategy: new ComponentDeclarationTestStrategy()
         );

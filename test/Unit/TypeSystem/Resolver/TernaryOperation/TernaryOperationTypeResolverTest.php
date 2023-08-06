@@ -39,12 +39,12 @@ final class TernaryOperationTypeResolverTest extends TestCase
     public static function ternaryOperationExamples(): array
     {
         return [
-            'true ? 42 : "foo"' => ['true ? 42 : "foo"', IntegerType::get()],
-            'false ? 42 : "foo"' => ['false ? 42 : "foo"', StringType::get()],
-            '1 < 2 ? 42 : "foo"' => ['1 < 2 ? 42 : "foo"', UnionType::of(IntegerType::get(), StringType::get())],
+            'true ? 42 : "foo"' => ['true ? 42 : "foo"', IntegerType::singleton()],
+            'false ? 42 : "foo"' => ['false ? 42 : "foo"', StringType::singleton()],
+            '1 < 2 ? 42 : "foo"' => ['1 < 2 ? 42 : "foo"', UnionType::of(IntegerType::singleton(), StringType::singleton())],
             '1 < 2 ? variableOfTypeString : variableOfTypeNumber' => [
                 '1 < 2 ? variableOfTypeString : variableOfTypeNumber',
-                UnionType::of(IntegerType::get(), StringType::get())
+                UnionType::of(IntegerType::singleton(), StringType::singleton())
             ]
         ];
     }
@@ -59,10 +59,10 @@ final class TernaryOperationTypeResolverTest extends TestCase
     public function resolvesTernaryOperationToResultingType(string $ternaryExpressionAsString, TypeInterface $expectedType): void
     {
         $scope = new DummyScope(
-            [StringType::get(), IntegerType::get()],
+            [StringType::singleton(), IntegerType::singleton()],
             [
-                'variableOfTypeString' => StringType::get(),
-                'variableOfTypeNumber' => IntegerType::get()
+                'variableOfTypeString' => StringType::singleton(),
+                'variableOfTypeNumber' => IntegerType::singleton()
             ]
         );
         $ternaryOperationTypeResolver = new TernaryOperationTypeResolver(

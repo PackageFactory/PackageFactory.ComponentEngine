@@ -48,7 +48,7 @@ final class BinaryOperationTypeResolver
             BinaryOperator::GREATER_THAN,
             BinaryOperator::GREATER_THAN_OR_EQUAL,
             BinaryOperator::LESS_THAN,
-            BinaryOperator::LESS_THAN_OR_EQUAL => BooleanType::get()
+            BinaryOperator::LESS_THAN_OR_EQUAL => BooleanType::singleton()
         };
     }
 

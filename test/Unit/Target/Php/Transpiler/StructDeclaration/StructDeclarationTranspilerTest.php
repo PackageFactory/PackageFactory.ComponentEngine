@@ -43,7 +43,7 @@ final class StructDeclarationTranspilerTest extends TestCase
         }
         EOT;
         $structDeclarationTranspiler = new StructDeclarationTranspiler(
-            scope: new DummyScope([StringType::get()]),
+            scope: new DummyScope([StringType::singleton()]),
             strategy: new StructDeclarationTestStrategy()
         );
         $structDeclarationNode = ASTNodeFixtures::StructDeclaration($structDeclarationAsString);

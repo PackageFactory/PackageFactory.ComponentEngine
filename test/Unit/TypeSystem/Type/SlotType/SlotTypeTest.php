@@ -35,7 +35,7 @@ final class SlotTypeTest extends TestCase
      */
     public function providesItsTypeName(): void
     {
-        $this->assertEquals(TypeName::from('slot'), SlotType::get()->getName());
+        $this->assertEquals(TypeName::from('slot'), SlotType::singleton()->getName());
     }
 
     /**
@@ -43,7 +43,7 @@ final class SlotTypeTest extends TestCase
      */
     public function stringTypeIsSingleton(): void
     {
-        $this->assertSame(SlotType::get(), SlotType::get());
+        $this->assertSame(SlotType::singleton(), SlotType::singleton());
     }
 
     /**
@@ -51,7 +51,7 @@ final class SlotTypeTest extends TestCase
      */
     public function isReturnsTrueIfGivenTypeIsSlotType(): void
     {
-        $this->assertTrue(SlotType::get()->is(SlotType::get()));
+        $this->assertTrue(SlotType::singleton()->is(SlotType::singleton()));
     }
 
     /**
@@ -59,6 +59,6 @@ final class SlotTypeTest extends TestCase
      */
     public function isReturnsFalseIfGivenTypeIsNotSlotType(): void
     {
-        $this->assertFalse(SlotType::get()->is(IntegerType::get()));
+        $this->assertFalse(SlotType::singleton()->is(IntegerType::singleton()));
     }
 }

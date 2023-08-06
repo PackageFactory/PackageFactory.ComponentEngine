@@ -37,7 +37,7 @@ final class BooleanLiteralTypeResolverTest extends TestCase
         $booleanLiteralTypeResolver = new BooleanLiteralTypeResolver();
         $booleanLiteralNode = ASTNodeFixtures::BooleanLiteral('true');
 
-        $expectedType = BooleanType::get();
+        $expectedType = BooleanType::singleton();
         $actualType = $booleanLiteralTypeResolver->resolveTypeOf($booleanLiteralNode);
 
         $this->assertTrue(

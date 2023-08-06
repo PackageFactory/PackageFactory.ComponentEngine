@@ -78,7 +78,7 @@ final class PhpTranspilerIntegrationTest extends TestCase
             loader: new ModuleFileLoader(
                 sourcePath: $sourcePath
             ),
-            globalScope: GlobalScope::get(),
+            globalScope: GlobalScope::singleton(),
             strategy: new ModuleTestStrategy()
         );
 

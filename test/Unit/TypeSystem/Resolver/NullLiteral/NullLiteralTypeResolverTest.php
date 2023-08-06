@@ -37,7 +37,7 @@ final class NullLiteralTypeResolverTest extends TestCase
         $nullLiteralTypeResolver = new NullLiteralTypeResolver();
         $nullLiteralNode = ASTNodeFixtures::NullLiteral('null');
 
-        $expectedType = NullType::get();
+        $expectedType = NullType::singleton();
         $actualType = $nullLiteralTypeResolver->resolveTypeOf($nullLiteralNode);
 
         $this->assertTrue(

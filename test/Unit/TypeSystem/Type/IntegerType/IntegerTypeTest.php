@@ -35,7 +35,7 @@ final class IntegerTypeTest extends TestCase
      */
     public function providesItsTypeName(): void
     {
-        $this->assertEquals(TypeName::from('number'), IntegerType::get()->getName());
+        $this->assertEquals(TypeName::from('number'), IntegerType::singleton()->getName());
     }
 
     /**
@@ -43,7 +43,7 @@ final class IntegerTypeTest extends TestCase
      */
     public function integerTypeIsSingleton(): void
     {
-        $this->assertSame(IntegerType::get(), IntegerType::get());
+        $this->assertSame(IntegerType::singleton(), IntegerType::singleton());
     }
 
     /**
@@ -51,7 +51,7 @@ final class IntegerTypeTest extends TestCase
      */
     public function isReturnsTrueIfGivenTypeIsIntegerType(): void
     {
-        $this->assertTrue(IntegerType::get()->is(IntegerType::get()));
+        $this->assertTrue(IntegerType::singleton()->is(IntegerType::singleton()));
     }
 
     /**
@@ -59,6 +59,6 @@ final class IntegerTypeTest extends TestCase
      */
     public function isReturnsFalseIfGivenTypeIsNotIntegerType(): void
     {
-        $this->assertFalse(IntegerType::get()->is(StringType::get()));
+        $this->assertFalse(IntegerType::singleton()->is(StringType::singleton()));
     }
 }

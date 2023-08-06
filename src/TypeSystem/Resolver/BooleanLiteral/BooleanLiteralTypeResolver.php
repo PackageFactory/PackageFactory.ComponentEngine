@@ -30,6 +30,6 @@ final class BooleanLiteralTypeResolver
 {
     public function resolveTypeOf(BooleanLiteralNode $booleanLiteralNode): TypeInterface
     {
-        return BooleanType::get();
+        return BooleanType::singleton();
     }
 }
