@@ -20,13 +20,13 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\Identifier;
+namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\ValueReference;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 
-final class IdentifierTranspiler
+final class ValueReferenceTranspiler
 {
     public function __construct(private readonly ScopeInterface $scope)
     {

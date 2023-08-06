@@ -20,24 +20,24 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Identifier;
+namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\ValueReference;
 
 use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
-use PackageFactory\ComponentEngine\Target\Php\Transpiler\Identifier\IdentifierTranspiler;
+use PackageFactory\ComponentEngine\Target\Php\Transpiler\ValueReference\ValueReferenceTranspiler;
 use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PHPUnit\Framework\TestCase;
 
-final class IdentifierTranspilerTest extends TestCase
+final class ValueReferenceTranspilerTest extends TestCase
 {
     /**
      * @test
      * @return void
      */
-    public function transpilesIdentifierNodes(): void
+    public function transpilesValueReferenceNodes(): void
     {
-        $identifierTranspiler = new IdentifierTranspiler(
+        $identifierTranspiler = new ValueReferenceTranspiler(
             scope: new DummyScope()
         );
         $identifierNode = ASTNodeFixtures::ValueReference('foo');
@@ -57,9 +57,9 @@ final class IdentifierTranspilerTest extends TestCase
      * @test
      * @return void
      */
-    public function transpilesIdentifierNodesReferringToEnums(): void
+    public function transpilesValueReferenceNodesReferringToEnums(): void
     {
-        $identifierTranspiler = new IdentifierTranspiler(
+        $identifierTranspiler = new ValueReferenceTranspiler(
             scope: new DummyScope(
                 [
                     $someEnumType = EnumStaticType::fromModuleIdAndDeclaration(

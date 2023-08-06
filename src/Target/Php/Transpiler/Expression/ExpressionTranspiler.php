@@ -38,7 +38,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferen
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Access\AccessTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\BinaryOperation\BinaryOperationTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\BooleanLiteral\BooleanLiteralTranspiler;
-use PackageFactory\ComponentEngine\Target\Php\Transpiler\Identifier\IdentifierTranspiler;
+use PackageFactory\ComponentEngine\Target\Php\Transpiler\ValueReference\ValueReferenceTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Match\MatchTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\NullLiteral\NullLiteralTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\IntegerLiteral\IntegerLiteralTranspiler;
@@ -63,7 +63,7 @@ final class ExpressionTranspiler
             AccessNode::class => new AccessTranspiler(
                 scope: $this->scope
             ),
-            ValueReferenceNode::class => new IdentifierTranspiler(
+            ValueReferenceNode::class => new ValueReferenceTranspiler(
                 scope: $this->scope
             ),
             TernaryOperationNode::class => new TernaryOperationTranspiler(
