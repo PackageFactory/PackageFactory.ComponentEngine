@@ -22,37 +22,83 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\TemplateLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TemplateLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralExpressionSegmentNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralStringSegmentNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Expression\ExpressionTranspiler;
-use PackageFactory\ComponentEngine\Target\Php\Transpiler\StringLiteral\StringLiteralTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 
 final class TemplateLiteralTranspiler
 {
+    private ?ExpressionTranspiler $expressionTranspiler = null;
+
     public function __construct(private readonly ScopeInterface $scope)
     {
     }
 
     public function transpile(TemplateLiteralNode $templateLiteralNode): string
     {
-        $stringLiteralTranspiler = new StringLiteralTranspiler(
-            shouldAddQuotes: true
-        );
-        $expressionTranspiler = new ExpressionTranspiler(
-            scope: $this->scope,
-            shouldAddQuotesIfNecessary: true
-        );
         $segments = [];
 
-        foreach ($templateLiteralNode->segments as $segmentNode) {
+        foreach ($templateLiteralNode->segments->items as $segmentNode) {
             $segments[] = match ($segmentNode::class) {
-                StringLiteralNode::class => $stringLiteralTranspiler->transpile($segmentNode),
-                ExpressionNode::class => $expressionTranspiler->transpile($segmentNode)
+                TemplateLiteralStringSegmentNode::class => $this->transpileStringSegment($segmentNode),
+                TemplateLiteralExpressionSegmentNode::class => $this->transpileExpressionSegment($segmentNode)
             };
         }
 
         return join(' . ', $segments);
+    }
+
+    private function transpileStringSegment(TemplateLiteralStringSegmentNode $segmentNode): string
+    {
+        $result = $segmentNode->value;
+        $shouldAddTrailingQuote = true;
+        $shouldAddLeadingQuote = true;
+
+        if (strpos($result, "\n") !== false) {
+            $lines = explode("\n", $result);
+            $result = array_shift($lines);
+            $additionalLineBreaks = '';
+            $shouldAddLeadingQuote = $result !== '';
+
+            foreach ($lines as $line) {
+                if ($line === '') {
+                    $additionalLineBreaks .= '\n';
+                } else {
+                    $result .= $result
+                        ?  '\' . "\n' . $additionalLineBreaks . '" . \'' . $line
+                        :  '"\n' . $additionalLineBreaks . '" . \'' . $line;
+                    $additionalLineBreaks = '';
+                }
+            }
+
+            if ($additionalLineBreaks) {
+                $result .= $result
+                    ? '\' . "' . $additionalLineBreaks . '"'
+                    : '"' . $additionalLineBreaks . '"';
+                $shouldAddTrailingQuote = false;
+            }
+        }
+
+        if ($shouldAddLeadingQuote) {
+            $result = '\'' . $result;
+        }
+
+        if ($shouldAddTrailingQuote) {
+            $result .= '\'';
+        }
+
+        return $result;
+    }
+
+    private function transpileExpressionSegment(TemplateLiteralExpressionSegmentNode $segmentNode): string
+    {
+        $this->expressionTranspiler ??= new ExpressionTranspiler(
+            scope: $this->scope,
+            shouldAddQuotesIfNecessary: true
+        );
+
+        return $this->expressionTranspiler->transpile($segmentNode->expression);
     }
 }

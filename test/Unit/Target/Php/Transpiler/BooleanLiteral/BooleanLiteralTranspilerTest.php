@@ -22,9 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\BooleanLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\BooleanLiteral\BooleanLiteralTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PHPUnit\Framework\TestCase;
 
 final class BooleanLiteralTranspilerTest extends TestCase
@@ -50,8 +49,7 @@ final class BooleanLiteralTranspilerTest extends TestCase
     public function transpilesBooleanLiteralNodes(string $booleanLiteralAsString, string $expectedTranspilationResult): void
     {
         $booleanLiteralTranspiler = new BooleanLiteralTranspiler();
-        $booleanLiteralNode = ExpressionNode::fromString($booleanLiteralAsString)->root;
-        assert($booleanLiteralNode instanceof BooleanLiteralNode);
+        $booleanLiteralNode = ASTNodeFixtures::BooleanLiteral($booleanLiteralAsString);
 
         $actualTranspilationResult = $booleanLiteralTranspiler->transpile(
             $booleanLiteralNode

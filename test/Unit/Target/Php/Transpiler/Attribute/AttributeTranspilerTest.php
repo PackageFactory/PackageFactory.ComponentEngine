@@ -22,9 +22,9 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Attribute;
 
-use PackageFactory\ComponentEngine\Parser\Ast\AttributeNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Attribute\AttributeTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PHPUnit\Framework\TestCase;
 
 final class AttributeTranspilerTest extends TestCase
@@ -53,7 +53,8 @@ final class AttributeTranspilerTest extends TestCase
         $attributeTranspiler = new AttributeTranspiler(
             scope: new DummyScope()
         );
-        $attributeNode = AttributeNode::fromString($attributeAsString);
+        $attributeNode = ASTNodeFixtures::Attribute($attributeAsString);
+        assert($attributeNode !== null);
 
         $actualTranspilationResult = $attributeTranspiler->transpile(
             $attributeNode

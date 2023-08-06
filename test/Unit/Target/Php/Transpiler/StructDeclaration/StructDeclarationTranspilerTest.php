@@ -22,8 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\StructDeclaration;
 
-use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\StructDeclaration\StructDeclarationTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
@@ -43,10 +43,10 @@ final class StructDeclarationTranspilerTest extends TestCase
         }
         EOT;
         $structDeclarationTranspiler = new StructDeclarationTranspiler(
-            scope: new DummyScope([], ['string' => StringType::get()]),
+            scope: new DummyScope([StringType::get()]),
             strategy: new StructDeclarationTestStrategy()
         );
-        $structDeclarationNode = StructDeclarationNode::fromString($structDeclarationAsString);
+        $structDeclarationNode = ASTNodeFixtures::StructDeclaration($structDeclarationAsString);
 
         $expectedTranspilationResult = <<<'PHP'
         <?php

@@ -22,16 +22,38 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\ModuleScope;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\Test\Unit\Module\Loader\Fixtures\DummyLoader;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Scope\ModuleScope\ModuleScope;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 use PHPUnit\Framework\TestCase;
 
 final class ModuleScopeTest extends TestCase
 {
+    private function mockAtomicType(string $name): AtomicTypeInterface
+    {
+        return new class($name) implements AtomicTypeInterface
+        {
+            public function __construct(private readonly string $name)
+            {
+            }
+
+            public function getName(): TypeName
+            {
+                return TypeName::from($this->name);
+            }
+
+            public function is(TypeInterface $other): bool
+            {
+                return $other === $this;
+            }
+        };
+    }
+
     /**
      * @test
      * @return void
@@ -41,16 +63,18 @@ final class ModuleScopeTest extends TestCase
         $moduleAsString = <<<EOT
         from "./Foo.afx" import { Foo }
         from "./Bar.afx" import { Bar, Baz }
+
+        export struct Qux {}
         EOT;
-        $moduleNode = ModuleNode::fromString($moduleAsString);
+        $moduleNode = ASTNodeFixtures::Module($moduleAsString);
         $moduleScope = new ModuleScope(
             loader: new DummyLoader([
                 './Foo.afx' => [
-                    'Foo' => $typeOfFoo = $this->createStub(TypeInterface::class),
+                    'Foo' => $typeOfFoo = $this->createStub(AtomicTypeInterface::class),
                 ],
                 './Bar.afx' => [
-                    'Bar' => $typeOfBar = $this->createStub(TypeInterface::class),
-                    'Baz' => $typeOfBaz = $this->createStub(TypeInterface::class)
+                    'Bar' => $typeOfBar = $this->createStub(AtomicTypeInterface::class),
+                    'Baz' => $typeOfBaz = $this->createStub(AtomicTypeInterface::class)
                 ],
             ]),
             moduleNode: $moduleNode,
@@ -59,23 +83,17 @@ final class ModuleScopeTest extends TestCase
 
         $this->assertSame(
             $typeOfFoo,
-            $moduleScope->resolveTypeReference(
-                TypeReferenceNode::fromString('Foo')
-            )
+            $moduleScope->getType(TypeName::from('Foo'))
         );
 
         $this->assertSame(
             $typeOfBar,
-            $moduleScope->resolveTypeReference(
-                TypeReferenceNode::fromString('Bar')
-            )
+            $moduleScope->getType(TypeName::from('Bar'))
         );
 
         $this->assertSame(
             $typeOfBaz,
-            $moduleScope->resolveTypeReference(
-                TypeReferenceNode::fromString('Baz')
-            )
+            $moduleScope->getType(TypeName::from('Baz'))
         );
     }
 
@@ -85,18 +103,23 @@ final class ModuleScopeTest extends TestCase
      */
     public function fallsBackToParentScopeWhenProvidingTypesForValues(): void
     {
-        $moduleNode = ModuleNode::fromString('from "y" import { y }');
+        $moduleNode = ASTNodeFixtures::Module('from "y" import { y } export struct Qux {}');
         $moduleScope = new ModuleScope(
             loader: new DummyLoader(),
             moduleNode: $moduleNode,
-            parentScope: new DummyScope([
-                'foo' => $typeOfFoo = $this->createStub(TypeInterface::class),
-            ])
+            parentScope: new DummyScope(
+                [
+                    $typeOfFoo = $this->mockAtomicType('Foo')
+                ],
+                [
+                    'foo' => $typeOfFoo
+                ]
+            )
         );
 
         $this->assertSame(
             $typeOfFoo,
-            $moduleScope->lookupTypeFor('foo')
+            $moduleScope->getTypeOf(VariableName::from('foo'))
         );
     }
 }

@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\NullLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Ast\NullLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\NullLiteral\NullLiteralNode;
 
 final class NullLiteralTranspiler
 {

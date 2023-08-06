@@ -22,15 +22,19 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Access;
 
+use PackageFactory\ComponentEngine\Domain\PropertyName\PropertyName;
+use PackageFactory\ComponentEngine\Domain\StructName\StructName;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeNames;
 use PackageFactory\ComponentEngine\Module\ModuleId;
-use PackageFactory\ComponentEngine\Parser\Ast\AccessNode;
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Access\AccessTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\Properties;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\Property;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
+use PackageFactory\ComponentEngine\TypeSystem\TypeReference;
 use PHPUnit\Framework\TestCase;
 
 final class AccessTranspilerTest extends TestCase
@@ -60,31 +64,70 @@ final class AccessTranspilerTest extends TestCase
     public function transpilesAccessNodes(string $accessAsString, string $expectedTranspilationResult): void
     {
         $accessTranspiler = new AccessTranspiler(
-            scope: new DummyScope([
-                'a' => StructType::fromStructDeclarationNode(
-                    StructDeclarationNode::fromString(
-                        'struct A { b: B }'
-                    )
-                ),
-                'SomeEnum' => EnumStaticType::fromModuleIdAndDeclaration(
-                    ModuleId::fromString("module-a"),
-                    EnumDeclarationNode::fromString(
-                        'enum SomeEnum { A B C }'
-                    )
-                ),
-                'someStruct' => StructType::fromStructDeclarationNode(
-                    StructDeclarationNode::fromString(<<<'AFX'
-                        struct SomeStruct {
-                            foo: string
-                            deep: ?SomeStruct
-                        }
-                        AFX
-                    )
-                )
-            ])
+            scope: new DummyScope(
+                [
+                    $structTypeA = new StructType(
+                        name: StructName::from('A'),
+                        properties: new Properties(
+                            new Property(
+                                name: PropertyName::from('b'),
+                                type: new TypeReference(
+                                    names: new TypeNames(TypeName::from('B')),
+                                    isOptional: false,
+                                    isArray: false
+                                )
+                            )
+                        )
+                    ),
+                    $enumStaticType = EnumStaticType::fromModuleIdAndDeclaration(
+                        ModuleId::fromString("module-a"),
+                        ASTNodeFixtures::EnumDeclaration(
+                            'enum SomeEnum { A B C }'
+                        )
+                    ),
+                    $structTypeSomeStruct = new StructType(
+                        name: StructName::from('SomeStruct'),
+                        properties: new Properties(
+                            new Property(
+                                name: PropertyName::from('b'),
+                                type: new TypeReference(
+                                    names: new TypeNames(TypeName::from('foo')),
+                                    isOptional: false,
+                                    isArray: false
+                                )
+                            ),
+                            new Property(
+                                name: PropertyName::from('deep'),
+                                type: new TypeReference(
+                                    names: new TypeNames(TypeName::from('SomeStruct')),
+                                    isOptional: true,
+                                    isArray: false
+                                )
+                            )
+                        )
+                    ),
+                    new StructType(
+                        name: StructName::from('B'),
+                        properties: new Properties(
+                            new Property(
+                                name: PropertyName::from('c'),
+                                type: new TypeReference(
+                                    names: new TypeNames(TypeName::from('string')),
+                                    isOptional: false,
+                                    isArray: false
+                                )
+                            )
+                        )
+                    ),
+                ],
+                [
+                    'a' => $structTypeA,
+                    'SomeEnum' => $enumStaticType,
+                    'someStruct' => $structTypeSomeStruct
+                ]
+            )
         );
-        $accessNode = ExpressionNode::fromString($accessAsString)->root;
-        assert($accessNode instanceof AccessNode);
+        $accessNode = ASTNodeFixtures::Access($accessAsString);
 
         $actualTranspilationResult = $accessTranspiler->transpile(
             $accessNode

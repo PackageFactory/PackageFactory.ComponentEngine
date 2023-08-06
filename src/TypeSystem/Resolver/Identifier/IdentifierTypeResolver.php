@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\Identifier;
 
-use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
@@ -32,13 +32,13 @@ final class IdentifierTypeResolver
     {
     }
 
-    public function resolveTypeOf(IdentifierNode $identifierNode): TypeInterface
+    public function resolveTypeOf(ValueReferenceNode $identifierNode): TypeInterface
     {
-        $name = $identifierNode->value;
-        $foundType = $this->scope->lookupTypeFor($name);
+        $name = $identifierNode->name;
+        $foundType = $this->scope->getTypeOf($name);
 
         if ($foundType === null) {
-            throw new \Exception('@TODO: Unknown identifier ' . $name);
+            throw new \Exception('@TODO: Unknown identifier ' . $name->value);
         } else {
             return $foundType;
         }

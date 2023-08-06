@@ -22,7 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\GlobalScope;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
 use PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope\GlobalScope;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
@@ -30,18 +31,6 @@ use PHPUnit\Framework\TestCase;
 
 final class GlobalScopeTest extends TestCase
 {
-    /**
-     * @test
-     * @return void
-     */
-    public function isSingleton(): void
-    {
-        $globalScope1 = GlobalScope::get();
-        $globalScope2 = GlobalScope::get();
-
-        $this->assertSame($globalScope1, $globalScope2);
-    }
-
     /**
      * @return array<string,mixed>
      */
@@ -55,16 +44,14 @@ final class GlobalScopeTest extends TestCase
     /**
      * @dataProvider primitiveTypeExamples
      * @test
-     * @param string $typeReferenceAsString
+     * @param string $typeNameAsString
      * @param TypeInterface $expectedType
      * @return void
      */
-    public function resolvesPrimitiveTypes(string $typeReferenceAsString, TypeInterface $expectedType): void
+    public function resolvesPrimitiveTypes(string $typeNameAsString, TypeInterface $expectedType): void
     {
         $globalScope = GlobalScope::get();
-        $typeReferenceNode = TypeReferenceNode::fromString($typeReferenceAsString);
-
-        $actualType = $globalScope->resolveTypeReference($typeReferenceNode);
+        $actualType = $globalScope->getType(TypeName::from($typeNameAsString));
 
         $this->assertTrue(
             $expectedType->is($actualType),
@@ -80,6 +67,6 @@ final class GlobalScopeTest extends TestCase
     {
         $globalScope = GlobalScope::get();
 
-        $this->assertNull($globalScope->lookupTypeFor('someVariable'));
+        $this->assertNull($globalScope->getTypeOf(VariableName::from('someVariable')));
     }
 }

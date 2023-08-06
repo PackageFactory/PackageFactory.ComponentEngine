@@ -22,10 +22,9 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\Access;
 
+use PackageFactory\ComponentEngine\Domain\EnumMemberName\EnumMemberName;
 use PackageFactory\ComponentEngine\Module\ModuleId;
-use PackageFactory\ComponentEngine\Parser\Ast\AccessNode;
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Access\AccessTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
@@ -60,11 +59,9 @@ final class AccessTypeResolverTest extends TestCase
 
     private function resolveAccessType(string $accessAsString, ScopeInterface $scope): TypeInterface
     {
-        $accessTypeResolver = new AccessTypeResolver(
-            scope: $scope
-        );
-        $accessNode = ExpressionNode::fromString($accessAsString)->root;
-        assert($accessNode instanceof AccessNode);
+        $accessTypeResolver = new AccessTypeResolver(scope: $scope);
+        $accessNode = ASTNodeFixtures::Access($accessAsString);
+
         return $accessTypeResolver->resolveTypeOf($accessNode);
     }
 
@@ -73,16 +70,17 @@ final class AccessTypeResolverTest extends TestCase
      */
     public function enumMemberAccessOnStaticEnum(): void
     {
-        $someEnum = EnumStaticType::fromModuleIdAndDeclaration(
-            ModuleId::fromString("module-a"),
-            EnumDeclarationNode::fromString(
-                'enum SomeEnum { A("Hi") }'
-            )
+        $scope = new DummyScope(
+            [
+                $someEnum = EnumStaticType::fromModuleIdAndDeclaration(
+                    ModuleId::fromString("module-a"),
+                    ASTNodeFixtures::EnumDeclaration(
+                        'enum SomeEnum { A("Hi") }'
+                    )
+                )
+            ],
+            ['SomeEnum' => $someEnum]
         );
-
-        $scope = new DummyScope([
-            'SomeEnum' => $someEnum
-        ]);
 
         $accessType = $this->resolveAccessType(
             'SomeEnum.A',
@@ -94,7 +92,7 @@ final class AccessTypeResolverTest extends TestCase
 
         $this->assertTrue($accessType->enumStaticType->is($someEnum));
 
-        $this->assertEquals("A", $accessType->getMemberName());
+        $this->assertEquals(EnumMemberName::from('A'), $accessType->getMemberName());
     }
 
     /**
@@ -105,22 +103,24 @@ final class AccessTypeResolverTest extends TestCase
     {
         $this->expectExceptionMessage($expectedErrorMessage);
 
-        $someEnum = EnumStaticType::fromModuleIdAndDeclaration(
-            ModuleId::fromString("module-a"),
-            EnumDeclarationNode::fromString(
-                'enum SomeEnum { A }'
-            )
+        $scope = new DummyScope(
+            [
+                StringType::get(),
+                $someEnum = EnumStaticType::fromModuleIdAndDeclaration(
+                    ModuleId::fromString("module-a"),
+                    ASTNodeFixtures::EnumDeclaration(
+                        'enum SomeEnum { A }'
+                    )
+                )
+            ],
+            [
+                'someString' => StringType::get(),
+                'SomeEnum' => $someEnum,
+                'someEnumValue' => $someEnum->toEnumInstanceType()
+            ]
         );
-        $scope = new DummyScope([
-            'someString' => StringType::get(),
-            'SomeEnum' => $someEnum,
-            'someEnumValue' => $someEnum->toEnumInstanceType()
-        ]);
-        $accessTypeResolver = new AccessTypeResolver(
-            scope: $scope
-        );
-        $accessNode = ExpressionNode::fromString($accessAsString)->root;
-        assert($accessNode instanceof AccessNode);
+        $accessTypeResolver = new AccessTypeResolver(scope: $scope);
+        $accessNode = ASTNodeFixtures::Access($accessAsString);
 
         $accessTypeResolver->resolveTypeOf($accessNode);
     }

@@ -17,6 +17,5 @@
     --display-deprecations \
     --display-errors \
     --display-notices \
-    --testdox \
     --coverage-html build/coverage-report \
     --coverage-filter src $@

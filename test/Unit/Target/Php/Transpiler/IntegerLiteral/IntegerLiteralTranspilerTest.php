@@ -22,9 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\IntegerLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\IntegerLiteral\IntegerLiteralTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PHPUnit\Framework\TestCase;
 
 final class IntegerLiteralTranspilerTest extends TestCase
@@ -66,8 +65,7 @@ final class IntegerLiteralTranspilerTest extends TestCase
     public function transpilesIntegerLiteralNodes(string $integerLiteralAsString, string $expectedTranspilationResult): void
     {
         $integerLiteralTranspiler = new IntegerLiteralTranspiler();
-        $integerLiteralNode = ExpressionNode::fromString($integerLiteralAsString)->root;
-        assert($integerLiteralNode instanceof IntegerLiteralNode);
+        $integerLiteralNode = ASTNodeFixtures::IntegerLiteral($integerLiteralAsString);
 
         $actualTranspilationResult = $integerLiteralTranspiler->transpile(
             $integerLiteralNode

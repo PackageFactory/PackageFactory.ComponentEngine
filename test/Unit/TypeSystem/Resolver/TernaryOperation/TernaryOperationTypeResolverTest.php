@@ -22,8 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\TernaryOperation;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\TernaryOperation\TernaryOperationTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
@@ -59,15 +58,19 @@ final class TernaryOperationTypeResolverTest extends TestCase
      */
     public function resolvesTernaryOperationToResultingType(string $ternaryExpressionAsString, TypeInterface $expectedType): void
     {
-        $scope = new DummyScope([
-            'variableOfTypeString' => StringType::get(),
-            'variableOfTypeNumber' => IntegerType::get(),
-        ]);
+        $scope = new DummyScope(
+            [StringType::get(), IntegerType::get()],
+            [
+                'variableOfTypeString' => StringType::get(),
+                'variableOfTypeNumber' => IntegerType::get()
+            ]
+        );
         $ternaryOperationTypeResolver = new TernaryOperationTypeResolver(
             scope: $scope
         );
-        $ternaryOperationNode = ExpressionNode::fromString($ternaryExpressionAsString)->root;
-        assert($ternaryOperationNode instanceof TernaryOperationNode);
+        $ternaryOperationNode = ASTNodeFixtures::TernaryOperation(
+            $ternaryExpressionAsString
+        );
 
         $actualType = $ternaryOperationTypeResolver->resolveTypeOf($ternaryOperationNode);
 

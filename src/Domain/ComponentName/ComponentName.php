@@ -22,6 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Domain\ComponentName;
 
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+
 final class ComponentName
 {
     private function __construct(
@@ -32,5 +34,10 @@ final class ComponentName
     public static function from(string $string): self
     {
         return new self($string);
+    }
+
+    public function toTypeName(): TypeName
+    {
+        return TypeName::from($this->value);
     }
 }

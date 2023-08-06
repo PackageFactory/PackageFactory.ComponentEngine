@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\EnumDeclaration;
 
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Target\Php\TargetSpecific\ClassName;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\EnumDeclaration\EnumDeclarationStrategyInterface;
 
@@ -30,6 +30,6 @@ final class EnumDeclarationTestStrategy implements EnumDeclarationStrategyInterf
 {
     public function getClassNameFor(EnumDeclarationNode $enumDeclarationNode): ClassName
     {
-        return ClassName::fromString('Vendor\\Project\\Component\\' . $enumDeclarationNode->enumName);
+        return ClassName::fromString('Vendor\\Project\\Component\\' . $enumDeclarationNode->name->value->value);
     }
 }

@@ -22,10 +22,9 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Tag;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Tag\TagTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
 
@@ -62,12 +61,9 @@ final class TagTranspilerTest extends TestCase
     public function transpilesTagNodes(string $tagAsString, string $expectedTranspilationResult): void
     {
         $tagTranspiler = new TagTranspiler(
-            scope: new DummyScope([
-                'someValue' => StringType::get()
-            ])
+            scope: new DummyScope([StringType::get()], ['someValue' => StringType::get()])
         );
-        $tagNode = ExpressionNode::fromString($tagAsString)->root;
-        assert($tagNode instanceof TagNode);
+        $tagNode = ASTNodeFixtures::Tag($tagAsString);
 
         $actualTranspilationResult = $tagTranspiler->transpile($tagNode);
 

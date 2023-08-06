@@ -22,18 +22,18 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression;
 
-use PackageFactory\ComponentEngine\Parser\Ast\AccessNode;
-use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
-use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
-use PackageFactory\ComponentEngine\Parser\Ast\NullLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TemplateLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Access\AccessNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\BinaryOperation\BinaryOperationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral\BooleanLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Match\MatchNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\NullLiteral\NullLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TernaryOperation\TernaryOperationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Access\AccessTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\BinaryOperation\BinaryOperationTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\BooleanLiteral\BooleanLiteralTypeResolver;
@@ -64,7 +64,7 @@ final class ExpressionTypeResolver
             ))->resolveTypeOf($rootNode),
             BooleanLiteralNode::class => (new BooleanLiteralTypeResolver())
                 ->resolveTypeOf($rootNode),
-            IdentifierNode::class => (new IdentifierTypeResolver(
+            ValueReferenceNode::class => (new IdentifierTypeResolver(
                 scope: $this->scope
             ))->resolveTypeOf($rootNode),
             MatchNode::class => (new MatchTypeResolver(

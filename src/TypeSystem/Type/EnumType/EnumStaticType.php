@@ -22,19 +22,23 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Type\EnumType;
 
+use PackageFactory\ComponentEngine\Domain\EnumMemberName\EnumMemberName;
+use PackageFactory\ComponentEngine\Domain\EnumName\EnumName;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Module\ModuleId;
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class EnumStaticType implements TypeInterface
+final class EnumStaticType implements AtomicTypeInterface
 {
     /**
-     * @param string $enumName
+     * @param EnumName $name
      * @param ModuleId $moduleId
      * @param array<string,bool> $memberNameHashMap
      */
     public function __construct(
-        public readonly string $enumName,
+        private readonly EnumName $name,
         private readonly ModuleId $moduleId,
         private readonly array $memberNameHashMap,
     ) {
@@ -43,12 +47,12 @@ final class EnumStaticType implements TypeInterface
     public static function fromModuleIdAndDeclaration(ModuleId $moduleId, EnumDeclarationNode $enumDeclarationNode): self
     {
         $memberNameHashMap = [];
-        foreach ($enumDeclarationNode->memberDeclarations->items as $memberDeclarationNode) {
-            $memberNameHashMap[$memberDeclarationNode->name] = true;
+        foreach ($enumDeclarationNode->members->items as $memberDeclarationNode) {
+            $memberNameHashMap[$memberDeclarationNode->name->value->value] = true;
         }
 
         return new self(
-            enumName: $enumDeclarationNode->enumName,
+            name: $enumDeclarationNode->name->value,
             moduleId: $moduleId,
             memberNameHashMap: $memberNameHashMap
         );
@@ -62,17 +66,22 @@ final class EnumStaticType implements TypeInterface
         return array_keys($this->memberNameHashMap);
     }
 
-    public function hasMember(string $memberName): bool
+    public function hasMember(EnumMemberName $memberName): bool
     {
-        return array_key_exists($memberName, $this->memberNameHashMap);
+        return array_key_exists($memberName->value, $this->memberNameHashMap);
     }
 
-    public function getMemberType(string $memberName): EnumInstanceType
+    public function getMemberType(EnumMemberName $memberName): EnumInstanceType
     {
         return EnumInstanceType::fromStaticEnumTypeAndMemberName(
             $this,
             $memberName
         );
+    }
+
+    public function getName(): TypeName
+    {
+        return $this->name->toTypeName();
     }
 
     public function is(TypeInterface $other): bool
@@ -82,7 +91,7 @@ final class EnumStaticType implements TypeInterface
         }
         if ($other instanceof EnumStaticType) {
             return $this->moduleId === $other->moduleId
-                && $this->enumName === $other->enumName;
+                && $this->name->value === $other->name->value;
         }
         return false;
     }

@@ -22,12 +22,22 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\NullType;
 
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
 
 final class NullTypeTest extends TestCase
 {
+    /**
+     * @test
+     * @return void
+     */
+    public function providesItsTypeName(): void
+    {
+        $this->assertEquals(TypeName::from('null'), NullType::get()->getName());
+    }
+
     /**
      * @test
      */

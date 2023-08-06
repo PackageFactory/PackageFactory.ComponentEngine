@@ -25,6 +25,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Module;
 use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
 use PackageFactory\ComponentEngine\Test\Unit\Module\Loader\Fixtures\DummyLoader;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Module\ModuleTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope\GlobalScope;
 use PHPUnit\Framework\TestCase;
 
@@ -46,7 +47,7 @@ final class ModuleTranspilerTest extends TestCase
             globalScope: GlobalScope::get(),
             strategy: new ModuleTestStrategy()
         );
-        $moduleNode = ModuleNode::fromString($moduleNodeAsString);
+        $moduleNode = ASTNodeFixtures::Module($moduleNodeAsString);
 
         $expectedTranspilationResult = <<<PHP
         <?php
@@ -94,7 +95,7 @@ final class ModuleTranspilerTest extends TestCase
             globalScope: GlobalScope::get(),
             strategy: new ModuleTestStrategy()
         );
-        $moduleNode = ModuleNode::fromString($moduleNodeAsString);
+        $moduleNode = ASTNodeFixtures::Module($moduleNodeAsString);
 
         $expectedTranspilationResult = <<<PHP
         <?php
@@ -139,7 +140,7 @@ final class ModuleTranspilerTest extends TestCase
             globalScope: GlobalScope::get(),
             strategy: new ModuleTestStrategy()
         );
-        $moduleNode = ModuleNode::fromString($moduleNodeAsString);
+        $moduleNode = ASTNodeFixtures::Module($moduleNodeAsString);
 
         $expectedTranspilationResult = <<<'PHP'
         <?php

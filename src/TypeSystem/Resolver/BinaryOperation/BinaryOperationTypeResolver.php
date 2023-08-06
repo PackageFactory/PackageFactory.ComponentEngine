@@ -22,8 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\BinaryOperation;
 
-use PackageFactory\ComponentEngine\Definition\BinaryOperator;
-use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\BinaryOperation\BinaryOperationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\BinaryOperation\BinaryOperator;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
@@ -58,9 +58,9 @@ final class BinaryOperationTypeResolver
             scope: $this->scope
         );
 
-        return UnionType::of(
-            $expressionTypeResolver->resolveTypeOf($binaryOperationNode->left),
-            $expressionTypeResolver->resolveTypeOf($binaryOperationNode->right)
+        return UnionType::merge(
+            $expressionTypeResolver->resolveTypeOf($binaryOperationNode->leftOperand),
+            $expressionTypeResolver->resolveTypeOf($binaryOperationNode->rightOperand)
         );
     }
 }

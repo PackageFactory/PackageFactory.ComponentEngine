@@ -23,32 +23,38 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Module\Loader\Fixtures;
 
 use PackageFactory\ComponentEngine\Module\LoaderInterface;
-use PackageFactory\ComponentEngine\Parser\Ast\ImportNode;
-use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
+use PackageFactory\ComponentEngine\Module\ModuleInterface;
+use PackageFactory\ComponentEngine\Test\Unit\Module\Fixtures\DummyModule;
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 
 final class DummyLoader implements LoaderInterface
 {
     /**
-     * @param array<string,array<string,TypeInterface>> $data
+     * @var array<string,DummyModule>
      */
-    public function __construct(private readonly array $data = [])
+    private readonly array $data;
+
+    /**
+     * @param array<string,array<string,AtomicTypeInterface>> $data
+     */
+    public function __construct(array $data = [])
     {
+        $thisData = [];
+        foreach ($data as $key => $moduleData) {
+            $thisData[$key] = new DummyModule($moduleData);
+        }
+
+        $this->data = $thisData;
     }
 
-    public function resolveTypeOfImport(ImportNode $importNode): TypeInterface
+    public function loadModule(string $pathToModule): ModuleInterface
     {
-        if ($moduleData = $this->data[$importNode->path] ?? null) {
-            if ($type = $moduleData[$importNode->name->value] ?? null) {
-                return $type;
-            }
-
-            throw new \Exception(
-                '[DummyLoader] Cannot import "' . $importNode->name->value . '" from "' . $importNode->sourcePath->value . '"'
-            );
+        if ($module = $this->data[$pathToModule] ?? null) {
+            return $module;
         }
 
         throw new \Exception(
-            '[DummyLoader] Unknown Import: ' . json_encode($importNode, JSON_PRETTY_PRINT)
+            '[DummyLoader] Module at path "' . $pathToModule . '" does not exist'
         );
     }
 }

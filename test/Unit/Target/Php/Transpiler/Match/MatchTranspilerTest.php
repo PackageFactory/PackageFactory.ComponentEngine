@@ -23,11 +23,9 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Match;
 
 use PackageFactory\ComponentEngine\Module\ModuleId;
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Match\MatchTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PHPUnit\Framework\TestCase;
 
@@ -72,17 +70,19 @@ final class MatchTranspilerTest extends TestCase
     public function transpilesMatchNodes(string $matchAsString, string $expectedTranspilationResult): void
     {
         $matchTranspiler = new MatchTranspiler(
-            scope: new DummyScope([
-                'SomeEnum' => EnumStaticType::fromModuleIdAndDeclaration(
-                    ModuleId::fromString("module-a"),
-                    EnumDeclarationNode::fromString(
-                        'enum SomeEnum { A B C }'
+            scope: new DummyScope(
+                [
+                    $someEnumType = EnumStaticType::fromModuleIdAndDeclaration(
+                        ModuleId::fromString("module-a"),
+                        ASTNodeFixtures::EnumDeclaration(
+                            'enum SomeEnum { A B C }'
+                        )
                     )
-                )
-            ])
+                ],
+                ['SomeEnum' => $someEnumType]
+            )
         );
-        $matchNode = ExpressionNode::fromString($matchAsString)->root;
-        assert($matchNode instanceof MatchNode);
+        $matchNode = ASTNodeFixtures::Match($matchAsString);
 
         $actualTranspilationResult = $matchTranspiler->transpile(
             $matchNode

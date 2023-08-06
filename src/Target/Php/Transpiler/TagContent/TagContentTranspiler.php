@@ -22,10 +22,9 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\TagContent;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TagContentNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TextNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Expression\ExpressionTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Tag\TagTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Text\TextTranspiler;
@@ -63,14 +62,14 @@ final class TagContentTranspiler
         return $result;
     }
 
-    public function transpile(TagContentNode $tagContentNode): string
+    public function transpile(TextNode|ExpressionNode|TagNode $tagContentNode): string
     {
-        return match ($tagContentNode->root::class) {
-            TextNode::class => (new TextTranspiler())->transpile($tagContentNode->root),
-            ExpressionNode::class => $this->transpileExpression($tagContentNode->root),
+        return match ($tagContentNode::class) {
+            TextNode::class => (new TextTranspiler())->transpile($tagContentNode),
+            ExpressionNode::class => $this->transpileExpression($tagContentNode),
             TagNode::class => (new TagTranspiler(
                 scope: $this->scope
-            ))->transpile($tagContentNode->root)
+            ))->transpile($tagContentNode)
         };
     }
 }

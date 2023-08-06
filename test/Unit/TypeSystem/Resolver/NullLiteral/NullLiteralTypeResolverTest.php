@@ -22,8 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\NullLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Ast\NullLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\NullLiteral\NullLiteralTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
 use PHPUnit\Framework\TestCase;
@@ -36,8 +35,7 @@ final class NullLiteralTypeResolverTest extends TestCase
     public function resolvesNullLiteralToNullType(): void
     {
         $nullLiteralTypeResolver = new NullLiteralTypeResolver();
-        $nullLiteralNode = ExpressionNode::fromString('null')->root;
-        assert($nullLiteralNode instanceof NullLiteralNode);
+        $nullLiteralNode = ASTNodeFixtures::NullLiteral('null');
 
         $expectedType = NullType::get();
         $actualType = $nullLiteralTypeResolver->resolveTypeOf($nullLiteralNode);

@@ -22,7 +22,9 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
@@ -43,19 +45,19 @@ final class GlobalScope implements ScopeInterface
         return self::$instance ??= new self();
     }
 
-    public function lookupTypeFor(string $name): ?TypeInterface
+    public function getType(TypeName $typeName): AtomicTypeInterface
     {
-        return null;
-    }
-
-    public function resolveTypeReference(TypeReferenceNode $typeReferenceNode): TypeInterface
-    {
-        return match ($typeReferenceNode->name) {
+        return match ($typeName->value) {
             'string' => StringType::get(),
             'number' => IntegerType::get(),
             'boolean' => BooleanType::get(),
             'slot' => SlotType::get(),
-            default => throw new \Exception('@TODO: Unknown Type ' . $typeReferenceNode->name)
+            default => throw new \Exception('@TODO: Unknown Type ' . $typeName->value)
         };
+    }
+
+    public function getTypeOf(VariableName $variableName): ?TypeInterface
+    {
+        return null;
     }
 }

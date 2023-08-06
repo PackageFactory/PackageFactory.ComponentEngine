@@ -22,8 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\BinaryOperation;
 
-use PackageFactory\ComponentEngine\Definition\BinaryOperator;
-use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\BinaryOperation\BinaryOperationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\BinaryOperation\BinaryOperator;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Expression\ExpressionTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 
@@ -54,9 +54,9 @@ final class BinaryOperationTranspiler
             shouldAddQuotesIfNecessary: true
         );
 
-        $left = $expressionTranspiler->transpile($binaryOperationNode->left);
+        $left = $expressionTranspiler->transpile($binaryOperationNode->leftOperand);
         $operator = $this->transpileBinaryOperator($binaryOperationNode->operator);
-        $right = $expressionTranspiler->transpile($binaryOperationNode->right);
+        $right = $expressionTranspiler->transpile($binaryOperationNode->rightOperand);
 
         return sprintf('(%s %s %s)', $left, $operator, $right);
     }

@@ -22,9 +22,11 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType;
 
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class BooleanType implements TypeInterface
+final class BooleanType implements AtomicTypeInterface
 {
     private static null|self $instance = null;
 
@@ -35,6 +37,11 @@ final class BooleanType implements TypeInterface
     public static function get(): self
     {
         return self::$instance ??= new self();
+    }
+
+    public function getName(): TypeName
+    {
+        return TypeName::from('boolean');
     }
 
     public function is(TypeInterface $other): bool

@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,22 +20,16 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Definition;
+namespace PackageFactory\ComponentEngine\TypeSystem\Type\StructType;
 
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use PackageFactory\ComponentEngine\Domain\PropertyName\PropertyName;
+use PackageFactory\ComponentEngine\TypeSystem\TypeReference;
 
-enum AccessType: string
+final class Property
 {
-    case MANDATORY = 'MANDATORY';
-    case OPTIONAL = 'OPTIONAL';
-
-    public static function fromTokenType(TokenType $tokenType): self
-    {
-        return match ($tokenType) {
-            TokenType::PERIOD => self::MANDATORY,
-            TokenType::OPTCHAIN => self::OPTIONAL,
-
-            default => throw new \Exception('@TODO: Unknown AccessType')
-        };
+    public function __construct(
+        public readonly PropertyName $name,
+        public readonly TypeReference $type
+    ) {
     }
 }

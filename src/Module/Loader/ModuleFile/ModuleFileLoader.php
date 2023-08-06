@@ -22,48 +22,39 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Module\Loader\ModuleFile;
 
+use PackageFactory\ComponentEngine\Language\Parser\Module\ModuleParser;
 use PackageFactory\ComponentEngine\Module\LoaderInterface;
 use PackageFactory\ComponentEngine\Module\ModuleId;
-use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ImportNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
-use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
+use PackageFactory\ComponentEngine\Module\ModuleInterface;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
-use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
-use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class ModuleFileLoader implements LoaderInterface
 {
-    public function resolveTypeOfImport(ImportNode $importNode): TypeInterface
+    public function __construct(
+        private readonly Path $sourcePath
+    ) {
+    }
+
+    public function loadModule(string $pathToModule): ModuleInterface
     {
-        $pathToImportFrom = $importNode->sourcePath->resolveRelationTo(
-            Path::fromString($importNode->path)
+        $pathToImportFrom = $this->sourcePath->resolveRelationTo(
+            Path::fromString($pathToModule)
         );
         $source = Source::fromFile($pathToImportFrom->value);
         $tokenizer = Tokenizer::fromSource($source);
-        $module = ModuleNode::fromTokens($tokenizer->getIterator());
-        $export = $module->exports->get($importNode->name->value);
+        $tokens = $tokenizer->getIterator();
 
-        if ($export === null) {
-            throw new \Exception(
-                '@TODO: Module "' . $importNode->path . '" has no exported member "' . $importNode->name->value . '".'
-            );
-        }
+        $moduleParser = ModuleParser::singleton();
 
         $moduleId = ModuleId::fromSource($source);
+        $moduleNode = $moduleParser->parse($tokens);
 
-        return match ($export->declaration::class) {
-            ComponentDeclarationNode::class => ComponentType::fromComponentDeclarationNode($export->declaration),
-            EnumDeclarationNode::class => EnumStaticType::fromModuleIdAndDeclaration(
-                $moduleId,
-                $export->declaration,
-            ),
-            StructDeclarationNode::class => StructType::fromStructDeclarationNode($export->declaration)
-        };
+
+        return new Module(
+            moduleId: $moduleId,
+            moduleNode: $moduleNode
+        );
     }
 }

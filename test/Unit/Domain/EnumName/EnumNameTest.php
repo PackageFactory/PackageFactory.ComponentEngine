@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,19 +20,22 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Definition;
+namespace PackageFactory\ComponentEngine\Test\Unit\Domain\EnumName;
 
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use PackageFactory\ComponentEngine\Domain\EnumName\EnumName;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PHPUnit\Framework\TestCase;
 
-enum UnaryOperator: string
+final class EnumNameTest extends TestCase
 {
-    case NOT = 'NOT';
-
-    public static function fromTokenType(TokenType $tokenType): self
+    /**
+     * @test
+     */
+    public function convertsToTypeName(): void
     {
-        return match ($tokenType) {
-            TokenType::OPERATOR_BOOLEAN_NOT => self::NOT,
-            default => throw new \Exception('@TODO: Unknown Unary Operator')
-        };
+        $this->assertEquals(
+            TypeName::from('Foo'),
+            EnumName::from('Foo')->toTypeName()
+        );
     }
 }

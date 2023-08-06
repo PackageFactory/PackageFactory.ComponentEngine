@@ -24,6 +24,8 @@ namespace PackageFactory\ComponentEngine\Parser\Source;
 
 final class Range
 {
+    private static ?self $zero;
+
     private function __construct(
         public readonly Position $start,
         public readonly Position $end,
@@ -33,5 +35,10 @@ final class Range
     public static function from(Position $start, Position $end): self
     {
         return new self($start, $end);
+    }
+
+    public static function zero(): self
+    {
+        return self::$zero ??= new self(Position::zero(), Position::zero());
     }
 }

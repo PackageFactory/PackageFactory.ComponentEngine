@@ -42,14 +42,6 @@ final class UnionTypeTest extends TestCase
         $unionType = UnionType::of(IntegerType::get());
         $this->assertTrue($unionType->is(IntegerType::get()));
         $this->assertTrue(IntegerType::get()->is($unionType));
-
-        $unionType = UnionType::of(UnionType::of(StringType::get()));
-        $this->assertTrue($unionType->is(StringType::get()));
-        $this->assertTrue(StringType::get()->is($unionType));
-
-        $unionType = UnionType::of(UnionType::of(IntegerType::get()));
-        $this->assertTrue($unionType->is(IntegerType::get()));
-        $this->assertTrue(IntegerType::get()->is($unionType));
     }
 
     /**
@@ -57,11 +49,7 @@ final class UnionTypeTest extends TestCase
      */
     public function staticOfResolvesToGivenTypeIfAllGivenTypesAreIdentical(): void
     {
-        $unionType = UnionType::of(StringType::get(), StringType::get());
-        $this->assertTrue($unionType->is(StringType::get()));
-        $this->assertTrue(StringType::get()->is($unionType));
-
-        $unionType = UnionType::of(StringType::get(), StringType::get(), UnionType::of(StringType::get(), StringType::get()));
+        $unionType = UnionType::of(StringType::get(), StringType::get(), StringType::get());
         $this->assertTrue($unionType->is(StringType::get()));
         $this->assertTrue(StringType::get()->is($unionType));
     }

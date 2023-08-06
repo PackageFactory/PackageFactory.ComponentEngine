@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\StructDeclaration;
 
-use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference\TypeReferenceTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 
@@ -58,7 +58,7 @@ final class StructDeclarationTranspiler
             : 'final class ' . $className->getShortClassName();
         $lines[] = '{';
 
-        if (!$structDeclarationNode->propertyDeclarations->isEmpty()) {
+        if (!$structDeclarationNode->properties->isEmpty()) {
             $lines[] = '    public function __construct(';
             $lines[] = $this->writeConstructorPropertyDeclarations($structDeclarationNode);
             $lines[] = '    ) {';
@@ -77,11 +77,11 @@ final class StructDeclarationTranspiler
             scope: $this->scope,
             strategy: $this->strategy->getTypeReferenceStrategyFor($structDeclarationNode)
         );
-        $propertyDeclarations = $structDeclarationNode->propertyDeclarations;
+        $propertyDeclarations = $structDeclarationNode->properties;
         $lines = [];
 
         foreach ($propertyDeclarations->items as $propertyDeclaration) {
-            $lines[] = '        public readonly ' . $typeReferenceTranspiler->transpile($propertyDeclaration->type) . ' $' . $propertyDeclaration->name . ',';
+            $lines[] = '        public readonly ' . $typeReferenceTranspiler->transpile($propertyDeclaration->type) . ' $' . $propertyDeclaration->name->value->value . ',';
         }
 
         if ($length = count($lines)) {

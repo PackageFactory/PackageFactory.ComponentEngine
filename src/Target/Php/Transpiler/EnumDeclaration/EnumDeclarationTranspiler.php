@@ -22,10 +22,10 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\EnumDeclaration;
 
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\EnumMemberDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumDeclarationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberDeclarationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 
 final class EnumDeclarationTranspiler
 {
@@ -49,8 +49,8 @@ final class EnumDeclarationTranspiler
         $lines[] = 'enum ' . $className->getShortClassName() . ' : ' . $this->transpileBackingType($enumDeclarationNode);
         $lines[] = '{';
 
-        foreach ($enumDeclarationNode->memberDeclarations->items as $memberDeclarationNode) {
-            $lines[] = '    case ' . $memberDeclarationNode->name . ' = ' . $this->transpileMemberValue($memberDeclarationNode) . ';';
+        foreach ($enumDeclarationNode->members->items as $memberDeclarationNode) {
+            $lines[] = '    case ' . $memberDeclarationNode->name->value->value . ' = ' . $this->transpileMemberValue($memberDeclarationNode) . ';';
         }
 
         $lines[] = '}';
@@ -61,8 +61,8 @@ final class EnumDeclarationTranspiler
 
     private function transpileBackingType(EnumDeclarationNode $enumDeclarationNode): string
     {
-        foreach ($enumDeclarationNode->memberDeclarations->items as $memberDeclarationNode) {
-            if ($memberDeclarationNode->value instanceof IntegerLiteralNode) {
+        foreach ($enumDeclarationNode->members->items as $memberDeclarationNode) {
+            if ($memberDeclarationNode->value?->value instanceof IntegerLiteralNode) {
                 return 'int';
             } else {
                 return 'string';
@@ -74,12 +74,12 @@ final class EnumDeclarationTranspiler
 
     private function transpileMemberValue(EnumMemberDeclarationNode $enumMemberDeclarationNode): string
     {
-        if ($enumMemberDeclarationNode->value instanceof IntegerLiteralNode) {
-            return $enumMemberDeclarationNode->value->value;
-        } else if ($enumMemberDeclarationNode->value instanceof StringLiteralNode) {
-            return '\'' . $enumMemberDeclarationNode->value->value . '\'';
+        if ($enumMemberDeclarationNode->value?->value instanceof IntegerLiteralNode) {
+            return $enumMemberDeclarationNode->value->value->value;
+        } else if ($enumMemberDeclarationNode->value?->value instanceof StringLiteralNode) {
+            return '\'' . $enumMemberDeclarationNode->value->value->value . '\'';
         } else {
-            return '\'' . $enumMemberDeclarationNode->name . '\'';
+            return '\'' . $enumMemberDeclarationNode->name->value->value . '\'';
         }
     }
 }

@@ -22,7 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\ComponentType;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
 use PHPUnit\Framework\TestCase;
 
@@ -34,8 +35,8 @@ final class ComponentTypeTest extends TestCase
      */
     public function canBeCreatedFromComponentDeclarationNode(): void
     {
-        $componentDeclarationNode = ComponentDeclarationNode::fromString(
-            'component Foo { a : string b : number return <div>{a} and {b}</div> }'
+        $componentDeclarationNode = ASTNodeFixtures::ComponentDeclaration(
+            'component Foo { a: string b: number return <div>{a} and {b}</div> }'
         );
         $componentType = ComponentType::fromComponentDeclarationNode(
             $componentDeclarationNode
@@ -50,14 +51,17 @@ final class ComponentTypeTest extends TestCase
      */
     public function providesNameOfTheComponent(): void
     {
-        $componentDeclarationNode = ComponentDeclarationNode::fromString(
+        $componentDeclarationNode = ASTNodeFixtures::ComponentDeclaration(
             'component SomeComponent { return "" }'
         );
         $componentType = ComponentType::fromComponentDeclarationNode(
             $componentDeclarationNode
         );
 
-        $this->assertEquals('SomeComponent', $componentType->componentName);
+        $this->assertEquals(
+            TypeName::from('SomeComponent'),
+            $componentType->getName()
+        );
     }
 
     /**
@@ -66,7 +70,7 @@ final class ComponentTypeTest extends TestCase
      */
     public function isEquivalentToItself(): void
     {
-        $componentDeclarationNode = ComponentDeclarationNode::fromString(
+        $componentDeclarationNode = ASTNodeFixtures::ComponentDeclaration(
             'component SomeComponent { return "" }'
         );
         $componentType = ComponentType::fromComponentDeclarationNode(

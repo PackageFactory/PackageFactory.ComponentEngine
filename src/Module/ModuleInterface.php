@@ -20,34 +20,12 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast;
+namespace PackageFactory\ComponentEngine\Module;
 
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 
-final class NullLiteralNode implements \JsonSerializable
+interface ModuleInterface
 {
-    private function __construct()
-    {
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return self
-     */
-    public static function fromTokens(\Iterator $tokens): self
-    {
-        Scanner::assertType($tokens, TokenType::KEYWORD_NULL);
-        Scanner::skipOne($tokens);
-
-        return new self();
-    }
-
-    public function jsonSerialize(): mixed
-    {
-        return [
-            'type' => 'NullLiteralNode'
-        ];
-    }
+    public function getTypeOf(VariableName $exportName): AtomicTypeInterface;
 }

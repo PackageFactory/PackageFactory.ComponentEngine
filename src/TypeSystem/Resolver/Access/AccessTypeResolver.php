@@ -22,15 +22,14 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\Access;
 
-
-use PackageFactory\ComponentEngine\Parser\Ast\AccessNode;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumInstanceType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
-use PackageFactory\ComponentEngine\Definition\AccessType;
+use PackageFactory\ComponentEngine\Language\AST\Node\Access\AccessKeyNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Access\AccessNode;
 
 final class AccessTypeResolver
 {
@@ -41,27 +40,23 @@ final class AccessTypeResolver
 
     public function resolveTypeOf(AccessNode $accessNode): TypeInterface
     {
-        $expressionResolver = new ExpressionTypeResolver(scope: $this->scope);
-        $rootType = $expressionResolver->resolveTypeOf($accessNode->root);
+        $expressionTypeResolver = new ExpressionTypeResolver(scope: $this->scope);
+        $parentType = $expressionTypeResolver->resolveTypeOf($accessNode->parent);
 
-        return match ($rootType::class) {
-            EnumStaticType::class => $this->createEnumInstanceMemberType($accessNode, $rootType),
-            StructType::class => throw new \Exception('@TODO: StructType Access is not implemented'),
-            default => throw new \Exception('@TODO Error: Cannot access on type ' . $rootType::class)
+        return match ($parentType::class) {
+            EnumStaticType::class => $this->resolveEnumInstanceMemberType($parentType, $accessNode->key),
+            StructType::class => $this->resolveStructPropertyType($parentType, $accessNode->key),
+            default => throw new \Exception('@TODO Error: Cannot access on type ' . $parentType::class)
         };
     }
-    
-    private function createEnumInstanceMemberType(AccessNode $accessNode, EnumStaticType $enumType): EnumInstanceType
-    {
-        if (!(
-            count($accessNode->chain->items) === 1
-            && $accessNode->chain->items[0]->accessType === AccessType::MANDATORY
-        )) {
-            throw new \Error('@TODO Error: Enum access malformed, only one level member access is allowed.');
-        }
 
-        $enumMemberName = $accessNode->chain->items[0]->accessor->value;
-        
-        return $enumType->getMemberType($enumMemberName);
+    private function resolveEnumInstanceMemberType(EnumStaticType $enumType, AccessKeyNode $keyNode): EnumInstanceType
+    {
+        return $enumType->getMemberType($keyNode->value->toEnumMemberName());
+    }
+
+    private function resolveStructPropertyType(StructType $structType, AccessKeyNode $keyNode): TypeInterface
+    {
+        return $structType->getTypeOfProperty($keyNode->value)->toType($this->scope);
     }
 }

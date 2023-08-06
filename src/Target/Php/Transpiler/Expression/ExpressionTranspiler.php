@@ -22,19 +22,19 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\Expression;
 
-use PackageFactory\ComponentEngine\Parser\Ast\AccessNode;
-use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
-use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
-use PackageFactory\ComponentEngine\Parser\Ast\NullLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TemplateLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\UnaryOperationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Access\AccessNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\BinaryOperation\BinaryOperationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral\BooleanLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Match\MatchNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\NullLiteral\NullLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TernaryOperation\TernaryOperationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Access\AccessTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\BinaryOperation\BinaryOperationTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\BooleanLiteral\BooleanLiteralTranspiler;
@@ -63,7 +63,7 @@ final class ExpressionTranspiler
             AccessNode::class => new AccessTranspiler(
                 scope: $this->scope
             ),
-            IdentifierNode::class => new IdentifierTranspiler(
+            ValueReferenceNode::class => new IdentifierTranspiler(
                 scope: $this->scope
             ),
             TernaryOperationNode::class => new TernaryOperationTranspiler(

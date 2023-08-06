@@ -22,8 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\BooleanLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\BooleanLiteral\BooleanLiteralTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PHPUnit\Framework\TestCase;
@@ -36,8 +35,7 @@ final class BooleanLiteralTypeResolverTest extends TestCase
     public function resolvesBooleanLiteralToBooleanType(): void
     {
         $booleanLiteralTypeResolver = new BooleanLiteralTypeResolver();
-        $booleanLiteralNode = ExpressionNode::fromString('true')->root;
-        assert($booleanLiteralNode instanceof BooleanLiteralNode);
+        $booleanLiteralNode = ASTNodeFixtures::BooleanLiteral('true');
 
         $expectedType = BooleanType::get();
         $actualType = $booleanLiteralTypeResolver->resolveTypeOf($booleanLiteralNode);

@@ -22,9 +22,11 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType;
 
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class IntegerType implements TypeInterface
+final class IntegerType implements AtomicTypeInterface
 {
     private static null|self $instance = null;
 
@@ -35,6 +37,11 @@ final class IntegerType implements TypeInterface
     public static function get(): self
     {
         return self::$instance ??= new self();
+    }
+
+    public function getName(): TypeName
+    {
+        return TypeName::from('number');
     }
 
     public function is(TypeInterface $other): bool

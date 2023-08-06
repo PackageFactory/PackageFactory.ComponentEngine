@@ -38,4 +38,9 @@ final class PropertyDeclarationNodes
 
         $this->items = $itemsAsHashMap;
     }
+
+    public function isEmpty(): bool
+    {
+        return count($this->items) === 0;
+    }
 }

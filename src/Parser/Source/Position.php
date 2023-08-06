@@ -24,10 +24,17 @@ namespace PackageFactory\ComponentEngine\Parser\Source;
 
 final class Position
 {
+    private static ?self $zero;
+
     public function __construct(
         public readonly int $lineNumber,
         public readonly int $columnNumber
     ) {
+    }
+
+    public static function zero(): self
+    {
+        return self::$zero ??= new self(0, 0);
     }
 
     public function toDebugString(): string

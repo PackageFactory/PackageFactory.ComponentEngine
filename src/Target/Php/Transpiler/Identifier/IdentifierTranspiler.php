@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\Identifier;
 
-use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 
@@ -32,14 +32,14 @@ final class IdentifierTranspiler
     {
     }
 
-    public function transpile(IdentifierNode $identifierNode): string
+    public function transpile(ValueReferenceNode $identifierNode): string
     {
-        $typeOfIdentifiedValue = $this->scope->lookupTypeFor($identifierNode->value);
+        $typeOfIdentifiedValue = $this->scope->getTypeOf($identifierNode->name);
 
         return match (true) {
             // @TODO: Generate Name via TypeReferenceStrategyInterface Dynamically
-            $typeOfIdentifiedValue instanceof EnumStaticType => $identifierNode->value,
-            default => '$this->' . $identifierNode->value
+            $typeOfIdentifiedValue instanceof EnumStaticType => $identifierNode->name->value,
+            default => '$this->' . $identifierNode->name->value
         };
     }
 }

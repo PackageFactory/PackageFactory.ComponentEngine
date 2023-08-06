@@ -22,12 +22,22 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\SlotType;
 
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
 use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
 use PHPUnit\Framework\TestCase;
 
 final class SlotTypeTest extends TestCase
 {
+    /**
+     * @test
+     * @return void
+     */
+    public function providesItsTypeName(): void
+    {
+        $this->assertEquals(TypeName::from('slot'), SlotType::get()->getName());
+    }
+
     /**
      * @test
      */

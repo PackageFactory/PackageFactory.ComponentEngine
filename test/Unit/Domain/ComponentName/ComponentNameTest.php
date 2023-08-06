@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,26 +20,22 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Definition;
+namespace PackageFactory\ComponentEngine\Test\Unit\Domain\ComponentName;
 
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use PackageFactory\ComponentEngine\Domain\ComponentName\ComponentName;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PHPUnit\Framework\TestCase;
 
-enum IntegerFormat: string
+final class ComponentNameTest extends TestCase
 {
-    case BINARY = 'BINARY';
-    case OCTAL = 'OCTAL';
-    case DECIMAL = 'DECIMAL';
-    case HEXADECIMAL = 'HEXADECIMAL';
-
-    public static function fromTokenType(TokenType $tokenType): self
+    /**
+     * @test
+     */
+    public function convertsToTypeName(): void
     {
-        return match ($tokenType) {
-            TokenType::NUMBER_BINARY => self::BINARY,
-            TokenType::NUMBER_OCTAL => self::OCTAL,
-            TokenType::NUMBER_DECIMAL => self::DECIMAL,
-            TokenType::NUMBER_HEXADECIMAL => self::HEXADECIMAL,
-
-            default => throw new \Exception('@TODO: Unknown Integer Format: ' . $tokenType->value)
-        };
+        $this->assertEquals(
+            TypeName::from('Foo'),
+            ComponentName::from('Foo')->toTypeName()
+        );
     }
 }

@@ -22,10 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Module;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ImportNode;
-use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
-
 interface LoaderInterface
 {
-    public function resolveTypeOfImport(ImportNode $importNode): TypeInterface;
+    public function loadModule(string $pathToModule): ModuleInterface;
 }

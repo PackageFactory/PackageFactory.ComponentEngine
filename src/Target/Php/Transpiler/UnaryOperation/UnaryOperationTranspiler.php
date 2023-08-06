@@ -22,8 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\UnaryOperation;
 
-use PackageFactory\ComponentEngine\Definition\UnaryOperator;
-use PackageFactory\ComponentEngine\Parser\Ast\UnaryOperationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperator;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Expression\ExpressionTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 
@@ -48,7 +48,7 @@ final class UnaryOperationTranspiler
         );
 
         $operator = $this->transpileUnaryOperator($unaryOperationNode->operator);
-        $argument = $expressionTranspiler->transpile($unaryOperationNode->argument);
+        $argument = $expressionTranspiler->transpile($unaryOperationNode->operand);
 
         return sprintf('(%s%s)', $operator, $argument);
     }

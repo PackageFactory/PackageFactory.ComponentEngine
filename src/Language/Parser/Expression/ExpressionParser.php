@@ -45,6 +45,7 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
+use PhpParser\Parser\Tokens;
 
 final class ExpressionParser
 {
@@ -69,13 +70,15 @@ final class ExpressionParser
      */
     public function parse(\Iterator &$tokens): ExpressionNode
     {
+        Scanner::skipSpaceAndComments($tokens);
+
         $result = $this->parseUnaryStatement($tokens);
 
         if ($this->shouldStop($tokens)) {
             return $result;
         }
 
-        $result = match (Scanner::type($tokens)) {
+        $binaryOperationTokens = TokenTypes::from(
             TokenType::OPERATOR_BOOLEAN_AND,
             TokenType::OPERATOR_BOOLEAN_OR,
             TokenType::COMPARATOR_EQUAL,
@@ -83,9 +86,15 @@ final class ExpressionParser
             TokenType::COMPARATOR_GREATER_THAN,
             TokenType::COMPARATOR_GREATER_THAN_OR_EQUAL,
             TokenType::COMPARATOR_LESS_THAN,
-            TokenType::COMPARATOR_LESS_THAN_OR_EQUAL => $this->parseBinaryOperation($tokens, $result),
-            default => $result
-        };
+            TokenType::COMPARATOR_LESS_THAN_OR_EQUAL
+        );
+
+        while (
+            !$this->shouldStop($tokens) &&
+            $binaryOperationTokens->contains(Scanner::type($tokens))
+        ) {
+            $result = $this->parseBinaryOperation($tokens, $result);
+        }
 
         if ($this->shouldStop($tokens)) {
             return $result;

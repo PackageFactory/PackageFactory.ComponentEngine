@@ -22,6 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Domain\PropertyName;
 
+use PackageFactory\ComponentEngine\Domain\EnumMemberName\EnumMemberName;
+
 final class PropertyName
 {
     private function __construct(
@@ -32,5 +34,10 @@ final class PropertyName
     public static function from(string $string): self
     {
         return new self($string);
+    }
+
+    public function toEnumMemberName(): EnumMemberName
+    {
+        return EnumMemberName::from($this->value);
     }
 }

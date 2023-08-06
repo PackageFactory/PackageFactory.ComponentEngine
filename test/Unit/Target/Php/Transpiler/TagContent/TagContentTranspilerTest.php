@@ -22,32 +22,15 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\TagContent;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TagContentNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\TagContent\TagContentTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
 
 final class TagContentTranspilerTest extends TestCase
 {
-    private static function tagContentNodeFromString(string $tagContentAsString): TagContentNode
-    {
-        $expressionNode = ExpressionNode::fromString(
-            sprintf('<div>%s</div>', $tagContentAsString)
-        );
-        $tagNode = $expressionNode->root;
-        assert($tagNode instanceof TagNode);
-
-        $tagContentNode = $tagNode->children->items[0];
-        assert($tagContentNode instanceof TagContentNode);
-
-        return $tagContentNode;
-    }
-
     /**
      * @return array<string,mixed>
      */
@@ -79,11 +62,10 @@ final class TagContentTranspilerTest extends TestCase
     public function transpilesTagContentNodes(string $tagContentAsString, string $expectedTranspilationResult): void
     {
         $tagContentTranspiler = new TagContentTranspiler(
-            scope: new DummyScope([
-                'someValue' => StringType::get()
-            ])
+            scope: new DummyScope([StringType::get()], ['someValue' => StringType::get()])
         );
-        $tagContentNode = self::tagContentNodeFromString($tagContentAsString);
+        $tagContentNode = ASTNodeFixtures::TagContent($tagContentAsString);
+        assert($tagContentNode !== null);
 
         $actualTranspilationResult = $tagContentTranspiler->transpile(
             $tagContentNode
@@ -102,15 +84,19 @@ final class TagContentTranspilerTest extends TestCase
     public function addsCallToRenderFunctionIfInterpolatedValueIsOfTypeComponent(): void
     {
         $tagContentTranspiler = new TagContentTranspiler(
-            scope: new DummyScope([
-                'button' => ComponentType::fromComponentDeclarationNode(
-                    ComponentDeclarationNode::fromString(
-                        'component Button { return <button></button> }'
+            scope: new DummyScope(
+                [
+                    $buttonType = ComponentType::fromComponentDeclarationNode(
+                        ASTNodeFixtures::ComponentDeclaration(
+                            'component Button { return <button></button> }'
+                        )
                     )
-                )
-            ])
+                ],
+                ['button' => $buttonType]
+            )
         );
-        $tagContentNode = self::tagContentNodeFromString('{button}');
+        $tagContentNode = ASTNodeFixtures::TagContent('{button}');
+        assert($tagContentNode !== null);
 
         $expectedTranspilationResult = '\' . $this->button->render() . \'';
         $actualTranspilationResult = $tagContentTranspiler->transpile(

@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\Expression;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
@@ -68,7 +68,7 @@ final class ExpressionTypeResolverTest extends TestCase
     {
         $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString($binaryExpressionAsString);
+        $expressionNode = ASTNodeFixtures::Expression($binaryExpressionAsString);
 
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
 
@@ -86,7 +86,7 @@ final class ExpressionTypeResolverTest extends TestCase
     {
         $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString('true');
+        $expressionNode = ASTNodeFixtures::Expression('true');
 
         $expectedType = BooleanType::get();
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
@@ -103,9 +103,9 @@ final class ExpressionTypeResolverTest extends TestCase
      */
     public function resolvesKnownIdentifierToItsType(): void
     {
-        $scope = new DummyScope(['foo' => StringType::get()]);
+        $scope = new DummyScope([StringType::get()], ['foo' => StringType::get()]);
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString('foo');
+        $expressionNode = ASTNodeFixtures::Expression('foo');
 
         $expectedType = StringType::get();
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
@@ -150,13 +150,16 @@ final class ExpressionTypeResolverTest extends TestCase
      */
     public function resolvesMatchToResultingType(string $matchAsString, TypeInterface $expectedType): void
     {
-        $scope = new DummyScope([
-            'variableOfTypeBoolean' => BooleanType::get(),
-            'variableOfTypeString' => StringType::get(),
-            'variableOfTypeNumber' => IntegerType::get(),
-        ]);
+        $scope = new DummyScope(
+            [BooleanType::get(), StringType::get(), IntegerType::get()],
+            [
+                'variableOfTypeBoolean' => BooleanType::get(),
+                'variableOfTypeString' => StringType::get(),
+                'variableOfTypeNumber' => IntegerType::get()
+            ]
+        );
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString($matchAsString);
+        $expressionNode = ASTNodeFixtures::Expression($matchAsString);
 
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
 
@@ -174,7 +177,7 @@ final class ExpressionTypeResolverTest extends TestCase
     {
         $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString('null');
+        $expressionNode = ASTNodeFixtures::Expression('null');
 
         $expectedType = NullType::get();
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
@@ -193,7 +196,7 @@ final class ExpressionTypeResolverTest extends TestCase
     {
         $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString('42');
+        $expressionNode = ASTNodeFixtures::Expression('42');
 
         $expectedType = IntegerType::get();
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
@@ -212,7 +215,7 @@ final class ExpressionTypeResolverTest extends TestCase
     {
         $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString('"foo"');
+        $expressionNode = ASTNodeFixtures::Expression('"foo"');
 
         $expectedType = StringType::get();
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
@@ -231,7 +234,7 @@ final class ExpressionTypeResolverTest extends TestCase
     {
         $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString('<div></div>');
+        $expressionNode = ASTNodeFixtures::Expression('<div></div>');
 
         $expectedType = StringType::get();
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
@@ -265,7 +268,7 @@ final class ExpressionTypeResolverTest extends TestCase
     {
         $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString($templateLiteralAsString);
+        $expressionNode = ASTNodeFixtures::Expression($templateLiteralAsString);
 
         $expectedType = StringType::get();
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
@@ -299,7 +302,7 @@ final class ExpressionTypeResolverTest extends TestCase
     {
         $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString($ternaryOperationAsString);
+        $expressionNode = ASTNodeFixtures::Expression($ternaryOperationAsString);
 
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
 

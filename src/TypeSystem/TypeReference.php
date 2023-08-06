@@ -20,40 +20,34 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Ast;
+namespace PackageFactory\ComponentEngine\TypeSystem;
 
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeNames;
+use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 
-final class AccessNode implements \JsonSerializable
+final class TypeReference
 {
-    private function __construct(
-        public readonly ExpressionNode $root,
-        public readonly AccessChainSegmentNodes $chain
+    public function __construct(
+        public readonly TypeNames $names,
+        public readonly bool $isOptional,
+        public readonly bool $isArray
     ) {
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return self
-     */
-    public static function fromTokens(ExpressionNode $root, \Iterator $tokens): self
+    public function toType(ScopeInterface $scope): TypeInterface
     {
-        $chain = AccessChainSegmentNodes::fromTokens($tokens);
+        $types = [];
 
-        return new self(
-            root: $root,
-            chain: $chain
-        );
-    }
+        if ($this->isOptional) {
+            $types[] = NullType::get();
+        }
 
-    public function jsonSerialize(): mixed
-    {
-        return [
-            'type' => 'AccessNode',
-            'payload' => [
-                'root' => $this->root,
-                'chain' => $this->chain
-            ]
-        ];
+        foreach ($this->names->items as $name) {
+            $types[] = $scope->getType($name);
+        }
+
+
+        return UnionType::of(...$types);
     }
 }

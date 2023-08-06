@@ -22,8 +22,15 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\StructType;
 
-use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
+use PackageFactory\ComponentEngine\Domain\PropertyName\PropertyName;
+use PackageFactory\ComponentEngine\Domain\StructName\StructName;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeNames;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\Properties;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\Property;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
+use PackageFactory\ComponentEngine\TypeSystem\TypeReference;
 use PHPUnit\Framework\TestCase;
 
 final class StructTypeTest extends TestCase
@@ -32,30 +39,17 @@ final class StructTypeTest extends TestCase
      * @test
      * @return void
      */
-    public function canBeCreatedFromStructDeclarationNode(): void
-    {
-        $structDeclarationNode = StructDeclarationNode::fromString(
-            'struct Foo { a : string b : number }'
-        );
-        $structType = StructType::fromStructDeclarationNode($structDeclarationNode);
-
-        $this->assertInstanceOf(StructType::class, $structType);
-    }
-
-    /**
-     * @test
-     * @return void
-     */
     public function providesNameOfTheStruct(): void
     {
-        $structDeclarationNode = StructDeclarationNode::fromString(
-            'struct SomeStruct {}'
-        );
-        $structStaticType = StructType::fromStructDeclarationNode(
-            $structDeclarationNode
+        $structType = new StructType(
+            name: StructName::from('SomeStruct'),
+            properties: new Properties()
         );
 
-        $this->assertEquals('SomeStruct', $structStaticType->structName);
+        $this->assertEquals(
+            TypeName::from('SomeStruct'),
+            $structType->getName()
+        );
     }
 
     /**
@@ -64,13 +58,37 @@ final class StructTypeTest extends TestCase
      */
     public function isEquivalentToItself(): void
     {
-        $structDeclarationNode = StructDeclarationNode::fromString(
-            'struct SomeStruct {}'
-        );
-        $structStaticType = StructType::fromStructDeclarationNode(
-            $structDeclarationNode
+        $structType = new StructType(
+            name: StructName::from('SomeStruct'),
+            properties: new Properties()
         );
 
-        $this->assertTrue($structStaticType->is($structStaticType));
+        $this->assertTrue($structType->is($structType));
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function providesTypeOfProperty(): void
+    {
+        $structType = new StructType(
+            name: StructName::from('SomeStruct'),
+            properties: new Properties(
+                new Property(
+                    name: PropertyName::from('foo'),
+                    type: $typeOfFoo = new TypeReference(
+                        names: new TypeNames(TypeName::from('string')),
+                        isOptional: false,
+                        isArray: false
+                    )
+                )
+            )
+        );
+
+        $this->assertEquals(
+            $typeOfFoo,
+            $structType->getTypeOfProperty(PropertyName::from('foo'))
+        );
     }
 }

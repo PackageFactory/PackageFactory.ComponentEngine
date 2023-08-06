@@ -22,9 +22,9 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\Attribute;
 
-use PackageFactory\ComponentEngine\Parser\Ast\AttributeNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Tag\AttributeNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Expression\ExpressionTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\StringLiteral\StringLiteralTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
@@ -37,18 +37,22 @@ final class AttributeTranspiler
 
     public function transpile(AttributeNode $attributeNode): string
     {
-        return sprintf(
-            '%s="%s"',
-            $attributeNode->name,
-            match ($attributeNode->value::class) {
-                ExpressionNode::class => sprintf(
-                    '\' . %s . \'',
-                    (new ExpressionTranspiler(
-                        scope: $this->scope
-                    ))->transpile($attributeNode->value)
-                ),
-                StringLiteralNode::class => (new StringLiteralTranspiler())->transpile($attributeNode->value)
-            }
-        );
+        if ($attributeNode->value) {
+            return sprintf(
+                '%s="%s"',
+                $attributeNode->name->value->value,
+                match ($attributeNode->value::class) {
+                    ExpressionNode::class => sprintf(
+                        '\' . %s . \'',
+                        (new ExpressionTranspiler(
+                            scope: $this->scope
+                        ))->transpile($attributeNode->value)
+                    ),
+                    StringLiteralNode::class => (new StringLiteralTranspiler())->transpile($attributeNode->value)
+                }
+            );
+        } else {
+            return $attributeNode->name->value->value;
+        }
     }
 }

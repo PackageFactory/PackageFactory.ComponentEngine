@@ -23,9 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\Match;
 
 use PackageFactory\ComponentEngine\Module\ModuleId;
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Match\MatchTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
@@ -61,22 +59,22 @@ final class MatchTypeResolverTest extends TestCase
                 UnionType::of(IntegerType::get(), StringType::get())
             ],
             'match enum with all declared members' => [
-                <<<'EOF'
-                    match (someEnumValue) {
-                        SomeEnum.A -> variableOfTypeNumber
-                        SomeEnum.B -> variableOfTypeString
-                        SomeEnum.C -> variableOfTypeBoolean
-                    }
+                <<<EOF
+                match (someEnumValue) {
+                    SomeEnum.A -> variableOfTypeNumber
+                    SomeEnum.B -> variableOfTypeString
+                    SomeEnum.C -> variableOfTypeBoolean
+                }
                 EOF,
                 UnionType::of(IntegerType::get(), StringType::get(), BooleanType::get())
             ],
             'match enum with some declared members and default' => [
-                <<<'EOF'
-                    match (someEnumValue) {
-                        SomeEnum.A -> variableOfTypeNumber
-                        SomeEnum.B -> variableOfTypeString
-                        default -> variableOfTypeBoolean
-                    }
+                <<<EOF
+                match (someEnumValue) {
+                    SomeEnum.A -> variableOfTypeNumber
+                    SomeEnum.B -> variableOfTypeString
+                    default -> variableOfTypeBoolean
+                }
                 EOF,
                 UnionType::of(IntegerType::get(), StringType::get(), BooleanType::get())
             ],
@@ -92,24 +90,28 @@ final class MatchTypeResolverTest extends TestCase
      */
     public function resolvesMatchToResultingType(string $matchAsString, TypeInterface $expectedType): void
     {
-        $someStaticEnumType = EnumStaticType::fromModuleIdAndDeclaration(
-            ModuleId::fromString("module-a"),
-            EnumDeclarationNode::fromString(
-                'enum SomeEnum { A B C }'
-            )
+        $scope = new DummyScope(
+            [
+                BooleanType::get(),
+                StringType::get(),
+                IntegerType::get(),
+                $someStaticEnumType = EnumStaticType::fromModuleIdAndDeclaration(
+                    ModuleId::fromString("module-a"),
+                    ASTNodeFixtures::EnumDeclaration(
+                        'enum SomeEnum { A B C }'
+                    )
+                )
+            ],
+            [
+                'variableOfTypeBoolean' => BooleanType::get(),
+                'variableOfTypeString' => StringType::get(),
+                'variableOfTypeNumber' => IntegerType::get(),
+                'someEnumValue' => $someStaticEnumType->toEnumInstanceType(),
+                'SomeEnum' => $someStaticEnumType
+            ]
         );
-        $scope = new DummyScope([
-            'variableOfTypeBoolean' => BooleanType::get(),
-            'variableOfTypeString' => StringType::get(),
-            'variableOfTypeNumber' => IntegerType::get(),
-            'someEnumValue' => $someStaticEnumType->toEnumInstanceType(),
-            'SomeEnum' => $someStaticEnumType
-        ]);
-        $matchTypeResolver = new MatchTypeResolver(
-            scope: $scope
-        );
-        $matchNode = ExpressionNode::fromString($matchAsString)->root;
-        assert($matchNode instanceof MatchNode);
+        $matchTypeResolver = new MatchTypeResolver(scope: $scope);
+        $matchNode = ASTNodeFixtures::Match($matchAsString);
 
         $actualType = $matchTypeResolver->resolveTypeOf($matchNode);
 
@@ -124,19 +126,8 @@ final class MatchTypeResolverTest extends TestCase
      */
     public static function malformedEnumExamples(): iterable
     {
-        yield "Multiple default keys" => [
-            <<<'EOF'
-            match (someEnumValue) {
-                SomeEnum.A -> "a"
-                default -> "b"
-                default -> "c"
-            }
-            EOF,
-            "@TODO Error: Multiple illegal default arms"
-        ];
-
         yield "Missing match" => [
-            <<<'EOF'
+            <<<EOF
             match (someEnumValue) {
                 SomeEnum.A -> "a"
                 SomeEnum.B -> "a"
@@ -146,7 +137,7 @@ final class MatchTypeResolverTest extends TestCase
         ];
 
         yield "Non existent enum member access" => [
-            <<<'EOF'
+            <<<EOF
             match (someEnumValue) {
                 SomeEnum.A -> "a"
                 SomeEnum.B -> "a"
@@ -158,7 +149,7 @@ final class MatchTypeResolverTest extends TestCase
         ];
 
         yield "Duplicate match 1" => [
-            <<<'EOF'
+            <<<EOF
             match (someEnumValue) {
                 SomeEnum.A -> "a"
                 SomeEnum.A -> "a"
@@ -168,7 +159,7 @@ final class MatchTypeResolverTest extends TestCase
         ];
 
         yield "Duplicate match 2" => [
-            <<<'EOF'
+            <<<EOF
             match (someEnumValue) {
                 SomeEnum.A, SomeEnum.A -> "a"
             }
@@ -177,7 +168,7 @@ final class MatchTypeResolverTest extends TestCase
         ];
 
         yield "Incompatible enum types" => [
-            <<<'EOF'
+            <<<EOF
             match (someEnumValue) {
                 OtherEnum.A -> "a"
             }
@@ -186,7 +177,7 @@ final class MatchTypeResolverTest extends TestCase
         ];
 
         yield "Cant match enum and string" => [
-            <<<'EOF'
+            <<<EOF
             match (someEnumValue) {
                 "foo" -> "a"
             }
@@ -195,7 +186,7 @@ final class MatchTypeResolverTest extends TestCase
         ];
 
         yield "Matching enum value should be referenced statically" => [
-            <<<'EOF'
+            <<<EOF
             match (someEnumValue) {
                 someEnumValue -> "a"
             }
@@ -211,27 +202,30 @@ final class MatchTypeResolverTest extends TestCase
     public function malformedMatchCannotBeResolved(string $matchAsString, string $expectedErrorMessage): void
     {
         $this->expectExceptionMessage($expectedErrorMessage);
-        $someStaticEnumType = EnumStaticType::fromModuleIdAndDeclaration(
-            ModuleId::fromString("module-a"),
-            EnumDeclarationNode::fromString(
-                'enum SomeEnum { A B C }'
-            )
+        $scope = new DummyScope(
+            [
+                $someStaticEnumType = EnumStaticType::fromModuleIdAndDeclaration(
+                    ModuleId::fromString("module-a"),
+                    ASTNodeFixtures::EnumDeclaration(
+                        'enum SomeEnum { A B C }'
+                    )
+                ),
+                $otherStaticEnumType = EnumStaticType::fromModuleIdAndDeclaration(
+                    ModuleId::fromString("module-a"),
+                    ASTNodeFixtures::EnumDeclaration('enum OtherEnum { A }')
+                )
+            ],
+            [
+                'SomeEnum' =>  $someStaticEnumType,
+                'someEnumValue' =>  $someStaticEnumType->toEnumInstanceType(),
+                'OtherEnum' => $otherStaticEnumType
+            ]
         );
-        $scope = new DummyScope([
-            'SomeEnum' => $someStaticEnumType,
-            'someEnumValue' => $someStaticEnumType->toEnumInstanceType(),
-            'OtherEnum' => EnumStaticType::fromModuleIdAndDeclaration(
-                ModuleId::fromString("module-a"),
-                EnumDeclarationNode::fromString('enum OtherEnum { A }')
-            )
-
-        ]);
 
         $matchTypeResolver = new MatchTypeResolver(
             scope: $scope
         );
-        $matchNode = ExpressionNode::fromString($matchAsString)->root;
-        assert($matchNode instanceof MatchNode);
+        $matchNode = ASTNodeFixtures::Match($matchAsString);
 
         $matchTypeResolver->resolveTypeOf($matchNode);
     }

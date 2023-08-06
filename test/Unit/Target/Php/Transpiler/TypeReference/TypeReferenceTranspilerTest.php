@@ -22,42 +22,64 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\TypeReference;
 
+use PackageFactory\ComponentEngine\Domain\StructName\StructName;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
 use PackageFactory\ComponentEngine\Module\ModuleId;
-use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference\TypeReferenceTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\Properties;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 use PHPUnit\Framework\TestCase;
 
 final class TypeReferenceTranspilerTest extends TestCase
 {
+    private function mockAtomicType(string $name): AtomicTypeInterface
+    {
+        return new class($name) implements AtomicTypeInterface
+        {
+            public function __construct(private readonly string $name)
+            {
+            }
+
+            public function getName(): TypeName
+            {
+                return TypeName::from($this->name);
+            }
+
+            public function is(TypeInterface $other): bool
+            {
+                return $other === $this;
+            }
+        };
+    }
+
     protected function getTypeReferenceTranspiler(): TypeReferenceTranspiler
     {
         return new TypeReferenceTranspiler(
-            scope: new DummyScope([], [
-                'string' => StringType::get(),
-                'boolean' => BooleanType::get(),
-                'number' => IntegerType::get(),
-                'Button' => ComponentType::fromComponentDeclarationNode(
-                    ComponentDeclarationNode::fromString('component Button { return "" }')
+            scope: new DummyScope([
+                StringType::get(),
+                BooleanType::get(),
+                IntegerType::get(),
+                ComponentType::fromComponentDeclarationNode(
+                    ASTNodeFixtures::ComponentDeclaration('component Button { return "" }')
                 ),
-                'DayOfWeek' => EnumStaticType::fromModuleIdAndDeclaration(
+                EnumStaticType::fromModuleIdAndDeclaration(
                     ModuleId::fromString("module-a"),
-                    EnumDeclarationNode::fromString('enum DayOfWeek {}')
+                    ASTNodeFixtures::EnumDeclaration('enum DayOfWeek {}')
                 ),
-                'Link' => StructType::fromStructDeclarationNode(
-                    StructDeclarationNode::fromString('struct Link {}')
+                new StructType(
+                    name: StructName::from('Link'),
+                    properties: new Properties()
                 ),
-                'SomeType' => $this->createMock(TypeInterface::class)
+                $this->mockAtomicType('SomeType')
             ]),
             strategy: new TypeReferenceTestStrategy()
         );
@@ -89,7 +111,7 @@ final class TypeReferenceTranspilerTest extends TestCase
     public function transpilesReferencesToPrimitiveTypes(string $typeReferenceAsString, string $expectedTranspilationResult): void
     {
         $typeReferenceTranspiler = $this->getTypeReferenceTranspiler();
-        $typeReferenceNode = TypeReferenceNode::fromString($typeReferenceAsString);
+        $typeReferenceNode = ASTNodeFixtures::TypeReference($typeReferenceAsString);
 
         $actualTranspilationResult = $typeReferenceTranspiler->transpile(
             $typeReferenceNode
@@ -127,7 +149,7 @@ final class TypeReferenceTranspilerTest extends TestCase
     public function transpilesReferencesToOptionalTypes(string $typeReferenceAsString, string $expectedTranspilationResult): void
     {
         $typeReferenceTranspiler = $this->getTypeReferenceTranspiler();
-        $typeReferenceNode = TypeReferenceNode::fromString($typeReferenceAsString);
+        $typeReferenceNode = ASTNodeFixtures::TypeReference($typeReferenceAsString);
 
         $actualTranspilationResult = $typeReferenceTranspiler->transpile(
             $typeReferenceNode

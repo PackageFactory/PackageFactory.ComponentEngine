@@ -22,8 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\BinaryOperation;
 
-use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\BinaryOperation\BinaryOperationTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
@@ -73,8 +72,7 @@ final class BinaryOperationTypeResolverTest extends TestCase
         $binaryOperationTypeResolver = new BinaryOperationTypeResolver(
             scope: $scope
         );
-        $binaryOperationNode = ExpressionNode::fromString($binaryOperationAsString)->root;
-        assert($binaryOperationNode instanceof BinaryOperationNode);
+        $binaryOperationNode = ASTNodeFixtures::BinaryOperation($binaryOperationAsString);
 
         $actualType = $binaryOperationTypeResolver->resolveTypeOf($binaryOperationNode);
 

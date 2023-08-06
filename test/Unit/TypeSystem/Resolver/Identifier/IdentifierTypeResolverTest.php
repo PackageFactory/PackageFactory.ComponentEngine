@@ -22,11 +22,13 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\Identifier;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeNames;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Identifier\IdentifierTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
+use PackageFactory\ComponentEngine\TypeSystem\TypeReference;
 use PHPUnit\Framework\TestCase;
 
 final class IdentifierTypeResolverTest extends TestCase
@@ -37,10 +39,9 @@ final class IdentifierTypeResolverTest extends TestCase
      */
     public function resolvesKnownIdentifierToItsType(): void
     {
-        $scope = new DummyScope(['foo' => StringType::get()]);
+        $scope = new DummyScope([StringType::get()], ['foo' => StringType::get()]);
         $identifierTypeResolver = new IdentifierTypeResolver(scope: $scope);
-        $identifierNode = ExpressionNode::fromString('foo')->root;
-        assert($identifierNode instanceof IdentifierNode);
+        $identifierNode = ASTNodeFixtures::ValueReference('foo');
 
         $expectedType = StringType::get();
         $actualType = $identifierTypeResolver->resolveTypeOf($identifierNode);
@@ -59,8 +60,7 @@ final class IdentifierTypeResolverTest extends TestCase
     {
         $scope = new DummyScope();
         $identifierTypeResolver = new IdentifierTypeResolver(scope: $scope);
-        $identifierNode = ExpressionNode::fromString('foo')->root;
-        assert($identifierNode instanceof IdentifierNode);
+        $identifierNode = ASTNodeFixtures::ValueReference('foo');
 
         $this->expectExceptionMessageMatches('/unknown identifier/i');
 

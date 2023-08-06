@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\StructDeclaration;
 
-use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Target\Php\TargetSpecific\ClassName;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\StructDeclaration\StructDeclarationStrategyInterface;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference\TypeReferenceStrategyInterface;
@@ -32,7 +32,7 @@ final class StructDeclarationTestStrategy implements StructDeclarationStrategyIn
 {
     public function getClassNameFor(StructDeclarationNode $structDeclarationNode): ClassName
     {
-        return ClassName::fromString('Vendor\\Project\\Component\\' . $structDeclarationNode->structName);
+        return ClassName::fromString('Vendor\\Project\\Component\\' . $structDeclarationNode->name->value->value);
     }
 
     public function getBaseClassNameFor(StructDeclarationNode $structDeclarationNode): ?ClassName

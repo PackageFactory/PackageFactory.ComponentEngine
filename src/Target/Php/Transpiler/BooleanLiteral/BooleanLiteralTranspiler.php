@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\BooleanLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral\BooleanLiteralNode;
 
 final class BooleanLiteralTranspiler
 {

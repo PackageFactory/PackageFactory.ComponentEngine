@@ -22,21 +22,22 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Type\UnionType;
 
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class UnionType implements TypeInterface
 {
     /**
-     * @var TypeInterface[]
+     * @var AtomicTypeInterface[]
      */
-    private array $members;
+    public readonly array $members;
 
-    private function __construct(TypeInterface ...$members)
+    private function __construct(AtomicTypeInterface ...$members)
     {
         $this->members = $members;
     }
 
-    public static function of(TypeInterface ...$members): TypeInterface
+    public static function of(AtomicTypeInterface ...$members): TypeInterface
     {
         $uniqueMembers = [];
         foreach ($members as $member) {
@@ -54,6 +55,23 @@ final class UnionType implements TypeInterface
         }
 
         return new self(...$members);
+    }
+
+    public static function merge(TypeInterface ...$items): TypeInterface
+    {
+        $members = [];
+
+        foreach ($items as $item) {
+            if ($item instanceof UnionType) {
+                $members = array_merge($members, $item->members);
+            } else if ($item instanceof AtomicTypeInterface) {
+                $members[] = $item;
+            } else {
+                throw new \Exception('@TODO: Unable to merge type ' . $item::class);
+            }
+        }
+
+        return self::of(...$members);
     }
 
     public function is(TypeInterface $other): bool

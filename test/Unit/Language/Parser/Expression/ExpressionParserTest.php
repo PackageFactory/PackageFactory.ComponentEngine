@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\Expression;
 
+use ArrayIterator;
 use PackageFactory\ComponentEngine\Domain\AttributeName\AttributeName;
 use PackageFactory\ComponentEngine\Domain\PropertyName\PropertyName;
 use PackageFactory\ComponentEngine\Domain\TagName\TagName;
@@ -57,6 +58,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperati
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperator;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
 use PackageFactory\ComponentEngine\Language\Parser\Expression\ExpressionParser;
+use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
 final class ExpressionParserTest extends ParserTestCase
@@ -1426,6 +1428,150 @@ final class ExpressionParserTest extends ParserTestCase
                                 value: 'no'
                             )
                         )
+                    )
+                )
+            )
+        );
+
+        $this->assertEquals(
+            $expectedExpressioNode,
+            $expressionParser->parse($tokens)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function parsesTernaryOperationWithComplexUnbracketedCondition(): void
+    {
+        $expressionParser = new ExpressionParser();
+        $tokens = $this->createTokenIterator(
+            '1 < 2 === a || 5 > b || c === true && false ? "a" : "foo"'
+        );
+
+        $expectedExpressioNode = new ExpressionNode(
+            rangeInSource: $this->range([0, 0], [0, 55]),
+            root: new TernaryOperationNode(
+                condition: new ExpressionNode(
+                    rangeInSource: $this->range([0, 0], [0, 42]),
+                    root: new BinaryOperationNode(
+                        rangeInSource: $this->range([0, 0], [0, 42]),
+                        operator: BinaryOperator::OR,
+                        leftOperand: new ExpressionNode(
+                            rangeInSource: $this->range([0, 0], [0, 19]),
+                            root: new BinaryOperationNode(
+                                rangeInSource: $this->range([0, 0], [0, 19]),
+                                operator: BinaryOperator::OR,
+                                leftOperand: new ExpressionNode(
+                                    rangeInSource: $this->range([0, 0], [0, 10]),
+                                    root: new BinaryOperationNode(
+                                        rangeInSource: $this->range([0, 0], [0, 10]),
+                                        operator: BinaryOperator::EQUAL,
+                                        leftOperand: new ExpressionNode(
+                                            rangeInSource: $this->range([0, 0], [0, 4]),
+                                            root: new BinaryOperationNode(
+                                                rangeInSource: $this->range([0, 0], [0, 4]),
+                                                operator: BinaryOperator::LESS_THAN,
+                                                leftOperand: new ExpressionNode(
+                                                    rangeInSource: $this->range([0, 0], [0, 0]),
+                                                    root: new IntegerLiteralNode(
+                                                        rangeInSource: $this->range([0, 0], [0, 0]),
+                                                        format: IntegerFormat::DECIMAL,
+                                                        value: '1'
+                                                    )
+                                                ),
+                                                rightOperand: new ExpressionNode(
+                                                    rangeInSource: $this->range([0, 4], [0, 4]),
+                                                    root: new IntegerLiteralNode(
+                                                        rangeInSource: $this->range([0, 4], [0, 4]),
+                                                        format: IntegerFormat::DECIMAL,
+                                                        value: '2'
+                                                    )
+                                                ),
+                                            )
+                                        ),
+                                        rightOperand: new ExpressionNode(
+                                            rangeInSource: $this->range([0, 10], [0, 10]),
+                                            root: new ValueReferenceNode(
+                                                rangeInSource: $this->range([0, 10], [0, 10]),
+                                                name: VariableName::from('a')
+                                            )
+                                        )
+                                    )
+                                ),
+                                rightOperand: new ExpressionNode(
+                                    rangeInSource: $this->range([0, 15], [0, 19]),
+                                    root: new BinaryOperationNode(
+                                        rangeInSource: $this->range([0, 15], [0, 19]),
+                                        operator: BinaryOperator::GREATER_THAN,
+                                        leftOperand: new ExpressionNode(
+                                            rangeInSource: $this->range([0, 15], [0, 15]),
+                                            root: new IntegerLiteralNode(
+                                                rangeInSource: $this->range([0, 15], [0, 15]),
+                                                format: IntegerFormat::DECIMAL,
+                                                value: '5'
+                                            )
+                                        ),
+                                        rightOperand: new ExpressionNode(
+                                            rangeInSource: $this->range([0, 19], [0, 19]),
+                                            root: new ValueReferenceNode(
+                                                rangeInSource: $this->range([0, 19], [0, 19]),
+                                                name: VariableName::from('b')
+                                            )
+                                        )
+                                    )
+                                )
+                            ),
+                        ),
+                        rightOperand: new ExpressionNode(
+                            rangeInSource: $this->range([0, 24], [0, 42]),
+                            root: new BinaryOperationNode(
+                                rangeInSource: $this->range([0, 24], [0, 42]),
+                                operator: BinaryOperator::AND,
+                                leftOperand: new ExpressionNode(
+                                    rangeInSource: $this->range([0, 24], [0, 33]),
+                                    root: new BinaryOperationNode(
+                                        rangeInSource: $this->range([0, 24], [0, 33]),
+                                        operator: BinaryOperator::EQUAL,
+                                        leftOperand: new ExpressionNode(
+                                            rangeInSource: $this->range([0, 24], [0, 24]),
+                                            root: new ValueReferenceNode(
+                                                rangeInSource: $this->range([0, 24], [0, 24]),
+                                                name: VariableName::from('c')
+                                            )
+                                        ),
+                                        rightOperand: new ExpressionNode(
+                                            rangeInSource: $this->range([0, 30], [0, 33]),
+                                            root: new BooleanLiteralNode(
+                                                rangeInSource: $this->range([0, 30], [0, 33]),
+                                                value: true
+                                            )
+                                        )
+                                    )
+                                ),
+                                rightOperand: new ExpressionNode(
+                                    rangeInSource: $this->range([0, 38], [0, 42]),
+                                    root: new BooleanLiteralNode(
+                                        rangeInSource: $this->range([0, 38], [0, 42]),
+                                        value: false
+                                    )
+                                )
+                            )
+                        )
+                    )
+                ),
+                trueBranch: new ExpressionNode(
+                    rangeInSource: $this->range([0, 47], [0, 47]),
+                    root: new StringLiteralNode(
+                        rangeInSource: $this->range([0, 47], [0, 47]),
+                        value: 'a'
+                    )
+                ),
+                falseBranch: new ExpressionNode(
+                    rangeInSource: $this->range([0, 53], [0, 55]),
+                    root: new StringLiteralNode(
+                        rangeInSource: $this->range([0, 53], [0, 55]),
+                        value: 'foo'
                     )
                 )
             )
