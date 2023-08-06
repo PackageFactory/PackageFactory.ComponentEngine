@@ -20,29 +20,22 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Domain\TypeName;
+namespace PackageFactory\ComponentEngine\Test\Unit\Domain\TagName;
 
-use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
+use PackageFactory\ComponentEngine\Domain\TagName\TagName;
+use PHPUnit\Framework\TestCase;
 
-final class TypeName
+final class TagNameTest extends TestCase
 {
     /**
-     * @var array<string,self>
+     * @test
      */
-    private static array $instances = [];
-
-    private function __construct(
-        public readonly string $value
-    ) {
-    }
-
-    public static function from(string $string): self
+    public function isFlyweight(): void
     {
-        return self::$instances[$string] ??= new self($string);
-    }
+        $this->assertSame(TagName::from('div'), TagName::from('div'));
+        $this->assertSame(TagName::from('a'), TagName::from('a'));
+        $this->assertSame(TagName::from('vendor-component'), TagName::from('vendor-component'));
 
-    public function toVariableName(): VariableName
-    {
-        return VariableName::from($this->value);
+        $this->assertNotSame(TagName::from('pre'), TagName::from('table'));
     }
 }

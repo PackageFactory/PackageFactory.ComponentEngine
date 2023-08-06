@@ -20,29 +20,22 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Domain\TypeName;
+namespace PackageFactory\ComponentEngine\Test\Unit\Domain\EnumMemberName;
 
-use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
+use PackageFactory\ComponentEngine\Domain\EnumMemberName\EnumMemberName;
+use PHPUnit\Framework\TestCase;
 
-final class TypeName
+final class EnumMemberNameTest extends TestCase
 {
     /**
-     * @var array<string,self>
+     * @test
      */
-    private static array $instances = [];
-
-    private function __construct(
-        public readonly string $value
-    ) {
-    }
-
-    public static function from(string $string): self
+    public function isFlyweight(): void
     {
-        return self::$instances[$string] ??= new self($string);
-    }
+        $this->assertSame(EnumMemberName::from('foo'), EnumMemberName::from('foo'));
+        $this->assertSame(EnumMemberName::from('bar'), EnumMemberName::from('bar'));
+        $this->assertSame(EnumMemberName::from('foobar'), EnumMemberName::from('foobar'));
 
-    public function toVariableName(): VariableName
-    {
-        return VariableName::from($this->value);
+        $this->assertNotSame(EnumMemberName::from('foo'), EnumMemberName::from('bar'));
     }
 }

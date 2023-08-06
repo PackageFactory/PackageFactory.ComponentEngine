@@ -24,6 +24,11 @@ namespace PackageFactory\ComponentEngine\Domain\TagName;
 
 final class TagName
 {
+    /**
+     * @var array<string,self>
+     */
+    private static array $instances = [];
+
     private function __construct(
         public readonly string $value
     ) {
@@ -31,6 +36,6 @@ final class TagName
 
     public static function from(string $string): self
     {
-        return new self($string);
+        return self::$instances[$string] ??= new self($string);
     }
 }

@@ -31,6 +31,16 @@ final class ComponentNameTest extends TestCase
     /**
      * @test
      */
+    public function isFlyweight(): void
+    {
+        $this->assertSame(ComponentName::from('Foo'), ComponentName::from('Foo'));
+        $this->assertSame(ComponentName::from('Bar'), ComponentName::from('Bar'));
+        $this->assertSame(ComponentName::from('FooBar'), ComponentName::from('FooBar'));
+    }
+
+    /**
+     * @test
+     */
     public function convertsToTypeName(): void
     {
         $this->assertEquals(

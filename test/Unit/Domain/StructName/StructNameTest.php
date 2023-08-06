@@ -31,6 +31,18 @@ final class StructNameTest extends TestCase
     /**
      * @test
      */
+    public function isFlyweight(): void
+    {
+        $this->assertSame(StructName::from('Foo'), StructName::from('Foo'));
+        $this->assertSame(StructName::from('Bar'), StructName::from('Bar'));
+        $this->assertSame(StructName::from('FooBar'), StructName::from('FooBar'));
+
+        $this->assertNotSame(StructName::from('Foo'), StructName::from('Bar'));
+   }
+
+    /**
+     * @test
+     */
     public function convertsToTypeName(): void
     {
         $this->assertEquals(

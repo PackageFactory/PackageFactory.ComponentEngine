@@ -31,6 +31,18 @@ final class EnumNameTest extends TestCase
     /**
      * @test
      */
+    public function isFlyweight(): void
+    {
+        $this->assertSame(EnumName::from('Foo'), EnumName::from('Foo'));
+        $this->assertSame(EnumName::from('Bar'), EnumName::from('Bar'));
+        $this->assertSame(EnumName::from('FooBar'), EnumName::from('FooBar'));
+
+        $this->assertNotSame(EnumName::from('Foo'), EnumName::from('Bar'));
+   }
+
+    /**
+     * @test
+     */
     public function convertsToTypeName(): void
     {
         $this->assertEquals(

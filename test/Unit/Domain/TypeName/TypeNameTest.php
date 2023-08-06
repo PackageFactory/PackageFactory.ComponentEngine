@@ -31,6 +31,18 @@ final class TypeNameTest extends TestCase
     /**
      * @test
      */
+    public function isFlyweight(): void
+    {
+        $this->assertSame(TypeName::from('Foo'), TypeName::from('Foo'));
+        $this->assertSame(TypeName::from('Bar'), TypeName::from('Bar'));
+        $this->assertSame(TypeName::from('FooBar'), TypeName::from('FooBar'));
+
+        $this->assertNotSame(TypeName::from('Foo'), TypeName::from('Bar'));
+   }
+
+    /**
+     * @test
+     */
     public function convertsToVariableName(): void
     {
         $this->assertEquals(

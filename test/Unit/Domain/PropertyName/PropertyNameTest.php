@@ -20,29 +20,22 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Domain\TypeName;
+namespace PackageFactory\ComponentEngine\Test\Unit\Domain\PropertyName;
 
-use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
+use PackageFactory\ComponentEngine\Domain\PropertyName\PropertyName;
+use PHPUnit\Framework\TestCase;
 
-final class TypeName
+final class PropertyNameTest extends TestCase
 {
     /**
-     * @var array<string,self>
+     * @test
      */
-    private static array $instances = [];
-
-    private function __construct(
-        public readonly string $value
-    ) {
-    }
-
-    public static function from(string $string): self
+    public function isFlyweight(): void
     {
-        return self::$instances[$string] ??= new self($string);
-    }
+        $this->assertSame(PropertyName::from('foo'), PropertyName::from('foo'));
+        $this->assertSame(PropertyName::from('bar'), PropertyName::from('bar'));
+        $this->assertSame(PropertyName::from('foobar'), PropertyName::from('foobar'));
 
-    public function toVariableName(): VariableName
-    {
-        return VariableName::from($this->value);
+        $this->assertNotSame(PropertyName::from('foo'), PropertyName::from('bar'));
     }
 }
