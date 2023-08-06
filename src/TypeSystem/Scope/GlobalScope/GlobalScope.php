@@ -47,11 +47,11 @@ final class GlobalScope implements ScopeInterface
 
     public function getType(TypeName $typeName): AtomicTypeInterface
     {
-        return match ($typeName->value) {
-            'string' => StringType::get(),
-            'number' => IntegerType::get(),
-            'boolean' => BooleanType::get(),
-            'slot' => SlotType::get(),
+        return match ($typeName) {
+            StringType::get()->getName() => StringType::get(),
+            IntegerType::get()->getName() => IntegerType::get(),
+            BooleanType::get()->getName() => BooleanType::get(),
+            SlotType::get()->getName() => SlotType::get(),
             default => throw new \Exception('@TODO: Unknown Type ' . $typeName->value)
         };
     }
