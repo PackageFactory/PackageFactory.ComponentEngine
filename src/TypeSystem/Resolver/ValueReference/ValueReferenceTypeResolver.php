@@ -20,13 +20,13 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\Identifier;
+namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\ValueReference;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class IdentifierTypeResolver
+final class ValueReferenceTypeResolver
 {
     public function __construct(private readonly ScopeInterface $scope)
     {

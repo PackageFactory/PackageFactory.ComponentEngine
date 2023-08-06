@@ -37,7 +37,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferen
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Access\AccessTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\BinaryOperation\BinaryOperationTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\BooleanLiteral\BooleanLiteralTypeResolver;
-use PackageFactory\ComponentEngine\TypeSystem\Resolver\Identifier\IdentifierTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\ValueReference\ValueReferenceTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Match\MatchTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\NullLiteral\NullLiteralTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\IntegerLiteral\IntegerLiteralTypeResolver;
@@ -64,7 +64,7 @@ final class ExpressionTypeResolver
             ))->resolveTypeOf($rootNode),
             BooleanLiteralNode::class => (new BooleanLiteralTypeResolver())
                 ->resolveTypeOf($rootNode),
-            ValueReferenceNode::class => (new IdentifierTypeResolver(
+            ValueReferenceNode::class => (new ValueReferenceTypeResolver(
                 scope: $this->scope
             ))->resolveTypeOf($rootNode),
             MatchNode::class => (new MatchTypeResolver(

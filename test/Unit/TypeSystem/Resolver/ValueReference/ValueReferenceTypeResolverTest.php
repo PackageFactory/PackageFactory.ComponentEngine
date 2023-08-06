@@ -20,27 +20,24 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\Identifier;
+namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\ValueReference;
 
-use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
-use PackageFactory\ComponentEngine\Domain\TypeName\TypeNames;
 use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
-use PackageFactory\ComponentEngine\TypeSystem\Resolver\Identifier\IdentifierTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\ValueReference\ValueReferenceTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
-use PackageFactory\ComponentEngine\TypeSystem\TypeReference;
 use PHPUnit\Framework\TestCase;
 
-final class IdentifierTypeResolverTest extends TestCase
+final class ValueReferenceTypeResolverTest extends TestCase
 {
     /**
      * @test
      * @return void
      */
-    public function resolvesKnownIdentifierToItsType(): void
+    public function resolvesKnownValueReferenceToItsType(): void
     {
         $scope = new DummyScope([StringType::get()], ['foo' => StringType::get()]);
-        $identifierTypeResolver = new IdentifierTypeResolver(scope: $scope);
+        $identifierTypeResolver = new ValueReferenceTypeResolver(scope: $scope);
         $identifierNode = ASTNodeFixtures::ValueReference('foo');
 
         $expectedType = StringType::get();
@@ -56,10 +53,10 @@ final class IdentifierTypeResolverTest extends TestCase
      * @test
      * @return void
      */
-    public function throwsIfGivenIdentifierIsUnknown(): void
+    public function throwsIfGivenValueReferenceIsUnknown(): void
     {
         $scope = new DummyScope();
-        $identifierTypeResolver = new IdentifierTypeResolver(scope: $scope);
+        $identifierTypeResolver = new ValueReferenceTypeResolver(scope: $scope);
         $identifierNode = ASTNodeFixtures::ValueReference('foo');
 
         $this->expectExceptionMessageMatches('/unknown identifier/i');
