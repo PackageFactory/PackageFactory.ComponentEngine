@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,30 +20,32 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Source;
+namespace PackageFactory\ComponentEngine\Language\Lexer\Token;
 
-final class Position
+final class TokenTypes
 {
-    private static ?self $zero;
+    /**
+     * @var TokenType[]
+     */
+    public readonly array $items;
 
-    public function __construct(
-        public readonly int $lineNumber,
-        public readonly int $columnNumber
-    ) {
+    private function __construct(TokenType ...$items)
+    {
+        assert(count($items) > 0);
+
+        $this->items = $items;
     }
 
-    public static function zero(): self
+    public static function from(TokenType ...$items): self
     {
-        return self::$zero ??= new self(0, 0);
+        $items = array_unique($items, SORT_REGULAR);
+        $items = array_values($items);
+
+        return new self(...$items);
     }
 
-    public function toDebugString(): string
+    public function contains(TokenType $needle): bool
     {
-        return sprintf('line %s, column %s', $this->lineNumber, $this->columnNumber);
-    }
-
-    public function toRange(): Range
-    {
-        return Range::from($this, $this);
+        return in_array($needle, $this->items);
     }
 }

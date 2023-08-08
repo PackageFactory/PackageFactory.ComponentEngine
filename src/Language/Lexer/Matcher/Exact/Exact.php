@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,30 +20,29 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Source;
+namespace PackageFactory\ComponentEngine\Language\Lexer\Matcher\Exact;
 
-final class Position
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Result;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Matcher;
+
+final class Exact extends Matcher
 {
-    private static ?self $zero;
+    private int $length;
 
-    public function __construct(
-        public readonly int $lineNumber,
-        public readonly int $columnNumber
-    ) {
+    public function __construct(private readonly string $keyword)
+    {
+        $this->length = strlen($this->keyword);
+        assert($this->length > 0);
     }
 
-    public static function zero(): self
+    public function match(?string $character, int $offset): Result
     {
-        return self::$zero ??= new self(0, 0);
-    }
-
-    public function toDebugString(): string
-    {
-        return sprintf('line %s, column %s', $this->lineNumber, $this->columnNumber);
-    }
-
-    public function toRange(): Range
-    {
-        return Range::from($this, $this);
+        return match (true) {
+            $offset >= $this->length =>
+                Result::SATISFIED,
+            $this->keyword[$offset] === $character =>
+                Result::KEEP,
+            default => Result::CANCEL
+        };
     }
 }

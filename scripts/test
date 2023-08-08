@@ -17,5 +17,6 @@
     --display-deprecations \
     --display-errors \
     --display-notices \
+    --display-warnings \
     --coverage-html build/coverage-report \
     --coverage-filter src $@

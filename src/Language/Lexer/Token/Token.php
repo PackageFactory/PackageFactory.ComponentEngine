@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,30 +20,16 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Source;
+namespace PackageFactory\ComponentEngine\Language\Lexer\Token;
 
-final class Position
+use PackageFactory\ComponentEngine\Parser\Source\Range;
+
+final class Token
 {
-    private static ?self $zero;
-
     public function __construct(
-        public readonly int $lineNumber,
-        public readonly int $columnNumber
+        public readonly Range $rangeInSource,
+        public readonly TokenType $type,
+        public readonly string $value
     ) {
-    }
-
-    public static function zero(): self
-    {
-        return self::$zero ??= new self(0, 0);
-    }
-
-    public function toDebugString(): string
-    {
-        return sprintf('line %s, column %s', $this->lineNumber, $this->columnNumber);
-    }
-
-    public function toRange(): Range
-    {
-        return Range::from($this, $this);
     }
 }

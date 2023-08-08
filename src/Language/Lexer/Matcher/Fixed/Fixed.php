@@ -2,7 +2,7 @@
 
 /**
  * PackageFactory.ComponentEngine - Universal View Components for PHP
- *   Copyright (C) 2022 Contributors of PackageFactory.ComponentEngine
+ *   Copyright (C) 2023 Contributors of PackageFactory.ComponentEngine
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,30 +20,31 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Parser\Source;
+namespace PackageFactory\ComponentEngine\Language\Lexer\Matcher\Fixed;
 
-final class Position
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Result;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Matcher;
+
+final class Fixed extends Matcher
 {
-    private static ?self $zero;
-
     public function __construct(
-        public readonly int $lineNumber,
-        public readonly int $columnNumber
+        private readonly int $fixedLength,
+        private readonly Matcher $innerMatcher
     ) {
+        assert($this->fixedLength > 0);
     }
 
-    public static function zero(): self
+    public function match(?string $character, int $offset): Result
     {
-        return self::$zero ??= new self(0, 0);
-    }
+        if ($offset >= $this->fixedLength) {
+            return Result::SATISFIED;
+        }
 
-    public function toDebugString(): string
-    {
-        return sprintf('line %s, column %s', $this->lineNumber, $this->columnNumber);
-    }
+        $result = $this->innerMatcher->match($character, $offset);
 
-    public function toRange(): Range
-    {
-        return Range::from($this, $this);
+        return match ($result) {
+            Result::SATISFIED => Result::CANCEL,
+            default => $result
+        };
     }
 }
