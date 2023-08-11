@@ -22,9 +22,11 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\Expression;
 
+use PackageFactory\ComponentEngine\Language\Lexer\Token\Token;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
 use PackageFactory\ComponentEngine\Language\Parser\ParserException;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
+use PackageFactory\ComponentEngine\Language\Util\DebugHelper;
 
 final class ExpressionCouldNotBeParsed extends ParserException
 {
@@ -37,10 +39,10 @@ final class ExpressionCouldNotBeParsed extends ParserException
             message: sprintf(
                 'Expression could not be parsed because of unexpected token %s. '
                 . 'Expected %s instead.',
-                $actualToken->toDebugString(),
-                $expectedTokenTypes->toDebugString()
+                DebugHelper::describeToken($actualToken),
+                DebugHelper::describeTokenTypes($expectedTokenTypes)
             ),
-            affectedRangeInSource: $actualToken->boundaries
+            affectedRangeInSource: $actualToken->rangeInSource
         );
     }
 }

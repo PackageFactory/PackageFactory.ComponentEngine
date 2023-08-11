@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\Expression;
 
+use LogicException;
 use PackageFactory\ComponentEngine\Domain\PropertyName\PropertyName;
 use PackageFactory\ComponentEngine\Language\AST\Node\Access\AccessKeyNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Access\AccessNode;
@@ -32,6 +33,9 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TernaryOperation\TernaryOperationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperator;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
 use PackageFactory\ComponentEngine\Language\Parser\BooleanLiteral\BooleanLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\Match\MatchParser;
@@ -41,14 +45,14 @@ use PackageFactory\ComponentEngine\Language\Parser\Tag\TagParser;
 use PackageFactory\ComponentEngine\Language\Parser\TemplateLiteral\TemplateLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\ValueReference\ValueReferenceParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
-use PhpParser\Parser\Tokens;
 
 final class ExpressionParser
 {
+    private static TokenTypes $TOKEN_TYPES_ACCESS;
+    private static TokenTypes $TOKEN_TYPES_BINARY_OPERATORS;
+    private static TokenTypes $TOKEN_TYPES_UNARY;
+    private static TokenTypes $TOKEN_TYPES_CLOSING_DELIMITERS;
+
     private ?BooleanLiteralParser $booleanLiteralParser = null;
     private ?IntegerLiteralParser $integerLiteralParser = null;
     private ?MatchParser $matchParser = null;
@@ -59,137 +63,133 @@ final class ExpressionParser
     private ?ValueReferenceParser $valueReferenceParser = null;
 
     public function __construct(
-        private ?TokenType $stopAt = null,
         private Precedence $precedence = Precedence::SEQUENCE
     ) {
+        self::$TOKEN_TYPES_ACCESS ??= TokenTypes::from(
+            TokenType::SYMBOL_PERIOD,
+            TokenType::SYMBOL_OPTCHAIN
+        );
+        self::$TOKEN_TYPES_BINARY_OPERATORS ??= TokenTypes::from(
+            TokenType::SYMBOL_NULLISH_COALESCE,
+            TokenType::SYMBOL_BOOLEAN_AND,
+            TokenType::SYMBOL_BOOLEAN_OR,
+            TokenType::SYMBOL_STRICT_EQUALS,
+            TokenType::SYMBOL_NOT_EQUALS,
+            TokenType::SYMBOL_GREATER_THAN,
+            TokenType::SYMBOL_LESS_THAN
+        );
+        self::$TOKEN_TYPES_UNARY ??= TokenTypes::from(
+            TokenType::SYMBOL_EXCLAMATIONMARK,
+            TokenType::KEYWORD_TRUE,
+            TokenType::KEYWORD_FALSE,
+            TokenType::KEYWORD_NULL,
+            TokenType::KEYWORD_MATCH,
+            TokenType::STRING_LITERAL_DELIMITER,
+            TokenType::INTEGER_HEXADECIMAL,
+            TokenType::INTEGER_DECIMAL,
+            TokenType::INTEGER_OCTAL,
+            TokenType::INTEGER_BINARY,
+            TokenType::WORD,
+            TokenType::BRACKET_ANGLE_OPEN,
+            TokenType::BRACKET_ROUND_OPEN
+        );
+        self::$TOKEN_TYPES_CLOSING_DELIMITERS = TokenTypes::from(
+            TokenType::BRACKET_CURLY_OPEN,
+            TokenType::BRACKET_CURLY_CLOSE,
+            TokenType::BRACKET_ROUND_CLOSE,
+            TokenType::SYMBOL_COLON,
+            TokenType::SYMBOL_COMMA,
+            TokenType::SYMBOL_ARROW_SINGLE
+        );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExpressionNode
-     */
-    public function parse(\Iterator &$tokens): ExpressionNode
+    public function parse(Lexer $lexer): ExpressionNode
     {
-        Scanner::skipSpaceAndComments($tokens);
+        $result = $this->parseUnaryStatement($lexer);
 
-        $result = $this->parseUnaryStatement($tokens);
+        while (!$lexer->isEnd()) {
+            $lexer->skipSpaceAndComments();
 
-        if ($this->shouldStop($tokens)) {
+            if ($lexer->peekOneOf(self::$TOKEN_TYPES_CLOSING_DELIMITERS)) {
+                return $result;
+            }
+
+            if ($lexer->probeOneOf(self::$TOKEN_TYPES_ACCESS)) {
+                $result = $this->parseAcccess($lexer, $result);
+                continue;
+            }
+
+            if ($lexer->peek(TokenType::SYMBOL_QUESTIONMARK)) {
+                if ($this->precedence->mustStopAt(TokenType::SYMBOL_QUESTIONMARK)) {
+                    return $result;
+                }
+
+                $result = $this->parseTernaryOperation($lexer, $result);
+                continue;
+            }
+
+            if ($tokenType = $lexer->peekOneOf(self::$TOKEN_TYPES_BINARY_OPERATORS)) {
+                if ($this->precedence->mustStopAt($tokenType)) {
+                    return $result;
+                }
+
+                $result = $this->parseBinaryOperation($lexer, $result);
+                continue;
+            }
+
             return $result;
         }
-
-        $binaryOperationTokens = TokenTypes::from(
-            TokenType::OPERATOR_BOOLEAN_AND,
-            TokenType::OPERATOR_BOOLEAN_OR,
-            TokenType::COMPARATOR_EQUAL,
-            TokenType::COMPARATOR_NOT_EQUAL,
-            TokenType::COMPARATOR_GREATER_THAN,
-            TokenType::COMPARATOR_GREATER_THAN_OR_EQUAL,
-            TokenType::COMPARATOR_LESS_THAN,
-            TokenType::COMPARATOR_LESS_THAN_OR_EQUAL
-        );
-
-        while (
-            !$this->shouldStop($tokens) &&
-            $binaryOperationTokens->contains(Scanner::type($tokens))
-        ) {
-            $result = $this->parseBinaryOperation($tokens, $result);
-        }
-
-        if ($this->shouldStop($tokens)) {
-            return $result;
-        }
-
-        $result = match (Scanner::type($tokens)) {
-            TokenType::QUESTIONMARK =>
-                $this->parseTernaryOperation($tokens, $result),
-            default =>
-                throw ExpressionCouldNotBeParsed::becauseOfUnexpectedToken(
-                    expectedTokenTypes: TokenTypes::from(TokenType::QUESTIONMARK),
-                    actualToken: $tokens->current()
-                )
-        };
 
         return $result;
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExpressionNode
-     */
-    private function parseUnaryStatement(\Iterator &$tokens): ExpressionNode
+    private function parseUnaryStatement(Lexer $lexer): ExpressionNode
     {
-        $result = match (Scanner::type($tokens)) {
-            TokenType::OPERATOR_BOOLEAN_NOT =>
-                $this->parseUnaryOperation($tokens),
-            TokenType::KEYWORD_TRUE,
-            TokenType::KEYWORD_FALSE =>
-                $this->parseBooleanLiteral($tokens),
-            TokenType::KEYWORD_NULL =>
-                $this->parseNullLiteral($tokens),
-            TokenType::STRING_QUOTED =>
-                $this->parseStringLiteral($tokens),
-            TokenType::NUMBER_BINARY,
-            TokenType::NUMBER_OCTAL,
-            TokenType::NUMBER_DECIMAL,
-            TokenType::NUMBER_HEXADECIMAL =>
-                $this->parseIntegerLiteral($tokens),
-            TokenType::STRING =>
-                $this->parseValueReference($tokens),
-            TokenType::TAG_START_OPENING =>
-                $this->parseTag($tokens),
-            TokenType::TEMPLATE_LITERAL_START =>
-                $this->parseTemplateLiteral($tokens),
-            TokenType::KEYWORD_MATCH =>
-                $this->parseMatch($tokens),
-            TokenType::BRACKET_ROUND_OPEN =>
-                $this->parseBracketedExpression($tokens),
-            default =>
-                throw ExpressionCouldNotBeParsed::becauseOfUnexpectedToken(
-                    expectedTokenTypes: TokenTypes::from(
-                        TokenType::KEYWORD_TRUE,
-                        TokenType::KEYWORD_FALSE,
-                        TokenType::KEYWORD_NULL,
-                        TokenType::STRING_QUOTED,
-                        TokenType::NUMBER_BINARY,
-                        TokenType::NUMBER_OCTAL,
-                        TokenType::NUMBER_DECIMAL,
-                        TokenType::NUMBER_HEXADECIMAL,
-                        TokenType::STRING,
-                        TokenType::TAG_START_OPENING,
-                        TokenType::TEMPLATE_LITERAL_START,
-                        TokenType::KEYWORD_MATCH,
-                        TokenType::BRACKET_ROUND_OPEN
-                    ),
-                    actualToken: $tokens->current()
-                )
-        };
-
-        if (!Scanner::isEnd($tokens)) {
-            $result = match (Scanner::type($tokens)) {
-                TokenType::PERIOD,
-                TokenType::OPTCHAIN => $this->parseAcccess($tokens, $result),
-                default => $result
+        if ($lexer->peek(TokenType::TEMPLATE_LITERAL_DELIMITER)) {
+            $result = $this->parseTemplateLiteral($lexer);
+        } else {
+            $result = match ($lexer->expectOneOf(self::$TOKEN_TYPES_UNARY)) {
+                TokenType::SYMBOL_EXCLAMATIONMARK =>
+                    $this->parseUnaryOperation($lexer),
+                TokenType::KEYWORD_TRUE,
+                TokenType::KEYWORD_FALSE =>
+                    $this->parseBooleanLiteral($lexer),
+                TokenType::KEYWORD_NULL =>
+                    $this->parseNullLiteral($lexer),
+                TokenType::STRING_LITERAL_DELIMITER =>
+                    $this->parseStringLiteral($lexer),
+                TokenType::INTEGER_HEXADECIMAL,
+                TokenType::INTEGER_DECIMAL,
+                TokenType::INTEGER_OCTAL,
+                TokenType::INTEGER_BINARY =>
+                    $this->parseIntegerLiteral($lexer),
+                TokenType::WORD =>
+                    $this->parseValueReference($lexer),
+                TokenType::BRACKET_ANGLE_OPEN =>
+                    $this->parseTag($lexer),
+                TokenType::KEYWORD_MATCH =>
+                    $this->parseMatch($lexer),
+                TokenType::BRACKET_ROUND_OPEN =>
+                    $this->parseBracketedExpression($lexer),
+                default => throw new LogicException()
             };
         }
 
+        $lexer->skipSpaceAndComments();
+
         return $result;
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExpressionNode
-     */
-    private function parseUnaryOperation(\Iterator &$tokens): ExpressionNode
+    private function parseUnaryOperation(Lexer $lexer): ExpressionNode
     {
-        $startingToken = $tokens->current();
+        $start = $lexer->getStartPosition();
 
-        $operator = $this->parseUnaryOperator($tokens);
-        $operand = $this->parseUnaryStatement($tokens);
+        $operator = $this->parseUnaryOperator($lexer);
+        $operand = $this->parseUnaryStatement($lexer);
 
         $unaryOperationNode = new UnaryOperationNode(
             rangeInSource: Range::from(
-                $startingToken->boundaries->start,
+                $start,
                 $operand->rangeInSource->end
             ),
             operator: $operator,
@@ -202,75 +202,29 @@ final class ExpressionParser
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return UnaryOperator
-     */
-    private function parseUnaryOperator(\Iterator &$tokens): UnaryOperator
+    private function parseUnaryOperator(Lexer $lexer): UnaryOperator
     {
-        $unaryOperator = match (Scanner::type($tokens)) {
-            TokenType::OPERATOR_BOOLEAN_NOT => UnaryOperator::NOT,
-            default => throw ExpressionCouldNotBeParsed::becauseOfUnexpectedToken(
-                expectedTokenTypes: TokenTypes::from(TokenType::OPERATOR_BOOLEAN_NOT),
-                actualToken: $tokens->current()
-            )
-        };
+        $lexer->read(TokenType::SYMBOL_EXCLAMATIONMARK);
 
-        Scanner::skipOne($tokens);
+        $unaryOperator = UnaryOperator::NOT;
+
+        $lexer->skipSpaceAndComments();
 
         return $unaryOperator;
     }
 
-    private function withStopAt(TokenType $stopAt): self
-    {
-        $newExpressionParser = clone $this;
-        $newExpressionParser->stopAt = $stopAt;
-
-        return $newExpressionParser;
-    }
-
     private function withPrecedence(Precedence $precedence): self
     {
-        $newExpressionParser = clone $this;
-        $newExpressionParser->precedence = $precedence;
-
-        return $newExpressionParser;
+        return new self(
+            precedence: $precedence
+        );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return boolean
-     */
-    private function shouldStop(\Iterator &$tokens): bool
-    {
-        Scanner::skipSpaceAndComments($tokens);
-
-        if (Scanner::isEnd($tokens)) {
-            return true;
-        }
-
-        $type = Scanner::type($tokens);
-
-        if ($this->precedence->mustStopAt($type)) {
-            return true;
-        }
-
-        if ($this->stopAt && $type === $this->stopAt) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExpressionNode
-     */
-    private function parseBooleanLiteral(\Iterator &$tokens): ExpressionNode
+    private function parseBooleanLiteral(Lexer $lexer): ExpressionNode
     {
         $this->booleanLiteralParser ??= BooleanLiteralParser::singleton();
 
-        $booleanLiteralNode = $this->booleanLiteralParser->parse($tokens);
+        $booleanLiteralNode = $this->booleanLiteralParser->parse($lexer);
 
         return new ExpressionNode(
             rangeInSource: $booleanLiteralNode->rangeInSource,
@@ -278,16 +232,11 @@ final class ExpressionParser
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExpressionNode
-     */
-    private function parseNullLiteral(\Iterator &$tokens): ExpressionNode
+    private function parseNullLiteral(Lexer $lexer): ExpressionNode
     {
-
         $this->nullLiteralParser ??= NullLiteralParser::singleton();
 
-        $nullLiteralNode = $this->nullLiteralParser->parse($tokens);
+        $nullLiteralNode = $this->nullLiteralParser->parse($lexer);
 
         return new ExpressionNode(
             rangeInSource: $nullLiteralNode->rangeInSource,
@@ -295,15 +244,11 @@ final class ExpressionParser
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExpressionNode
-     */
-    private function parseStringLiteral(\Iterator &$tokens): ExpressionNode
+    private function parseStringLiteral(Lexer $lexer): ExpressionNode
     {
         $this->stringLiteralParser ??= StringLiteralParser::singleton();
 
-        $stringLiteralNode = $this->stringLiteralParser->parse($tokens);
+        $stringLiteralNode = $this->stringLiteralParser->parse($lexer);
 
         return new ExpressionNode(
             rangeInSource: $stringLiteralNode->rangeInSource,
@@ -311,15 +256,11 @@ final class ExpressionParser
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExpressionNode
-     */
-    private function parseIntegerLiteral(\Iterator &$tokens): ExpressionNode
+    private function parseIntegerLiteral(Lexer $lexer): ExpressionNode
     {
         $this->integerLiteralParser ??= IntegerLiteralParser::singleton();
 
-        $integerLiteralNode = $this->integerLiteralParser->parse($tokens);
+        $integerLiteralNode = $this->integerLiteralParser->parse($lexer);
 
         return new ExpressionNode(
             rangeInSource: $integerLiteralNode->rangeInSource,
@@ -327,15 +268,11 @@ final class ExpressionParser
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExpressionNode
-     */
-    private function parseValueReference(\Iterator &$tokens): ExpressionNode
+    private function parseValueReference(Lexer $lexer): ExpressionNode
     {
         $this->valueReferenceParser ??= ValueReferenceParser::singleton();
 
-        $valueReferenceNode = $this->valueReferenceParser->parse($tokens);
+        $valueReferenceNode = $this->valueReferenceParser->parse($lexer);
 
         return new ExpressionNode(
             rangeInSource: $valueReferenceNode->rangeInSource,
@@ -343,15 +280,11 @@ final class ExpressionParser
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExpressionNode
-     */
-    private function parseTag(\Iterator &$tokens): ExpressionNode
+    private function parseTag(Lexer $lexer): ExpressionNode
     {
         $this->tagParser ??= TagParser::singleton();
 
-        $tagNode = $this->tagParser->parse($tokens);
+        $tagNode = $this->tagParser->parse($lexer);
 
         return new ExpressionNode(
             rangeInSource: $tagNode->rangeInSource,
@@ -359,15 +292,11 @@ final class ExpressionParser
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExpressionNode
-     */
-    private function parseTemplateLiteral(\Iterator &$tokens): ExpressionNode
+    private function parseTemplateLiteral(Lexer $lexer): ExpressionNode
     {
         $this->templateLiteralParser ??= TemplateLiteralParser::singleton();
 
-        $templateLiteralNode = $this->templateLiteralParser->parse($tokens);
+        $templateLiteralNode = $this->templateLiteralParser->parse($lexer);
 
         return new ExpressionNode(
             rangeInSource: $templateLiteralNode->rangeInSource,
@@ -375,15 +304,11 @@ final class ExpressionParser
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExpressionNode
-     */
-    private function parseMatch(\Iterator &$tokens): ExpressionNode
+    private function parseMatch(Lexer $lexer): ExpressionNode
     {
         $this->matchParser ??= MatchParser::singleton();
 
-        $matchNode = $this->matchParser->parse($tokens);
+        $matchNode = $this->matchParser->parse($lexer);
 
         return new ExpressionNode(
             rangeInSource: $matchNode->rangeInSource,
@@ -391,56 +316,35 @@ final class ExpressionParser
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExpressionNode
-     */
-    private function parseBracketedExpression(\Iterator &$tokens): ExpressionNode
+    private function parseBracketedExpression(Lexer $lexer): ExpressionNode
     {
-        Scanner::assertType($tokens, TokenType::BRACKET_ROUND_OPEN);
+        $lexer->read(TokenType::BRACKET_ROUND_OPEN);
+        $start = $lexer->getStartPosition();
+        $lexer->skipSpaceAndComments();
 
-        $openingBracketToken = $tokens->current();
+        $innerExpressionNode = $this->parse($lexer);
 
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
-
-        $innerExpressionNode = $this->withStopAt(TokenType::BRACKET_ROUND_CLOSE)->parse($tokens);
-
-        Scanner::assertType($tokens, TokenType::BRACKET_ROUND_CLOSE);
-
-        $closingBracketToken = $tokens->current();
-
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
+        $lexer->read(TokenType::BRACKET_ROUND_CLOSE);
+        $end = $lexer->getEndPosition();
+        $lexer->skipSpaceAndComments();
 
         return new ExpressionNode(
-            rangeInSource: Range::from(
-                $openingBracketToken->boundaries->start,
-                $closingBracketToken->boundaries->end
-            ),
+            rangeInSource: Range::from($start, $end),
             root: $innerExpressionNode->root
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @param ExpressionNode $parent
-     * @return ExpressionNode
-     */
-    private function parseAcccess(\Iterator &$tokens, ExpressionNode $parent): ExpressionNode
+    private function parseAcccess(Lexer $lexer, ExpressionNode $parent): ExpressionNode
     {
-        $accessTokenTypes = TokenTypes::from(TokenType::PERIOD, TokenType::OPTCHAIN);
+        while (!$lexer->isEnd()) {
+            $type = $this->parseAccessType($lexer);
 
-        while (!Scanner::isEnd($tokens) && $accessTokenTypes->contains(Scanner::type($tokens))) {
-            $type = $this->parseAccessType($tokens);
-
-            Scanner::assertType($tokens, TokenType::STRING);
-            $keyToken = $tokens->current();
-            Scanner::skipOne($tokens);
+            $lexer->read(TokenType::WORD);
+            $keyToken = $lexer->getTokenUnderCursor();
 
             $rangeInSource = Range::from(
                 $parent->rangeInSource->start,
-                $keyToken->boundaries->end
+                $keyToken->rangeInSource->end
             );
 
             $parent = new ExpressionNode(
@@ -450,47 +354,37 @@ final class ExpressionParser
                     parent: $parent,
                     type: $type,
                     key: new AccessKeyNode(
-                        rangeInSource: $keyToken->boundaries,
+                        rangeInSource: $keyToken->rangeInSource,
                         value: PropertyName::from($keyToken->value)
                     )
                 )
             );
+
+            $lexer->skipSpaceAndComments();
+
+            if (!$lexer->probeOneOf(self::$TOKEN_TYPES_ACCESS)) {
+                break;
+            }
         }
 
         return $parent;
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return AccessType
-     */
-    private function parseAccessType(\Iterator &$tokens): AccessType
+    private function parseAccessType(Lexer $lexer): AccessType
     {
-        $accessType = match (Scanner::type($tokens)) {
-            TokenType::PERIOD => AccessType::MANDATORY,
-            TokenType::OPTCHAIN => AccessType::OPTIONAL,
-            default => throw ExpressionCouldNotBeParsed::becauseOfUnexpectedToken(
-                expectedTokenTypes: TokenTypes::from(TokenType::PERIOD, TokenType::OPTCHAIN),
-                actualToken: $tokens->current()
-            )
+        return match ($lexer->getTokenTypeUnderCursor()) {
+            TokenType::SYMBOL_PERIOD => AccessType::MANDATORY,
+            TokenType::SYMBOL_OPTCHAIN => AccessType::OPTIONAL,
+            default => throw new LogicException()
         };
-
-        Scanner::skipOne($tokens);
-
-        return $accessType;
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @param ExpressionNode $leftOperand
-     * @return ExpressionNode
-     */
-    private function parseBinaryOperation(\Iterator &$tokens, ExpressionNode $leftOperand): ExpressionNode
+    private function parseBinaryOperation(Lexer $lexer, ExpressionNode $leftOperand): ExpressionNode
     {
-        $operator = $this->parseBinaryOperator($tokens);
+        $operator = $this->parseBinaryOperator($lexer);
         $rightOperand = $this
             ->withPrecedence(Precedence::forBinaryOperator($operator))
-            ->parse($tokens);
+            ->parse($lexer);
         $rangeInSource = Range::from(
             $leftOperand->rangeInSource->start,
             $rightOperand->rangeInSource->end
@@ -507,60 +401,46 @@ final class ExpressionParser
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return BinaryOperator
-     */
-    private function parseBinaryOperator(\Iterator &$tokens): BinaryOperator
+    private function parseBinaryOperator(Lexer $lexer): BinaryOperator
     {
-        $operator = match (Scanner::type($tokens)) {
-            TokenType::OPERATOR_BOOLEAN_AND => BinaryOperator::AND,
-            TokenType::OPERATOR_BOOLEAN_OR => BinaryOperator::OR,
-            TokenType::COMPARATOR_EQUAL => BinaryOperator::EQUAL,
-            TokenType::COMPARATOR_NOT_EQUAL => BinaryOperator::NOT_EQUAL,
-            TokenType::COMPARATOR_GREATER_THAN => BinaryOperator::GREATER_THAN,
-            TokenType::COMPARATOR_GREATER_THAN_OR_EQUAL => BinaryOperator::GREATER_THAN_OR_EQUAL,
-            TokenType::COMPARATOR_LESS_THAN => BinaryOperator::LESS_THAN,
-            TokenType::COMPARATOR_LESS_THAN_OR_EQUAL => BinaryOperator::LESS_THAN_OR_EQUAL,
-            default => throw ExpressionCouldNotBeParsed::becauseOfUnexpectedToken(
-                expectedTokenTypes: TokenTypes::from(
-                    TokenType::OPERATOR_BOOLEAN_AND,
-                    TokenType::OPERATOR_BOOLEAN_OR,
-                    TokenType::COMPARATOR_EQUAL,
-                    TokenType::COMPARATOR_NOT_EQUAL,
-                    TokenType::COMPARATOR_GREATER_THAN,
-                    TokenType::COMPARATOR_GREATER_THAN_OR_EQUAL,
-                    TokenType::COMPARATOR_LESS_THAN,
-                    TokenType::COMPARATOR_LESS_THAN_OR_EQUAL
-                ),
-                actualToken: $tokens->current()
-            )
+        if ($lexer->probe(TokenType::SYMBOL_GREATER_THAN_OR_EQUAL)) {
+            $lexer->skipSpaceAndComments();
+            return BinaryOperator::GREATER_THAN_OR_EQUAL;
+        }
+
+        if ($lexer->probe(TokenType::SYMBOL_LESS_THAN_OR_EQUAL)) {
+            $lexer->skipSpaceAndComments();
+            return BinaryOperator::LESS_THAN_OR_EQUAL;
+        }
+
+        $lexer->readOneOf(self::$TOKEN_TYPES_BINARY_OPERATORS);
+        $operator = match ($lexer->getTokenTypeUnderCursor()) {
+            TokenType::SYMBOL_NULLISH_COALESCE => BinaryOperator::NULLISH_COALESCE,
+            TokenType::SYMBOL_BOOLEAN_AND => BinaryOperator::AND,
+            TokenType::SYMBOL_BOOLEAN_OR => BinaryOperator::OR,
+            TokenType::SYMBOL_STRICT_EQUALS => BinaryOperator::EQUAL,
+            TokenType::SYMBOL_NOT_EQUALS => BinaryOperator::NOT_EQUAL,
+            TokenType::SYMBOL_GREATER_THAN => BinaryOperator::GREATER_THAN,
+            TokenType::SYMBOL_LESS_THAN => BinaryOperator::LESS_THAN,
+            default => throw new LogicException()
         };
 
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
+        $lexer->skipSpaceAndComments();
 
         return $operator;
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @param ExpressionNode $condition
-     * @return ExpressionNode
-     */
-    private function parseTernaryOperation(\Iterator &$tokens, ExpressionNode $condition): ExpressionNode
+    private function parseTernaryOperation(Lexer $lexer, ExpressionNode $condition): ExpressionNode
     {
-        Scanner::assertType($tokens, TokenType::QUESTIONMARK);
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
+        $lexer->read(TokenType::SYMBOL_QUESTIONMARK);
+        $lexer->skipSpaceAndComments();
 
-        $trueBranch = $this->withStopAt(TokenType::COLON)->parse($tokens);
+        $trueBranch = $this->parse($lexer);
 
-        Scanner::assertType($tokens, TokenType::COLON);
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
+        $lexer->read(TokenType::SYMBOL_COLON);
+        $lexer->skipSpaceAndComments();
 
-        $falseBranch = $this->parse($tokens);
+        $falseBranch = $this->parse($lexer);
 
         $root = new TernaryOperationNode(
             condition: $condition,

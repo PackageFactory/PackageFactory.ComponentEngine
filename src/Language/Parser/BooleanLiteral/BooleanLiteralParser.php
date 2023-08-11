@@ -24,29 +24,33 @@ namespace PackageFactory\ComponentEngine\Language\Parser\BooleanLiteral;
 
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral\BooleanLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
 
 final class BooleanLiteralParser
 {
     use Singleton;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return BooleanLiteralNode
-     */
-    public function parse(\Iterator &$tokens): BooleanLiteralNode
-    {
-        Scanner::assertType($tokens, TokenType::KEYWORD_TRUE, TokenType::KEYWORD_FALSE);
+    private static TokenTypes $TOKEN_TYPES_BOOLEAN_KEYWORDS;
 
-        $token = $tokens->current();
+    private function __construct()
+    {
+        self::$TOKEN_TYPES_BOOLEAN_KEYWORDS ??= TokenTypes::from(
+            TokenType::KEYWORD_TRUE,
+            TokenType::KEYWORD_FALSE
+        );
+    }
+
+    public function parse(Lexer $lexer): BooleanLiteralNode
+    {
+        $lexer->readOneOf(self::$TOKEN_TYPES_BOOLEAN_KEYWORDS);
+
+        $token = $lexer->getTokenUnderCursor();
         $value = $token->type === TokenType::KEYWORD_TRUE;
 
-        Scanner::skipOne($tokens);
-
         return new BooleanLiteralNode(
-            rangeInSource: $token->boundaries,
+            rangeInSource: $token->rangeInSource,
             value: $value
         );
     }

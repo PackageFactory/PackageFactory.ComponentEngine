@@ -22,6 +22,17 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Util;
 
+use PackageFactory\ComponentEngine\Language\AST\Node\BinaryOperation\BinaryOperationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Node;
+use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralExpressionSegmentNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralStringSegmentNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TernaryOperation\TernaryOperationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Token\Token;
 use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
 use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
@@ -119,5 +130,81 @@ final class DebugHelper
     public static function describeToken(Token $token): string
     {
         return sprintf('%s ("%s")', $token->type->value, $token->value);
+    }
+
+    public static function printASTNode(Node $node, string $indentation = ''): string
+    {
+        return $indentation . match ($node::class) {
+            BinaryOperationNode::class => self::printBinaryOperationNode($node, $indentation),
+            ExpressionNode::class => self::printExpressionNode($node, $indentation),
+            IntegerLiteralNode::class => self::printIntegerLiteralNode($node, $indentation),
+            StringLiteralNode::class => self::printStringLiteralNode($node, $indentation),
+            TagNode::class => self::printTagNode($node, $indentation),
+            TemplateLiteralNode::class => self::printTemplateLiteralNode($node, $indentation),
+            TernaryOperationNode::class => self::printTernaryOperationNode($node, $indentation),
+            ValueReferenceNode::class => self::printValueReferenceNode($node, $indentation),
+            default => throw new \Exception(__METHOD__ . ' is not implemented yet for: ' . $node::class)
+        };
+    }
+
+    public static function printBinaryOperationNode(BinaryOperationNode $node, string $indentation = ''): string
+    {
+        $left = self::printASTNode($node->leftOperand, $indentation . '  ');
+        $right = self::printASTNode($node->rightOperand, $indentation . '  ');
+        $op = $indentation . '      ' . $node->operator->name;
+
+        return $indentation . 'BinaryOperation' . PHP_EOL . $left . PHP_EOL . $op . PHP_EOL . $right;
+    }
+
+    public static function printExpressionNode(ExpressionNode $node, string $indentation = ''): string
+    {
+        return $indentation . 'Expression' . PHP_EOL . self::printASTNode($node->root, $indentation . '  ');
+    }
+
+    public static function printIntegerLiteralNode(IntegerLiteralNode $node, string $indentation = ''): string
+    {
+        return $indentation . 'IntegerLiteral (format=' . $node->format->name . ')' . $node->value;
+    }
+
+    public static function printStringLiteralNode(StringLiteralNode $node, string $indentation = ''): string
+    {
+        return $indentation . 'StringLiteral "' . substr(addslashes($node->value), 0, 64 - strlen($indentation)) .  '"';
+    }
+
+    public static function printTemplateLiteralNode(TemplateLiteralNode $node, string $indentation = ''): string
+    {
+        $lines = [];
+        foreach ($node->lines->items as $line) {
+            $segments = [];
+            foreach ($line->segments->items as $segment) {
+                $segments[] = match ($segment::class) {
+                    TemplateLiteralStringSegmentNode::class => $indentation . '    "' . substr(addslashes($segment->value), 0, 64 - strlen($indentation)) . '"',
+                    TemplateLiteralExpressionSegmentNode::class => self::printASTNode($segment->expression, $indentation . '    ')
+                };
+            }
+
+            $lines[] = $indentation . '  Line (indent=' . $line->indentation . ')' . PHP_EOL . join(PHP_EOL, $segments);
+        }
+
+        return $indentation . 'TemplateLiteral (indent=' . $node->indentation . ')' . PHP_EOL . join(PHP_EOL, $lines) . PHP_EOL;
+    }
+
+    public static function printTagNode(TagNode $node, string $indentation = ''): string
+    {
+        return $indentation . 'Tag <' . $node->name->value->value . '/>';
+    }
+
+    public static function printTernaryOperationNode(TernaryOperationNode $node, string $indentation = ''): string
+    {
+        $condition = self::printASTNode($node->condition, $indentation . '  ');
+        $true = self::printASTNode($node->trueBranch, $indentation . '  ');
+        $false = self::printASTNode($node->falseBranch, $indentation . '  ');
+
+        return $indentation . 'TernaryOperation' . PHP_EOL . $condition . PHP_EOL . $true . PHP_EOL . $false;
+    }
+
+    public static function printValueReferenceNode(ValueReferenceNode $node, string $indentation = ''): string
+    {
+        return $indentation . 'ValueReference ' . $node->name->value;
     }
 }

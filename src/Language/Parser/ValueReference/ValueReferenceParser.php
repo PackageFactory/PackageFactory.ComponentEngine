@@ -25,28 +25,20 @@ namespace PackageFactory\ComponentEngine\Language\Parser\ValueReference;
 use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
 
 final class ValueReferenceParser
 {
     use Singleton;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ValueReferenceNode
-     */
-    public function parse(\Iterator &$tokens): ValueReferenceNode
+    public function parse(Lexer $lexer): ValueReferenceNode
     {
-        Scanner::assertType($tokens, TokenType::STRING);
-
-        $token = $tokens->current();
-
-        Scanner::skipOne($tokens);
+        $lexer->read(TokenType::WORD);
+        $token = $lexer->getTokenUnderCursor();
 
         return new ValueReferenceNode(
-            rangeInSource: $token->boundaries,
+            rangeInSource: $token->rangeInSource,
             name: VariableName::from($token->value)
         );
     }

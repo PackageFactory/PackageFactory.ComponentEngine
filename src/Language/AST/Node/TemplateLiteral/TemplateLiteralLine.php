@@ -20,31 +20,13 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\Parser;
+namespace PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral;
 
-use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
-use PackageFactory\ComponentEngine\Parser\Source\Range;
-
-abstract class ParserException extends \Exception
+final class TemplateLiteralLine
 {
-    protected const TITLE = 'Parser failed';
-
-    final protected function __construct(
-        int $code,
-        string $message,
-        public readonly ?Range $affectedRangeInSource = null,
-        ?\Exception $cause = null
+    public function __construct(
+        public readonly int $indentation,
+        public readonly TemplateLiteralSegments $segments
     ) {
-        parent::__construct(static::TITLE . ': ' . $message, $code, $cause);
-    }
-
-    public static function becauseOfLexerException(LexerException $cause): static
-    {
-        return new static(
-            code: 1691238491,
-            message: $cause->getMessage(),
-            affectedRangeInSource: $cause->affectedRangeInSource,
-            cause: $cause
-        );
     }
 }

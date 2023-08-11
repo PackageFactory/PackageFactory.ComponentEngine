@@ -24,136 +24,91 @@ namespace PackageFactory\ComponentEngine\Language\Parser\Text;
 
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
+use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class TextParser
 {
     use Singleton;
 
-    private string $value;
+    private static TokenTypes $TOKEN_TYPES_END_DELIMITERS;
+    private static TokenTypes $TOKEN_TYPES_CONTENT;
 
-    private ?Token $startingToken;
-    private ?Token $finalToken;
-
-    private bool $trimLeadingSpace;
-    private bool $trimTrailingSpace;
-    private bool $currentlyCapturingSpace;
-    private bool $trailingSpaceContainsLineBreak;
-    private bool $terminated;
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @param boolean $preserveLeadingSpace
-     * @return null|TextNode
-     */
-    public function parse(\Iterator &$tokens, bool $preserveLeadingSpace = false): ?TextNode
+    private function __construct()
     {
-        $this->reset($preserveLeadingSpace);
+        self::$TOKEN_TYPES_END_DELIMITERS = TokenTypes::from(
+            TokenType::SYMBOL_CLOSE_TAG,
+            TokenType::BRACKET_ANGLE_OPEN,
+            TokenType::BRACKET_CURLY_OPEN
+        );
+        self::$TOKEN_TYPES_CONTENT = TokenTypes::from(
+            TokenType::SPACE,
+            TokenType::END_OF_LINE,
+            TokenType::TEXT
+        );
+    }
 
-        while (!Scanner::isEnd($tokens) && !$this->terminated) {
-            $this->startingToken ??= $tokens->current();
+    public function parse(Lexer $lexer, bool $preserveLeadingSpace = false): ?TextNode
+    {
+        /** @var null|Position $start */
+        $start = null;
+        $hasLeadingSpace = false;
 
-            match (Scanner::type($tokens)) {
-                TokenType::BRACKET_CURLY_OPEN,
-                TokenType::TAG_START_OPENING =>
-                    $this->terminateAtAdjacentChildNode(),
-                TokenType::TAG_START_CLOSING =>
-                    $this->terminateAtClosingTag(),
-                TokenType::SPACE =>
-                    $this->captureSpace($tokens->current()),
-                TokenType::END_OF_LINE =>
-                    $this->captureLineBreak($tokens->current()),
-                default =>
-                    $this->captureText($tokens->current()),
-            };
+        if ($lexer->probe(TokenType::SPACE)) {
+            $start = $lexer->getStartPosition();
+            $hasLeadingSpace = true;
+        }
 
-            if (!$this->terminated) {
-                Scanner::skipOne($tokens);
+        if ($lexer->probe(TokenType::END_OF_LINE)) {
+            $start ??= $lexer->getStartPosition();
+            $hasLeadingSpace = false;
+        }
+
+        $lexer->skipSpace();
+        if ($lexer->isEnd() || $lexer->peekOneOf(self::$TOKEN_TYPES_END_DELIMITERS)) {
+            return null;
+        }
+
+        $hasTrailingSpace = false;
+        $trailingSpaceContainsLineBreaks = false;
+        $value = $hasLeadingSpace && $preserveLeadingSpace ? ' ' : '';
+        while (!$lexer->isEnd() && !$lexer->peekOneOf(self::$TOKEN_TYPES_END_DELIMITERS)) {
+            $lexer->readOneOf(self::$TOKEN_TYPES_CONTENT);
+
+            if ($lexer->getTokenTypeUnderCursor() === TokenType::TEXT) {
+                $start ??= $lexer->getStartPosition();
+                if ($hasTrailingSpace) {
+                    $value .= ' ';
+                    $hasTrailingSpace = false;
+                    $trailingSpaceContainsLineBreaks = false;
+                }
+                $value .= $lexer->getTokenUnderCursor()->value;
+                continue;
             }
+
+            if ($lexer->getTokenTypeUnderCursor() === TokenType::END_OF_LINE) {
+                $trailingSpaceContainsLineBreaks = true;
+            }
+
+            $hasTrailingSpace = true;
         }
 
-        return $this->build();
-    }
-
-    private function reset(bool $preserveLeadingSpace): void
-    {
-        $this->value = '';
-
-        $this->startingToken = null;
-        $this->finalToken = null;
-
-        $this->trimLeadingSpace = !$preserveLeadingSpace;
-        $this->trimTrailingSpace = true;
-        $this->currentlyCapturingSpace = false;
-        $this->trailingSpaceContainsLineBreak = false;
-        $this->terminated = false;
-    }
-
-    private function terminateAtAdjacentChildNode(): void
-    {
-        $this->terminated = true;
-        $this->trimTrailingSpace = $this->trailingSpaceContainsLineBreak;
-    }
-
-    private function terminateAtClosingTag(): void
-    {
-        $this->terminated = true;
-    }
-
-    private function captureSpace(Token $token): void
-    {
-        $this->finalToken = $token;
-
-        if ($this->currentlyCapturingSpace) {
-            return;
-        }
-
-        $this->currentlyCapturingSpace = true;
-        $this->value .= ' ';
-    }
-
-    private function captureLineBreak(Token $token): void
-    {
-        $this->captureSpace($token);
-        $this->trailingSpaceContainsLineBreak = true;
-    }
-
-    private function captureText(Token $token): void
-    {
-        $this->finalToken = $token;
-        $this->currentlyCapturingSpace = false;
-        $this->trailingSpaceContainsLineBreak = false;
-
-        $this->value .= $token->value;
-    }
-
-    private function build(): ?TextNode
-    {
-        if (is_null($this->startingToken) || is_null($this->finalToken)) {
+        if ($start === null) {
             return null;
         }
 
-        if ($this->trimLeadingSpace) {
-            $this->value = ltrim($this->value);
-        }
+        $end = $lexer->getEndPosition();
 
-        if ($this->trimTrailingSpace) {
-            $this->value = rtrim($this->value);
-        }
-
-        if ($this->value === '' || $this->value === ' ') {
-            return null;
+        if ($hasTrailingSpace && !$trailingSpaceContainsLineBreaks && !$lexer->isEnd() && !$lexer->peek(TokenType::SYMBOL_CLOSE_TAG)) {
+            $value .= ' ';
         }
 
         return new TextNode(
-            rangeInSource: Range::from(
-                $this->startingToken->boundaries->start,
-                $this->finalToken->boundaries->end
-            ),
-            value: $this->value
+            rangeInSource: Range::from($start, $end),
+            value: $value
         );
     }
 }

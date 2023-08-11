@@ -24,28 +24,20 @@ namespace PackageFactory\ComponentEngine\Language\Parser\NullLiteral;
 
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\NullLiteral\NullLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
 
 final class NullLiteralParser
 {
     use Singleton;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return NullLiteralNode
-     */
-    public function parse(\Iterator &$tokens): NullLiteralNode
+    public function parse(Lexer $lexer): NullLiteralNode
     {
-        Scanner::assertType($tokens, TokenType::KEYWORD_NULL);
-
-        $token = $tokens->current();
-
-        Scanner::skipOne($tokens);
+        $lexer->read(TokenType::KEYWORD_NULL);
+        $token = $lexer->getTokenUnderCursor();
 
         return new NullLiteralNode(
-            rangeInSource: $token->boundaries
+            rangeInSource: $token->rangeInSource
         );
     }
 }

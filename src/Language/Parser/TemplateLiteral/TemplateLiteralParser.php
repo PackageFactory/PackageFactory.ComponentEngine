@@ -24,14 +24,15 @@ namespace PackageFactory\ComponentEngine\Language\Parser\TemplateLiteral;
 
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralExpressionSegmentNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralLine;
+use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralLines;
 use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralSegments;
 use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralStringSegmentNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
 use PackageFactory\ComponentEngine\Language\Parser\Expression\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class TemplateLiteralParser
 {
@@ -39,93 +40,90 @@ final class TemplateLiteralParser
 
     private ?ExpressionParser $expressionParser = null;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return TemplateLiteralNode
-     */
-    public function parse(\Iterator &$tokens): TemplateLiteralNode
+    public function parse(Lexer $lexer): TemplateLiteralNode
     {
-        Scanner::assertType($tokens, TokenType::TEMPLATE_LITERAL_START);
-        $startingDelimiterToken = $tokens->current();
-        Scanner::skipOne($tokens);
+        $lexer->read(TokenType::TEMPLATE_LITERAL_DELIMITER);
+        $start = $lexer->getStartPosition();
 
-        $segments = $this->parseSegments($tokens);
+        $lines = $this->parseLines($lexer);
 
-        Scanner::assertType($tokens, TokenType::TEMPLATE_LITERAL_END);
-        $finalDelimiterToken = $tokens->current();
-        Scanner::skipOne($tokens);
+        $lexer->read(TokenType::TEMPLATE_LITERAL_DELIMITER);
+        $end = $lexer->getEndPosition();
 
         return new TemplateLiteralNode(
-            rangeInSource: Range::from(
-                $startingDelimiterToken->boundaries->start,
-                $finalDelimiterToken->boundaries->end
-            ),
+            rangeInSource: Range::from($start, $end),
+            indentation: $lexer->getStartPosition()->columnNumber,
+            lines: $lines
+        );
+    }
+
+    public function parseLines(Lexer $lexer): TemplateLiteralLines
+    {
+        $lexer->read(TokenType::END_OF_LINE);
+        $lexer->probe(TokenType::SPACE);
+
+        $items = [];
+        while (!$lexer->peek(TokenType::TEMPLATE_LITERAL_DELIMITER)) {
+            $items[] = $this->parseLine($lexer);
+            $lexer->read(TokenType::END_OF_LINE);
+            $lexer->probe(TokenType::SPACE);
+        }
+
+        return new TemplateLiteralLines(...$items);
+    }
+
+    public function parseLine(Lexer $lexer): TemplateLiteralLine
+    {
+        $segments = $this->parseSegments($lexer);
+        $indentation = $segments->items[0]?->rangeInSource->start->columnNumber ?? 0;
+
+        return new TemplateLiteralLine(
+            indentation: $indentation,
             segments: $segments
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return TemplateLiteralSegments
-     */
-    public function parseSegments(\Iterator &$tokens): TemplateLiteralSegments
+    public function parseSegments(Lexer $lexer): TemplateLiteralSegments
     {
         $items = [];
-        while (Scanner::type($tokens) !== TokenType::TEMPLATE_LITERAL_END) {
-            $items[] = match (Scanner::type($tokens)) {
-                TokenType::STRING_QUOTED => $this->parseStringSegment($tokens),
-                TokenType::DOLLAR => $this->parseExpressionSegment($tokens),
-                default => throw new \Exception(__METHOD__ . ' for ' . Scanner::type($tokens)->value .  ' is not implemented yet!')
-            };
+        while (!$lexer->peek(TokenType::END_OF_LINE)) {
+            if ($lexer->peek(TokenType::BRACKET_CURLY_OPEN)) {
+                $items[] = $this->parseExpressionSegment($lexer);
+                continue;
+            }
+            $items[] = $this->parseStringSegment($lexer);
         }
 
         return new TemplateLiteralSegments(...$items);
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return TemplateLiteralStringSegmentNode
-     */
-    public function parseStringSegment(\Iterator &$tokens): TemplateLiteralStringSegmentNode
+    public function parseStringSegment(Lexer $lexer): TemplateLiteralStringSegmentNode
     {
-        Scanner::assertType($tokens, TokenType::STRING_QUOTED);
-        $stringToken = $tokens->current();
-        Scanner::skipOne($tokens);
+        $lexer->read(TokenType::TEMPLATE_LITERAL_CONTENT);
+        $stringToken = $lexer->getTokenUnderCursor();
 
         return new TemplateLiteralStringSegmentNode(
-            rangeInSource: $stringToken->boundaries,
+            rangeInSource: $stringToken->rangeInSource,
             value: $stringToken->value
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return TemplateLiteralExpressionSegmentNode
-     */
-    public function parseExpressionSegment(\Iterator &$tokens): TemplateLiteralExpressionSegmentNode
+    public function parseExpressionSegment(Lexer $lexer): TemplateLiteralExpressionSegmentNode
     {
-        $this->expressionParser ??= new ExpressionParser(
-            stopAt: TokenType::BRACKET_CURLY_CLOSE
-        );
+        $this->expressionParser ??= new ExpressionParser();
 
-        Scanner::assertType($tokens, TokenType::DOLLAR);
-        $dollarToken = $tokens->current();
-        Scanner::skipOne($tokens);
+        $lexer->read(TokenType::BRACKET_CURLY_OPEN);
+        $start = $lexer->getStartPosition();
+        $lexer->skipSpaceAndComments();
 
-        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_OPEN);
-        Scanner::skipOne($tokens);
+        $expression = $this->expressionParser->parse($lexer);
 
-        $expression = $this->expressionParser->parse($tokens);
-
-        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
-        $closingBracketToken = $tokens->current();
-        Scanner::skipOne($tokens);
+        $lexer->skipSpaceAndComments();
+        $lexer->read(TokenType::BRACKET_CURLY_CLOSE);
+        $end = $lexer->getEndPosition();
 
         return new TemplateLiteralExpressionSegmentNode(
-            rangeInSource: Range::from(
-                $dollarToken->boundaries->start,
-                $closingBracketToken->boundaries->end
-            ),
+            rangeInSource: Range::from($start, $end),
             expression: $expression
         );
     }

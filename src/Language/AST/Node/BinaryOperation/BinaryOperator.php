@@ -24,6 +24,8 @@ namespace PackageFactory\ComponentEngine\Language\AST\Node\BinaryOperation;
 
 enum BinaryOperator: string
 {
+    case NULLISH_COALESCE = 'NULLISH_COALESCE';
+
     case AND = 'AND';
     case OR = 'OR';
 

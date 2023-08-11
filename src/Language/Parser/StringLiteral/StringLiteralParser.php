@@ -24,29 +24,38 @@ namespace PackageFactory\ComponentEngine\Language\Parser\StringLiteral;
 
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class StringLiteralParser
 {
     use Singleton;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return StringLiteralNode
-     */
-    public function parse(\Iterator &$tokens): StringLiteralNode
+    public function parse(Lexer $lexer): StringLiteralNode
     {
-        Scanner::assertType($tokens, TokenType::STRING_QUOTED);
+        $lexer->read(TokenType::STRING_LITERAL_DELIMITER);
+        $start = $lexer->getStartPosition();
 
-        $token = $tokens->current();
+        $value = '';
+        while (!$lexer->peek(TokenType::STRING_LITERAL_DELIMITER)) {
+            if ($lexer->probe(TokenType::STRING_LITERAL_CONTENT)) {
+                $value = $lexer->getTokenUnderCursor()->value;
+            }
 
-        Scanner::skipOne($tokens);
+            if ($lexer->probe(TokenType::ESCAPE_SEQUENCE_SINGLE_CHARACTER)) {
+                $value = $lexer->getTokenUnderCursor()->value;
+            }
+            break;
+        }
+
+
+        $lexer->read(TokenType::STRING_LITERAL_DELIMITER);
+        $end = $lexer->getEndPosition();
 
         return new StringLiteralNode(
-            rangeInSource: $token->boundaries,
-            value: $token->value
+            rangeInSource: Range::from($start, $end),
+            value: $value
         );
     }
 }

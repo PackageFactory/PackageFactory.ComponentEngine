@@ -29,7 +29,8 @@ final class TemplateLiteralNode extends Node
 {
     public function __construct(
         public readonly Range $rangeInSource,
-        public readonly TemplateLiteralSegments $segments
+        public readonly int $indentation,
+        public readonly TemplateLiteralLines $lines
     ) {
     }
 }

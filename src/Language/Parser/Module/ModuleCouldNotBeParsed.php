@@ -27,16 +27,5 @@ use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 
 final class ModuleCouldNotBeParsed extends ParserException
 {
-    public static function becauseOfUnexpectedExceedingToken(
-        Token $exceedingToken
-    ): self {
-        return new self(
-            code: 1691235933,
-            message: sprintf(
-                'Module could not be parsed because of unexpected exceeding token %s.',
-                $exceedingToken->toDebugString()
-            ),
-            affectedRangeInSource: $exceedingToken->boundaries
-        );
-    }
+    protected const TITLE = 'Module could not be parsed';
 }

@@ -24,12 +24,12 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\IntegerLitera
 
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerFormat;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
-use PackageFactory\ComponentEngine\Parser\Source\Path;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
 final class IntegerLiteralParserTest extends ParserTestCase
@@ -40,7 +40,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
     public function parsesBinaryInteger(): void
     {
         $integerLiteralParser = IntegerLiteralParser::singleton();
-        $tokens = $this->createTokenIterator('0b1010110101');
+        $lexer = new Lexer('0b1010110101');
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
             rangeInSource: $this->range([0, 0], [0, 11]),
@@ -50,7 +50,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedIntegerLiteralNode,
-            $integerLiteralParser->parse($tokens)
+            $integerLiteralParser->parse($lexer)
         );
     }
 
@@ -60,7 +60,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
     public function parsesOctalInteger(): void
     {
         $integerLiteralParser = IntegerLiteralParser::singleton();
-        $tokens = $this->createTokenIterator('0o755');
+        $lexer = new Lexer('0o755');
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
             rangeInSource: $this->range([0, 0], [0, 4]),
@@ -70,7 +70,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedIntegerLiteralNode,
-            $integerLiteralParser->parse($tokens)
+            $integerLiteralParser->parse($lexer)
         );
     }
 
@@ -80,7 +80,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
     public function parsesDecimalInteger(): void
     {
         $integerLiteralParser = IntegerLiteralParser::singleton();
-        $tokens = $this->createTokenIterator('1234567890');
+        $lexer = new Lexer('1234567890');
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
             rangeInSource: $this->range([0, 0], [0, 9]),
@@ -90,7 +90,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedIntegerLiteralNode,
-            $integerLiteralParser->parse($tokens)
+            $integerLiteralParser->parse($lexer)
         );
     }
 
@@ -100,7 +100,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
     public function parsesHexadecimalInteger(): void
     {
         $integerLiteralParser = IntegerLiteralParser::singleton();
-        $tokens = $this->createTokenIterator('0x123456789ABCDEF');
+        $lexer = new Lexer('0x123456789ABCDEF');
 
         $expectedIntegerLiteralNode = new IntegerLiteralNode(
             rangeInSource: $this->range([0, 0], [0, 16]),
@@ -110,7 +110,7 @@ final class IntegerLiteralParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedIntegerLiteralNode,
-            $integerLiteralParser->parse($tokens)
+            $integerLiteralParser->parse($lexer)
         );
     }
 
@@ -122,11 +122,21 @@ final class IntegerLiteralParserTest extends ParserTestCase
         $this->assertThrowsParserException(
             function () {
                 $integerLiteralParser = IntegerLiteralParser::singleton();
-                $tokens = $this->createTokenIterator('');
+                $lexer = new Lexer('');
 
-                $integerLiteralParser->parse($tokens);
+                $integerLiteralParser->parse($lexer);
             },
-            IntegerLiteralCouldNotBeParsed::becauseOfUnexpectedEndOfFile()
+            IntegerLiteralCouldNotBeParsed::becauseOfLexerException(
+                cause: LexerException::becauseOfUnexpectedEndOfSource(
+                    expectedTokenTypes: TokenTypes::from(
+                        TokenType::INTEGER_HEXADECIMAL,
+                        TokenType::INTEGER_DECIMAL,
+                        TokenType::INTEGER_OCTAL,
+                        TokenType::INTEGER_BINARY
+                    ),
+                    affectedRangeInSource: $this->range([0, 0], [0, 0])
+                )
+            )
         );
     }
 
@@ -138,22 +148,20 @@ final class IntegerLiteralParserTest extends ParserTestCase
         $this->assertThrowsParserException(
             function () {
                 $integerLiteralParser = IntegerLiteralParser::singleton();
-                $tokens = $this->createTokenIterator('foo1234');
+                $lexer = new Lexer('foo1234');
 
-                $integerLiteralParser->parse($tokens);
+                $integerLiteralParser->parse($lexer);
             },
-            IntegerLiteralCouldNotBeParsed::becauseOfUnexpectedToken(
-                expectedTokenTypes: TokenTypes::from(
-                    TokenType::NUMBER_BINARY,
-                    TokenType::NUMBER_OCTAL,
-                    TokenType::NUMBER_DECIMAL,
-                    TokenType::NUMBER_HEXADECIMAL
-                ),
-                actualToken: new Token(
-                    type: TokenType::STRING,
-                    value: 'foo1234',
-                    boundaries: $this->range([0, 0], [0, 6]),
-                    sourcePath: Path::createMemory()
+            IntegerLiteralCouldNotBeParsed::becauseOfLexerException(
+                cause: LexerException::becauseOfUnexpectedCharacterSequence(
+                    expectedTokenTypes: TokenTypes::from(
+                        TokenType::INTEGER_HEXADECIMAL,
+                        TokenType::INTEGER_DECIMAL,
+                        TokenType::INTEGER_OCTAL,
+                        TokenType::INTEGER_BINARY
+                    ),
+                    affectedRangeInSource: $this->range([0, 0], [0, 0]),
+                    actualCharacterSequence: 'f'
                 )
             )
         );

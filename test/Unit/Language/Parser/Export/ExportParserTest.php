@@ -47,12 +47,12 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
 use PackageFactory\ComponentEngine\Language\Parser\Export\ExportCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Language\Parser\Export\ExportParser;
-use PackageFactory\ComponentEngine\Parser\Source\Path;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
 final class ExportParserTest extends ParserTestCase
@@ -63,7 +63,7 @@ final class ExportParserTest extends ParserTestCase
     public function parsesComponentExport(): void
     {
         $exportParser = ExportParser::singleton();
-        $tokens = $this->createTokenIterator(
+        $lexer = new Lexer(
             'export component Foo { return bar }'
         );
 
@@ -88,7 +88,7 @@ final class ExportParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExportNode,
-            $exportParser->parse($tokens)
+            $exportParser->parse($lexer)
         );
     }
 
@@ -98,7 +98,7 @@ final class ExportParserTest extends ParserTestCase
     public function parsesEnumExport(): void
     {
         $exportParser = ExportParser::singleton();
-        $tokens = $this->createTokenIterator(
+        $lexer = new Lexer(
             'export enum Foo { BAR }'
         );
 
@@ -125,7 +125,7 @@ final class ExportParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExportNode,
-            $exportParser->parse($tokens)
+            $exportParser->parse($lexer)
         );
     }
 
@@ -135,7 +135,7 @@ final class ExportParserTest extends ParserTestCase
     public function parsesStructExport(): void
     {
         $exportParser = ExportParser::singleton();
-        $tokens = $this->createTokenIterator(
+        $lexer = new Lexer(
             'export struct Foo { bar: baz }'
         );
 
@@ -172,7 +172,7 @@ final class ExportParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExportNode,
-            $exportParser->parse($tokens)
+            $exportParser->parse($lexer)
         );
     }
 
@@ -184,22 +184,20 @@ final class ExportParserTest extends ParserTestCase
         $this->assertThrowsParserException(
             function () {
                 $exportParser = ExportParser::singleton();
-                $tokens = $this->createTokenIterator('export null');
+                $lexer = new Lexer('export null');
 
-                $exportParser->parse($tokens);
+                $exportParser->parse($lexer);
             },
-            ExportCouldNotBeParsed::becauseOfUnexpectedToken(
-                expectedTokenTypes: TokenTypes::from(
-                    TokenType::KEYWORD_COMPONENT,
-                    TokenType::KEYWORD_ENUM,
-                    TokenType::KEYWORD_STRUCT
+            ExportCouldNotBeParsed::becauseOfLexerException(
+                cause: LexerException::becauseOfUnexpectedCharacterSequence(
+                    expectedTokenTypes: TokenTypes::from(
+                        TokenType::KEYWORD_COMPONENT,
+                        TokenType::KEYWORD_ENUM,
+                        TokenType::KEYWORD_STRUCT
+                    ),
+                    affectedRangeInSource: $this->range([0, 7], [0, 7]),
+                    actualCharacterSequence: 'n'
                 ),
-                actualToken: new Token(
-                    type: TokenType::KEYWORD_NULL,
-                    value: 'null',
-                    boundaries: $this->range([0, 7], [0, 10]),
-                    sourcePath: Path::createMemory()
-                )
             )
         );
     }

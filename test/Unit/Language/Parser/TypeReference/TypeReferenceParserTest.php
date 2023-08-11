@@ -29,6 +29,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeRe
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Parser\TypeReference\TypeReferenceParser;
 use PackageFactory\ComponentEngine\Language\Parser\ParserException;
 use PackageFactory\ComponentEngine\Language\Parser\TypeReference\TypeReferenceCouldNotBeParsed;
@@ -42,7 +43,7 @@ final class TypeReferenceParserTest extends ParserTestCase
     public function parsesSimpleTypeReference(): void
     {
         $typeReferenceParser = TypeReferenceParser::singleton();
-        $tokens = $this->createTokenIterator('Foo');
+        $lexer = new Lexer('Foo');
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
             rangeInSource: $this->range([0, 0], [0, 2]),
@@ -58,7 +59,7 @@ final class TypeReferenceParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTypeReferenceNode,
-            $typeReferenceParser->parse($tokens)
+            $typeReferenceParser->parse($lexer)
         );
     }
 
@@ -68,7 +69,7 @@ final class TypeReferenceParserTest extends ParserTestCase
     public function parsesArrayTypeReference(): void
     {
         $typeReferenceParser = TypeReferenceParser::singleton();
-        $tokens = $this->createTokenIterator('Foo[]');
+        $lexer = new Lexer('Foo[]');
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
             rangeInSource: $this->range([0, 0], [0, 4]),
@@ -84,7 +85,7 @@ final class TypeReferenceParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTypeReferenceNode,
-            $typeReferenceParser->parse($tokens)
+            $typeReferenceParser->parse($lexer)
         );
     }
 
@@ -94,7 +95,7 @@ final class TypeReferenceParserTest extends ParserTestCase
     public function parsesOptionalTypeReference(): void
     {
         $typeReferenceParser = TypeReferenceParser::singleton();
-        $tokens = $this->createTokenIterator('?Foo');
+        $lexer = new Lexer('?Foo');
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
             rangeInSource: $this->range([0, 0], [0, 3]),
@@ -110,7 +111,7 @@ final class TypeReferenceParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTypeReferenceNode,
-            $typeReferenceParser->parse($tokens)
+            $typeReferenceParser->parse($lexer)
         );
     }
 
@@ -120,7 +121,7 @@ final class TypeReferenceParserTest extends ParserTestCase
     public function parsesUnionTypeReference(): void
     {
         $typeReferenceParser = TypeReferenceParser::singleton();
-        $tokens = $this->createTokenIterator('Foo|Bar|Baz');
+        $lexer = new Lexer('Foo|Bar|Baz');
 
         $expectedTypeReferenceNode = new TypeReferenceNode(
             rangeInSource: $this->range([0, 0], [0, 10]),
@@ -144,7 +145,7 @@ final class TypeReferenceParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTypeReferenceNode,
-            $typeReferenceParser->parse($tokens)
+            $typeReferenceParser->parse($lexer)
         );
     }
 
@@ -154,7 +155,7 @@ final class TypeReferenceParserTest extends ParserTestCase
     public function throwsIfInvalidTypeReferenceOccurs(): void
     {
         $typeReferenceParser = TypeReferenceParser::singleton();
-        $tokens = $this->createTokenIterator('?Foo[]');
+        $lexer = new Lexer('?Foo[]');
 
         $this->expectException(ParserException::class);
         $this->expectExceptionObject(
@@ -166,7 +167,7 @@ final class TypeReferenceParserTest extends ParserTestCase
             )
         );
 
-        $typeReferenceParser->parse($tokens);
+        $typeReferenceParser->parse($lexer);
     }
 
     /**
@@ -175,7 +176,7 @@ final class TypeReferenceParserTest extends ParserTestCase
     public function throwsIfDuplicatesOccurInUnionTypeReference(): void
     {
         $typeReferenceParser = TypeReferenceParser::singleton();
-        $tokens = $this->createTokenIterator('Foo|Bar|Foo|Baz');
+        $lexer = new Lexer('Foo|Bar|Foo|Baz');
 
         $this->expectException(ParserException::class);
         $this->expectExceptionObject(
@@ -189,6 +190,6 @@ final class TypeReferenceParserTest extends ParserTestCase
             )
         );
 
-        $typeReferenceParser->parse($tokens);
+        $typeReferenceParser->parse($lexer);
     }
 }

@@ -22,100 +22,81 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\Export;
 
+use LogicException;
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\ComponentDeclaration\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Export\ExportNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructDeclarationNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
 use PackageFactory\ComponentEngine\Language\Parser\ComponentDeclaration\ComponentDeclarationParser;
 use PackageFactory\ComponentEngine\Language\Parser\EnumDeclaration\EnumDeclarationParser;
 use PackageFactory\ComponentEngine\Language\Parser\StructDeclaration\StructDeclarationParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
 
 final class ExportParser
 {
     use Singleton;
 
+    private static TokenTypes $TOKEN_TYPES_DECLARATION_KEYWORDS;
+
     private ?ComponentDeclarationParser $componentDeclarationParser = null;
     private ?EnumDeclarationParser $enumDeclarationParser = null;
     private ?StructDeclarationParser $structDeclarationParser = null;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExportNode
-     */
-    public function parse(\Iterator &$tokens): ExportNode
+    private function __construct()
     {
-        $exportKeywordToken = $this->extractToken($tokens, TokenType::KEYWORD_EXPORT);
-        $declaration = match (Scanner::type($tokens)) {
-            TokenType::KEYWORD_COMPONENT => $this->parseComponentDeclaration($tokens),
-            TokenType::KEYWORD_ENUM => $this->parseEnumDeclaration($tokens),
-            TokenType::KEYWORD_STRUCT => $this->parseStructDeclaration($tokens),
-            default => throw ExportCouldNotBeParsed::becauseOfUnexpectedToken(
-                expectedTokenTypes: TokenTypes::from(
-                    TokenType::KEYWORD_COMPONENT,
-                    TokenType::KEYWORD_ENUM,
-                    TokenType::KEYWORD_STRUCT
-                ),
-                actualToken: $tokens->current()
-            )
-        };
-
-        return new ExportNode(
-            rangeInSource: Range::from(
-                $exportKeywordToken->boundaries->start,
-                $declaration->rangeInSource->end
-            ),
-            declaration: $declaration
+        self::$TOKEN_TYPES_DECLARATION_KEYWORDS ??= TokenTypes::from(
+            TokenType::KEYWORD_COMPONENT,
+            TokenType::KEYWORD_ENUM,
+            TokenType::KEYWORD_STRUCT
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @param TokenType $tokenType
-     * @return Token
-     */
-    private function extractToken(\Iterator &$tokens, TokenType $tokenType): Token
+    public function parse(Lexer $lexer): ExportNode
     {
-        Scanner::assertType($tokens, $tokenType);
-        $token = $tokens->current();
-        Scanner::skipOne($tokens);
-        Scanner::skipSpace($tokens);
+        try {
+            $lexer->read(TokenType::KEYWORD_EXPORT);
+            $start = $lexer->getStartPosition();
 
-        return $token;
+            $lexer->skipSpace();
+
+            $declaration = match ($lexer->expectOneOf(self::$TOKEN_TYPES_DECLARATION_KEYWORDS)) {
+                TokenType::KEYWORD_COMPONENT => $this->parseComponentDeclaration($lexer),
+                TokenType::KEYWORD_ENUM => $this->parseEnumDeclaration($lexer),
+                TokenType::KEYWORD_STRUCT => $this->parseStructDeclaration($lexer),
+                default => throw new LogicException()
+            };
+
+            $end = $lexer->getEndPosition();
+
+            return new ExportNode(
+                rangeInSource: Range::from($start, $end),
+                declaration: $declaration
+            );
+        } catch (LexerException $e) {
+            throw ExportCouldNotBeParsed::becauseOfLexerException($e);
+        }
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ComponentDeclarationNode
-     */
-    private function parseComponentDeclaration(\Iterator &$tokens): ComponentDeclarationNode
+    private function parseComponentDeclaration(Lexer $lexer): ComponentDeclarationNode
     {
         $this->componentDeclarationParser ??= ComponentDeclarationParser::singleton();
-        return $this->componentDeclarationParser->parse($tokens);
+        return $this->componentDeclarationParser->parse($lexer);
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return EnumDeclarationNode
-     */
-    private function parseEnumDeclaration(\Iterator &$tokens): EnumDeclarationNode
+    private function parseEnumDeclaration(Lexer $lexer): EnumDeclarationNode
     {
         $this->enumDeclarationParser ??= EnumDeclarationParser::singleton();
-        return $this->enumDeclarationParser->parse($tokens);
+        return $this->enumDeclarationParser->parse($lexer);
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return StructDeclarationNode
-     */
-    private function parseStructDeclaration(\Iterator &$tokens): StructDeclarationNode
+    private function parseStructDeclaration(Lexer $lexer): StructDeclarationNode
     {
         $this->structDeclarationParser ??= StructDeclarationParser::singleton();
-        return $this->structDeclarationParser->parse($tokens);
+        return $this->structDeclarationParser->parse($lexer);
     }
 }

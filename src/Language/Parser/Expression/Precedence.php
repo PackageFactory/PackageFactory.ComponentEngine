@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Parser\Expression;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\BinaryOperation\BinaryOperator;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
 
 enum Precedence: int
 {
@@ -47,25 +47,26 @@ enum Precedence: int
             TokenType::BRACKET_ROUND_CLOSE,
             TokenType::BRACKET_SQUARE_OPEN,
             TokenType::BRACKET_SQUARE_CLOSE,
-            TokenType::OPTCHAIN,
-            TokenType::PERIOD => self::ACCESS,
+            TokenType::SYMBOL_OPTCHAIN,
+            TokenType::SYMBOL_PERIOD => self::ACCESS,
 
-            TokenType::OPERATOR_BOOLEAN_NOT => self::UNARY,
+            TokenType::SYMBOL_EXCLAMATIONMARK => self::UNARY,
 
-            TokenType::COMPARATOR_GREATER_THAN,
-            TokenType::COMPARATOR_GREATER_THAN_OR_EQUAL,
-            TokenType::COMPARATOR_LESS_THAN,
-            TokenType::COMPARATOR_LESS_THAN_OR_EQUAL => self::COMPARISON,
+            TokenType::SYMBOL_GREATER_THAN,
+            TokenType::SYMBOL_GREATER_THAN_OR_EQUAL,
+            TokenType::SYMBOL_LESS_THAN,
+            TokenType::SYMBOL_LESS_THAN_OR_EQUAL => self::COMPARISON,
 
-            TokenType::COMPARATOR_EQUAL,
-            TokenType::COMPARATOR_NOT_EQUAL => self::EQUALITY,
+            TokenType::SYMBOL_STRICT_EQUALS,
+            TokenType::SYMBOL_NOT_EQUALS => self::EQUALITY,
 
-            TokenType::OPERATOR_BOOLEAN_AND => self::LOGICAL_AND,
+            TokenType::SYMBOL_BOOLEAN_AND => self::LOGICAL_AND,
 
-            TokenType::OPERATOR_BOOLEAN_OR => self::LOGICAL_OR,
+            TokenType::SYMBOL_NULLISH_COALESCE,
+            TokenType::SYMBOL_BOOLEAN_OR => self::LOGICAL_OR,
 
-            TokenType::QUESTIONMARK,
-            TokenType::COLON => self::TERNARY,
+            TokenType::SYMBOL_QUESTIONMARK,
+            TokenType::SYMBOL_COLON => self::TERNARY,
 
             default => self::SEQUENCE
         };
@@ -75,6 +76,8 @@ enum Precedence: int
     {
         return match ($binaryOperator) {
             BinaryOperator::AND => self::LOGICAL_AND,
+
+            BinaryOperator::NULLISH_COALESCE,
             BinaryOperator::OR  => self::LOGICAL_OR,
 
             BinaryOperator::EQUAL,

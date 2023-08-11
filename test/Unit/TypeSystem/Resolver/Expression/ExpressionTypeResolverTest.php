@@ -246,16 +246,37 @@ final class ExpressionTypeResolverTest extends TestCase
     }
 
     /**
-     * @return array<string,mixed>
+     * @return iterable<mixed>
      */
-    public static function templateLiteralExamples(): array
+    public static function templateLiteralExamples(): iterable
     {
-        return [
-            '`Hello World`' => ['`Hello World`'],
-            '`Hello ${name}`' => ['`Hello ${name}`'],
-            '`${greeting} World`' => ['`${greeting} World`'],
-            '`Hello ${name}! How are you?`' => ['`Hello ${name}! How are you?`'],
-        ];
+        $source = <<<EOF
+        """
+        Hello world
+        """
+        EOF;
+        yield $source => [$source];
+
+        $source = <<<EOF
+        """
+        Hello {name}
+        """
+        EOF;
+        yield $source => [$source];
+
+        $source = <<<EOF
+        """
+        {greeting} World
+        """
+        EOF;
+        yield $source => [$source];
+
+        $source = <<<EOF
+        """
+        Hello {name}! How are you?
+        """
+        EOF;
+        yield $source => [$source];
     }
 
     /**

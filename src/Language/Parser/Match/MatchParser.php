@@ -29,11 +29,10 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Match\InvalidMatchArmNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Match\MatchArmNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Match\MatchArmNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Match\MatchNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
 use PackageFactory\ComponentEngine\Language\Parser\Expression\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class MatchParser
 {
@@ -43,196 +42,100 @@ final class MatchParser
     private ?ExpressionParser $matchArmLeftParser = null;
     private ?ExpressionParser $matchArmRightParser = null;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return MatchNode
-     */
-    public function parse(\Iterator &$tokens): MatchNode
+    public function parse(Lexer $lexer): MatchNode
     {
-        $matchKeywordToken = $this->extractMatchKeywordToken($tokens);
-        $subject = $this->parseSubject($tokens);
+        $lexer->read(TokenType::KEYWORD_MATCH);
+        $start = $lexer->getStartPosition();
+        $lexer->skipSpace();
 
-        $this->skipOpeningBracketToken($tokens);
+        $subject = $this->parseSubject($lexer);
+        $arms = $this->parseArms($lexer);
+        $end = $lexer->getEndPosition();
+
+        return new MatchNode(
+            rangeInSource: Range::from($start, $end),
+            subject: $subject,
+            arms: $arms
+        );
+    }
+
+    private function parseSubject(Lexer $lexer): ExpressionNode
+    {
+        $this->subjectParser ??= new ExpressionParser();
+
+        return $this->subjectParser->parse($lexer);
+    }
+
+    private function parseArms(Lexer $lexer): MatchArmNodes
+    {
+        $lexer->read(TokenType::BRACKET_CURLY_OPEN);
+        $start = $lexer->getStartPosition();
+
+        $items = [];
+        while (!$lexer->peek(TokenType::BRACKET_CURLY_CLOSE)) {
+            $lexer->skipSpaceAndComments();
+            $items[] = $this->parseArm($lexer);
+        }
+
+
+        $lexer->skipSpaceAndComments();
+        $lexer->read(TokenType::BRACKET_CURLY_CLOSE);
+        $end = $lexer->getEndPosition();
 
         try {
-            $arms = $this->parseArms($tokens);
-
-            Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
-            $closingBracketToken = $tokens->current();
-            Scanner::skipOne($tokens);
-
-            return new MatchNode(
-                rangeInSource: Range::from(
-                    $matchKeywordToken->boundaries->start,
-                    $closingBracketToken->boundaries->end
-                ),
-                subject: $subject,
-                arms: $arms
-            );
+            return new MatchArmNodes(...$items);
         } catch (InvalidMatchArmNodes $e) {
             throw MatchCouldNotBeParsed::becauseOfInvalidMatchArmNodes(
                 cause: $e,
-                affectedRangeInSource: $matchKeywordToken->boundaries
+                affectedRangeInSource: $e->affectedRangeInSource ?? Range::from($start, $end)
             );
         }
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return Token
-     */
-    private function extractMatchKeywordToken(\Iterator &$tokens): Token
+    private function parseArm(Lexer $lexer): MatchArmNode
     {
-        Scanner::assertType($tokens, TokenType::KEYWORD_MATCH);
+        $left = $this->parseArmLeft($lexer);
+        $start = $left?->items[0]?->rangeInSource->start ??
+            $lexer->getStartPosition();
 
-        $matchKeywordToken = $tokens->current();
+        $lexer->skipSpaceAndComments();
+        $lexer->read(TokenType::SYMBOL_ARROW_SINGLE);
+        $lexer->skipSpaceAndComments();
 
-        Scanner::skipOne($tokens);
-        Scanner::skipSpace($tokens);
-
-        return $matchKeywordToken;
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExpressionNode
-     */
-    private function parseSubject(\Iterator &$tokens): ExpressionNode
-    {
-        $this->subjectParser ??= new ExpressionParser(
-            stopAt: TokenType::BRACKET_CURLY_OPEN
-        );
-
-        return $this->subjectParser->parse($tokens);
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return void
-     */
-    private function skipOpeningBracketToken(\Iterator &$tokens): void
-    {
-        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_OPEN);
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return MatchArmNodes
-     */
-    private function parseArms(\Iterator &$tokens): MatchArmNodes
-    {
-        $items = [];
-        while (Scanner::type($tokens) !== TokenType::BRACKET_CURLY_CLOSE) {
-            $items[] = $this->parseArm($tokens);
-        }
-
-        return new MatchArmNodes(...$items);
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return MatchArmNode
-     */
-    private function parseArm(\Iterator &$tokens): MatchArmNode
-    {
-        $defaultKeywordToken = $this->extractDefaultKeywordToken($tokens);
-        $left = is_null($defaultKeywordToken) ? $this->parseArmLeft($tokens) : null;
-
-        $this->skipArrowSingleToken($tokens);
-
-        $right = $this->parseArmRight($tokens);
-
-        if (is_null($defaultKeywordToken)) {
-            assert($left !== null);
-            $start = $left->items[0]->rangeInSource->start;
-        } else {
-            $start = $defaultKeywordToken->boundaries->start;
-        }
+        $right = $this->parseArmRight($lexer);
+        $lexer->skipSpaceAndComments();
 
         return new MatchArmNode(
-            rangeInSource: Range::from(
-                $start,
-                $right->rangeInSource->end
-            ),
+            rangeInSource: Range::from($start, $right->rangeInSource->end),
             left: $left,
             right: $right
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return null|Token
-     */
-    private function extractDefaultKeywordToken(\Iterator &$tokens): ?Token
+    private function parseArmLeft(Lexer $lexer): ?ExpressionNodes
     {
-        if (Scanner::type($tokens) === TokenType::KEYWORD_DEFAULT) {
-            $defaultKeywordToken = $tokens->current();
-            Scanner::skipOne($tokens);
-            Scanner::skipSpaceAndComments($tokens);
-
-            return $defaultKeywordToken;
+        if ($lexer->probe(TokenType::KEYWORD_DEFAULT)) {
+            return null;
         }
 
-        return null;
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExpressionNodes
-     */
-    private function parseArmLeft(\Iterator &$tokens): ExpressionNodes
-    {
-        $this->matchArmLeftParser ??= new ExpressionParser(
-            stopAt: TokenType::ARROW_SINGLE
-        );
+        $this->matchArmLeftParser ??= new ExpressionParser();
 
         $items = [];
-        while (Scanner::type($tokens) !== TokenType::ARROW_SINGLE) {
-            assert($this->matchArmLeftParser !== null);
-            $items[] = $this->matchArmLeftParser->parse($tokens);
+        do {
+            $lexer->skipSpaceAndComments();
+            $items[] = $this->matchArmLeftParser->parse($lexer);
+            $lexer->skipSpaceAndComments();
+        } while ($lexer->probe(TokenType::SYMBOL_COMMA));
 
-            if (Scanner::type($tokens) !== TokenType::ARROW_SINGLE) {
-                $this->skipCommaToken($tokens);
-            }
-        }
+        $lexer->skipSpaceAndComments();
 
         return new ExpressionNodes(...$items);
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return void
-     */
-    private function skipCommaToken(\Iterator &$tokens): void
+    private function parseArmRight(Lexer $lexer): ExpressionNode
     {
-        Scanner::assertType($tokens, TokenType::COMMA);
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
-    }
+        $this->matchArmRightParser ??= new ExpressionParser();
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return void
-     */
-    private function skipArrowSingleToken(\Iterator &$tokens): void
-    {
-        Scanner::assertType($tokens, TokenType::ARROW_SINGLE);
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExpressionNode
-     */
-    private function parseArmRight(\Iterator &$tokens): ExpressionNode
-    {
-        $this->matchArmRightParser ??= new ExpressionParser(
-            stopAt: TokenType::BRACKET_CURLY_CLOSE
-        );
-
-        return $this->matchArmRightParser->parse($tokens);
+        return $this->matchArmRightParser->parse($lexer);
     }
 }

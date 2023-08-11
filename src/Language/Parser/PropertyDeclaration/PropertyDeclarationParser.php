@@ -26,11 +26,10 @@ use PackageFactory\ComponentEngine\Domain\PropertyName\PropertyName;
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\PropertyDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\PropertyNameNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
 use PackageFactory\ComponentEngine\Language\Parser\TypeReference\TypeReferenceParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class PropertyDeclarationParser
 {
@@ -38,32 +37,24 @@ final class PropertyDeclarationParser
 
     private ?TypeReferenceParser $typeReferenceParser = null;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return PropertyDeclarationNode
-     */
-    public function parse(\Iterator &$tokens): PropertyDeclarationNode
+    public function parse(Lexer $lexer): PropertyDeclarationNode
     {
-        Scanner::assertType($tokens, TokenType::STRING);
-        $propertyNameToken = $tokens->current();
+        $lexer->read(TokenType::WORD);
+        $propertyNameToken = $lexer->getTokenUnderCursor();
 
-        Scanner::skipOne($tokens);
-
-        Scanner::assertType($tokens, TokenType::COLON);
-        Scanner::skipOne($tokens);
-
-        Scanner::skipSpace($tokens);
+        $lexer->read(TokenType::SYMBOL_COLON);
+        $lexer->skipSpace();
 
         $this->typeReferenceParser ??= TypeReferenceParser::singleton();
-        $typeReferenceNode = $this->typeReferenceParser->parse($tokens);
+        $typeReferenceNode = $this->typeReferenceParser->parse($lexer);
 
         return new PropertyDeclarationNode(
             rangeInSource: Range::from(
-                $propertyNameToken->boundaries->start,
+                $propertyNameToken->rangeInSource->start,
                 $typeReferenceNode->rangeInSource->end
             ),
             name: new PropertyNameNode(
-                rangeInSource: $propertyNameToken->boundaries,
+                rangeInSource: $propertyNameToken->rangeInSource,
                 value: PropertyName::from($propertyNameToken->value)
             ),
             type: $typeReferenceNode

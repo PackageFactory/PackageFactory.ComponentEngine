@@ -33,6 +33,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructNam
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Parser\StructDeclaration\StructDeclarationParser;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
@@ -44,7 +45,7 @@ final class StructDeclarationParserTest extends ParserTestCase
     public function parsesStructDeclarationWithOneProperty(): void
     {
         $structDeclarationParser = StructDeclarationParser::singleton();
-        $tokens = $this->createTokenIterator('struct Foo { bar: Baz }');
+        $lexer = new Lexer('struct Foo { bar: Baz }');
 
         $expectedStructDeclarationNode = new StructDeclarationNode(
             rangeInSource: $this->range([0, 0], [0, 22]),
@@ -76,7 +77,7 @@ final class StructDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedStructDeclarationNode,
-            $structDeclarationParser->parse($tokens)
+            $structDeclarationParser->parse($lexer)
         );
     }
 
@@ -86,7 +87,7 @@ final class StructDeclarationParserTest extends ParserTestCase
     public function parsesStructDeclarationWithMultipleProperties(): void
     {
         $structDeclarationParser = StructDeclarationParser::singleton();
-        $tokens = $this->createTokenIterator('struct Foo { bar: Baz qux: Quux corge: Grault }');
+        $lexer = new Lexer('struct Foo { bar: Baz qux: Quux corge: Grault }');
 
         $expectedStructDeclarationNode = new StructDeclarationNode(
             rangeInSource: $this->range([0, 0], [0, 46]),
@@ -154,7 +155,7 @@ final class StructDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedStructDeclarationNode,
-            $structDeclarationParser->parse($tokens)
+            $structDeclarationParser->parse($lexer)
         );
     }
 
@@ -175,7 +176,7 @@ final class StructDeclarationParserTest extends ParserTestCase
 
         }
         AFX;
-        $tokens = $this->createTokenIterator($structAsString);
+        $lexer = new Lexer($structAsString);
 
         $expectedStructDeclarationNode = new StructDeclarationNode(
             rangeInSource: $this->range([0, 0], [8, 0]),
@@ -225,7 +226,7 @@ final class StructDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedStructDeclarationNode,
-            $structDeclarationParser->parse($tokens)
+            $structDeclarationParser->parse($lexer)
         );
     }
 
@@ -242,7 +243,7 @@ final class StructDeclarationParserTest extends ParserTestCase
             title: ?string
         }
         AFX;
-        $tokens = $this->createTokenIterator($structAsString);
+        $lexer = new Lexer($structAsString);
 
         $expectedStructDeclarationNode = new StructDeclarationNode(
             rangeInSource: $this->range([0, 0], [4, 0]),
@@ -318,7 +319,7 @@ final class StructDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedStructDeclarationNode,
-            $structDeclarationParser->parse($tokens)
+            $structDeclarationParser->parse($lexer)
         );
     }
 }

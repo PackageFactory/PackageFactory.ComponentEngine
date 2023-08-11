@@ -33,224 +33,140 @@ use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumMemberV
 use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class EnumDeclarationParser
 {
     use Singleton;
 
+    private static TokenTypes $TOKEN_TYPES_ENUM_MEMBER_VALUE_START;
+
     private ?StringLiteralParser $stringLiteralParser = null;
     private ?IntegerLiteralParser $integerLiteralParser = null;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return EnumDeclarationNode
-     */
-    public function parse(\Iterator &$tokens): EnumDeclarationNode
+    private function __construct()
     {
-        $enumKeyWordToken = $this->extractEnumKeywordToken($tokens);
-        $enumNameNode = $this->parseEnumName($tokens);
+        self::$TOKEN_TYPES_ENUM_MEMBER_VALUE_START ??= TokenTypes::from(
+            TokenType::STRING_LITERAL_DELIMITER,
+            TokenType::INTEGER_BINARY,
+            TokenType::INTEGER_OCTAL,
+            TokenType::INTEGER_DECIMAL,
+            TokenType::INTEGER_HEXADECIMAL
+        );
+    }
 
-        $this->skipOpeningBracketToken($tokens);
+    public function parse(Lexer $lexer): EnumDeclarationNode
+    {
+        $lexer->read(TokenType::KEYWORD_ENUM);
+        $start = $lexer->getStartPosition();
+        $lexer->skipSpace();
 
-        $enumMemberDeclarations = $this->parseEnumMemberDeclarations($tokens);
-        $closingBracketToken = $this->extractClosingBracketToken($tokens);
+        $enumNameNode = $this->parseEnumName($lexer);
+        $enumMemberDeclarations = $this->parseEnumMemberDeclarations($lexer);
+
+        $end = $lexer->getEndPosition();
 
         return new EnumDeclarationNode(
-            rangeInSource: Range::from(
-                $enumKeyWordToken->boundaries->start,
-                $closingBracketToken->boundaries->end
-            ),
+            rangeInSource: Range::from($start, $end),
             name: $enumNameNode,
             members: $enumMemberDeclarations
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return Token
-     */
-    private function extractEnumKeywordToken(\Iterator &$tokens): Token
+    private function parseEnumName(Lexer $lexer): EnumNameNode
     {
-        Scanner::assertType($tokens, TokenType::KEYWORD_ENUM);
+        $lexer->read(TokenType::WORD);
+        $enumKeyNameToken = $lexer->getTokenUnderCursor();
+        $lexer->skipSpace();
 
-        $enumKeyWordToken = $tokens->current();
-
-        Scanner::skipOne($tokens);
-        Scanner::skipSpace($tokens);
-
-        return $enumKeyWordToken;
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return EnumNameNode
-     */
-    private function parseEnumName(\Iterator &$tokens): EnumNameNode
-    {
-        Scanner::assertType($tokens, TokenType::STRING);
-
-        $enumKeyNameToken = $tokens->current();
-        $enumNameNode = new EnumNameNode(
-            rangeInSource: $enumKeyNameToken->boundaries,
+        return new EnumNameNode(
+            rangeInSource: $enumKeyNameToken->rangeInSource,
             value: EnumName::from($enumKeyNameToken->value)
         );
-
-        Scanner::skipOne($tokens);
-        Scanner::skipSpace($tokens);
-
-        return $enumNameNode;
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return void
-     */
-    private function skipOpeningBracketToken(\Iterator &$tokens): void
+    private function parseEnumMemberDeclarations(Lexer $lexer): EnumMemberDeclarationNodes
     {
-        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_OPEN);
-        Scanner::skipOne($tokens);
-    }
+        $lexer->read(TokenType::BRACKET_CURLY_OPEN);
+        $lexer->skipSpaceAndComments();
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return EnumMemberDeclarationNodes
-     */
-    private function parseEnumMemberDeclarations(\Iterator &$tokens): EnumMemberDeclarationNodes
-    {
         $items = [];
-        while (true) {
-            Scanner::skipSpaceAndComments($tokens);
-
-            switch (Scanner::type($tokens)) {
-                case TokenType::STRING:
-                    $items[] = $this->parseEnumMemberDeclaration($tokens);
-                    break;
-                case TokenType::BRACKET_CURLY_CLOSE:
-                    break 2;
-                default:
-                    Scanner::assertType($tokens, TokenType::STRING, TokenType::BRACKET_CURLY_CLOSE);
-            }
+        while (!$lexer->peek(TokenType::BRACKET_CURLY_CLOSE)) {
+            $items[] = $this->parseEnumMemberDeclaration($lexer);
         }
+
+        $lexer->read(TokenType::BRACKET_CURLY_CLOSE);
 
         return new EnumMemberDeclarationNodes(...$items);
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return Token
-     */
-    private function extractClosingBracketToken(\Iterator &$tokens): Token
+    private function parseEnumMemberDeclaration(Lexer $lexer): EnumMemberDeclarationNode
     {
-        Scanner::skipSpace($tokens);
-        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
+        $name = $this->parseEnumMemberName($lexer);
+        $value = $this->parseEnumMemberValue($lexer);
 
-        $closingBracketToken = $tokens->current();
-
-        Scanner::skipOne($tokens);
-
-        return $closingBracketToken;
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return EnumMemberDeclarationNode
-     */
-    private function parseEnumMemberDeclaration(\Iterator &$tokens): EnumMemberDeclarationNode
-    {
-        $enumMemberName = $this->parseEnumMemberName($tokens);
-        $value = $this->parseEnumMemberValue($tokens);
+        $lexer->skipSpaceAndComments();
 
         return new EnumMemberDeclarationNode(
             rangeInSource: Range::from(
-                $enumMemberName->rangeInSource->start,
+                $name->rangeInSource->start,
                 $value?->rangeInSource->end
-                    ?? $enumMemberName->rangeInSource->end
+                    ?? $name->rangeInSource->end
             ),
-            name: $enumMemberName,
+            name: $name,
             value: $value
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return EnumMemberNameNode
-     */
-    private function parseEnumMemberName(\Iterator &$tokens): EnumMemberNameNode
+    private function parseEnumMemberName(Lexer $lexer): EnumMemberNameNode
     {
-        Scanner::assertType($tokens, TokenType::STRING);
+        $lexer->read(TokenType::WORD);
+        $enumMemberNameToken = $lexer->getTokenUnderCursor();
 
-        $enumMemberNameToken = $tokens->current();
-        $enumMemberNameNode = new EnumMemberNameNode(
-            rangeInSource: $enumMemberNameToken->boundaries,
+        return new EnumMemberNameNode(
+            rangeInSource: $enumMemberNameToken->rangeInSource,
             value: EnumMemberName::from($enumMemberNameToken->value)
         );
-
-        Scanner::skipOne($tokens);
-
-        return $enumMemberNameNode;
     }
 
-    /**
-     * @param \Iterator $tokens
-     * @return null|EnumMemberValueNode
-     */
-    private function parseEnumMemberValue(\Iterator &$tokens): ?EnumMemberValueNode
+    private function parseEnumMemberValue(Lexer $lexer): ?EnumMemberValueNode
     {
-        if (Scanner::type($tokens) !== TokenType::BRACKET_ROUND_OPEN) {
-            return null;
+        if ($lexer->probe(TokenType::BRACKET_ROUND_OPEN)) {
+            $start = $lexer->getStartPosition();
+
+            $value = match ($lexer->expectOneOf(self::$TOKEN_TYPES_ENUM_MEMBER_VALUE_START)) {
+                TokenType::STRING_LITERAL_DELIMITER =>
+                    $this->parseStringLiteral($lexer),
+                default =>
+                  $this->parseIntegerLiteral($lexer)
+            };
+
+            $lexer->read(TokenType::BRACKET_ROUND_CLOSE);
+            $end = $lexer->getEndPosition();
+
+            return new EnumMemberValueNode(
+                rangeInSource: Range::from($start, $end),
+                value: $value
+            );
         }
 
-        $openingBracketToken = $tokens->current();
-        Scanner::skipOne($tokens);
-
-        $valueToken = $tokens->current();
-        $value = match ($valueToken->type) {
-            TokenType::STRING_QUOTED =>
-                $this->parseStringLiteral($tokens),
-            TokenType::NUMBER_BINARY,
-            TokenType::NUMBER_OCTAL,
-            TokenType::NUMBER_DECIMAL,
-            TokenType::NUMBER_HEXADECIMAL =>
-                $this->parseIntegerLiteral($tokens),
-            default => throw new \Exception('@TODO: Unexpected Token ' . Scanner::type($tokens)->value)
-        };
-
-        Scanner::assertType($tokens, TokenType::BRACKET_ROUND_CLOSE);
-        $closingBracketToken = $tokens->current();
-        Scanner::skipOne($tokens);
-
-        return new EnumMemberValueNode(
-            rangeInSource: Range::from(
-                $openingBracketToken->boundaries->start,
-                $closingBracketToken->boundaries->end
-            ),
-            value: $value
-        );
+        return null;
     }
 
-    /**
-     * @param \Iterator $tokens
-     * @return StringLiteralNode
-     */
-    private function parseStringLiteral(\Iterator &$tokens): StringLiteralNode
+    private function parseStringLiteral(Lexer $lexer): StringLiteralNode
     {
         $this->stringLiteralParser ??= StringLiteralParser::singleton();
-        return $this->stringLiteralParser->parse($tokens);
+        return $this->stringLiteralParser->parse($lexer);
     }
 
-    /**
-     * @param \Iterator $tokens
-     * @return IntegerLiteralNode
-     */
-    private function parseIntegerLiteral(\Iterator &$tokens): IntegerLiteralNode
+    private function parseIntegerLiteral(Lexer $lexer): IntegerLiteralNode
     {
         $this->integerLiteralParser ??= IntegerLiteralParser::singleton();
-        return $this->integerLiteralParser->parse($tokens);
+        return $this->integerLiteralParser->parse($lexer);
     }
 }

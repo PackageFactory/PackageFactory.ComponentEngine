@@ -34,11 +34,10 @@ use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\Propert
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructNameNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
 use PackageFactory\ComponentEngine\Language\Parser\Module\ModuleCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Language\Parser\Module\ModuleParser;
-use PackageFactory\ComponentEngine\Parser\Source\Path;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
 final class ModuleParserTest extends ParserTestCase
@@ -52,7 +51,7 @@ final class ModuleParserTest extends ParserTestCase
         $moduleAsString = <<<AFX
         export struct Foo {}
         AFX;
-        $tokens = $this->createTokenIterator($moduleAsString);
+        $lexer = new Lexer($moduleAsString);
 
         $expectedModuleNode = new ModuleNode(
             rangeInSource: $this->range([0, 0], [0, 19]),
@@ -72,7 +71,7 @@ final class ModuleParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedModuleNode,
-            $moduleParser->parse($tokens)
+            $moduleParser->parse($lexer)
         );
     }
 
@@ -87,7 +86,7 @@ final class ModuleParserTest extends ParserTestCase
 
         export struct Baz {}
         AFX;
-        $tokens = $this->createTokenIterator($moduleAsString);
+        $lexer = new Lexer($moduleAsString);
 
         $expectedModuleNode = new ModuleNode(
             rangeInSource: $this->range([0, 0], [2, 19]),
@@ -95,7 +94,7 @@ final class ModuleParserTest extends ParserTestCase
                 new ImportNode(
                     rangeInSource: $this->range([0, 0], [0, 37]),
                     path: new StringLiteralNode(
-                        rangeInSource: $this->range([0, 6], [0, 16]),
+                        rangeInSource: $this->range([0, 5], [0, 17]),
                         value: '/some/where'
                     ),
                     names: new ImportedNameNodes(
@@ -125,7 +124,7 @@ final class ModuleParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedModuleNode,
-            $moduleParser->parse($tokens)
+            $moduleParser->parse($lexer)
         );
     }
 
@@ -142,7 +141,7 @@ final class ModuleParserTest extends ParserTestCase
 
         export struct Corge {}
         AFX;
-        $tokens = $this->createTokenIterator($moduleAsString);
+        $lexer = new Lexer($moduleAsString);
 
         $expectedModuleNode = new ModuleNode(
             rangeInSource: $this->range([0, 0], [4, 21]),
@@ -150,7 +149,7 @@ final class ModuleParserTest extends ParserTestCase
                 new ImportNode(
                     rangeInSource: $this->range([0, 0], [0, 37]),
                     path: new StringLiteralNode(
-                        rangeInSource: $this->range([0, 6], [0, 16]),
+                        rangeInSource: $this->range([0, 5], [0, 17]),
                         value: '/some/where'
                     ),
                     names: new ImportedNameNodes(
@@ -167,7 +166,7 @@ final class ModuleParserTest extends ParserTestCase
                 new ImportNode(
                     rangeInSource: $this->range([1, 0], [1, 37]),
                     path: new StringLiteralNode(
-                        rangeInSource: $this->range([1, 6], [1, 21]),
+                        rangeInSource: $this->range([1, 5], [1, 22]),
                         value: '/some/where/else'
                     ),
                     names: new ImportedNameNodes(
@@ -180,7 +179,7 @@ final class ModuleParserTest extends ParserTestCase
                 new ImportNode(
                     rangeInSource: $this->range([2, 0], [2, 33]),
                     path: new StringLiteralNode(
-                        rangeInSource: $this->range([2, 6], [2, 11]),
+                        rangeInSource: $this->range([2, 5], [2, 12]),
                         value: './here'
                     ),
                     names: new ImportedNameNodes(
@@ -211,7 +210,7 @@ final class ModuleParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedModuleNode,
-            $moduleParser->parse($tokens)
+            $moduleParser->parse($lexer)
         );
     }
 
@@ -240,7 +239,7 @@ final class ModuleParserTest extends ParserTestCase
         #
 
         AFX;
-        $tokens = $this->createTokenIterator($moduleAsString);
+        $lexer = new Lexer($moduleAsString);
 
         $expectedModuleNode = new ModuleNode(
             rangeInSource: $this->range([0, 0], [11, 19]),
@@ -248,7 +247,7 @@ final class ModuleParserTest extends ParserTestCase
                 new ImportNode(
                     rangeInSource: $this->range([5, 0], [5, 37]),
                     path: new StringLiteralNode(
-                        rangeInSource: $this->range([5, 6], [5, 16]),
+                        rangeInSource: $this->range([5, 5], [5, 17]),
                         value: '/some/where'
                     ),
                     names: new ImportedNameNodes(
@@ -278,14 +277,14 @@ final class ModuleParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedModuleNode,
-            $moduleParser->parse($tokens)
+            $moduleParser->parse($lexer)
         );
     }
 
     /**
      * @test
      */
-    public function throwsIfExceedingTokensOccur(): void
+    public function throwsIfExceedingCharactersOccur(): void
     {
         $this->assertThrowsParserException(
             function () {
@@ -297,16 +296,14 @@ final class ModuleParserTest extends ParserTestCase
                 export struct Qux {}
                 export struct Quux {}
                 AFX;
-                $tokens = $this->createTokenIterator($moduleAsString);
+                $lexer = new Lexer($moduleAsString);
 
-                $moduleParser->parse($tokens);
+                $moduleParser->parse($lexer);
             },
-            ModuleCouldNotBeParsed::becauseOfUnexpectedExceedingToken(
-                exceedingToken: new Token(
-                    type: TokenType::KEYWORD_EXPORT,
-                    value: 'export',
-                    boundaries: $this->range([4, 0], [4, 5]),
-                    sourcePath: Path::createMemory()
+            ModuleCouldNotBeParsed::becauseOfLexerException(
+                cause: LexerException::becauseOfUnexpectedExceedingSource(
+                    affectedRangeInSource: $this->range([4, 0], [4, 0]),
+                    exceedingCharacter: 'e'
                 )
             )
         );
