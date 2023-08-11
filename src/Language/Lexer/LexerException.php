@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Lexer;
 
+use PackageFactory\ComponentEngine\Language\Lexer\Token\Token;
 use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
 use PackageFactory\ComponentEngine\Language\Util\DebugHelper;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
@@ -33,6 +34,13 @@ final class LexerException extends \Exception
         string $message,
         public readonly Range $affectedRangeInSource
     ) {
+        $message = sprintf(
+            '[%s:%s] %s',
+            $affectedRangeInSource->start->lineNumber,
+            $affectedRangeInSource->start->columnNumber,
+            $message
+        );
+
         parent::__construct($message, $code);
     }
 
@@ -61,6 +69,35 @@ final class LexerException extends \Exception
                 'Unexpected character sequence "%s" was encountered. Expected %s instead.',
                 $actualCharacterSequence,
                 DebugHelper::describeTokenTypes($expectedTokenTypes)
+            ),
+            affectedRangeInSource: $affectedRangeInSource
+        );
+    }
+
+    public static function becauseOfUnexpectedToken(
+        TokenTypes $expectedTokenTypes,
+        Token $actualToken
+    ): self {
+        return new self(
+            code: 1691575769,
+            message: sprintf(
+                'Unexpected token "%s" was encountered. Expected %s instead.',
+                DebugHelper::describeToken($actualToken),
+                DebugHelper::describeTokenTypes($expectedTokenTypes)
+            ),
+            affectedRangeInSource: $actualToken->rangeInSource
+        );
+    }
+
+    public static function becauseOfUnexpectedExceedingSource(
+        Range $affectedRangeInSource,
+        string $exceedingCharacter
+    ): self {
+        return new self(
+            code: 1691675396,
+            message: sprintf(
+                'Expected source to end, but found exceeding character "%s".',
+                $exceedingCharacter
             ),
             affectedRangeInSource: $affectedRangeInSource
         );

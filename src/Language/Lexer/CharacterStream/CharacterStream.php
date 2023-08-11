@@ -24,6 +24,9 @@ namespace PackageFactory\ComponentEngine\Language\Lexer\CharacterStream;
 
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 
+/**
+ * @internal
+ */
 final class CharacterStream
 {
     private int $byte;
@@ -80,5 +83,26 @@ final class CharacterStream
     public function getPreviousPosition(): Position
     {
         return $this->cursor->getPreviousPosition();
+    }
+
+    public function makeSnapshot(): CharacterStreamSnapshot
+    {
+        return new CharacterStreamSnapshot(
+            byte: $this->byte,
+            cursor: $this->cursor->makeSnapshot(),
+            characterUnderCursor: $this->characterUnderCursor
+        );
+    }
+
+    public function restoreSnapshot(CharacterStreamSnapshot $snapshot): void
+    {
+        $this->byte = $snapshot->byte;
+        $this->cursor->restoreSnapshot($snapshot->cursor);
+        $this->characterUnderCursor = $snapshot->characterUnderCursor;
+    }
+
+    public function getRest(): string
+    {
+        return $this->characterUnderCursor . substr($this->source, $this->byte);
     }
 }

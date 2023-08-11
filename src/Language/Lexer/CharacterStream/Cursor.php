@@ -24,6 +24,9 @@ namespace PackageFactory\ComponentEngine\Language\Lexer\CharacterStream;
 
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 
+/**
+ * @internal
+ */
 final class Cursor
 {
     private int $currentLineNumber = 0;
@@ -57,5 +60,23 @@ final class Cursor
         assert($this->previousColumnNumber >= 0);
 
         return new Position($this->previousLineNumber, $this->previousColumnNumber);
+    }
+
+    public function makeSnapshot(): CursorSnapshot
+    {
+        return new CursorSnapshot(
+            currentLineNumber: $this->currentLineNumber,
+            currentColumnNumber: $this->currentColumnNumber,
+            previousLineNumber: $this->previousLineNumber,
+            previousColumnNumber: $this->previousColumnNumber
+        );
+    }
+
+    public function restoreSnapshot(CursorSnapshot $snapshot): void
+    {
+        $this->currentLineNumber = $snapshot->currentLineNumber;
+        $this->currentColumnNumber = $snapshot->currentColumnNumber;
+        $this->previousLineNumber = $snapshot->previousLineNumber;
+        $this->previousColumnNumber = $snapshot->previousColumnNumber;
     }
 }

@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Lexer;
 
+use LogicException;
 use PackageFactory\ComponentEngine\Language\Lexer\CharacterStream\CharacterStream;
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Matcher;
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Result;
@@ -33,135 +34,253 @@ use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class Lexer
 {
+    private readonly TokenTypes $TOKEN_TYPES_SPACE;
+    private readonly TokenTypes $TOKEN_TYPES_SPACE_AND_COMMENTS;
+
     private readonly CharacterStream $characterStream;
-    private ?Position $startPosition = null;
+    private Position $startPosition;
     private int $offset = 0;
     private string $buffer = '';
     private ?TokenType $tokenTypeUnderCursor = null;
     private ?Token $tokenUnderCursor = null;
-    private ?LexerException $latestError = null;
 
     public function __construct(string $source)
     {
+        $this->TOKEN_TYPES_SPACE = TokenTypes::from(
+            TokenType::SPACE,
+            TokenType::END_OF_LINE
+        );
+        $this->TOKEN_TYPES_SPACE_AND_COMMENTS = TokenTypes::from(
+            TokenType::SPACE,
+            TokenType::END_OF_LINE,
+            TokenType::COMMENT
+        );
+
         $this->characterStream = new CharacterStream($source);
+        $this->startPosition = Position::zero();
+    }
+
+    public function getTokenTypeUnderCursor(): TokenType
+    {
+        assert($this->tokenTypeUnderCursor !== null);
+
+        return $this->tokenTypeUnderCursor;
+    }
+
+    public function getTokenUnderCursor(): Token
+    {
+        return $this->tokenUnderCursor ??= new Token(
+            rangeInSource: Range::from($this->startPosition, $this->getEndPosition()),
+            type: $this->getTokenTypeUnderCursor(),
+            value: $this->buffer
+        );
+    }
+
+    public function isEnd(): bool
+    {
+        return $this->characterStream->isEnd();
+    }
+
+    public function assertIsEnd(): void
+    {
+        if (!$this->isEnd()) {
+            throw LexerException::becauseOfUnexpectedExceedingSource(
+                affectedRangeInSource: $this->characterStream->getCurrentPosition()->toRange(),
+                exceedingCharacter: $this->characterStream->current() ?? ''
+            );
+        }
+    }
+
+    public function getStartPosition(): Position
+    {
+
+        return $this->startPosition;
+    }
+
+    public function getEndPosition(): Position
+    {
+
+        return $this->characterStream->getPreviousPosition();
     }
 
     public function read(TokenType $tokenType): void
     {
-        assert($this->latestError === null);
-        $this->startPosition = $this->characterStream->getCurrentPosition();
 
         if ($this->characterStream->isEnd()) {
-            throw $this->latestError = LexerException::becauseOfUnexpectedEndOfSource(
+            throw LexerException::becauseOfUnexpectedEndOfSource(
                 expectedTokenTypes: TokenTypes::from($tokenType),
-                affectedRangeInSource: $this->startPosition->toRange()
+                affectedRangeInSource: $this->characterStream->getCurrentPosition()->toRange()
             );
         }
 
-        $this->tokenTypeUnderCursor = null;
-        $this->tokenUnderCursor = null;
-        $this->offset = 0;
-        $this->buffer = '';
-
-        while (true) {
-            $character = $this->characterStream->current();
-            $result = Matcher::for($tokenType)->match($character, $this->offset);
-
-            if ($result === Result::KEEP) {
-                $this->offset++;
-                $this->buffer .= $character;
-                $this->characterStream->next();
-                continue;
-            }
-
-            if ($result === Result::SATISFIED) {
-                $this->tokenTypeUnderCursor = $tokenType;
-                break;
-            }
-
-            if ($result === Result::CANCEL) {
-                throw $this->latestError = LexerException::becauseOfUnexpectedCharacterSequence(
-                    expectedTokenTypes: TokenTypes::from($tokenType),
-                    affectedRangeInSource: Range::from(
-                        $this->startPosition,
-                        $this->characterStream->getCurrentPosition()
-                    ),
-                    actualCharacterSequence: $this->buffer . $character
-                );
-            }
+        if ($this->extract($tokenType)) {
+            $this->tokenTypeUnderCursor = $tokenType;
+            return;
         }
+
+        throw LexerException::becauseOfUnexpectedCharacterSequence(
+            expectedTokenTypes: TokenTypes::from($tokenType),
+            affectedRangeInSource: Range::from(
+                $this->startPosition,
+                $this->characterStream->getCurrentPosition()
+            ),
+            actualCharacterSequence: $this->buffer . $this->characterStream->current()
+        );
     }
 
     public function readOneOf(TokenTypes $tokenTypes): void
     {
-        assert($this->latestError === null);
-        $this->startPosition = $this->characterStream->getCurrentPosition();
 
         if ($this->characterStream->isEnd()) {
-            throw $this->latestError = LexerException::becauseOfUnexpectedEndOfSource(
+            throw LexerException::becauseOfUnexpectedEndOfSource(
                 expectedTokenTypes: $tokenTypes,
-                affectedRangeInSource: $this->startPosition->toRange()
+                affectedRangeInSource: $this->characterStream->getCurrentPosition()->toRange()
             );
         }
 
-        $this->tokenTypeUnderCursor = null;
-        $this->tokenUnderCursor = null;
-        $this->offset = 0;
-        $this->buffer = '';
-
-        $tokenTypeCandidates = $tokenTypes->items;
-        while (count($tokenTypeCandidates)) {
-            $character = $this->characterStream->current();
-
-            $nextTokenTypeCandidates = [];
-            foreach ($tokenTypeCandidates as $tokenType) {
-                $result = Matcher::for($tokenType)->match($character, $this->offset);
-
-                if ($result === Result::KEEP) {
-                    $nextTokenTypeCandidates[] = $tokenType;
-                    continue;
-                }
-
-                if ($result === Result::SATISFIED) {
-                    $this->tokenTypeUnderCursor = $tokenType;
-                    return;
-                }
-            }
-
-            $this->offset++;
-            $this->buffer .= $character;
-            $tokenTypeCandidates = $nextTokenTypeCandidates;
-            $this->characterStream->next();
+        $foundTokenType = $this->extractOneOf($tokenTypes);
+        if ($foundTokenType === null) {
+            throw LexerException::becauseOfUnexpectedCharacterSequence(
+                expectedTokenTypes: $tokenTypes,
+                affectedRangeInSource: Range::from(
+                    $this->startPosition,
+                    $this->characterStream->getPreviousPosition()
+                ),
+                actualCharacterSequence: $this->buffer
+            );
         }
 
-        throw $this->latestError = LexerException::becauseOfUnexpectedCharacterSequence(
-            expectedTokenTypes: $tokenTypes,
-            affectedRangeInSource: Range::from(
-                $this->startPosition,
-                $this->characterStream->getPreviousPosition()
-            ),
-            actualCharacterSequence: $this->buffer
-        );
+        $this->tokenTypeUnderCursor = $foundTokenType;
+    }
+
+    public function probe(TokenType $tokenType): bool
+    {
+
+        if ($this->characterStream->isEnd()) {
+            return false;
+        }
+
+        $snapshot = $this->characterStream->makeSnapshot();
+
+        if ($tokenType = $this->extract($tokenType)) {
+            $this->tokenTypeUnderCursor = $tokenType;
+            return true;
+        }
+
+        $this->characterStream->restoreSnapshot($snapshot);
+        return false;
+    }
+
+    public function probeOneOf(TokenTypes $tokenTypes): bool
+    {
+        if ($this->characterStream->isEnd()) {
+            return false;
+        }
+
+        $snapshot = $this->characterStream->makeSnapshot();
+
+        if ($tokenType = $this->extractOneOf($tokenTypes)) {
+            $this->tokenTypeUnderCursor = $tokenType;
+            return true;
+        }
+
+        $this->characterStream->restoreSnapshot($snapshot);
+        return false;
+    }
+
+    public function peek(TokenType $tokenType): bool
+    {
+        if ($this->characterStream->isEnd()) {
+            return false;
+        }
+
+        $snapshot = $this->characterStream->makeSnapshot();
+        $result = $this->extract($tokenType) !== null;
+        $this->characterStream->restoreSnapshot($snapshot);
+
+        return $result;
+    }
+
+    public function peekOneOf(TokenTypes $tokenTypes): ?TokenType
+    {
+        if ($this->characterStream->isEnd()) {
+            return null;
+        }
+
+        $snapshot = $this->characterStream->makeSnapshot();
+        $foundTokenType = $this->extractOneOf($tokenTypes);
+        $this->characterStream->restoreSnapshot($snapshot);
+
+        return $foundTokenType;
+    }
+
+    public function expect(TokenType $tokenType): void
+    {
+        if ($this->characterStream->isEnd()) {
+            throw LexerException::becauseOfUnexpectedEndOfSource(
+                expectedTokenTypes: TokenTypes::from($tokenType),
+                affectedRangeInSource: $this->characterStream->getCurrentPosition()->toRange()
+            );
+        }
+
+        $snapshot = $this->characterStream->makeSnapshot();
+        if ($this->extract($tokenType) === null) {
+            throw LexerException::becauseOfUnexpectedCharacterSequence(
+                expectedTokenTypes: TokenTypes::from($tokenType),
+                affectedRangeInSource: Range::from(
+                    $this->startPosition,
+                    $this->characterStream->getPreviousPosition()
+                ),
+                actualCharacterSequence: $this->buffer
+            );
+        }
+
+        $this->characterStream->restoreSnapshot($snapshot);
+    }
+
+    public function expectOneOf(TokenTypes $tokenTypes): TokenType
+    {
+        if ($this->characterStream->isEnd()) {
+            throw LexerException::becauseOfUnexpectedEndOfSource(
+                expectedTokenTypes: $tokenTypes,
+                affectedRangeInSource: $this->characterStream->getCurrentPosition()->toRange()
+            );
+        }
+
+        $snapshot = $this->characterStream->makeSnapshot();
+        $foundTokenType = $this->extractOneOf($tokenTypes);
+        if ($foundTokenType === null) {
+            throw LexerException::becauseOfUnexpectedCharacterSequence(
+                expectedTokenTypes: $tokenTypes,
+                affectedRangeInSource: Range::from(
+                    $this->startPosition,
+                    $this->characterStream->getPreviousPosition()
+                ),
+                actualCharacterSequence: $this->buffer
+            );
+        }
+
+        $this->characterStream->restoreSnapshot($snapshot);
+
+        return $foundTokenType;
     }
 
     public function skipSpace(): void
     {
-        assert($this->latestError === null);
-        $this->skip(TokenType::SPACE, TokenType::END_OF_LINE);
+        $this->skipAnyOf($this->TOKEN_TYPES_SPACE);
     }
 
     public function skipSpaceAndComments(): void
     {
-        assert($this->latestError === null);
-        $this->skip(TokenType::SPACE, TokenType::END_OF_LINE, TokenType::COMMENT);
+        $this->skipAnyOf($this->TOKEN_TYPES_SPACE_AND_COMMENTS);
     }
 
-    private function skip(TokenType ...$tokenTypes): void
+    private function skipAnyOf(TokenTypes $tokenTypes): void
     {
         while (true) {
             $character = $this->characterStream->current();
 
-            foreach ($tokenTypes as $tokenType) {
+            foreach ($tokenTypes->items as $tokenType) {
                 $matcher = Matcher::for($tokenType);
 
                 if ($matcher->match($character, 0) === Result::KEEP) {
@@ -174,24 +293,66 @@ final class Lexer
         }
     }
 
-    public function getTokenUnderCursor(): Token
+    private function extract(TokenType $tokenType): ?TokenType
     {
-        assert($this->latestError === null);
-        assert($this->startPosition !== null);
-        assert($this->tokenTypeUnderCursor !== null);
+        $this->startPosition = $this->characterStream->getCurrentPosition();
+        $this->tokenUnderCursor = null;
+        $this->offset = 0;
+        $this->buffer = '';
 
-        return $this->tokenUnderCursor ??= new Token(
-            rangeInSource: Range::from(
-                $this->startPosition,
-                $this->characterStream->getPreviousPosition()
-            ),
-            type: $this->tokenTypeUnderCursor,
-            value: $this->buffer
-        );
+        while (true) {
+            $character = $this->characterStream->current();
+            $result = Matcher::for($tokenType)->match($character, $this->offset);
+
+            if ($result === Result::SATISFIED) {
+                return $tokenType;
+            }
+
+            if ($result === Result::CANCEL) {
+                return null;
+            }
+
+            $this->offset++;
+            $this->buffer .= $character;
+            $this->characterStream->next();
+        }
     }
 
-    public function isEnd(): bool
+    private function extractOneOf(TokenTypes $tokenTypes): ?TokenType
     {
-        return $this->characterStream->isEnd();
+        $this->startPosition = $this->characterStream->getCurrentPosition();
+        $this->tokenUnderCursor = null;
+        $this->offset = 0;
+        $this->buffer = '';
+
+        $tokenTypeCandidates = $tokenTypes->items;
+        while (count($tokenTypeCandidates)) {
+            $character = $this->characterStream->current();
+
+            $nextTokenTypeCandidates = [];
+            foreach ($tokenTypeCandidates as $tokenType) {
+                $result = Matcher::for($tokenType)->match($character, $this->offset);
+
+                if ($result === Result::SATISFIED) {
+                    return $tokenType;
+                }
+
+                if ($result === Result::KEEP) {
+                    $nextTokenTypeCandidates[] = $tokenType;
+                }
+            }
+
+            $this->offset++;
+            $this->buffer .= $character;
+            $tokenTypeCandidates = $nextTokenTypeCandidates;
+            $this->characterStream->next();
+        }
+
+        return null;
+    }
+
+    public function dumpRest(): string
+    {
+        return $this->characterStream->getRest();
     }
 }

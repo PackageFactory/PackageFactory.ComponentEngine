@@ -26,6 +26,7 @@ use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Characters\Characters;
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Exact\Exact;
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Fixed\Fixed;
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Not\Not;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Optional\Optional;
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Sequence\Sequence;
 use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
 
@@ -40,7 +41,10 @@ abstract class Matcher
     {
         return self::$instancesByTokenType[$tokenType->value] ??= match ($tokenType) {
             TokenType::COMMENT =>
-                new Sequence(new Exact('#'), new Not(new Exact("\n"))),
+                new Sequence(
+                    new Exact('#'),
+                    new Optional(new Not(new Exact("\n")))
+                ),
 
             TokenType::KEYWORD_FROM =>
                 new Exact('from'),
@@ -70,7 +74,7 @@ abstract class Matcher
             TokenType::STRING_LITERAL_DELIMITER =>
                 new Exact('"'),
             TokenType::STRING_LITERAL_CONTENT =>
-                new Not(new Characters('"\\' . "\n")),
+                new Not(new Characters('"\\')),
 
             TokenType::INTEGER_BINARY =>
                 new Sequence(new Exact('0b'), new Characters('01')),
@@ -147,12 +151,16 @@ abstract class Matcher
                 new Exact('&&'),
             TokenType::SYMBOL_BOOLEAN_OR =>
                 new Exact('||'),
-            TokenType::SYMBOL_STRICT_EQUALs =>
+            TokenType::SYMBOL_STRICT_EQUALS =>
                 new Exact('==='),
-            TokenType::SYMBOL_NOT_EQUALs =>
+            TokenType::SYMBOL_NOT_EQUALS =>
                 new Exact('!=='),
+            TokenType::SYMBOL_GREATER_THAN =>
+                new Exact('>'),
             TokenType::SYMBOL_GREATER_THAN_OR_EQUAL =>
                 new Exact('>='),
+            TokenType::SYMBOL_LESS_THAN =>
+                new Exact('<'),
             TokenType::SYMBOL_LESS_THAN_OR_EQUAL =>
                 new Exact('<='),
             TokenType::SYMBOL_ARROW_SINGLE =>
@@ -161,13 +169,15 @@ abstract class Matcher
                 new Exact('?.'),
             TokenType::SYMBOL_NULLISH_COALESCE =>
                 new Exact('??'),
+            TokenType::SYMBOL_CLOSE_TAG =>
+                new Exact('</'),
 
             TokenType::WORD =>
                 new Characters(
                     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
                 ),
             TokenType::TEXT =>
-                new Not(new Characters('<{}>')),
+                new Not(new Characters('<{}>' . " \t\n")),
 
             TokenType::SPACE =>
                 new Characters(" \t"),

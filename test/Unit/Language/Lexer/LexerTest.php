@@ -22,7 +22,6 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\Lexer;
 
-use AssertionError;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
 use PackageFactory\ComponentEngine\Language\Lexer\Token\Token;
@@ -64,6 +63,8 @@ final class LexerTest extends TestCase
      */
     public static function singleTokenExamples(): iterable
     {
+        yield ($source = '#') =>
+            [$source, TokenType::COMMENT];
         yield ($source = '# This is a comment') =>
             [$source, TokenType::COMMENT];
         yield ($source = '# 🌵🆚⌚️: Multi-byte characters are not a problem inside a comment.') =>
@@ -170,9 +171,9 @@ final class LexerTest extends TestCase
         yield ($source = '||') =>
             [$source, TokenType::SYMBOL_BOOLEAN_OR];
         yield ($source = '===') =>
-            [$source, TokenType::SYMBOL_STRICT_EQUALs];
+            [$source, TokenType::SYMBOL_STRICT_EQUALS];
         yield ($source = '!==') =>
-            [$source, TokenType::SYMBOL_NOT_EQUALs];
+            [$source, TokenType::SYMBOL_NOT_EQUALS];
         yield ($source = '>=') =>
             [$source, TokenType::SYMBOL_GREATER_THAN_OR_EQUAL];
         yield ($source = '<=') =>
@@ -191,9 +192,9 @@ final class LexerTest extends TestCase
         yield ($source = '1245ValidWord') =>
             [$source, TokenType::WORD];
 
-        yield ($source = 'Just some text. Nothing special.') =>
+        yield ($source = 'JustSomeText.TextTerminates-Only-At??Space//Characters.') =>
             [$source, TokenType::TEXT];
-        yield ($source = '🌵🆚⌚️: Multi-byte characters are not a problem inside of text.') =>
+        yield ($source = '🌵🆚⌚️') =>
             [$source, TokenType::TEXT];
 
         yield ($source = ' ') =>
@@ -218,10 +219,62 @@ final class LexerTest extends TestCase
      * @param TokenType $expectedTokenType
      * @return void
      */
-    public function readsSingleToken(string $source, TokenType $expectedTokenType): void
+    public function readSavesTokenOfGivenTypeIfMatchIsFound(string $source, TokenType $expectedTokenType): void
     {
         $lexer = new Lexer($source);
         $lexer->read($expectedTokenType);
+
+        $this->assertEquals(
+            $expectedTokenType,
+            $lexer->getTokenTypeUnderCursor()
+        );
+
+        $this->assertEquals(
+            new Position(0, 0),
+            $lexer->getStartPosition()
+        );
+
+        $this->assertEquals(
+            new Position(0, \mb_strlen($source) - 1),
+            $lexer->getEndPosition()
+        );
+
+        $this->assertEquals(
+            new Token(
+                rangeInSource: self::range([0, 0], [0, \mb_strlen($source) - 1]),
+                type: $expectedTokenType,
+                value: $source
+            ),
+            $lexer->getTokenUnderCursor()
+        );
+    }
+
+    /**
+     * @dataProvider singleTokenExamples
+     * @test
+     * @param string $source
+     * @param TokenType $expectedTokenType
+     * @return void
+     */
+    public function readOneOfSavesTokenOfGivenTypeIfMatchIsFound(string $source, TokenType $expectedTokenType): void
+    {
+        $lexer = new Lexer($source);
+        $lexer->readOneOf(TokenTypes::from($expectedTokenType));
+
+        $this->assertEquals(
+            $expectedTokenType,
+            $lexer->getTokenTypeUnderCursor()
+        );
+
+        $this->assertEquals(
+            new Position(0, 0),
+            $lexer->getStartPosition()
+        );
+
+        $this->assertEquals(
+            new Position(0, \mb_strlen($source) - 1),
+            $lexer->getEndPosition()
+        );
 
         $this->assertEquals(
             new Token(
@@ -422,8 +475,8 @@ final class LexerTest extends TestCase
         ];
 
         $source = <<<AFX
-        This is some text with expressions {}
-        and tags <> inside.
+        ThisIsSomeText-with-expressions{}
+        line-breaks,   spaces   andTags<>inside.
         AFX;
         yield $source => [
             $source,
@@ -431,18 +484,23 @@ final class LexerTest extends TestCase
                 TokenType::TEXT,
                 TokenType::BRACKET_CURLY_OPEN,
                 TokenType::BRACKET_CURLY_CLOSE,
+                TokenType::SPACE,
                 TokenType::END_OF_LINE,
                 TokenType::BRACKET_ANGLE_OPEN,
                 TokenType::BRACKET_ANGLE_CLOSE
             ),
-            new Token(self::range([0, 0], [0, 34]), TokenType::TEXT, 'This is some text with expressions '),
-            new Token(self::range([0, 35], [0, 35]), TokenType::BRACKET_CURLY_OPEN, '{'),
-            new Token(self::range([0, 36], [0, 36]), TokenType::BRACKET_CURLY_CLOSE, '}'),
-            new Token(self::range([0, 37], [0, 37]), TokenType::END_OF_LINE, "\n"),
-            new Token(self::range([1, 0], [1, 8]), TokenType::TEXT, 'and tags '),
-            new Token(self::range([1, 9], [1, 9]), TokenType::BRACKET_ANGLE_OPEN, '<'),
-            new Token(self::range([1, 10], [1, 10]), TokenType::BRACKET_ANGLE_CLOSE, '>'),
-            new Token(self::range([1, 11], [1, 18]), TokenType::TEXT, ' inside.'),
+            new Token(self::range([0, 0], [0, 30]), TokenType::TEXT, 'ThisIsSomeText-with-expressions'),
+            new Token(self::range([0, 31], [0, 31]), TokenType::BRACKET_CURLY_OPEN, '{'),
+            new Token(self::range([0, 32], [0, 32]), TokenType::BRACKET_CURLY_CLOSE, '}'),
+            new Token(self::range([0, 33], [0, 33]), TokenType::END_OF_LINE, "\n"),
+            new Token(self::range([1, 0], [1, 11]), TokenType::TEXT, 'line-breaks,'),
+            new Token(self::range([1, 12], [1, 14]), TokenType::SPACE, '   '),
+            new Token(self::range([1, 15], [1, 20]), TokenType::TEXT, 'spaces'),
+            new Token(self::range([1, 21], [1, 23]), TokenType::SPACE, '   '),
+            new Token(self::range([1, 24], [1, 30]), TokenType::TEXT, 'andTags'),
+            new Token(self::range([1, 31], [1, 31]), TokenType::BRACKET_ANGLE_OPEN, '<'),
+            new Token(self::range([1, 32], [1, 32]), TokenType::BRACKET_ANGLE_CLOSE, '>'),
+            new Token(self::range([1, 33], [1, 39]), TokenType::TEXT, 'inside.'),
         ];
     }
 
@@ -453,7 +511,7 @@ final class LexerTest extends TestCase
      * @param Token ...$expectedTokens
      * @return void
      */
-    public function readsMultipleTokens(
+    public function testReadOneOfWithMultipleTokenTypes(
         string $source,
         TokenTypes $tokenTypes,
         Token ...$expectedTokens
@@ -504,7 +562,6 @@ final class LexerTest extends TestCase
 
         yield from $example(TokenType::STRING_LITERAL_DELIMITER, '\'', '\'');
         yield from $example(TokenType::STRING_LITERAL_CONTENT, '"', '"');
-        yield from $example(TokenType::STRING_LITERAL_CONTENT, "\n", "\n");
         yield from $example(TokenType::STRING_LITERAL_CONTENT, '\\', '\\');
 
         yield from $example(TokenType::INTEGER_BINARY, '001001', '00');
@@ -564,8 +621,8 @@ final class LexerTest extends TestCase
         yield from $example(TokenType::SYMBOL_PIPE, '🌵', '🌵');
         yield from $example(TokenType::SYMBOL_BOOLEAN_AND, '§§', '§');
         yield from $example(TokenType::SYMBOL_BOOLEAN_OR, '//', '/');
-        yield from $example(TokenType::SYMBOL_STRICT_EQUALs, '!==', '!');
-        yield from $example(TokenType::SYMBOL_NOT_EQUALs, '===', '=');
+        yield from $example(TokenType::SYMBOL_STRICT_EQUALS, '!==', '!');
+        yield from $example(TokenType::SYMBOL_NOT_EQUALS, '===', '=');
         yield from $example(TokenType::SYMBOL_GREATER_THAN_OR_EQUAL, '=>', '=');
         yield from $example(TokenType::SYMBOL_LESS_THAN_OR_EQUAL, '=<', '=');
         yield from $example(TokenType::SYMBOL_ARROW_SINGLE, '=>', '=');
@@ -873,45 +930,6 @@ final class LexerTest extends TestCase
             ),
             $lexer->getTokenUnderCursor()
         );
-    }
-
-    /**
-     * @return iterable<mixed>
-     */
-    public static function illegalOperationsAfterFailureExamples(): iterable
-    {
-        yield [fn (Lexer $lexer) => $lexer->read(TokenType::KEYWORD_IMPORT)];
-        yield [
-            fn (Lexer $lexer) => $lexer->readOneOf(
-                TokenTypes::from(
-                    TokenType::KEYWORD_IMPORT,
-                    TokenType::KEYWORD_NULL,
-                    TokenType::SYMBOL_ARROW_SINGLE,
-                    TokenType::BRACKET_ANGLE_CLOSE,
-                )
-            )
-        ];
-        yield [fn (Lexer $lexer) => $lexer->skipSpace()];
-        yield [fn (Lexer $lexer) => $lexer->skipSpaceAndComments()];
-        yield [fn (Lexer $lexer) => $lexer->getTokenUnderCursor()];
-    }
-
-    /**
-     * @dataProvider illegalOperationsAfterFailureExamples
-     * @test
-     * @param callable $operation
-     * @return void
-     */
-    public function cannotBeReusedAfterFailure(callable $operation): void
-    {
-        $lexer = new Lexer('import');
-        try {
-            $lexer->read(TokenType::SYMBOL_BOOLEAN_AND);
-        } catch (LexerException $e) {
-        }
-
-        $this->expectException(AssertionError::class);
-        $operation($lexer);
     }
 
     /**
