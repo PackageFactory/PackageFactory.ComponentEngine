@@ -340,24 +340,21 @@ final class ExpressionParser
             $type = $this->parseAccessType($lexer);
 
             $lexer->read(TokenType::WORD);
-            $keyToken = $lexer->getTokenUnderCursor();
-
-            $rangeInSource = Range::from(
-                $parent->rangeInSource->start,
-                $keyToken->rangeInSource->end
+            $accessNode = new AccessNode(
+                rangeInSource: $parent->rangeInSource->start->toRange(
+                    $lexer->getEndPosition()
+                ),
+                parent: $parent,
+                type: $type,
+                key: new AccessKeyNode(
+                    rangeInSource: $lexer->getCursorRange(),
+                    value: PropertyName::from($lexer->getBuffer())
+                )
             );
 
             $parent = new ExpressionNode(
-                rangeInSource: $rangeInSource,
-                root: new AccessNode(
-                    rangeInSource: $rangeInSource,
-                    parent: $parent,
-                    type: $type,
-                    key: new AccessKeyNode(
-                        rangeInSource: $keyToken->rangeInSource,
-                        value: PropertyName::from($keyToken->value)
-                    )
-                )
+                rangeInSource: $accessNode->rangeInSource,
+                root: $accessNode
             );
 
             $lexer->skipSpaceAndComments();

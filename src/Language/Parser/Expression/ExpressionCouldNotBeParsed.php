@@ -22,27 +22,9 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\Expression;
 
-use PackageFactory\ComponentEngine\Language\Lexer\Token\Token;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
 use PackageFactory\ComponentEngine\Language\Parser\ParserException;
-use PackageFactory\ComponentEngine\Language\Util\DebugHelper;
 
 final class ExpressionCouldNotBeParsed extends ParserException
 {
-    public static function becauseOfUnexpectedToken(
-        TokenTypes $expectedTokenTypes,
-        Token $actualToken
-    ): self {
-        return new self(
-            code: 1691063089,
-            message: sprintf(
-                'Expression could not be parsed because of unexpected token %s. '
-                . 'Expected %s instead.',
-                DebugHelper::describeToken($actualToken),
-                DebugHelper::describeTokenTypes($expectedTokenTypes)
-            ),
-            affectedRangeInSource: $actualToken->rangeInSource
-        );
-    }
+    protected const TITLE = 'Expression could not be parsed';
 }

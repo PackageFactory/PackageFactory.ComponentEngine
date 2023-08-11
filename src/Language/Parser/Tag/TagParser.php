@@ -100,14 +100,17 @@ final class TagParser
     private function parseName(Lexer $lexer): TagNameNode
     {
         $lexer->read(TokenType::WORD);
-        $tagNameToken = $lexer->getTokenUnderCursor();
+        $tagNameNode = new TagNameNode(
+            rangeInSource: Range::from(
+                $lexer->getStartPosition(),
+                $lexer->getEndPosition()
+            ),
+            value: TagName::from($lexer->getBuffer())
+        );
 
         $lexer->skipSpace();
 
-        return new TagNameNode(
-            rangeInSource: $tagNameToken->rangeInSource,
-            value: TagName::from($tagNameToken->value)
-        );
+        return $tagNameNode;
     }
 
     private function parseAttributes(Lexer $lexer): AttributeNodes
@@ -140,11 +143,10 @@ final class TagParser
     private function parseAttributeName(Lexer $lexer): AttributeNameNode
     {
         $lexer->read(TokenType::WORD);
-        $attributeNameToken = $lexer->getTokenUnderCursor();
 
         return new AttributeNameNode(
-            rangeInSource: $attributeNameToken->rangeInSource,
-            value: AttributeName::from($attributeNameToken->value)
+            rangeInSource: $lexer->getCursorRange(),
+            value: AttributeName::from($lexer->getBuffer())
         );
     }
 
@@ -220,15 +222,15 @@ final class TagParser
         $start = $lexer->getStartPosition();
 
         $lexer->read(TokenType::WORD);
-        $closingNameToken = $lexer->getTokenUnderCursor();
+        $closingName = $lexer->getBuffer();
 
         $lexer->read(TokenType::BRACKET_ANGLE_CLOSE);
         $end = $lexer->getEndPosition();
 
-        if ($closingNameToken->value !== $expectedName->value) {
+        if ($closingName !== $expectedName->value) {
             throw TagCouldNotBeParsed::becauseOfClosingTagNameMismatch(
                 expectedTagName: $expectedName,
-                actualTagName: $closingNameToken->value,
+                actualTagName: $closingName,
                 affectedRangeInSource: Range::from($start, $end)
             );
         }

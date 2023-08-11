@@ -100,11 +100,10 @@ final class TemplateLiteralParser
     public function parseStringSegment(Lexer $lexer): TemplateLiteralStringSegmentNode
     {
         $lexer->read(TokenType::TEMPLATE_LITERAL_CONTENT);
-        $stringToken = $lexer->getTokenUnderCursor();
 
         return new TemplateLiteralStringSegmentNode(
-            rangeInSource: $stringToken->rangeInSource,
-            value: $stringToken->value
+            rangeInSource: $lexer->getCursorRange(),
+            value: $lexer->getBuffer()
         );
     }
 

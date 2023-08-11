@@ -22,7 +22,6 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Lexer;
 
-use PackageFactory\ComponentEngine\Language\Lexer\Token\Token;
 use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
 use PackageFactory\ComponentEngine\Language\Util\DebugHelper;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
@@ -71,21 +70,6 @@ final class LexerException extends \Exception
                 DebugHelper::describeTokenTypes($expectedTokenTypes)
             ),
             affectedRangeInSource: $affectedRangeInSource
-        );
-    }
-
-    public static function becauseOfUnexpectedToken(
-        TokenTypes $expectedTokenTypes,
-        Token $actualToken
-    ): self {
-        return new self(
-            code: 1691575769,
-            message: sprintf(
-                'Unexpected token "%s" was encountered. Expected %s instead.',
-                DebugHelper::describeToken($actualToken),
-                DebugHelper::describeTokenTypes($expectedTokenTypes)
-            ),
-            affectedRangeInSource: $actualToken->rangeInSource
         );
     }
 

@@ -46,12 +46,9 @@ final class BooleanLiteralParser
     {
         $lexer->readOneOf(self::$TOKEN_TYPES_BOOLEAN_KEYWORDS);
 
-        $token = $lexer->getTokenUnderCursor();
-        $value = $token->type === TokenType::KEYWORD_TRUE;
-
         return new BooleanLiteralNode(
-            rangeInSource: $token->rangeInSource,
-            value: $value
+            rangeInSource: $lexer->getCursorRange(),
+            value: $lexer->getTokenTypeUnderCursor() === TokenType::KEYWORD_TRUE
         );
     }
 }

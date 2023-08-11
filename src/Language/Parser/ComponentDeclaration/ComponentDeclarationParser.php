@@ -76,14 +76,14 @@ final class ComponentDeclarationParser
     private function parseName(Lexer $lexer): ComponentNameNode
     {
         $lexer->read(TokenType::WORD);
-        $componentNameToken = $lexer->getTokenUnderCursor();
+        $componentNameNode = new ComponentNameNode(
+            rangeInSource: $lexer->getCursorRange(),
+            value: ComponentName::from($lexer->getBuffer())
+        );
 
         $lexer->skipSpace();
 
-        return new ComponentNameNode(
-            rangeInSource: $componentNameToken->rangeInSource,
-            value: ComponentName::from($componentNameToken->value)
-        );
+        return $componentNameNode;
     }
 
     private function parseProps(Lexer $lexer): PropertyDeclarationNodes

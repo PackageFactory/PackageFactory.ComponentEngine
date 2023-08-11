@@ -24,7 +24,6 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Lexer;
 
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\Token;
 use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
 use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
@@ -33,16 +32,43 @@ use PHPUnit\Framework\TestCase;
 
 final class LexerTest extends TestCase
 {
-    /**
-     * @param array{int,int} $startAsArray
-     * @param array{int,int} $endAsArray
-     * @return Range
-     */
-    protected static function range(array $startAsArray, array $endAsArray): Range
-    {
-        return Range::from(
-            new Position(...$startAsArray),
-            new Position(...$endAsArray)
+    private Lexer $lexer;
+
+    protected function assertLexerState(
+        Position $startPosition,
+        Position $endPosition,
+        TokenType $tokenTypeUnderCursor,
+        string $buffer,
+        bool $isEnd
+    ): void {
+        $this->assertEquals(
+            $startPosition,
+            $this->lexer->getStartPosition(),
+            'Failed asserting that start position of lexer equals'
+        );
+
+        $this->assertEquals(
+            $endPosition,
+            $this->lexer->getEndPosition(),
+            'Failed asserting that end position of lexer equals'
+        );
+
+        $this->assertEquals(
+            $tokenTypeUnderCursor,
+            $this->lexer->getTokenTypeUnderCursor(),
+            'Failed asserting that token type under cursor of lexer equals'
+        );
+
+        $this->assertEquals(
+            $buffer,
+            $this->lexer->getBuffer(),
+            'Failed asserting that buffer of lexer equals'
+        );
+
+        $this->assertEquals(
+            $isEnd,
+            $this->lexer->isEnd(),
+            'Failed asserting that isEnd of lexer equals'
         );
     }
 
@@ -221,31 +247,15 @@ final class LexerTest extends TestCase
      */
     public function readSavesTokenOfGivenTypeIfMatchIsFound(string $source, TokenType $expectedTokenType): void
     {
-        $lexer = new Lexer($source);
-        $lexer->read($expectedTokenType);
+        $this->lexer = new Lexer($source);
+        $this->lexer->read($expectedTokenType);
 
-        $this->assertEquals(
-            $expectedTokenType,
-            $lexer->getTokenTypeUnderCursor()
-        );
-
-        $this->assertEquals(
-            new Position(0, 0),
-            $lexer->getStartPosition()
-        );
-
-        $this->assertEquals(
-            new Position(0, \mb_strlen($source) - 1),
-            $lexer->getEndPosition()
-        );
-
-        $this->assertEquals(
-            new Token(
-                rangeInSource: self::range([0, 0], [0, \mb_strlen($source) - 1]),
-                type: $expectedTokenType,
-                value: $source
-            ),
-            $lexer->getTokenUnderCursor()
+        $this->assertLexerState(
+            startPosition: Position::from(0, 0),
+            endPosition: Position::from(0, \mb_strlen($source) - 1),
+            tokenTypeUnderCursor: $expectedTokenType,
+            buffer: $source,
+            isEnd: true
         );
     }
 
@@ -258,45 +268,29 @@ final class LexerTest extends TestCase
      */
     public function readOneOfSavesTokenOfGivenTypeIfMatchIsFound(string $source, TokenType $expectedTokenType): void
     {
-        $lexer = new Lexer($source);
-        $lexer->readOneOf(TokenTypes::from($expectedTokenType));
+        $this->lexer = new Lexer($source);
+        $this->lexer->readOneOf(TokenTypes::from($expectedTokenType));
 
-        $this->assertEquals(
-            $expectedTokenType,
-            $lexer->getTokenTypeUnderCursor()
-        );
-
-        $this->assertEquals(
-            new Position(0, 0),
-            $lexer->getStartPosition()
-        );
-
-        $this->assertEquals(
-            new Position(0, \mb_strlen($source) - 1),
-            $lexer->getEndPosition()
-        );
-
-        $this->assertEquals(
-            new Token(
-                rangeInSource: self::range([0, 0], [0, \mb_strlen($source) - 1]),
-                type: $expectedTokenType,
-                value: $source
-            ),
-            $lexer->getTokenUnderCursor()
+        $this->assertLexerState(
+            startPosition: Position::from(0, 0),
+            endPosition: Position::from(0, \mb_strlen($source) - 1),
+            tokenTypeUnderCursor: $expectedTokenType,
+            buffer: $source,
+            isEnd: true
         );
     }
 
     /**
-     * @return iterable<mixed>
+     * @return iterable<string,array{string,TokenTypes,array{array{int,int},array{int,int},TokenType,string}}>
      */
     public static function multipleTokensExamples(): iterable
     {
         yield ($source = "# This is a comment\n# This is also a comment") => [
             $source,
             TokenTypes::from(TokenType::COMMENT, TokenType::END_OF_LINE),
-            new Token(self::range([0, 0], [0, 18]), TokenType::COMMENT, '# This is a comment'),
-            new Token(self::range([0, 19], [0, 19]), TokenType::END_OF_LINE, "\n"),
-            new Token(self::range([1, 0], [1, 23]), TokenType::COMMENT, '# This is also a comment')
+            [[0,  0], [0, 18], TokenType::COMMENT, '# This is a comment'],
+            [[0, 19], [0, 19], TokenType::END_OF_LINE, "\n"],
+            [[1,  0], [1, 23], TokenType::COMMENT, '# This is also a comment'],
         ];
 
         yield ($source = "1765224, -0xAB89CD, true\nnull") => [
@@ -311,16 +305,16 @@ final class LexerTest extends TestCase
                 TokenType::KEYWORD_TRUE,
                 TokenType::KEYWORD_NULL
             ),
-            new Token(self::range([0, 0], [0, 6]), TokenType::INTEGER_DECIMAL, '1765224'),
-            new Token(self::range([0, 7], [0, 7]), TokenType::SYMBOL_COMMA, ','),
-            new Token(self::range([0, 8], [0, 8]), TokenType::SPACE, ' '),
-            new Token(self::range([0, 9], [0, 9]), TokenType::SYMBOL_DASH, '-'),
-            new Token(self::range([0, 10], [0, 17]), TokenType::INTEGER_HEXADECIMAL, '0xAB89CD'),
-            new Token(self::range([0, 18], [0, 18]), TokenType::SYMBOL_COMMA, ','),
-            new Token(self::range([0, 19], [0, 19]), TokenType::SPACE, ' '),
-            new Token(self::range([0, 20], [0, 23]), TokenType::KEYWORD_TRUE, 'true'),
-            new Token(self::range([0, 24], [0, 24]), TokenType::END_OF_LINE, "\n"),
-            new Token(self::range([1, 0], [1, 3]), TokenType::KEYWORD_NULL, 'null')
+            [[0,  0], [0,  6], TokenType::INTEGER_DECIMAL, '1765224'],
+            [[0,  7], [0,  7], TokenType::SYMBOL_COMMA, ','],
+            [[0,  8], [0,  8], TokenType::SPACE, ' '],
+            [[0,  9], [0,  9], TokenType::SYMBOL_DASH, '-'],
+            [[0, 10], [0, 17], TokenType::INTEGER_HEXADECIMAL, '0xAB89CD'],
+            [[0, 18], [0, 18], TokenType::SYMBOL_COMMA, ','],
+            [[0, 19], [0, 19], TokenType::SPACE, ' '],
+            [[0, 20], [0, 23], TokenType::KEYWORD_TRUE, 'true'],
+            [[0, 24], [0, 24], TokenType::END_OF_LINE, "\n"],
+            [[1,  0], [1,  3], TokenType::KEYWORD_NULL, 'null'],
         ];
 
         yield ($source = '0b100101 892837 0xFFAAEE 0o75374') => [
@@ -332,13 +326,13 @@ final class LexerTest extends TestCase
                 TokenType::INTEGER_DECIMAL,
                 TokenType::SPACE
             ),
-            new Token(self::range([0, 0], [0, 7]), TokenType::INTEGER_BINARY, '0b100101'),
-            new Token(self::range([0, 8], [0, 8]), TokenType::SPACE, ' '),
-            new Token(self::range([0, 9], [0, 14]), TokenType::INTEGER_DECIMAL, '892837'),
-            new Token(self::range([0, 15], [0, 15]), TokenType::SPACE, ' '),
-            new Token(self::range([0, 16], [0, 23]), TokenType::INTEGER_HEXADECIMAL, '0xFFAAEE'),
-            new Token(self::range([0, 24], [0, 24]), TokenType::SPACE, ' '),
-            new Token(self::range([0, 25], [0, 31]), TokenType::INTEGER_OCTAL, '0o75374'),
+            [[0,  0], [0,  7], TokenType::INTEGER_BINARY, '0b100101'],
+            [[0,  8], [0,  8], TokenType::SPACE, ' '],
+            [[0,  9], [0, 14], TokenType::INTEGER_DECIMAL, '892837'],
+            [[0, 15], [0, 15], TokenType::SPACE, ' '],
+            [[0, 16], [0, 23], TokenType::INTEGER_HEXADECIMAL, '0xFFAAEE'],
+            [[0, 24], [0, 24], TokenType::SPACE, ' '],
+            [[0, 25], [0, 31], TokenType::INTEGER_OCTAL, '0o75374'],
         ];
 
         yield ($source = '"This is a string literal with \\n escapes \\xB1 \\u5FA9 \\u{1343E}!"') => [
@@ -351,17 +345,17 @@ final class LexerTest extends TestCase
                 TokenType::ESCAPE_SEQUENCE_UNICODE,
                 TokenType::ESCAPE_SEQUENCE_UNICODE_CODEPOINT
             ),
-            new Token(self::range([0, 0], [0, 0]), TokenType::STRING_LITERAL_DELIMITER, '"'),
-            new Token(self::range([0, 1], [0, 30]), TokenType::STRING_LITERAL_CONTENT, 'This is a string literal with '),
-            new Token(self::range([0, 31], [0, 32]), TokenType::ESCAPE_SEQUENCE_SINGLE_CHARACTER, '\\n'),
-            new Token(self::range([0, 33], [0, 41]), TokenType::STRING_LITERAL_CONTENT, ' escapes '),
-            new Token(self::range([0, 42], [0, 45]), TokenType::ESCAPE_SEQUENCE_HEXADECIMAL, '\\xB1'),
-            new Token(self::range([0, 46], [0, 46]), TokenType::STRING_LITERAL_CONTENT, ' '),
-            new Token(self::range([0, 47], [0, 52]), TokenType::ESCAPE_SEQUENCE_UNICODE, '\\u5FA9'),
-            new Token(self::range([0, 53], [0, 53]), TokenType::STRING_LITERAL_CONTENT, ' '),
-            new Token(self::range([0, 54], [0, 62]), TokenType::ESCAPE_SEQUENCE_UNICODE_CODEPOINT, '\\u{1343E}'),
-            new Token(self::range([0, 63], [0, 63]), TokenType::STRING_LITERAL_CONTENT, '!'),
-            new Token(self::range([0, 64], [0, 64]), TokenType::STRING_LITERAL_DELIMITER, '"')
+            [[0,  0], [0,  0], TokenType::STRING_LITERAL_DELIMITER, '"'],
+            [[0,  1], [0, 30], TokenType::STRING_LITERAL_CONTENT, 'This is a string literal with '],
+            [[0, 31], [0, 32], TokenType::ESCAPE_SEQUENCE_SINGLE_CHARACTER, '\\n'],
+            [[0, 33], [0, 41], TokenType::STRING_LITERAL_CONTENT, ' escapes '],
+            [[0, 42], [0, 45], TokenType::ESCAPE_SEQUENCE_HEXADECIMAL, '\\xB1'],
+            [[0, 46], [0, 46], TokenType::STRING_LITERAL_CONTENT, ' '],
+            [[0, 47], [0, 52], TokenType::ESCAPE_SEQUENCE_UNICODE, '\\u5FA9'],
+            [[0, 53], [0, 53], TokenType::STRING_LITERAL_CONTENT, ' '],
+            [[0, 54], [0, 62], TokenType::ESCAPE_SEQUENCE_UNICODE_CODEPOINT, '\\u{1343E}'],
+            [[0, 63], [0, 63], TokenType::STRING_LITERAL_CONTENT, '!'],
+            [[0, 64], [0, 64], TokenType::STRING_LITERAL_DELIMITER, '"']
         ];
 
         $source = <<<AFX
@@ -384,28 +378,28 @@ final class LexerTest extends TestCase
                 TokenType::BRACKET_CURLY_OPEN,
                 TokenType::BRACKET_CURLY_CLOSE
             ),
-            new Token(self::range([0, 0], [0, 2]), TokenType::TEMPLATE_LITERAL_DELIMITER, '"""'),
-            new Token(self::range([0, 3], [0, 3]), TokenType::END_OF_LINE, "\n"),
-            new Token(self::range([1, 0], [1, 3]), TokenType::SPACE, '    '),
-            new Token(self::range([1, 4], [1, 43]), TokenType::TEMPLATE_LITERAL_CONTENT, 'This is "template literal" content with '),
-            new Token(self::range([1, 44], [1, 45]), TokenType::ESCAPE_SEQUENCE_SINGLE_CHARACTER, '\\n'),
-            new Token(self::range([1, 46], [1, 46]), TokenType::SPACE, ' '),
-            new Token(self::range([1, 47], [1, 54]), TokenType::TEMPLATE_LITERAL_CONTENT, 'escapes '),
-            new Token(self::range([1, 55], [1, 58]), TokenType::ESCAPE_SEQUENCE_HEXADECIMAL, '\\xB1'),
-            new Token(self::range([1, 59], [1, 59]), TokenType::SPACE, ' '),
-            new Token(self::range([1, 60], [1, 65]), TokenType::ESCAPE_SEQUENCE_UNICODE, '\\u5FA9'),
-            new Token(self::range([1, 66], [1, 66]), TokenType::SPACE, ' '),
-            new Token(self::range([1, 67], [1, 75]), TokenType::ESCAPE_SEQUENCE_UNICODE_CODEPOINT, '\\u{1343E}'),
-            new Token(self::range([1, 76], [1, 76]), TokenType::END_OF_LINE, "\n"),
-            new Token(self::range([2, 0], [2, 3]), TokenType::SPACE, '    '),
-            new Token(self::range([2, 4], [2, 29]), TokenType::TEMPLATE_LITERAL_CONTENT, 'and embedded expressions: '),
-            new Token(self::range([2, 30], [2, 30]), TokenType::BRACKET_CURLY_OPEN, '{'),
-            new Token(self::range([2, 31], [2, 31]), TokenType::BRACKET_CURLY_CLOSE, '}'),
-            new Token(self::range([2, 32], [2, 32]), TokenType::SPACE, ' '),
-            new Token(self::range([2, 33], [2, 34]), TokenType::TEMPLATE_LITERAL_CONTENT, ':)'),
-            new Token(self::range([2, 35], [2, 35]), TokenType::END_OF_LINE, "\n"),
-            new Token(self::range([3, 0], [3, 3]), TokenType::SPACE, '    '),
-            new Token(self::range([3, 4], [3, 6]), TokenType::TEMPLATE_LITERAL_DELIMITER, '"""'),
+            [[0,  0], [0,  2], TokenType::TEMPLATE_LITERAL_DELIMITER, '"""'],
+            [[0,  3], [0,  3], TokenType::END_OF_LINE, "\n"],
+            [[1,  0], [1,  3], TokenType::SPACE, '    '],
+            [[1,  4], [1, 43], TokenType::TEMPLATE_LITERAL_CONTENT, 'This is "template literal" content with '],
+            [[1, 44], [1, 45], TokenType::ESCAPE_SEQUENCE_SINGLE_CHARACTER, '\\n'],
+            [[1, 46], [1, 46], TokenType::SPACE, ' '],
+            [[1, 47], [1, 54], TokenType::TEMPLATE_LITERAL_CONTENT, 'escapes '],
+            [[1, 55], [1, 58], TokenType::ESCAPE_SEQUENCE_HEXADECIMAL, '\\xB1'],
+            [[1, 59], [1, 59], TokenType::SPACE, ' '],
+            [[1, 60], [1, 65], TokenType::ESCAPE_SEQUENCE_UNICODE, '\\u5FA9'],
+            [[1, 66], [1, 66], TokenType::SPACE, ' '],
+            [[1, 67], [1, 75], TokenType::ESCAPE_SEQUENCE_UNICODE_CODEPOINT, '\\u{1343E}'],
+            [[1, 76], [1, 76], TokenType::END_OF_LINE, "\n"],
+            [[2,  0], [2,  3], TokenType::SPACE, '    '],
+            [[2,  4], [2, 29], TokenType::TEMPLATE_LITERAL_CONTENT, 'and embedded expressions: '],
+            [[2, 30], [2, 30], TokenType::BRACKET_CURLY_OPEN, '{'],
+            [[2, 31], [2, 31], TokenType::BRACKET_CURLY_CLOSE, '}'],
+            [[2, 32], [2, 32], TokenType::SPACE, ' '],
+            [[2, 33], [2, 34], TokenType::TEMPLATE_LITERAL_CONTENT, ':)'],
+            [[2, 35], [2, 35], TokenType::END_OF_LINE, "\n"],
+            [[3,  0], [3,  3], TokenType::SPACE, '    '],
+            [[3,  4], [3,  6], TokenType::TEMPLATE_LITERAL_DELIMITER, '"""'],
         ];
 
         $source = <<<AFX
@@ -431,47 +425,47 @@ final class LexerTest extends TestCase
                 TokenType::BRACKET_CURLY_CLOSE,
                 TokenType::SYMBOL_COLON
             ),
-            new Token(self::range([0, 0], [0, 0]), TokenType::BRACKET_ANGLE_OPEN, '<'),
-            new Token(self::range([0, 1], [0, 1]), TokenType::WORD, 'a'),
-            new Token(self::range([0, 2], [0, 2]), TokenType::SPACE, ' '),
-            new Token(self::range([0, 3], [0, 6]), TokenType::WORD, 'href'),
-            new Token(self::range([0, 7], [0, 7]), TokenType::SYMBOL_EQUALS, '='),
-            new Token(self::range([0, 8], [0, 8]), TokenType::STRING_LITERAL_DELIMITER, '"'),
-            new Token(self::range([0, 9], [0, 9]), TokenType::STRING_LITERAL_DELIMITER, '"'),
-            new Token(self::range([0, 10], [0, 10]), TokenType::BRACKET_ANGLE_CLOSE, '>'),
-            new Token(self::range([0, 11], [0, 11]), TokenType::END_OF_LINE, "\n"),
-            new Token(self::range([1, 0], [1, 3]), TokenType::SPACE, '    '),
-            new Token(self::range([1, 4], [1, 4]), TokenType::BRACKET_ANGLE_OPEN, '<'),
-            new Token(self::range([1, 5], [1, 6]), TokenType::WORD, 'my'),
-            new Token(self::range([1, 7], [1, 7]), TokenType::SYMBOL_DASH, '-'),
-            new Token(self::range([1, 8], [1, 14]), TokenType::WORD, 'element'),
-            new Token(self::range([1, 15], [1, 15]), TokenType::SYMBOL_SLASH_FORWARD, '/'),
-            new Token(self::range([1, 16], [1, 16]), TokenType::BRACKET_ANGLE_CLOSE, '>'),
-            new Token(self::range([1, 17], [1, 17]), TokenType::END_OF_LINE, "\n"),
-            new Token(self::range([2, 0], [2, 3]), TokenType::SPACE, '    '),
-            new Token(self::range([2, 4], [2, 4]), TokenType::BRACKET_ANGLE_OPEN, '<'),
-            new Token(self::range([2, 5], [2, 7]), TokenType::WORD, 'div'),
-            new Token(self::range([2, 8], [2, 8]), TokenType::SPACE, ' '),
-            new Token(self::range([2, 9], [2, 13]), TokenType::WORD, 'class'),
-            new Token(self::range([2, 14], [2, 14]), TokenType::SYMBOL_EQUALS, '='),
-            new Token(self::range([2, 15], [2, 15]), TokenType::BRACKET_CURLY_OPEN, '{'),
-            new Token(self::range([2, 16], [2, 16]), TokenType::BRACKET_CURLY_CLOSE, '}'),
-            new Token(self::range([2, 17], [2, 17]), TokenType::SPACE, ' '),
-            new Token(self::range([2, 18], [2, 20]), TokenType::WORD, 'foo'),
-            new Token(self::range([2, 21], [2, 21]), TokenType::SYMBOL_COLON, ':'),
-            new Token(self::range([2, 22], [2, 24]), TokenType::WORD, 'bar'),
-            new Token(self::range([2, 25], [2, 25]), TokenType::BRACKET_ANGLE_CLOSE, '>'),
-            new Token(self::range([2, 26], [2, 26]), TokenType::END_OF_LINE, "\n"),
-            new Token(self::range([3, 0], [3, 3]), TokenType::SPACE, '    '),
-            new Token(self::range([3, 4], [3, 4]), TokenType::BRACKET_ANGLE_OPEN, '<'),
-            new Token(self::range([3, 5], [3, 5]), TokenType::SYMBOL_SLASH_FORWARD, '/'),
-            new Token(self::range([3, 6], [3, 8]), TokenType::WORD, 'div'),
-            new Token(self::range([3, 9], [3, 9]), TokenType::BRACKET_ANGLE_CLOSE, '>'),
-            new Token(self::range([3, 10], [3, 10]), TokenType::END_OF_LINE, "\n"),
-            new Token(self::range([4, 0], [4, 0]), TokenType::BRACKET_ANGLE_OPEN, '<'),
-            new Token(self::range([4, 1], [4, 1]), TokenType::SYMBOL_SLASH_FORWARD, '/'),
-            new Token(self::range([4, 2], [4, 2]), TokenType::WORD, 'a'),
-            new Token(self::range([4, 3], [4, 3]), TokenType::BRACKET_ANGLE_CLOSE, '>'),
+            [[0,  0], [0,  0], TokenType::BRACKET_ANGLE_OPEN, '<'],
+            [[0,  1], [0,  1], TokenType::WORD, 'a'],
+            [[0,  2], [0,  2], TokenType::SPACE, ' '],
+            [[0,  3], [0,  6], TokenType::WORD, 'href'],
+            [[0,  7], [0,  7], TokenType::SYMBOL_EQUALS, '='],
+            [[0,  8], [0,  8], TokenType::STRING_LITERAL_DELIMITER, '"'],
+            [[0,  9], [0,  9], TokenType::STRING_LITERAL_DELIMITER, '"'],
+            [[0, 10], [0, 10], TokenType::BRACKET_ANGLE_CLOSE, '>'],
+            [[0, 11], [0, 11], TokenType::END_OF_LINE, "\n"],
+            [[1,  0], [1,  3], TokenType::SPACE, '    '],
+            [[1,  4], [1,  4], TokenType::BRACKET_ANGLE_OPEN, '<'],
+            [[1,  5], [1,  6], TokenType::WORD, 'my'],
+            [[1,  7], [1,  7], TokenType::SYMBOL_DASH, '-'],
+            [[1,  8], [1, 14], TokenType::WORD, 'element'],
+            [[1, 15], [1, 15], TokenType::SYMBOL_SLASH_FORWARD, '/'],
+            [[1, 16], [1, 16], TokenType::BRACKET_ANGLE_CLOSE, '>'],
+            [[1, 17], [1, 17], TokenType::END_OF_LINE, "\n"],
+            [[2,  0], [2,  3], TokenType::SPACE, '    '],
+            [[2,  4], [2,  4], TokenType::BRACKET_ANGLE_OPEN, '<'],
+            [[2,  5], [2,  7], TokenType::WORD, 'div'],
+            [[2,  8], [2,  8], TokenType::SPACE, ' '],
+            [[2,  9], [2, 13], TokenType::WORD, 'class'],
+            [[2, 14], [2, 14], TokenType::SYMBOL_EQUALS, '='],
+            [[2, 15], [2, 15], TokenType::BRACKET_CURLY_OPEN, '{'],
+            [[2, 16], [2, 16], TokenType::BRACKET_CURLY_CLOSE, '}'],
+            [[2, 17], [2, 17], TokenType::SPACE, ' '],
+            [[2, 18], [2, 20], TokenType::WORD, 'foo'],
+            [[2, 21], [2, 21], TokenType::SYMBOL_COLON, ':'],
+            [[2, 22], [2, 24], TokenType::WORD, 'bar'],
+            [[2, 25], [2, 25], TokenType::BRACKET_ANGLE_CLOSE, '>'],
+            [[2, 26], [2, 26], TokenType::END_OF_LINE, "\n"],
+            [[3,  0], [3,  3], TokenType::SPACE, '    '],
+            [[3,  4], [3,  4], TokenType::BRACKET_ANGLE_OPEN, '<'],
+            [[3,  5], [3,  5], TokenType::SYMBOL_SLASH_FORWARD, '/'],
+            [[3,  6], [3,  8], TokenType::WORD, 'div'],
+            [[3,  9], [3,  9], TokenType::BRACKET_ANGLE_CLOSE, '>'],
+            [[3, 10], [3, 10], TokenType::END_OF_LINE, "\n"],
+            [[4,  0], [4,  0], TokenType::BRACKET_ANGLE_OPEN, '<'],
+            [[4,  1], [4,  1], TokenType::SYMBOL_SLASH_FORWARD, '/'],
+            [[4,  2], [4,  2], TokenType::WORD, 'a'],
+            [[4,  3], [4,  3], TokenType::BRACKET_ANGLE_CLOSE, '>'],
         ];
 
         $source = <<<AFX
@@ -489,18 +483,18 @@ final class LexerTest extends TestCase
                 TokenType::BRACKET_ANGLE_OPEN,
                 TokenType::BRACKET_ANGLE_CLOSE
             ),
-            new Token(self::range([0, 0], [0, 30]), TokenType::TEXT, 'ThisIsSomeText-with-expressions'),
-            new Token(self::range([0, 31], [0, 31]), TokenType::BRACKET_CURLY_OPEN, '{'),
-            new Token(self::range([0, 32], [0, 32]), TokenType::BRACKET_CURLY_CLOSE, '}'),
-            new Token(self::range([0, 33], [0, 33]), TokenType::END_OF_LINE, "\n"),
-            new Token(self::range([1, 0], [1, 11]), TokenType::TEXT, 'line-breaks,'),
-            new Token(self::range([1, 12], [1, 14]), TokenType::SPACE, '   '),
-            new Token(self::range([1, 15], [1, 20]), TokenType::TEXT, 'spaces'),
-            new Token(self::range([1, 21], [1, 23]), TokenType::SPACE, '   '),
-            new Token(self::range([1, 24], [1, 30]), TokenType::TEXT, 'andTags'),
-            new Token(self::range([1, 31], [1, 31]), TokenType::BRACKET_ANGLE_OPEN, '<'),
-            new Token(self::range([1, 32], [1, 32]), TokenType::BRACKET_ANGLE_CLOSE, '>'),
-            new Token(self::range([1, 33], [1, 39]), TokenType::TEXT, 'inside.'),
+            [[0,  0], [0, 30], TokenType::TEXT, 'ThisIsSomeText-with-expressions'],
+            [[0, 31], [0, 31], TokenType::BRACKET_CURLY_OPEN, '{'],
+            [[0, 32], [0, 32], TokenType::BRACKET_CURLY_CLOSE, '}'],
+            [[0, 33], [0, 33], TokenType::END_OF_LINE, "\n"],
+            [[1,  0], [1, 11], TokenType::TEXT, 'line-breaks,'],
+            [[1, 12], [1, 14], TokenType::SPACE, '   '],
+            [[1, 15], [1, 20], TokenType::TEXT, 'spaces'],
+            [[1, 21], [1, 23], TokenType::SPACE, '   '],
+            [[1, 24], [1, 30], TokenType::TEXT, 'andTags'],
+            [[1, 31], [1, 31], TokenType::BRACKET_ANGLE_OPEN, '<'],
+            [[1, 32], [1, 32], TokenType::BRACKET_ANGLE_CLOSE, '>'],
+            [[1, 33], [1, 39], TokenType::TEXT, 'inside.'],
         ];
     }
 
@@ -508,23 +502,27 @@ final class LexerTest extends TestCase
      * @dataProvider multipleTokensExamples
      * @test
      * @param string $source
-     * @param Token ...$expectedTokens
+     * @param array{array{int,int},array{int,int},TokenType,string} ...$expectedLexerStates
      * @return void
      */
     public function testReadOneOfWithMultipleTokenTypes(
         string $source,
         TokenTypes $tokenTypes,
-        Token ...$expectedTokens
+        array ...$expectedLexerStates
     ): void {
-        $lexer = new Lexer($source);
+        $this->lexer = new Lexer($source);
 
-        $actualTokens = [];
-        foreach ($expectedTokens as $token) {
-            $lexer->readOneOf($tokenTypes);
-            $actualTokens[] = $lexer->getTokenUnderCursor();
+        foreach ($expectedLexerStates as $i => $expectedLexerState) {
+            $this->lexer->readOneOf($tokenTypes);
+
+            $this->assertLexerState(
+                startPosition: Position::from(...$expectedLexerState[0]),
+                endPosition: Position::from(...$expectedLexerState[1]),
+                tokenTypeUnderCursor: $expectedLexerState[2],
+                buffer: $expectedLexerState[3],
+                isEnd: $i === count($expectedLexerStates) - 1
+            );
         }
-
-        $this->assertEquals($expectedTokens, $actualTokens);
     }
 
     /**
@@ -540,7 +538,10 @@ final class LexerTest extends TestCase
             yield sprintf('%s: %s', $type->value, $source) => [
                 $source,
                 $type,
-                self::range([0, 0], [0, \mb_strlen($unexpectedCharacterSequence) - 1]),
+                Range::from(
+                    Position::from(0, 0),
+                    Position::from(0, \mb_strlen($unexpectedCharacterSequence) - 1),
+                ),
                 $unexpectedCharacterSequence
             ];
         };
@@ -666,8 +667,8 @@ final class LexerTest extends TestCase
     ): void {
         $this->assertThrowsLexerException(
             function () use ($source, $expectedTokenType) {
-                $lexer = new Lexer($source);
-                $lexer->read($expectedTokenType);
+                $this->lexer = new Lexer($source);
+                $this->lexer->read($expectedTokenType);
             },
             LexerException::becauseOfUnexpectedCharacterSequence(
                 expectedTokenTypes: TokenTypes::from($expectedTokenType),
@@ -688,7 +689,10 @@ final class LexerTest extends TestCase
             3,
             LexerException::becauseOfUnexpectedCharacterSequence(
                 expectedTokenTypes: $tokenTypes,
-                affectedRangeInSource: self::range([1, 0], [1, 0]),
+                affectedRangeInSource: Range::from(
+                    Position::from(1, 0),
+                    Position::from(1, 0)
+                ),
                 actualCharacterSequence: 'T'
             )
         ];
@@ -711,10 +715,10 @@ final class LexerTest extends TestCase
     ): void {
         $this->assertThrowsLexerException(
             function () use ($source, $tokenTypes, $numberOfReadOperations) {
-                $lexer = new Lexer($source);
+                $this->lexer = new Lexer($source);
 
                 foreach(range(0, $numberOfReadOperations) as $i) {
-                    $lexer->readOneOf($tokenTypes);
+                    $this->lexer->readOneOf($tokenTypes);
                 }
             },
             $expectedLexerException
@@ -728,12 +732,15 @@ final class LexerTest extends TestCase
     {
         $this->assertThrowsLexerException(
             function () {
-                $lexer = new Lexer('');
-                $lexer->read(TokenType::KEYWORD_NULL);
+                $this->lexer = new Lexer('');
+                $this->lexer->read(TokenType::KEYWORD_NULL);
             },
             LexerException::becauseOfUnexpectedEndOfSource(
                 expectedTokenTypes: TokenTypes::from(TokenType::KEYWORD_NULL),
-                affectedRangeInSource: self::range([0, 0], [0, 0])
+                affectedRangeInSource: Range::from(
+                    Position::from(0, 0),
+                    Position::from(0, 0)
+                )
             )
         );
 
@@ -745,7 +752,10 @@ final class LexerTest extends TestCase
             },
             LexerException::becauseOfUnexpectedEndOfSource(
                 expectedTokenTypes: TokenTypes::from(TokenType::KEYWORD_NULL),
-                affectedRangeInSource: self::range([0, 0], [0, 4])
+                affectedRangeInSource: Range::from(
+                    Position::from(0, 0),
+                    Position::from(0, 4)
+                )
             )
         );
     }
@@ -765,7 +775,10 @@ final class LexerTest extends TestCase
             1,
             LexerException::becauseOfUnexpectedEndOfSource(
                 expectedTokenTypes: $tokenTypes,
-                affectedRangeInSource: self::range([0, 0], [0, 0])
+                affectedRangeInSource: Range::from(
+                    Position::from(0, 0),
+                    Position::from(0, 0)
+                )
             )
         ];
 
@@ -779,7 +792,10 @@ final class LexerTest extends TestCase
             2,
             LexerException::becauseOfUnexpectedEndOfSource(
                 expectedTokenTypes: $tokenTypes,
-                affectedRangeInSource: self::range([0, 6], [0, 6])
+                affectedRangeInSource: Range::from(
+                    Position::from(0, 6),
+                    Position::from(0, 6)
+                )
             )
         ];
 
@@ -793,7 +809,10 @@ final class LexerTest extends TestCase
             3,
             LexerException::becauseOfUnexpectedEndOfSource(
                 expectedTokenTypes: $tokenTypes,
-                affectedRangeInSource: self::range([0, 7], [0, 7])
+                affectedRangeInSource: Range::from(
+                    Position::from(0, 7),
+                    Position::from(0, 7)
+                )
             )
         ];
     }
@@ -815,10 +834,10 @@ final class LexerTest extends TestCase
     ): void {
         $this->assertThrowsLexerException(
             function () use ($source, $tokenTypes, $numberOfReadOperations) {
-                $lexer = new Lexer($source);
+                $this->lexer = new Lexer($source);
 
                 foreach(range(0, $numberOfReadOperations) as $i) {
-                    $lexer->readOneOf($tokenTypes);
+                    $this->lexer->readOneOf($tokenTypes);
                 }
             },
             $expectedLexerException
@@ -831,35 +850,33 @@ final class LexerTest extends TestCase
     public function skipsSpace(): void
     {
         // Single
-        $lexer = new Lexer('return   ' . "\t\n\t" . '   42');
+        $this->lexer = new Lexer('return   ' . "\t\n\t" . '   42');
 
-        $lexer->read(TokenType::KEYWORD_RETURN);
-        $lexer->skipSpace();
-        $lexer->read(TokenType::INTEGER_DECIMAL);
+        $this->lexer->read(TokenType::KEYWORD_RETURN);
+        $this->lexer->skipSpace();
+        $this->lexer->read(TokenType::INTEGER_DECIMAL);
 
-        $this->assertEquals(
-            new Token(
-                rangeInSource: self::range([1, 4], [1, 5]),
-                type: TokenType::INTEGER_DECIMAL,
-                value: '42'
-            ),
-            $lexer->getTokenUnderCursor()
+        $this->assertLexerState(
+            startPosition: Position::from(1, 4),
+            endPosition: Position::from(1, 5),
+            tokenTypeUnderCursor: TokenType::INTEGER_DECIMAL,
+            buffer: '42',
+            isEnd: true
         );
 
         // Multiple
-        $lexer = new Lexer('return   ' . "\t\n\t" . '   42');
+        $this->lexer = new Lexer('return   ' . "\t\n\t" . '   42');
 
-        $lexer->readOneOf(TokenTypes::from(TokenType::KEYWORD_RETURN, TokenType::INTEGER_DECIMAL));
-        $lexer->skipSpace();
-        $lexer->readOneOf(TokenTypes::from(TokenType::KEYWORD_RETURN, TokenType::INTEGER_DECIMAL));
+        $this->lexer->readOneOf(TokenTypes::from(TokenType::KEYWORD_RETURN, TokenType::INTEGER_DECIMAL));
+        $this->lexer->skipSpace();
+        $this->lexer->readOneOf(TokenTypes::from(TokenType::KEYWORD_RETURN, TokenType::INTEGER_DECIMAL));
 
-        $this->assertEquals(
-            new Token(
-                rangeInSource: self::range([1, 4], [1, 5]),
-                type: TokenType::INTEGER_DECIMAL,
-                value: '42'
-            ),
-            $lexer->getTokenUnderCursor()
+        $this->assertLexerState(
+            startPosition: Position::from(1, 4),
+            endPosition: Position::from(1, 5),
+            tokenTypeUnderCursor: TokenType::INTEGER_DECIMAL,
+            buffer: '42',
+            isEnd: true
         );
     }
 
@@ -879,42 +896,41 @@ final class LexerTest extends TestCase
         EOF;
 
         // Single
-        $lexer = new Lexer($source);
+        $this->lexer = new Lexer($source);
 
-        $lexer->read(TokenType::KEYWORD_IMPORT);
-        $lexer->skipSpaceAndComments();
-        $lexer->read(TokenType::KEYWORD_EXPORT);
-        $lexer->skipSpaceAndComments();
-        $lexer->read(TokenType::KEYWORD_COMPONENT);
+        $this->lexer->read(TokenType::KEYWORD_IMPORT);
+        $this->lexer->skipSpaceAndComments();
+        $this->lexer->read(TokenType::KEYWORD_EXPORT);
+        $this->lexer->skipSpaceAndComments();
+        $this->lexer->read(TokenType::KEYWORD_COMPONENT);
 
-        $this->assertEquals(
-            new Token(
-                rangeInSource: self::range([6, 4], [6, 12]),
-                type: TokenType::KEYWORD_COMPONENT,
-                value: 'component'
-            ),
-            $lexer->getTokenUnderCursor()
+        $this->assertLexerState(
+            startPosition: Position::from(6, 4),
+            endPosition: Position::from(6, 12),
+            tokenTypeUnderCursor: TokenType::KEYWORD_COMPONENT,
+            buffer: 'component',
+            isEnd: true
         );
 
         // Multiple
-        $lexer = new Lexer($source);
-        $lexer->readOneOf(
+        $this->lexer = new Lexer($source);
+        $this->lexer->readOneOf(
             TokenTypes::from(
                 TokenType::KEYWORD_IMPORT,
                 TokenType::KEYWORD_EXPORT,
                 TokenType::KEYWORD_COMPONENT
             )
         );
-        $lexer->skipSpaceAndComments();
-        $lexer->readOneOf(
+        $this->lexer->skipSpaceAndComments();
+        $this->lexer->readOneOf(
             TokenTypes::from(
                 TokenType::KEYWORD_IMPORT,
                 TokenType::KEYWORD_EXPORT,
                 TokenType::KEYWORD_COMPONENT
             )
         );
-        $lexer->skipSpaceAndComments();
-        $lexer->readOneOf(
+        $this->lexer->skipSpaceAndComments();
+        $this->lexer->readOneOf(
             TokenTypes::from(
                 TokenType::KEYWORD_IMPORT,
                 TokenType::KEYWORD_EXPORT,
@@ -922,39 +938,12 @@ final class LexerTest extends TestCase
             )
         );
 
-        $this->assertEquals(
-            new Token(
-                rangeInSource: self::range([6, 4], [6, 12]),
-                type: TokenType::KEYWORD_COMPONENT,
-                value: 'component'
-            ),
-            $lexer->getTokenUnderCursor()
+        $this->assertLexerState(
+            startPosition: Position::from(6, 4),
+            endPosition: Position::from(6, 12),
+            tokenTypeUnderCursor: TokenType::KEYWORD_COMPONENT,
+            buffer: 'component',
+            isEnd: true
         );
-    }
-
-    /**
-     * @test
-     */
-    public function tellsIfItHasEnded(): void
-    {
-        $lexer = new Lexer('');
-
-        $this->assertTrue($lexer->isEnd());
-
-        $lexer = new Lexer('return null');
-
-        $this->assertFalse($lexer->isEnd());
-
-        $lexer->read(TokenType::KEYWORD_RETURN);
-
-        $this->assertFalse($lexer->isEnd());
-
-        $lexer->read(TokenType::SPACE);
-
-        $this->assertFalse($lexer->isEnd());
-
-        $lexer->read(TokenType::KEYWORD_NULL);
-
-        $this->assertTrue($lexer->isEnd());
     }
 }

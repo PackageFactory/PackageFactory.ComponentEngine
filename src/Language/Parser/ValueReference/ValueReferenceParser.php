@@ -35,11 +35,10 @@ final class ValueReferenceParser
     public function parse(Lexer $lexer): ValueReferenceNode
     {
         $lexer->read(TokenType::WORD);
-        $token = $lexer->getTokenUnderCursor();
 
         return new ValueReferenceNode(
-            rangeInSource: $token->rangeInSource,
-            name: VariableName::from($token->value)
+            rangeInSource: $lexer->getCursorRange(),
+            name: VariableName::from($lexer->getBuffer())
         );
     }
 }

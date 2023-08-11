@@ -58,14 +58,14 @@ final class StructDeclarationParser
     private function parseStructName(Lexer $lexer): StructNameNode
     {
         $lexer->read(TokenType::WORD);
-        $structNameToken = $lexer->getTokenUnderCursor();
+        $structNameNode = new StructNameNode(
+            rangeInSource: $lexer->getCursorRange(),
+            value: StructName::from($lexer->getBuffer())
+        );
 
         $lexer->skipSpaceAndComments();
 
-        return new StructNameNode(
-            rangeInSource: $structNameToken->rangeInSource,
-            value: StructName::from($structNameToken->value)
-        );
+        return $structNameNode;
     }
 
     public function parsePropertyDeclarations(Lexer $lexer): PropertyDeclarationNodes

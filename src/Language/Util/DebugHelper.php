@@ -33,7 +33,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLit
 use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralStringSegmentNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TernaryOperation\TernaryOperationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\Token;
 use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
 use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
 
@@ -125,11 +124,6 @@ final class DebugHelper
             static fn (TokenType $tokenType) => self::describeTokenType($tokenType),
             $leadingItems
         )) . ' or ' . self::describeTokenType($trailingItem);
-    }
-
-    public static function describeToken(Token $token): string
-    {
-        return sprintf('%s ("%s")', $token->type->value, $token->value);
     }
 
     public static function printASTNode(Node $node, string $indentation = ''): string

@@ -39,25 +39,31 @@ final class PropertyDeclarationParser
 
     public function parse(Lexer $lexer): PropertyDeclarationNode
     {
-        $lexer->read(TokenType::WORD);
-        $propertyNameToken = $lexer->getTokenUnderCursor();
+        $name = $this->parsePropertyName($lexer);
 
         $lexer->read(TokenType::SYMBOL_COLON);
         $lexer->skipSpace();
 
         $this->typeReferenceParser ??= TypeReferenceParser::singleton();
-        $typeReferenceNode = $this->typeReferenceParser->parse($lexer);
+        $type = $this->typeReferenceParser->parse($lexer);
 
         return new PropertyDeclarationNode(
             rangeInSource: Range::from(
-                $propertyNameToken->rangeInSource->start,
-                $typeReferenceNode->rangeInSource->end
+                $name->rangeInSource->start,
+                $type->rangeInSource->end
             ),
-            name: new PropertyNameNode(
-                rangeInSource: $propertyNameToken->rangeInSource,
-                value: PropertyName::from($propertyNameToken->value)
-            ),
-            type: $typeReferenceNode
+            name: $name,
+            type: $type
+        );
+    }
+
+    public function parsePropertyName(Lexer $lexer): PropertyNameNode
+    {
+        $lexer->read(TokenType::WORD);
+
+        return new PropertyNameNode(
+            rangeInSource: $lexer->getCursorRange(),
+            value: PropertyName::from($lexer->getBuffer())
         );
     }
 }

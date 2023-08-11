@@ -95,10 +95,13 @@ final class ImportParser
         $start = $lexer->getStartPosition();
         $lexer->skipSpaceAndComments();
 
-        $nameTokens = [];
+        $nameNodes = [];
         while (!$lexer->peek(TokenType::BRACKET_CURLY_CLOSE)) {
             $lexer->read(TokenType::WORD);
-            $nameTokens[] = $lexer->getTokenUnderCursor();
+            $nameNodes[] = new ImportedNameNode(
+                rangeInSource: $lexer->getCursorRange(),
+                value: VariableName::from($lexer->getBuffer())
+            );
 
             $lexer->skipSpaceAndComments();
             if ($lexer->probe(TokenType::SYMBOL_COMMA)) {
@@ -112,20 +115,22 @@ final class ImportParser
         $end = $lexer->getEndPosition();
 
         try {
-            return new ImportedNameNodes(
-                ...array_map(
-                    static fn (Token $nameToken) => new ImportedNameNode(
-                        rangeInSource: $nameToken->rangeInSource,
-                        value: VariableName::from($nameToken->value)
-                    ),
-                    $nameTokens
-                )
-            );
+            return new ImportedNameNodes(...$nameNodes);
         }  catch (InvalidImportedNameNodes $e) {
             throw ImportCouldNotBeParsed::becauseOfInvalidImportedNameNodes(
                 cause: $e,
                 affectedRangeInSource: $e->affectedRangeInSource ?? Range::from($start, $end)
             );
         }
+    }
+
+    public function parseName(Lexer $lexer): ImportedNameNode
+    {
+        $lexer->read(TokenType::WORD);
+
+        return new ImportedNameNode(
+            rangeInSource: $lexer->getCursorRange(),
+            value: VariableName::from($lexer->getBuffer())
+        );
     }
 }

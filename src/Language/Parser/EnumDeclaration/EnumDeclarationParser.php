@@ -81,13 +81,13 @@ final class EnumDeclarationParser
     private function parseEnumName(Lexer $lexer): EnumNameNode
     {
         $lexer->read(TokenType::WORD);
-        $enumKeyNameToken = $lexer->getTokenUnderCursor();
+        $enumNameNode = new EnumNameNode(
+            rangeInSource: $lexer->getCursorRange(),
+            value: EnumName::from($lexer->getBuffer())
+        );
         $lexer->skipSpace();
 
-        return new EnumNameNode(
-            rangeInSource: $enumKeyNameToken->rangeInSource,
-            value: EnumName::from($enumKeyNameToken->value)
-        );
+        return $enumNameNode;
     }
 
     private function parseEnumMemberDeclarations(Lexer $lexer): EnumMemberDeclarationNodes
@@ -126,11 +126,10 @@ final class EnumDeclarationParser
     private function parseEnumMemberName(Lexer $lexer): EnumMemberNameNode
     {
         $lexer->read(TokenType::WORD);
-        $enumMemberNameToken = $lexer->getTokenUnderCursor();
 
         return new EnumMemberNameNode(
-            rangeInSource: $enumMemberNameToken->rangeInSource,
-            value: EnumMemberName::from($enumMemberNameToken->value)
+            rangeInSource: $lexer->getCursorRange(),
+            value: EnumMemberName::from($lexer->getBuffer())
         );
     }
 

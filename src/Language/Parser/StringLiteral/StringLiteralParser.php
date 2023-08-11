@@ -40,11 +40,11 @@ final class StringLiteralParser
         $value = '';
         while (!$lexer->peek(TokenType::STRING_LITERAL_DELIMITER)) {
             if ($lexer->probe(TokenType::STRING_LITERAL_CONTENT)) {
-                $value = $lexer->getTokenUnderCursor()->value;
+                $value = $lexer->getBuffer();
             }
 
             if ($lexer->probe(TokenType::ESCAPE_SEQUENCE_SINGLE_CHARACTER)) {
-                $value = $lexer->getTokenUnderCursor()->value;
+                $value = $lexer->getBuffer();
             }
             break;
         }

@@ -34,10 +34,9 @@ final class NullLiteralParser
     public function parse(Lexer $lexer): NullLiteralNode
     {
         $lexer->read(TokenType::KEYWORD_NULL);
-        $token = $lexer->getTokenUnderCursor();
 
         return new NullLiteralNode(
-            rangeInSource: $token->rangeInSource
+            rangeInSource: $lexer->getCursorRange()
         );
     }
 }

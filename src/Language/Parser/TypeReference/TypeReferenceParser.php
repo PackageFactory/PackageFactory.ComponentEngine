@@ -83,11 +83,10 @@ final class TypeReferenceParser
     {
         $lexer->read(TokenType::WORD);
         $this->start ??= $lexer->getStartPosition();
-        $typeNameToken = $lexer->getTokenUnderCursor();
 
         return new TypeNameNode(
-            rangeInSource: $typeNameToken->rangeInSource,
-            value: TypeName::from($typeNameToken->value)
+            rangeInSource: $lexer->getCursorRange(),
+            value: TypeName::from($lexer->getBuffer())
         );
     }
 

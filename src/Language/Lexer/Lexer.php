@@ -42,7 +42,6 @@ final class Lexer
     private int $offset = 0;
     private string $buffer = '';
     private ?TokenType $tokenTypeUnderCursor = null;
-    private ?Token $tokenUnderCursor = null;
 
     public function __construct(string $source)
     {
@@ -67,13 +66,9 @@ final class Lexer
         return $this->tokenTypeUnderCursor;
     }
 
-    public function getTokenUnderCursor(): Token
+    public function getBuffer(): string
     {
-        return $this->tokenUnderCursor ??= new Token(
-            rangeInSource: Range::from($this->startPosition, $this->getEndPosition()),
-            type: $this->getTokenTypeUnderCursor(),
-            value: $this->buffer
-        );
+        return $this->buffer;
     }
 
     public function isEnd(): bool
@@ -93,14 +88,17 @@ final class Lexer
 
     public function getStartPosition(): Position
     {
-
         return $this->startPosition;
     }
 
     public function getEndPosition(): Position
     {
-
         return $this->characterStream->getPreviousPosition();
+    }
+
+    public function getCursorRange(): Range
+    {
+        return $this->getStartPosition()->toRange($this->getEndPosition());
     }
 
     public function read(TokenType $tokenType): void
@@ -296,7 +294,6 @@ final class Lexer
     private function extract(TokenType $tokenType): ?TokenType
     {
         $this->startPosition = $this->characterStream->getCurrentPosition();
-        $this->tokenUnderCursor = null;
         $this->offset = 0;
         $this->buffer = '';
 
@@ -321,7 +318,6 @@ final class Lexer
     private function extractOneOf(TokenTypes $tokenTypes): ?TokenType
     {
         $this->startPosition = $this->characterStream->getCurrentPosition();
-        $this->tokenUnderCursor = null;
         $this->offset = 0;
         $this->buffer = '';
 

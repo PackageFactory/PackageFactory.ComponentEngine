@@ -85,7 +85,7 @@ final class TextParser
                     $hasTrailingSpace = false;
                     $trailingSpaceContainsLineBreaks = false;
                 }
-                $value .= $lexer->getTokenUnderCursor()->value;
+                $value .= $lexer->getBuffer();
                 continue;
             }
 
