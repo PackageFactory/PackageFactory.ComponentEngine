@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Parser\Expression;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\BinaryOperation\BinaryOperator;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 
 enum Precedence: int
 {
@@ -40,33 +40,33 @@ enum Precedence: int
     case TERNARY = 3;
     case SEQUENCE = 1;
 
-    public static function forTokenType(TokenType $tokenType): self
+    public static function forRule(Rule $tokenType): self
     {
         return match ($tokenType) {
-            TokenType::BRACKET_ROUND_OPEN,
-            TokenType::BRACKET_ROUND_CLOSE,
-            TokenType::BRACKET_SQUARE_OPEN,
-            TokenType::BRACKET_SQUARE_CLOSE,
-            TokenType::SYMBOL_OPTCHAIN,
-            TokenType::SYMBOL_PERIOD => self::ACCESS,
+            Rule::BRACKET_ROUND_OPEN,
+            Rule::BRACKET_ROUND_CLOSE,
+            Rule::BRACKET_SQUARE_OPEN,
+            Rule::BRACKET_SQUARE_CLOSE,
+            Rule::SYMBOL_OPTCHAIN,
+            Rule::SYMBOL_PERIOD => self::ACCESS,
 
-            TokenType::SYMBOL_EXCLAMATIONMARK => self::UNARY,
+            Rule::SYMBOL_EXCLAMATIONMARK => self::UNARY,
 
-            TokenType::SYMBOL_GREATER_THAN,
-            TokenType::SYMBOL_GREATER_THAN_OR_EQUAL,
-            TokenType::SYMBOL_LESS_THAN,
-            TokenType::SYMBOL_LESS_THAN_OR_EQUAL => self::COMPARISON,
+            Rule::SYMBOL_GREATER_THAN,
+            Rule::SYMBOL_GREATER_THAN_OR_EQUAL,
+            Rule::SYMBOL_LESS_THAN,
+            Rule::SYMBOL_LESS_THAN_OR_EQUAL => self::COMPARISON,
 
-            TokenType::SYMBOL_STRICT_EQUALS,
-            TokenType::SYMBOL_NOT_EQUALS => self::EQUALITY,
+            Rule::SYMBOL_STRICT_EQUALS,
+            Rule::SYMBOL_NOT_EQUALS => self::EQUALITY,
 
-            TokenType::SYMBOL_BOOLEAN_AND => self::LOGICAL_AND,
+            Rule::SYMBOL_BOOLEAN_AND => self::LOGICAL_AND,
 
-            TokenType::SYMBOL_NULLISH_COALESCE,
-            TokenType::SYMBOL_BOOLEAN_OR => self::LOGICAL_OR,
+            Rule::SYMBOL_NULLISH_COALESCE,
+            Rule::SYMBOL_BOOLEAN_OR => self::LOGICAL_OR,
 
-            TokenType::SYMBOL_QUESTIONMARK,
-            TokenType::SYMBOL_COLON => self::TERNARY,
+            Rule::SYMBOL_QUESTIONMARK,
+            Rule::SYMBOL_COLON => self::TERNARY,
 
             default => self::SEQUENCE
         };
@@ -90,8 +90,8 @@ enum Precedence: int
         };
     }
 
-    public function mustStopAt(TokenType $tokenType): bool
+    public function mustStopAt(Rule $tokenType): bool
     {
-        return self::forTokenType($tokenType)->value <= $this->value;
+        return self::forRule($tokenType)->value <= $this->value;
     }
 }

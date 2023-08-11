@@ -31,9 +31,9 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Import\InvalidImportedNameN
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\Token;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Token;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
@@ -41,29 +41,29 @@ final class ImportParser
 {
     use Singleton;
 
-    private static TokenTypes $TOKEN_TYPES_NAME_BOUNDARIES;
+    private static Rules $TOKEN_TYPES_NAME_BOUNDARIES;
 
     private ?StringLiteralParser $pathParser = null;
 
     private function __construct()
     {
-        self::$TOKEN_TYPES_NAME_BOUNDARIES ??= TokenTypes::from(
-            TokenType::WORD,
-            TokenType::SYMBOL_COMMA,
-            TokenType::BRACKET_CURLY_CLOSE
+        self::$TOKEN_TYPES_NAME_BOUNDARIES ??= Rules::from(
+            Rule::WORD,
+            Rule::SYMBOL_COMMA,
+            Rule::BRACKET_CURLY_CLOSE
         );
     }
 
     public function parse(Lexer $lexer): ImportNode
     {
         try {
-            $lexer->read(TokenType::KEYWORD_FROM);
+            $lexer->read(Rule::KEYWORD_FROM);
             $start = $lexer->getStartPosition();
             $lexer->skipSpace();
 
             $path = $this->parsePath($lexer);
 
-            $lexer->read(TokenType::KEYWORD_IMPORT);
+            $lexer->read(Rule::KEYWORD_IMPORT);
             $lexer->skipSpace();
 
             $names = $this->parseNames($lexer);
@@ -91,27 +91,27 @@ final class ImportParser
 
     private function parseNames(Lexer $lexer): ImportedNameNodes
     {
-        $lexer->read(TokenType::BRACKET_CURLY_OPEN);
+        $lexer->read(Rule::BRACKET_CURLY_OPEN);
         $start = $lexer->getStartPosition();
         $lexer->skipSpaceAndComments();
 
         $nameNodes = [];
-        while (!$lexer->peek(TokenType::BRACKET_CURLY_CLOSE)) {
-            $lexer->read(TokenType::WORD);
+        while (!$lexer->peek(Rule::BRACKET_CURLY_CLOSE)) {
+            $lexer->read(Rule::WORD);
             $nameNodes[] = new ImportedNameNode(
                 rangeInSource: $lexer->getCursorRange(),
                 value: VariableName::from($lexer->getBuffer())
             );
 
             $lexer->skipSpaceAndComments();
-            if ($lexer->probe(TokenType::SYMBOL_COMMA)) {
+            if ($lexer->probe(Rule::SYMBOL_COMMA)) {
                 $lexer->skipSpaceAndComments();
             } else {
                 break;
             }
         }
 
-        $lexer->read(TokenType::BRACKET_CURLY_CLOSE);
+        $lexer->read(Rule::BRACKET_CURLY_CLOSE);
         $end = $lexer->getEndPosition();
 
         try {
@@ -126,7 +126,7 @@ final class ImportParser
 
     public function parseName(Lexer $lexer): ImportedNameNode
     {
-        $lexer->read(TokenType::WORD);
+        $lexer->read(Rule::WORD);
 
         return new ImportedNameNode(
             rangeInSource: $lexer->getCursorRange(),

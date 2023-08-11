@@ -36,8 +36,8 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Parser\Expression\ExpressionParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\Text\TextParser;
@@ -47,7 +47,7 @@ final class TagParser
 {
     use Singleton;
 
-    private static TokenTypes $TOKEN_TYPES_ATTRIBUTE_DELIMITERS;
+    private static Rules $TOKEN_TYPES_ATTRIBUTE_DELIMITERS;
 
     private ?StringLiteralParser $stringLiteralParser = null;
     private ?TextParser $textParser = null;
@@ -55,22 +55,22 @@ final class TagParser
 
     private function __construct()
     {
-        self::$TOKEN_TYPES_ATTRIBUTE_DELIMITERS ??= TokenTypes::from(
-            TokenType::STRING_LITERAL_DELIMITER,
-            TokenType::BRACKET_CURLY_OPEN
+        self::$TOKEN_TYPES_ATTRIBUTE_DELIMITERS ??= Rules::from(
+            Rule::STRING_LITERAL_DELIMITER,
+            Rule::BRACKET_CURLY_OPEN
         );
     }
 
     public function parse(Lexer $lexer): TagNode
     {
-        $lexer->read(TokenType::BRACKET_ANGLE_OPEN);
+        $lexer->read(Rule::BRACKET_ANGLE_OPEN);
         $start = $lexer->getStartPosition();
 
         $name = $this->parseName($lexer);
         $attributes = $this->parseAttributes($lexer);
 
-        if ($lexer->probe(TokenType::SYMBOL_SLASH_FORWARD)) {
-            $lexer->read(TokenType::BRACKET_ANGLE_CLOSE);
+        if ($lexer->probe(Rule::SYMBOL_SLASH_FORWARD)) {
+            $lexer->read(Rule::BRACKET_ANGLE_CLOSE);
             $end = $lexer->getEndPosition();
 
             return new TagNode(
@@ -82,7 +82,7 @@ final class TagParser
             );
         }
 
-        $lexer->read(TokenType::BRACKET_ANGLE_CLOSE);
+        $lexer->read(Rule::BRACKET_ANGLE_CLOSE);
         $children = $this->parseChildren($lexer);
 
         $this->readClosingTagName($lexer, $name->value);
@@ -99,7 +99,7 @@ final class TagParser
 
     private function parseName(Lexer $lexer): TagNameNode
     {
-        $lexer->read(TokenType::WORD);
+        $lexer->read(Rule::WORD);
         $tagNameNode = new TagNameNode(
             rangeInSource: Range::from(
                 $lexer->getStartPosition(),
@@ -116,7 +116,7 @@ final class TagParser
     private function parseAttributes(Lexer $lexer): AttributeNodes
     {
         $items = [];
-        while ($lexer->peek(TokenType::WORD)) {
+        while ($lexer->peek(Rule::WORD)) {
             $items[] = $this->parseAttribute($lexer);
             $lexer->skipSpace();
         }
@@ -142,7 +142,7 @@ final class TagParser
 
     private function parseAttributeName(Lexer $lexer): AttributeNameNode
     {
-        $lexer->read(TokenType::WORD);
+        $lexer->read(Rule::WORD);
 
         return new AttributeNameNode(
             rangeInSource: $lexer->getCursorRange(),
@@ -152,11 +152,11 @@ final class TagParser
 
     private function parseAttributeValue(Lexer $lexer): null|StringLiteralNode|ExpressionNode
     {
-        if ($lexer->probe(TokenType::SYMBOL_EQUALS)) {
+        if ($lexer->probe(Rule::SYMBOL_EQUALS)) {
             return match ($lexer->expectOneOf(self::$TOKEN_TYPES_ATTRIBUTE_DELIMITERS)) {
-                TokenType::STRING_LITERAL_DELIMITER =>
+                Rule::STRING_LITERAL_DELIMITER =>
                     $this->parseString($lexer),
-                TokenType::BRACKET_CURLY_OPEN =>
+                Rule::BRACKET_CURLY_OPEN =>
                     $this->parseExpression($lexer),
                 default => throw new LogicException()
             };
@@ -175,11 +175,11 @@ final class TagParser
     {
         $this->expressionParser ??= new ExpressionParser();
 
-        $lexer->read(TokenType::BRACKET_CURLY_OPEN);
+        $lexer->read(Rule::BRACKET_CURLY_OPEN);
 
         $expressionNode =  $this->expressionParser->parse($lexer);
 
-        $lexer->read(TokenType::BRACKET_CURLY_CLOSE);
+        $lexer->read(Rule::BRACKET_CURLY_CLOSE);
 
         return $expressionNode;
     }
@@ -189,16 +189,16 @@ final class TagParser
         $items = [];
         $preserveLeadingSpace = false;
 
-        while (!$lexer->peek(TokenType::SYMBOL_CLOSE_TAG)) {
-            if ($lexer->peek(TokenType::BRACKET_ANGLE_OPEN)) {
+        while (!$lexer->peek(Rule::SYMBOL_CLOSE_TAG)) {
+            if ($lexer->peek(Rule::BRACKET_ANGLE_OPEN)) {
                 $items[] = $this->parse($lexer);
-                $preserveLeadingSpace = !$lexer->peek(TokenType::END_OF_LINE);
+                $preserveLeadingSpace = !$lexer->peek(Rule::END_OF_LINE);
                 continue;
             }
 
-            if ($lexer->peek(TokenType::BRACKET_CURLY_OPEN)) {
+            if ($lexer->peek(Rule::BRACKET_CURLY_OPEN)) {
                 $items[] = $this->parseExpression($lexer);
-                $preserveLeadingSpace = !$lexer->peek(TokenType::END_OF_LINE);
+                $preserveLeadingSpace = !$lexer->peek(Rule::END_OF_LINE);
                 continue;
             }
 
@@ -218,13 +218,13 @@ final class TagParser
 
     private function readClosingTagName(Lexer $lexer, TagName $expectedName): void
     {
-        $lexer->read(TokenType::SYMBOL_CLOSE_TAG);
+        $lexer->read(Rule::SYMBOL_CLOSE_TAG);
         $start = $lexer->getStartPosition();
 
-        $lexer->read(TokenType::WORD);
+        $lexer->read(Rule::WORD);
         $closingName = $lexer->getBuffer();
 
-        $lexer->read(TokenType::BRACKET_ANGLE_CLOSE);
+        $lexer->read(Rule::BRACKET_ANGLE_CLOSE);
         $end = $lexer->getEndPosition();
 
         if ($closingName !== $expectedName->value) {

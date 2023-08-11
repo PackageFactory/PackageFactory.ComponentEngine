@@ -49,8 +49,8 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReference
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Parser\Export\ExportCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Language\Parser\Export\ExportParser;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
@@ -190,10 +190,10 @@ final class ExportParserTest extends ParserTestCase
             },
             ExportCouldNotBeParsed::becauseOfLexerException(
                 cause: LexerException::becauseOfUnexpectedCharacterSequence(
-                    expectedTokenTypes: TokenTypes::from(
-                        TokenType::KEYWORD_COMPONENT,
-                        TokenType::KEYWORD_ENUM,
-                        TokenType::KEYWORD_STRUCT
+                    expectedRules: Rules::from(
+                        Rule::KEYWORD_COMPONENT,
+                        Rule::KEYWORD_ENUM,
+                        Rule::KEYWORD_STRUCT
                     ),
                     affectedRangeInSource: $this->range([0, 7], [0, 7]),
                     actualCharacterSequence: 'n'

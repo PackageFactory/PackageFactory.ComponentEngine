@@ -26,7 +26,7 @@ use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 
 final class ValueReferenceParser
 {
@@ -34,7 +34,7 @@ final class ValueReferenceParser
 
     public function parse(Lexer $lexer): ValueReferenceNode
     {
-        $lexer->read(TokenType::WORD);
+        $lexer->read(Rule::WORD);
 
         return new ValueReferenceNode(
             rangeInSource: $lexer->getCursorRange(),

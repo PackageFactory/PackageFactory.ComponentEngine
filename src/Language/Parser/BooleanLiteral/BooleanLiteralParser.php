@@ -25,20 +25,20 @@ namespace PackageFactory\ComponentEngine\Language\Parser\BooleanLiteral;
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 
 final class BooleanLiteralParser
 {
     use Singleton;
 
-    private static TokenTypes $TOKEN_TYPES_BOOLEAN_KEYWORDS;
+    private static Rules $TOKEN_TYPES_BOOLEAN_KEYWORDS;
 
     private function __construct()
     {
-        self::$TOKEN_TYPES_BOOLEAN_KEYWORDS ??= TokenTypes::from(
-            TokenType::KEYWORD_TRUE,
-            TokenType::KEYWORD_FALSE
+        self::$TOKEN_TYPES_BOOLEAN_KEYWORDS ??= Rules::from(
+            Rule::KEYWORD_TRUE,
+            Rule::KEYWORD_FALSE
         );
     }
 
@@ -48,7 +48,7 @@ final class BooleanLiteralParser
 
         return new BooleanLiteralNode(
             rangeInSource: $lexer->getCursorRange(),
-            value: $lexer->getTokenTypeUnderCursor() === TokenType::KEYWORD_TRUE
+            value: $lexer->getRuleUnderCursor() === Rule::KEYWORD_TRUE
         );
     }
 }

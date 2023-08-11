@@ -20,23 +20,23 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\Lexer\Token;
+namespace PackageFactory\ComponentEngine\Language\Lexer\Rule;
 
-final class TokenTypes
+final class Rules
 {
     /**
-     * @var TokenType[]
+     * @var Rule[]
      */
     public readonly array $items;
 
-    private function __construct(TokenType ...$items)
+    private function __construct(Rule ...$items)
     {
         assert(count($items) > 0);
 
         $this->items = $items;
     }
 
-    public static function from(TokenType ...$items): self
+    public static function from(Rule ...$items): self
     {
         $items = array_unique($items, SORT_REGULAR);
         $items = array_values($items);
@@ -44,7 +44,7 @@ final class TokenTypes
         return new self(...$items);
     }
 
-    public function contains(TokenType $needle): bool
+    public function contains(Rule $needle): bool
     {
         return in_array($needle, $this->items);
     }

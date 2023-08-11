@@ -30,7 +30,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Match\MatchArmNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Match\MatchArmNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Match\MatchNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 use PackageFactory\ComponentEngine\Language\Parser\Expression\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
@@ -44,7 +44,7 @@ final class MatchParser
 
     public function parse(Lexer $lexer): MatchNode
     {
-        $lexer->read(TokenType::KEYWORD_MATCH);
+        $lexer->read(Rule::KEYWORD_MATCH);
         $start = $lexer->getStartPosition();
         $lexer->skipSpace();
 
@@ -68,18 +68,18 @@ final class MatchParser
 
     private function parseArms(Lexer $lexer): MatchArmNodes
     {
-        $lexer->read(TokenType::BRACKET_CURLY_OPEN);
+        $lexer->read(Rule::BRACKET_CURLY_OPEN);
         $start = $lexer->getStartPosition();
 
         $items = [];
-        while (!$lexer->peek(TokenType::BRACKET_CURLY_CLOSE)) {
+        while (!$lexer->peek(Rule::BRACKET_CURLY_CLOSE)) {
             $lexer->skipSpaceAndComments();
             $items[] = $this->parseArm($lexer);
         }
 
 
         $lexer->skipSpaceAndComments();
-        $lexer->read(TokenType::BRACKET_CURLY_CLOSE);
+        $lexer->read(Rule::BRACKET_CURLY_CLOSE);
         $end = $lexer->getEndPosition();
 
         try {
@@ -99,7 +99,7 @@ final class MatchParser
             $lexer->getStartPosition();
 
         $lexer->skipSpaceAndComments();
-        $lexer->read(TokenType::SYMBOL_ARROW_SINGLE);
+        $lexer->read(Rule::SYMBOL_ARROW_SINGLE);
         $lexer->skipSpaceAndComments();
 
         $right = $this->parseArmRight($lexer);
@@ -114,7 +114,7 @@ final class MatchParser
 
     private function parseArmLeft(Lexer $lexer): ?ExpressionNodes
     {
-        if ($lexer->probe(TokenType::KEYWORD_DEFAULT)) {
+        if ($lexer->probe(Rule::KEYWORD_DEFAULT)) {
             return null;
         }
 
@@ -125,7 +125,7 @@ final class MatchParser
             $lexer->skipSpaceAndComments();
             $items[] = $this->matchArmLeftParser->parse($lexer);
             $lexer->skipSpaceAndComments();
-        } while ($lexer->probe(TokenType::SYMBOL_COMMA));
+        } while ($lexer->probe(Rule::SYMBOL_COMMA));
 
         $lexer->skipSpaceAndComments();
 

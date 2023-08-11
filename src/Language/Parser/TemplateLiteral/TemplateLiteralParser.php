@@ -30,7 +30,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLit
 use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralSegments;
 use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralStringSegmentNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 use PackageFactory\ComponentEngine\Language\Parser\Expression\ExpressionParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
@@ -42,12 +42,12 @@ final class TemplateLiteralParser
 
     public function parse(Lexer $lexer): TemplateLiteralNode
     {
-        $lexer->read(TokenType::TEMPLATE_LITERAL_DELIMITER);
+        $lexer->read(Rule::TEMPLATE_LITERAL_DELIMITER);
         $start = $lexer->getStartPosition();
 
         $lines = $this->parseLines($lexer);
 
-        $lexer->read(TokenType::TEMPLATE_LITERAL_DELIMITER);
+        $lexer->read(Rule::TEMPLATE_LITERAL_DELIMITER);
         $end = $lexer->getEndPosition();
 
         return new TemplateLiteralNode(
@@ -59,14 +59,14 @@ final class TemplateLiteralParser
 
     public function parseLines(Lexer $lexer): TemplateLiteralLines
     {
-        $lexer->read(TokenType::END_OF_LINE);
-        $lexer->probe(TokenType::SPACE);
+        $lexer->read(Rule::END_OF_LINE);
+        $lexer->probe(Rule::SPACE);
 
         $items = [];
-        while (!$lexer->peek(TokenType::TEMPLATE_LITERAL_DELIMITER)) {
+        while (!$lexer->peek(Rule::TEMPLATE_LITERAL_DELIMITER)) {
             $items[] = $this->parseLine($lexer);
-            $lexer->read(TokenType::END_OF_LINE);
-            $lexer->probe(TokenType::SPACE);
+            $lexer->read(Rule::END_OF_LINE);
+            $lexer->probe(Rule::SPACE);
         }
 
         return new TemplateLiteralLines(...$items);
@@ -86,8 +86,8 @@ final class TemplateLiteralParser
     public function parseSegments(Lexer $lexer): TemplateLiteralSegments
     {
         $items = [];
-        while (!$lexer->peek(TokenType::END_OF_LINE)) {
-            if ($lexer->peek(TokenType::BRACKET_CURLY_OPEN)) {
+        while (!$lexer->peek(Rule::END_OF_LINE)) {
+            if ($lexer->peek(Rule::BRACKET_CURLY_OPEN)) {
                 $items[] = $this->parseExpressionSegment($lexer);
                 continue;
             }
@@ -99,7 +99,7 @@ final class TemplateLiteralParser
 
     public function parseStringSegment(Lexer $lexer): TemplateLiteralStringSegmentNode
     {
-        $lexer->read(TokenType::TEMPLATE_LITERAL_CONTENT);
+        $lexer->read(Rule::TEMPLATE_LITERAL_CONTENT);
 
         return new TemplateLiteralStringSegmentNode(
             rangeInSource: $lexer->getCursorRange(),
@@ -111,14 +111,14 @@ final class TemplateLiteralParser
     {
         $this->expressionParser ??= new ExpressionParser();
 
-        $lexer->read(TokenType::BRACKET_CURLY_OPEN);
+        $lexer->read(Rule::BRACKET_CURLY_OPEN);
         $start = $lexer->getStartPosition();
         $lexer->skipSpaceAndComments();
 
         $expression = $this->expressionParser->parse($lexer);
 
         $lexer->skipSpaceAndComments();
-        $lexer->read(TokenType::BRACKET_CURLY_CLOSE);
+        $lexer->read(Rule::BRACKET_CURLY_CLOSE);
         $end = $lexer->getEndPosition();
 
         return new TemplateLiteralExpressionSegmentNode(

@@ -29,8 +29,8 @@ use PackageFactory\ComponentEngine\Language\AST\Node\ComponentDeclaration\Compon
 use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\PropertyDeclarationNodes;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Parser\Expression\ExpressionParser;
 use PackageFactory\ComponentEngine\Language\Parser\PropertyDeclaration\PropertyDeclarationParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
@@ -39,22 +39,22 @@ final class ComponentDeclarationParser
 {
     use Singleton;
 
-    private static TokenTypes $TOKEN_TYPES_SPACE;
+    private static Rules $TOKEN_TYPES_SPACE;
 
     private ?PropertyDeclarationParser $propertyDeclarationParser = null;
     private ?ExpressionParser $returnParser = null;
 
     private function __construct()
     {
-        self::$TOKEN_TYPES_SPACE ??= TokenTypes::from(
-            TokenType::SPACE,
-            TokenType::END_OF_LINE
+        self::$TOKEN_TYPES_SPACE ??= Rules::from(
+            Rule::SPACE,
+            Rule::END_OF_LINE
         );
     }
 
     public function parse(Lexer $lexer): ComponentDeclarationNode
     {
-        $lexer->read(TokenType::KEYWORD_COMPONENT);
+        $lexer->read(Rule::KEYWORD_COMPONENT);
         $start = $lexer->getStartPosition();
         $lexer->skipSpace();
 
@@ -62,7 +62,7 @@ final class ComponentDeclarationParser
         $props = $this->parseProps($lexer);
         $return = $this->parseReturn($lexer);
 
-        $lexer->read(TokenType::BRACKET_CURLY_CLOSE);
+        $lexer->read(Rule::BRACKET_CURLY_CLOSE);
         $end = $lexer->getEndPosition();
 
         return new ComponentDeclarationNode(
@@ -75,7 +75,7 @@ final class ComponentDeclarationParser
 
     private function parseName(Lexer $lexer): ComponentNameNode
     {
-        $lexer->read(TokenType::WORD);
+        $lexer->read(Rule::WORD);
         $componentNameNode = new ComponentNameNode(
             rangeInSource: $lexer->getCursorRange(),
             value: ComponentName::from($lexer->getBuffer())
@@ -90,12 +90,12 @@ final class ComponentDeclarationParser
     {
         $this->propertyDeclarationParser ??= PropertyDeclarationParser::singleton();
 
-        $lexer->read(TokenType::BRACKET_CURLY_OPEN);
+        $lexer->read(Rule::BRACKET_CURLY_OPEN);
         $lexer->skipSpaceAndComments();
 
         $items = [];
-        while (!$lexer->peek(TokenType::KEYWORD_RETURN)) {
-            $lexer->expect(TokenType::WORD);
+        while (!$lexer->peek(Rule::KEYWORD_RETURN)) {
+            $lexer->expect(Rule::WORD);
             $items[] = $this->propertyDeclarationParser->parse($lexer);
             $lexer->skipSpaceAndComments();
         }
@@ -107,7 +107,7 @@ final class ComponentDeclarationParser
     {
         $this->returnParser ??= new ExpressionParser();
 
-        $lexer->read(TokenType::KEYWORD_RETURN);
+        $lexer->read(Rule::KEYWORD_RETURN);
         $lexer->readOneOf(self::$TOKEN_TYPES_SPACE);
         $lexer->skipSpaceAndComments();
 

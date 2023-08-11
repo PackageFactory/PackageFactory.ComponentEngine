@@ -28,7 +28,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\Propert
 use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructNameNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 use PackageFactory\ComponentEngine\Language\Parser\PropertyDeclaration\PropertyDeclarationParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
@@ -40,7 +40,7 @@ final class StructDeclarationParser
 
     public function parse(Lexer $lexer): StructDeclarationNode
     {
-        $lexer->read(TokenType::KEYWORD_STRUCT);
+        $lexer->read(Rule::KEYWORD_STRUCT);
         $start = $lexer->getStartPosition();
         $lexer->skipSpace();
 
@@ -57,7 +57,7 @@ final class StructDeclarationParser
 
     private function parseStructName(Lexer $lexer): StructNameNode
     {
-        $lexer->read(TokenType::WORD);
+        $lexer->read(Rule::WORD);
         $structNameNode = new StructNameNode(
             rangeInSource: $lexer->getCursorRange(),
             value: StructName::from($lexer->getBuffer())
@@ -72,12 +72,12 @@ final class StructDeclarationParser
     {
         $this->propertyDeclarationParser ??= PropertyDeclarationParser::singleton();
 
-        $lexer->read(TokenType::BRACKET_CURLY_OPEN);
+        $lexer->read(Rule::BRACKET_CURLY_OPEN);
         $lexer->skipSpaceAndComments();
 
         $items = [];
-        while (!$lexer->probe(TokenType::BRACKET_CURLY_CLOSE)) {
-            $lexer->expect(TokenType::WORD);
+        while (!$lexer->probe(Rule::BRACKET_CURLY_CLOSE)) {
+            $lexer->expect(Rule::WORD);
             $items[] = $this->propertyDeclarationParser->parse($lexer);
             $lexer->skipSpaceAndComments();
         }

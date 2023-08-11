@@ -28,160 +28,160 @@ use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Fixed\Fixed;
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Not\Not;
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Optional\Optional;
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Sequence\Sequence;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 
 abstract class Matcher
 {
     /**
      * @var array<string,self>
      */
-    private static $instancesByTokenType = [];
+    private static $instancesByRule = [];
 
-    final public static function for(TokenType $tokenType): self
+    final public static function for(Rule $tokenType): self
     {
-        return self::$instancesByTokenType[$tokenType->value] ??= match ($tokenType) {
-            TokenType::COMMENT =>
+        return self::$instancesByRule[$tokenType->value] ??= match ($tokenType) {
+            Rule::COMMENT =>
                 new Sequence(
                     new Exact('#'),
                     new Optional(new Not(new Exact("\n")))
                 ),
 
-            TokenType::KEYWORD_FROM =>
+            Rule::KEYWORD_FROM =>
                 new Exact('from'),
-            TokenType::KEYWORD_IMPORT =>
+            Rule::KEYWORD_IMPORT =>
                 new Exact('import'),
-            TokenType::KEYWORD_EXPORT =>
+            Rule::KEYWORD_EXPORT =>
                 new Exact('export'),
-            TokenType::KEYWORD_ENUM =>
+            Rule::KEYWORD_ENUM =>
                 new Exact('enum'),
-            TokenType::KEYWORD_STRUCT =>
+            Rule::KEYWORD_STRUCT =>
                 new Exact('struct'),
-            TokenType::KEYWORD_COMPONENT =>
+            Rule::KEYWORD_COMPONENT =>
                 new Exact('component'),
-            TokenType::KEYWORD_MATCH =>
+            Rule::KEYWORD_MATCH =>
                 new Exact('match'),
-            TokenType::KEYWORD_DEFAULT =>
+            Rule::KEYWORD_DEFAULT =>
                 new Exact('default'),
-            TokenType::KEYWORD_RETURN =>
+            Rule::KEYWORD_RETURN =>
                 new Exact('return'),
-            TokenType::KEYWORD_TRUE =>
+            Rule::KEYWORD_TRUE =>
                 new Exact('true'),
-            TokenType::KEYWORD_FALSE =>
+            Rule::KEYWORD_FALSE =>
                 new Exact('false'),
-            TokenType::KEYWORD_NULL =>
+            Rule::KEYWORD_NULL =>
                 new Exact('null'),
 
-            TokenType::STRING_LITERAL_DELIMITER =>
+            Rule::STRING_LITERAL_DELIMITER =>
                 new Exact('"'),
-            TokenType::STRING_LITERAL_CONTENT =>
+            Rule::STRING_LITERAL_CONTENT =>
                 new Not(new Characters('"\\')),
 
-            TokenType::INTEGER_BINARY =>
+            Rule::INTEGER_BINARY =>
                 new Sequence(new Exact('0b'), new Characters('01')),
-            TokenType::INTEGER_OCTAL =>
+            Rule::INTEGER_OCTAL =>
                 new Sequence(new Exact('0o'), new Characters('01234567')),
-            TokenType::INTEGER_DECIMAL =>
+            Rule::INTEGER_DECIMAL =>
                 new Characters('0123456789', 'box'),
-            TokenType::INTEGER_HEXADECIMAL =>
+            Rule::INTEGER_HEXADECIMAL =>
                 new Sequence(new Exact('0x'), new Characters('0123456789ABCDEF')),
 
-            TokenType::TEMPLATE_LITERAL_DELIMITER =>
+            Rule::TEMPLATE_LITERAL_DELIMITER =>
                 new Exact('"""'),
-            TokenType::TEMPLATE_LITERAL_CONTENT =>
+            Rule::TEMPLATE_LITERAL_CONTENT =>
                 new Not(new Characters('{}\\' . "\n")),
 
-            TokenType::ESCAPE_SEQUENCE_SINGLE_CHARACTER =>
+            Rule::ESCAPE_SEQUENCE_SINGLE_CHARACTER =>
                 new Sequence(
                     new Exact('\\'),
                     new Fixed(1, new Characters('nrtvef\\$"'))
                 ),
-            TokenType::ESCAPE_SEQUENCE_HEXADECIMAL =>
+            Rule::ESCAPE_SEQUENCE_HEXADECIMAL =>
                 new Sequence(
                     new Exact('\\x'),
                     new Fixed(2, new Characters('abcdefABCDEF0123456789'))
                 ),
-            TokenType::ESCAPE_SEQUENCE_UNICODE =>
+            Rule::ESCAPE_SEQUENCE_UNICODE =>
                 new Sequence(
                     new Exact('\\u'),
                     new Fixed(4, new Characters('abcdefABCDEF0123456789'))
                 ),
-            TokenType::ESCAPE_SEQUENCE_UNICODE_CODEPOINT =>
+            Rule::ESCAPE_SEQUENCE_UNICODE_CODEPOINT =>
                 new Sequence(
                     new Exact('\\u{'),
                     new Characters('abcdefABCDEF0123456789'),
                     new Exact('}')
                 ),
 
-            TokenType::BRACKET_CURLY_OPEN =>
+            Rule::BRACKET_CURLY_OPEN =>
                 new Exact('{'),
-            TokenType::BRACKET_CURLY_CLOSE =>
+            Rule::BRACKET_CURLY_CLOSE =>
                 new Exact('}'),
-            TokenType::BRACKET_ROUND_OPEN =>
+            Rule::BRACKET_ROUND_OPEN =>
                 new Exact('('),
-            TokenType::BRACKET_ROUND_CLOSE =>
+            Rule::BRACKET_ROUND_CLOSE =>
                 new Exact(')'),
-            TokenType::BRACKET_SQUARE_OPEN =>
+            Rule::BRACKET_SQUARE_OPEN =>
                 new Exact('['),
-            TokenType::BRACKET_SQUARE_CLOSE =>
+            Rule::BRACKET_SQUARE_CLOSE =>
                 new Exact(']'),
-            TokenType::BRACKET_ANGLE_OPEN =>
+            Rule::BRACKET_ANGLE_OPEN =>
                 new Exact('<'),
-            TokenType::BRACKET_ANGLE_CLOSE =>
+            Rule::BRACKET_ANGLE_CLOSE =>
                 new Exact('>'),
 
-            TokenType::SYMBOL_COLON =>
+            Rule::SYMBOL_COLON =>
                 new Exact(':'),
-            TokenType::SYMBOL_PERIOD =>
+            Rule::SYMBOL_PERIOD =>
                 new Exact('.'),
-            TokenType::SYMBOL_QUESTIONMARK =>
+            Rule::SYMBOL_QUESTIONMARK =>
                 new Exact('?'),
-            TokenType::SYMBOL_EXCLAMATIONMARK =>
+            Rule::SYMBOL_EXCLAMATIONMARK =>
                 new Exact('!'),
-            TokenType::SYMBOL_COMMA =>
+            Rule::SYMBOL_COMMA =>
                 new Exact(','),
-            TokenType::SYMBOL_DASH =>
+            Rule::SYMBOL_DASH =>
                 new Exact('-'),
-            TokenType::SYMBOL_EQUALS =>
+            Rule::SYMBOL_EQUALS =>
                 new Exact('='),
-            TokenType::SYMBOL_SLASH_FORWARD =>
+            Rule::SYMBOL_SLASH_FORWARD =>
                 new Exact('/'),
-            TokenType::SYMBOL_PIPE =>
+            Rule::SYMBOL_PIPE =>
                 new Exact('|'),
-            TokenType::SYMBOL_BOOLEAN_AND =>
+            Rule::SYMBOL_BOOLEAN_AND =>
                 new Exact('&&'),
-            TokenType::SYMBOL_BOOLEAN_OR =>
+            Rule::SYMBOL_BOOLEAN_OR =>
                 new Exact('||'),
-            TokenType::SYMBOL_STRICT_EQUALS =>
+            Rule::SYMBOL_STRICT_EQUALS =>
                 new Exact('==='),
-            TokenType::SYMBOL_NOT_EQUALS =>
+            Rule::SYMBOL_NOT_EQUALS =>
                 new Exact('!=='),
-            TokenType::SYMBOL_GREATER_THAN =>
+            Rule::SYMBOL_GREATER_THAN =>
                 new Exact('>'),
-            TokenType::SYMBOL_GREATER_THAN_OR_EQUAL =>
+            Rule::SYMBOL_GREATER_THAN_OR_EQUAL =>
                 new Exact('>='),
-            TokenType::SYMBOL_LESS_THAN =>
+            Rule::SYMBOL_LESS_THAN =>
                 new Exact('<'),
-            TokenType::SYMBOL_LESS_THAN_OR_EQUAL =>
+            Rule::SYMBOL_LESS_THAN_OR_EQUAL =>
                 new Exact('<='),
-            TokenType::SYMBOL_ARROW_SINGLE =>
+            Rule::SYMBOL_ARROW_SINGLE =>
                 new Exact('->'),
-            TokenType::SYMBOL_OPTCHAIN =>
+            Rule::SYMBOL_OPTCHAIN =>
                 new Exact('?.'),
-            TokenType::SYMBOL_NULLISH_COALESCE =>
+            Rule::SYMBOL_NULLISH_COALESCE =>
                 new Exact('??'),
-            TokenType::SYMBOL_CLOSE_TAG =>
+            Rule::SYMBOL_CLOSE_TAG =>
                 new Exact('</'),
 
-            TokenType::WORD =>
+            Rule::WORD =>
                 new Characters(
                     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
                 ),
-            TokenType::TEXT =>
+            Rule::TEXT =>
                 new Not(new Characters('<{}>' . " \t\n")),
 
-            TokenType::SPACE =>
+            Rule::SPACE =>
                 new Characters(" \t"),
-            TokenType::END_OF_LINE =>
+            Rule::END_OF_LINE =>
                 new Exact("\n")
         };
     }

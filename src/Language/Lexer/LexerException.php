@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Lexer;
 
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Util\DebugHelper;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
@@ -44,21 +44,21 @@ final class LexerException extends \Exception
     }
 
     public static function becauseOfUnexpectedEndOfSource(
-        TokenTypes $expectedTokenTypes,
+        Rules $expectedRules,
         Range $affectedRangeInSource
     ): self {
         return new self(
             code: 1691489789,
             message: sprintf(
                 'Source ended unexpectedly. Expected %s instead.',
-                DebugHelper::describeTokenTypes($expectedTokenTypes)
+                DebugHelper::describeRules($expectedRules)
             ),
             affectedRangeInSource: $affectedRangeInSource
         );
     }
 
     public static function becauseOfUnexpectedCharacterSequence(
-        TokenTypes $expectedTokenTypes,
+        Rules $expectedRules,
         Range $affectedRangeInSource,
         string $actualCharacterSequence
     ): self {
@@ -67,7 +67,7 @@ final class LexerException extends \Exception
             message: sprintf(
                 'Unexpected character sequence "%s" was encountered. Expected %s instead.',
                 $actualCharacterSequence,
-                DebugHelper::describeTokenTypes($expectedTokenTypes)
+                DebugHelper::describeRules($expectedRules)
             ),
             affectedRangeInSource: $affectedRangeInSource
         );

@@ -20,9 +20,9 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\Lexer\Token;
+namespace PackageFactory\ComponentEngine\Language\Lexer\Rule;
 
-enum TokenType: string
+enum Rule: string
 {
     case COMMENT = 'COMMENT';
 

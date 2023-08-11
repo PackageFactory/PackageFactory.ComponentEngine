@@ -25,7 +25,7 @@ namespace PackageFactory\ComponentEngine\Language\Parser\StringLiteral;
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class StringLiteralParser
@@ -34,23 +34,23 @@ final class StringLiteralParser
 
     public function parse(Lexer $lexer): StringLiteralNode
     {
-        $lexer->read(TokenType::STRING_LITERAL_DELIMITER);
+        $lexer->read(Rule::STRING_LITERAL_DELIMITER);
         $start = $lexer->getStartPosition();
 
         $value = '';
-        while (!$lexer->peek(TokenType::STRING_LITERAL_DELIMITER)) {
-            if ($lexer->probe(TokenType::STRING_LITERAL_CONTENT)) {
+        while (!$lexer->peek(Rule::STRING_LITERAL_DELIMITER)) {
+            if ($lexer->probe(Rule::STRING_LITERAL_CONTENT)) {
                 $value = $lexer->getBuffer();
             }
 
-            if ($lexer->probe(TokenType::ESCAPE_SEQUENCE_SINGLE_CHARACTER)) {
+            if ($lexer->probe(Rule::ESCAPE_SEQUENCE_SINGLE_CHARACTER)) {
                 $value = $lexer->getBuffer();
             }
             break;
         }
 
 
-        $lexer->read(TokenType::STRING_LITERAL_DELIMITER);
+        $lexer->read(Rule::STRING_LITERAL_DELIMITER);
         $end = $lexer->getEndPosition();
 
         return new StringLiteralNode(

@@ -34,8 +34,8 @@ use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumNameNod
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
@@ -44,25 +44,25 @@ final class EnumDeclarationParser
 {
     use Singleton;
 
-    private static TokenTypes $TOKEN_TYPES_ENUM_MEMBER_VALUE_START;
+    private static Rules $TOKEN_TYPES_ENUM_MEMBER_VALUE_START;
 
     private ?StringLiteralParser $stringLiteralParser = null;
     private ?IntegerLiteralParser $integerLiteralParser = null;
 
     private function __construct()
     {
-        self::$TOKEN_TYPES_ENUM_MEMBER_VALUE_START ??= TokenTypes::from(
-            TokenType::STRING_LITERAL_DELIMITER,
-            TokenType::INTEGER_BINARY,
-            TokenType::INTEGER_OCTAL,
-            TokenType::INTEGER_DECIMAL,
-            TokenType::INTEGER_HEXADECIMAL
+        self::$TOKEN_TYPES_ENUM_MEMBER_VALUE_START ??= Rules::from(
+            Rule::STRING_LITERAL_DELIMITER,
+            Rule::INTEGER_BINARY,
+            Rule::INTEGER_OCTAL,
+            Rule::INTEGER_DECIMAL,
+            Rule::INTEGER_HEXADECIMAL
         );
     }
 
     public function parse(Lexer $lexer): EnumDeclarationNode
     {
-        $lexer->read(TokenType::KEYWORD_ENUM);
+        $lexer->read(Rule::KEYWORD_ENUM);
         $start = $lexer->getStartPosition();
         $lexer->skipSpace();
 
@@ -80,7 +80,7 @@ final class EnumDeclarationParser
 
     private function parseEnumName(Lexer $lexer): EnumNameNode
     {
-        $lexer->read(TokenType::WORD);
+        $lexer->read(Rule::WORD);
         $enumNameNode = new EnumNameNode(
             rangeInSource: $lexer->getCursorRange(),
             value: EnumName::from($lexer->getBuffer())
@@ -92,15 +92,15 @@ final class EnumDeclarationParser
 
     private function parseEnumMemberDeclarations(Lexer $lexer): EnumMemberDeclarationNodes
     {
-        $lexer->read(TokenType::BRACKET_CURLY_OPEN);
+        $lexer->read(Rule::BRACKET_CURLY_OPEN);
         $lexer->skipSpaceAndComments();
 
         $items = [];
-        while (!$lexer->peek(TokenType::BRACKET_CURLY_CLOSE)) {
+        while (!$lexer->peek(Rule::BRACKET_CURLY_CLOSE)) {
             $items[] = $this->parseEnumMemberDeclaration($lexer);
         }
 
-        $lexer->read(TokenType::BRACKET_CURLY_CLOSE);
+        $lexer->read(Rule::BRACKET_CURLY_CLOSE);
 
         return new EnumMemberDeclarationNodes(...$items);
     }
@@ -125,7 +125,7 @@ final class EnumDeclarationParser
 
     private function parseEnumMemberName(Lexer $lexer): EnumMemberNameNode
     {
-        $lexer->read(TokenType::WORD);
+        $lexer->read(Rule::WORD);
 
         return new EnumMemberNameNode(
             rangeInSource: $lexer->getCursorRange(),
@@ -135,17 +135,17 @@ final class EnumDeclarationParser
 
     private function parseEnumMemberValue(Lexer $lexer): ?EnumMemberValueNode
     {
-        if ($lexer->probe(TokenType::BRACKET_ROUND_OPEN)) {
+        if ($lexer->probe(Rule::BRACKET_ROUND_OPEN)) {
             $start = $lexer->getStartPosition();
 
             $value = match ($lexer->expectOneOf(self::$TOKEN_TYPES_ENUM_MEMBER_VALUE_START)) {
-                TokenType::STRING_LITERAL_DELIMITER =>
+                Rule::STRING_LITERAL_DELIMITER =>
                     $this->parseStringLiteral($lexer),
                 default =>
                   $this->parseIntegerLiteral($lexer)
             };
 
-            $lexer->read(TokenType::BRACKET_ROUND_CLOSE);
+            $lexer->read(Rule::BRACKET_ROUND_CLOSE);
             $end = $lexer->getEndPosition();
 
             return new EnumMemberValueNode(

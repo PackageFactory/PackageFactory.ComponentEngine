@@ -26,40 +26,40 @@ use LogicException;
 use PackageFactory\ComponentEngine\Language\Lexer\CharacterStream\CharacterStream;
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Matcher;
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Result;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\Token;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Token;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class Lexer
 {
-    private readonly TokenTypes $TOKEN_TYPES_SPACE;
-    private readonly TokenTypes $TOKEN_TYPES_SPACE_AND_COMMENTS;
+    private readonly Rules $TOKEN_TYPES_SPACE;
+    private readonly Rules $TOKEN_TYPES_SPACE_AND_COMMENTS;
 
     private readonly CharacterStream $characterStream;
     private Position $startPosition;
     private int $offset = 0;
     private string $buffer = '';
-    private ?TokenType $tokenTypeUnderCursor = null;
+    private ?Rule $tokenTypeUnderCursor = null;
 
     public function __construct(string $source)
     {
-        $this->TOKEN_TYPES_SPACE = TokenTypes::from(
-            TokenType::SPACE,
-            TokenType::END_OF_LINE
+        $this->TOKEN_TYPES_SPACE = Rules::from(
+            Rule::SPACE,
+            Rule::END_OF_LINE
         );
-        $this->TOKEN_TYPES_SPACE_AND_COMMENTS = TokenTypes::from(
-            TokenType::SPACE,
-            TokenType::END_OF_LINE,
-            TokenType::COMMENT
+        $this->TOKEN_TYPES_SPACE_AND_COMMENTS = Rules::from(
+            Rule::SPACE,
+            Rule::END_OF_LINE,
+            Rule::COMMENT
         );
 
         $this->characterStream = new CharacterStream($source);
         $this->startPosition = Position::zero();
     }
 
-    public function getTokenTypeUnderCursor(): TokenType
+    public function getRuleUnderCursor(): Rule
     {
         assert($this->tokenTypeUnderCursor !== null);
 
@@ -101,12 +101,12 @@ final class Lexer
         return $this->getStartPosition()->toRange($this->getEndPosition());
     }
 
-    public function read(TokenType $tokenType): void
+    public function read(Rule $tokenType): void
     {
 
         if ($this->characterStream->isEnd()) {
             throw LexerException::becauseOfUnexpectedEndOfSource(
-                expectedTokenTypes: TokenTypes::from($tokenType),
+                expectedRules: Rules::from($tokenType),
                 affectedRangeInSource: $this->characterStream->getCurrentPosition()->toRange()
             );
         }
@@ -117,7 +117,7 @@ final class Lexer
         }
 
         throw LexerException::becauseOfUnexpectedCharacterSequence(
-            expectedTokenTypes: TokenTypes::from($tokenType),
+            expectedRules: Rules::from($tokenType),
             affectedRangeInSource: Range::from(
                 $this->startPosition,
                 $this->characterStream->getCurrentPosition()
@@ -126,20 +126,20 @@ final class Lexer
         );
     }
 
-    public function readOneOf(TokenTypes $tokenTypes): void
+    public function readOneOf(Rules $tokenTypes): void
     {
 
         if ($this->characterStream->isEnd()) {
             throw LexerException::becauseOfUnexpectedEndOfSource(
-                expectedTokenTypes: $tokenTypes,
+                expectedRules: $tokenTypes,
                 affectedRangeInSource: $this->characterStream->getCurrentPosition()->toRange()
             );
         }
 
-        $foundTokenType = $this->extractOneOf($tokenTypes);
-        if ($foundTokenType === null) {
+        $foundRule = $this->extractOneOf($tokenTypes);
+        if ($foundRule === null) {
             throw LexerException::becauseOfUnexpectedCharacterSequence(
-                expectedTokenTypes: $tokenTypes,
+                expectedRules: $tokenTypes,
                 affectedRangeInSource: Range::from(
                     $this->startPosition,
                     $this->characterStream->getPreviousPosition()
@@ -148,10 +148,10 @@ final class Lexer
             );
         }
 
-        $this->tokenTypeUnderCursor = $foundTokenType;
+        $this->tokenTypeUnderCursor = $foundRule;
     }
 
-    public function probe(TokenType $tokenType): bool
+    public function probe(Rule $tokenType): bool
     {
 
         if ($this->characterStream->isEnd()) {
@@ -169,7 +169,7 @@ final class Lexer
         return false;
     }
 
-    public function probeOneOf(TokenTypes $tokenTypes): bool
+    public function probeOneOf(Rules $tokenTypes): bool
     {
         if ($this->characterStream->isEnd()) {
             return false;
@@ -186,7 +186,7 @@ final class Lexer
         return false;
     }
 
-    public function peek(TokenType $tokenType): bool
+    public function peek(Rule $tokenType): bool
     {
         if ($this->characterStream->isEnd()) {
             return false;
@@ -199,24 +199,24 @@ final class Lexer
         return $result;
     }
 
-    public function peekOneOf(TokenTypes $tokenTypes): ?TokenType
+    public function peekOneOf(Rules $tokenTypes): ?Rule
     {
         if ($this->characterStream->isEnd()) {
             return null;
         }
 
         $snapshot = $this->characterStream->makeSnapshot();
-        $foundTokenType = $this->extractOneOf($tokenTypes);
+        $foundRule = $this->extractOneOf($tokenTypes);
         $this->characterStream->restoreSnapshot($snapshot);
 
-        return $foundTokenType;
+        return $foundRule;
     }
 
-    public function expect(TokenType $tokenType): void
+    public function expect(Rule $tokenType): void
     {
         if ($this->characterStream->isEnd()) {
             throw LexerException::becauseOfUnexpectedEndOfSource(
-                expectedTokenTypes: TokenTypes::from($tokenType),
+                expectedRules: Rules::from($tokenType),
                 affectedRangeInSource: $this->characterStream->getCurrentPosition()->toRange()
             );
         }
@@ -224,7 +224,7 @@ final class Lexer
         $snapshot = $this->characterStream->makeSnapshot();
         if ($this->extract($tokenType) === null) {
             throw LexerException::becauseOfUnexpectedCharacterSequence(
-                expectedTokenTypes: TokenTypes::from($tokenType),
+                expectedRules: Rules::from($tokenType),
                 affectedRangeInSource: Range::from(
                     $this->startPosition,
                     $this->characterStream->getPreviousPosition()
@@ -236,20 +236,20 @@ final class Lexer
         $this->characterStream->restoreSnapshot($snapshot);
     }
 
-    public function expectOneOf(TokenTypes $tokenTypes): TokenType
+    public function expectOneOf(Rules $tokenTypes): Rule
     {
         if ($this->characterStream->isEnd()) {
             throw LexerException::becauseOfUnexpectedEndOfSource(
-                expectedTokenTypes: $tokenTypes,
+                expectedRules: $tokenTypes,
                 affectedRangeInSource: $this->characterStream->getCurrentPosition()->toRange()
             );
         }
 
         $snapshot = $this->characterStream->makeSnapshot();
-        $foundTokenType = $this->extractOneOf($tokenTypes);
-        if ($foundTokenType === null) {
+        $foundRule = $this->extractOneOf($tokenTypes);
+        if ($foundRule === null) {
             throw LexerException::becauseOfUnexpectedCharacterSequence(
-                expectedTokenTypes: $tokenTypes,
+                expectedRules: $tokenTypes,
                 affectedRangeInSource: Range::from(
                     $this->startPosition,
                     $this->characterStream->getPreviousPosition()
@@ -260,7 +260,7 @@ final class Lexer
 
         $this->characterStream->restoreSnapshot($snapshot);
 
-        return $foundTokenType;
+        return $foundRule;
     }
 
     public function skipSpace(): void
@@ -273,7 +273,7 @@ final class Lexer
         $this->skipAnyOf($this->TOKEN_TYPES_SPACE_AND_COMMENTS);
     }
 
-    private function skipAnyOf(TokenTypes $tokenTypes): void
+    private function skipAnyOf(Rules $tokenTypes): void
     {
         while (true) {
             $character = $this->characterStream->current();
@@ -291,7 +291,7 @@ final class Lexer
         }
     }
 
-    private function extract(TokenType $tokenType): ?TokenType
+    private function extract(Rule $tokenType): ?Rule
     {
         $this->startPosition = $this->characterStream->getCurrentPosition();
         $this->offset = 0;
@@ -315,7 +315,7 @@ final class Lexer
         }
     }
 
-    private function extractOneOf(TokenTypes $tokenTypes): ?TokenType
+    private function extractOneOf(Rules $tokenTypes): ?Rule
     {
         $this->startPosition = $this->characterStream->getCurrentPosition();
         $this->offset = 0;
@@ -325,7 +325,7 @@ final class Lexer
         while (count($tokenTypeCandidates)) {
             $character = $this->characterStream->current();
 
-            $nextTokenTypeCandidates = [];
+            $nextRuleCandidates = [];
             foreach ($tokenTypeCandidates as $tokenType) {
                 $result = Matcher::for($tokenType)->match($character, $this->offset);
 
@@ -334,13 +334,13 @@ final class Lexer
                 }
 
                 if ($result === Result::KEEP) {
-                    $nextTokenTypeCandidates[] = $tokenType;
+                    $nextRuleCandidates[] = $tokenType;
                 }
             }
 
             $this->offset++;
             $this->buffer .= $character;
-            $tokenTypeCandidates = $nextTokenTypeCandidates;
+            $tokenTypeCandidates = $nextRuleCandidates;
             $this->characterStream->next();
         }
 

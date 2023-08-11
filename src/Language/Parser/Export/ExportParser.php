@@ -30,8 +30,8 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Export\ExportNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Parser\ComponentDeclaration\ComponentDeclarationParser;
 use PackageFactory\ComponentEngine\Language\Parser\EnumDeclaration\EnumDeclarationParser;
 use PackageFactory\ComponentEngine\Language\Parser\StructDeclaration\StructDeclarationParser;
@@ -41,7 +41,7 @@ final class ExportParser
 {
     use Singleton;
 
-    private static TokenTypes $TOKEN_TYPES_DECLARATION_KEYWORDS;
+    private static Rules $TOKEN_TYPES_DECLARATION_KEYWORDS;
 
     private ?ComponentDeclarationParser $componentDeclarationParser = null;
     private ?EnumDeclarationParser $enumDeclarationParser = null;
@@ -49,25 +49,25 @@ final class ExportParser
 
     private function __construct()
     {
-        self::$TOKEN_TYPES_DECLARATION_KEYWORDS ??= TokenTypes::from(
-            TokenType::KEYWORD_COMPONENT,
-            TokenType::KEYWORD_ENUM,
-            TokenType::KEYWORD_STRUCT
+        self::$TOKEN_TYPES_DECLARATION_KEYWORDS ??= Rules::from(
+            Rule::KEYWORD_COMPONENT,
+            Rule::KEYWORD_ENUM,
+            Rule::KEYWORD_STRUCT
         );
     }
 
     public function parse(Lexer $lexer): ExportNode
     {
         try {
-            $lexer->read(TokenType::KEYWORD_EXPORT);
+            $lexer->read(Rule::KEYWORD_EXPORT);
             $start = $lexer->getStartPosition();
 
             $lexer->skipSpace();
 
             $declaration = match ($lexer->expectOneOf(self::$TOKEN_TYPES_DECLARATION_KEYWORDS)) {
-                TokenType::KEYWORD_COMPONENT => $this->parseComponentDeclaration($lexer),
-                TokenType::KEYWORD_ENUM => $this->parseEnumDeclaration($lexer),
-                TokenType::KEYWORD_STRUCT => $this->parseStructDeclaration($lexer),
+                Rule::KEYWORD_COMPONENT => $this->parseComponentDeclaration($lexer),
+                Rule::KEYWORD_ENUM => $this->parseEnumDeclaration($lexer),
+                Rule::KEYWORD_STRUCT => $this->parseStructDeclaration($lexer),
                 default => throw new LogicException()
             };
 

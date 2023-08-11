@@ -33,97 +33,97 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLit
 use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralStringSegmentNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TernaryOperation\TernaryOperationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 
 final class DebugHelper
 {
-    public static function describeTokenType(TokenType $tokenType): string
+    public static function describeRule(Rule $tokenType): string
     {
         return $tokenType->value . match ($tokenType) {
-            TokenType::COMMENT => ' (e.g. "# ...")',
+            Rule::COMMENT => ' (e.g. "# ...")',
 
-            TokenType::KEYWORD_FROM => ' ("from")',
-            TokenType::KEYWORD_IMPORT => ' ("import")',
-            TokenType::KEYWORD_EXPORT => ' ("export")',
-            TokenType::KEYWORD_ENUM => ' ("enum")',
-            TokenType::KEYWORD_STRUCT => ' ("struct")',
-            TokenType::KEYWORD_COMPONENT => ' ("component")',
-            TokenType::KEYWORD_MATCH => ' ("match")',
-            TokenType::KEYWORD_DEFAULT => ' ("default")',
-            TokenType::KEYWORD_RETURN => ' ("return")',
-            TokenType::KEYWORD_TRUE => ' ("true")',
-            TokenType::KEYWORD_FALSE => ' ("false")',
-            TokenType::KEYWORD_NULL => ' ("null")',
+            Rule::KEYWORD_FROM => ' ("from")',
+            Rule::KEYWORD_IMPORT => ' ("import")',
+            Rule::KEYWORD_EXPORT => ' ("export")',
+            Rule::KEYWORD_ENUM => ' ("enum")',
+            Rule::KEYWORD_STRUCT => ' ("struct")',
+            Rule::KEYWORD_COMPONENT => ' ("component")',
+            Rule::KEYWORD_MATCH => ' ("match")',
+            Rule::KEYWORD_DEFAULT => ' ("default")',
+            Rule::KEYWORD_RETURN => ' ("return")',
+            Rule::KEYWORD_TRUE => ' ("true")',
+            Rule::KEYWORD_FALSE => ' ("false")',
+            Rule::KEYWORD_NULL => ' ("null")',
 
-            TokenType::STRING_LITERAL_DELIMITER => ' (""")',
-            TokenType::STRING_LITERAL_CONTENT => '',
+            Rule::STRING_LITERAL_DELIMITER => ' (""")',
+            Rule::STRING_LITERAL_CONTENT => '',
 
-            TokenType::INTEGER_BINARY => ' (e.g. "0b1001")',
-            TokenType::INTEGER_OCTAL => ' (e.g. "0o644")',
-            TokenType::INTEGER_DECIMAL => ' (e.g. "42")',
-            TokenType::INTEGER_HEXADECIMAL => ' (e.g. "0xABC")',
+            Rule::INTEGER_BINARY => ' (e.g. "0b1001")',
+            Rule::INTEGER_OCTAL => ' (e.g. "0o644")',
+            Rule::INTEGER_DECIMAL => ' (e.g. "42")',
+            Rule::INTEGER_HEXADECIMAL => ' (e.g. "0xABC")',
 
-            TokenType::TEMPLATE_LITERAL_DELIMITER => ' (""""")',
-            TokenType::TEMPLATE_LITERAL_CONTENT => '',
+            Rule::TEMPLATE_LITERAL_DELIMITER => ' (""""")',
+            Rule::TEMPLATE_LITERAL_CONTENT => '',
 
-            TokenType::ESCAPE_SEQUENCE_SINGLE_CHARACTER => ' (e.g. "\\\\" or "\\n")',
-            TokenType::ESCAPE_SEQUENCE_HEXADECIMAL => ' (e.g. "\\xA9")',
-            TokenType::ESCAPE_SEQUENCE_UNICODE => ' (e.g. "\\u00A9")',
-            TokenType::ESCAPE_SEQUENCE_UNICODE_CODEPOINT => ' (e.g. "\\u{2F804}")',
+            Rule::ESCAPE_SEQUENCE_SINGLE_CHARACTER => ' (e.g. "\\\\" or "\\n")',
+            Rule::ESCAPE_SEQUENCE_HEXADECIMAL => ' (e.g. "\\xA9")',
+            Rule::ESCAPE_SEQUENCE_UNICODE => ' (e.g. "\\u00A9")',
+            Rule::ESCAPE_SEQUENCE_UNICODE_CODEPOINT => ' (e.g. "\\u{2F804}")',
 
-            TokenType::BRACKET_CURLY_OPEN => ' ("{")',
-            TokenType::BRACKET_CURLY_CLOSE => ' ("}")',
-            TokenType::BRACKET_ROUND_OPEN => ' ("(")',
-            TokenType::BRACKET_ROUND_CLOSE => ' (")")',
-            TokenType::BRACKET_SQUARE_OPEN => ' ("[")',
-            TokenType::BRACKET_SQUARE_CLOSE => ' ("]")',
-            TokenType::BRACKET_ANGLE_OPEN => ' ("<")',
-            TokenType::BRACKET_ANGLE_CLOSE => ' (">")',
+            Rule::BRACKET_CURLY_OPEN => ' ("{")',
+            Rule::BRACKET_CURLY_CLOSE => ' ("}")',
+            Rule::BRACKET_ROUND_OPEN => ' ("(")',
+            Rule::BRACKET_ROUND_CLOSE => ' (")")',
+            Rule::BRACKET_SQUARE_OPEN => ' ("[")',
+            Rule::BRACKET_SQUARE_CLOSE => ' ("]")',
+            Rule::BRACKET_ANGLE_OPEN => ' ("<")',
+            Rule::BRACKET_ANGLE_CLOSE => ' (">")',
 
-            TokenType::SYMBOL_PERIOD => ' (".")',
-            TokenType::SYMBOL_COLON => ' (":")',
-            TokenType::SYMBOL_QUESTIONMARK => ' ("?")',
-            TokenType::SYMBOL_EXCLAMATIONMARK => ' ("!")',
-            TokenType::SYMBOL_COMMA => ' (",")',
-            TokenType::SYMBOL_DASH => ' ("-")',
-            TokenType::SYMBOL_EQUALS => ' ("=")',
-            TokenType::SYMBOL_SLASH_FORWARD => ' ("/")',
-            TokenType::SYMBOL_PIPE => ' ("|")',
-            TokenType::SYMBOL_BOOLEAN_AND => ' ("&&")',
-            TokenType::SYMBOL_BOOLEAN_OR => ' ("||")',
-            TokenType::SYMBOL_STRICT_EQUALS => ' ("===")',
-            TokenType::SYMBOL_NOT_EQUALS => ' ("!==")',
-            TokenType::SYMBOL_GREATER_THAN => ' (">")',
-            TokenType::SYMBOL_GREATER_THAN_OR_EQUAL => ' (">=")',
-            TokenType::SYMBOL_LESS_THAN => ' ("<")',
-            TokenType::SYMBOL_LESS_THAN_OR_EQUAL => ' ("<=")',
-            TokenType::SYMBOL_ARROW_SINGLE => ' ("->")',
-            TokenType::SYMBOL_OPTCHAIN => ' ("?.")',
-            TokenType::SYMBOL_NULLISH_COALESCE => ' ("??")',
-            TokenType::SYMBOL_CLOSE_TAG => ' ("</")',
+            Rule::SYMBOL_PERIOD => ' (".")',
+            Rule::SYMBOL_COLON => ' (":")',
+            Rule::SYMBOL_QUESTIONMARK => ' ("?")',
+            Rule::SYMBOL_EXCLAMATIONMARK => ' ("!")',
+            Rule::SYMBOL_COMMA => ' (",")',
+            Rule::SYMBOL_DASH => ' ("-")',
+            Rule::SYMBOL_EQUALS => ' ("=")',
+            Rule::SYMBOL_SLASH_FORWARD => ' ("/")',
+            Rule::SYMBOL_PIPE => ' ("|")',
+            Rule::SYMBOL_BOOLEAN_AND => ' ("&&")',
+            Rule::SYMBOL_BOOLEAN_OR => ' ("||")',
+            Rule::SYMBOL_STRICT_EQUALS => ' ("===")',
+            Rule::SYMBOL_NOT_EQUALS => ' ("!==")',
+            Rule::SYMBOL_GREATER_THAN => ' (">")',
+            Rule::SYMBOL_GREATER_THAN_OR_EQUAL => ' (">=")',
+            Rule::SYMBOL_LESS_THAN => ' ("<")',
+            Rule::SYMBOL_LESS_THAN_OR_EQUAL => ' ("<=")',
+            Rule::SYMBOL_ARROW_SINGLE => ' ("->")',
+            Rule::SYMBOL_OPTCHAIN => ' ("?.")',
+            Rule::SYMBOL_NULLISH_COALESCE => ' ("??")',
+            Rule::SYMBOL_CLOSE_TAG => ' ("</")',
 
-            TokenType::WORD => '',
-            TokenType::TEXT => '',
+            Rule::WORD => '',
+            Rule::TEXT => '',
 
-            TokenType::SPACE => '',
-            TokenType::END_OF_LINE => ''
+            Rule::SPACE => '',
+            Rule::END_OF_LINE => ''
         };
     }
 
-    public static function describeTokenTypes(TokenTypes $tokenTypes): string
+    public static function describeRules(Rules $tokenTypes): string
     {
         if (count($tokenTypes->items) === 1) {
-            return self::describeTokenType($tokenTypes->items[0]);
+            return self::describeRule($tokenTypes->items[0]);
         }
 
         $leadingItems = array_slice($tokenTypes->items, 0, -1);
         $trailingItem = array_slice($tokenTypes->items, -1)[0];
 
         return join(', ', array_map(
-            static fn (TokenType $tokenType) => self::describeTokenType($tokenType),
+            static fn (Rule $tokenType) => self::describeRule($tokenType),
             $leadingItems
-        )) . ' or ' . self::describeTokenType($trailingItem);
+        )) . ' or ' . self::describeRule($trailingItem);
     }
 
     public static function printASTNode(Node $node, string $indentation = ''): string

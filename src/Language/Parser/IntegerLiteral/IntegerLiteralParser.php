@@ -28,8 +28,8 @@ use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerForma
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Util\DebugHelper;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
@@ -37,15 +37,15 @@ final class IntegerLiteralParser
 {
     use Singleton;
 
-    private static TokenTypes $INTEGER_TOKEN_TYPES;
+    private static Rules $INTEGER_TOKEN_TYPES;
 
     private function __construct()
     {
-        self::$INTEGER_TOKEN_TYPES ??= TokenTypes::from(
-            TokenType::INTEGER_HEXADECIMAL,
-            TokenType::INTEGER_DECIMAL,
-            TokenType::INTEGER_OCTAL,
-            TokenType::INTEGER_BINARY
+        self::$INTEGER_TOKEN_TYPES ??= Rules::from(
+            Rule::INTEGER_HEXADECIMAL,
+            Rule::INTEGER_DECIMAL,
+            Rule::INTEGER_OCTAL,
+            Rule::INTEGER_BINARY
         );
     }
 
@@ -56,7 +56,7 @@ final class IntegerLiteralParser
 
             return new IntegerLiteralNode(
                 rangeInSource: $lexer->getCursorRange(),
-                format: $this->getIntegerFormatFromToken($lexer->getTokenTypeUnderCursor()),
+                format: $this->getIntegerFormatFromToken($lexer->getRuleUnderCursor()),
                 value: $lexer->getBuffer()
             );
         } catch (LexerException $e) {
@@ -64,18 +64,18 @@ final class IntegerLiteralParser
         }
     }
 
-    private function getIntegerFormatFromToken(TokenType $tokenType): IntegerFormat
+    private function getIntegerFormatFromToken(Rule $tokenType): IntegerFormat
     {
         return match ($tokenType) {
-            TokenType::INTEGER_BINARY => IntegerFormat::BINARY,
-            TokenType::INTEGER_OCTAL => IntegerFormat::OCTAL,
-            TokenType::INTEGER_DECIMAL => IntegerFormat::DECIMAL,
-            TokenType::INTEGER_HEXADECIMAL => IntegerFormat::HEXADECIMAL,
+            Rule::INTEGER_BINARY => IntegerFormat::BINARY,
+            Rule::INTEGER_OCTAL => IntegerFormat::OCTAL,
+            Rule::INTEGER_DECIMAL => IntegerFormat::DECIMAL,
+            Rule::INTEGER_HEXADECIMAL => IntegerFormat::HEXADECIMAL,
             default => throw new LogicException(
                 sprintf(
                     'Expected %s to be one of %s',
                     $tokenType->value,
-                    DebugHelper::describeTokenTypes($this->INTEGER_TOKEN_TYPES)
+                    DebugHelper::describeRules($this->INTEGER_TOKEN_TYPES)
                 )
             )
         };

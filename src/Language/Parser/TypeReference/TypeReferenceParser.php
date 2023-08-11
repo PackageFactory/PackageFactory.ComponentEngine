@@ -30,7 +30,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
@@ -43,7 +43,7 @@ final class TypeReferenceParser
     public function parse(Lexer $lexer): TypeReferenceNode
     {
         $this->start = null;
-        $isOptional = $lexer->probe(TokenType::SYMBOL_QUESTIONMARK);
+        $isOptional = $lexer->probe(Rule::SYMBOL_QUESTIONMARK);
         $this->start = $lexer->getStartPosition();
         $typeNameNodes = $this->parseTypeNames($lexer);
         $isArray = $this->parseIsArray($lexer);
@@ -67,7 +67,7 @@ final class TypeReferenceParser
         while (true) {
             $items[] = $this->parseTypeName($lexer);
 
-            if ($lexer->isEnd() || !$lexer->probe(TokenType::SYMBOL_PIPE)) {
+            if ($lexer->isEnd() || !$lexer->probe(Rule::SYMBOL_PIPE)) {
                 break;
             }
         }
@@ -81,7 +81,7 @@ final class TypeReferenceParser
 
     public function parseTypeName(Lexer $lexer): TypeNameNode
     {
-        $lexer->read(TokenType::WORD);
+        $lexer->read(Rule::WORD);
         $this->start ??= $lexer->getStartPosition();
 
         return new TypeNameNode(
@@ -96,8 +96,8 @@ final class TypeReferenceParser
             return false;
         }
 
-        if ($lexer->probe(TokenType::BRACKET_SQUARE_OPEN)) {
-            $lexer->read(TokenType::BRACKET_SQUARE_CLOSE);
+        if ($lexer->probe(Rule::BRACKET_SQUARE_OPEN)) {
+            $lexer->read(Rule::BRACKET_SQUARE_CLOSE);
             return true;
         }
 

@@ -29,7 +29,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Import\ImportNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Module\ModuleNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 use PackageFactory\ComponentEngine\Language\Parser\Export\ExportParser;
 use PackageFactory\ComponentEngine\Language\Parser\Import\ImportParser;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
@@ -69,7 +69,7 @@ final class ModuleParser
     private function parseImports(Lexer $lexer): ImportNodes
     {
         $items = [];
-        while ($lexer->peek(TokenType::KEYWORD_FROM)) {
+        while ($lexer->peek(Rule::KEYWORD_FROM)) {
             $items[] = $this->parseImport($lexer);
         }
 

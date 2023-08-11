@@ -34,8 +34,8 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TernaryOperation\TernaryOpe
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperator;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Parser\BooleanLiteral\BooleanLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\Match\MatchParser;
@@ -48,10 +48,10 @@ use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class ExpressionParser
 {
-    private static TokenTypes $TOKEN_TYPES_ACCESS;
-    private static TokenTypes $TOKEN_TYPES_BINARY_OPERATORS;
-    private static TokenTypes $TOKEN_TYPES_UNARY;
-    private static TokenTypes $TOKEN_TYPES_CLOSING_DELIMITERS;
+    private static Rules $TOKEN_TYPES_ACCESS;
+    private static Rules $TOKEN_TYPES_BINARY_OPERATORS;
+    private static Rules $TOKEN_TYPES_UNARY;
+    private static Rules $TOKEN_TYPES_CLOSING_DELIMITERS;
 
     private ?BooleanLiteralParser $booleanLiteralParser = null;
     private ?IntegerLiteralParser $integerLiteralParser = null;
@@ -65,41 +65,41 @@ final class ExpressionParser
     public function __construct(
         private Precedence $precedence = Precedence::SEQUENCE
     ) {
-        self::$TOKEN_TYPES_ACCESS ??= TokenTypes::from(
-            TokenType::SYMBOL_PERIOD,
-            TokenType::SYMBOL_OPTCHAIN
+        self::$TOKEN_TYPES_ACCESS ??= Rules::from(
+            Rule::SYMBOL_PERIOD,
+            Rule::SYMBOL_OPTCHAIN
         );
-        self::$TOKEN_TYPES_BINARY_OPERATORS ??= TokenTypes::from(
-            TokenType::SYMBOL_NULLISH_COALESCE,
-            TokenType::SYMBOL_BOOLEAN_AND,
-            TokenType::SYMBOL_BOOLEAN_OR,
-            TokenType::SYMBOL_STRICT_EQUALS,
-            TokenType::SYMBOL_NOT_EQUALS,
-            TokenType::SYMBOL_GREATER_THAN,
-            TokenType::SYMBOL_LESS_THAN
+        self::$TOKEN_TYPES_BINARY_OPERATORS ??= Rules::from(
+            Rule::SYMBOL_NULLISH_COALESCE,
+            Rule::SYMBOL_BOOLEAN_AND,
+            Rule::SYMBOL_BOOLEAN_OR,
+            Rule::SYMBOL_STRICT_EQUALS,
+            Rule::SYMBOL_NOT_EQUALS,
+            Rule::SYMBOL_GREATER_THAN,
+            Rule::SYMBOL_LESS_THAN
         );
-        self::$TOKEN_TYPES_UNARY ??= TokenTypes::from(
-            TokenType::SYMBOL_EXCLAMATIONMARK,
-            TokenType::KEYWORD_TRUE,
-            TokenType::KEYWORD_FALSE,
-            TokenType::KEYWORD_NULL,
-            TokenType::KEYWORD_MATCH,
-            TokenType::STRING_LITERAL_DELIMITER,
-            TokenType::INTEGER_HEXADECIMAL,
-            TokenType::INTEGER_DECIMAL,
-            TokenType::INTEGER_OCTAL,
-            TokenType::INTEGER_BINARY,
-            TokenType::WORD,
-            TokenType::BRACKET_ANGLE_OPEN,
-            TokenType::BRACKET_ROUND_OPEN
+        self::$TOKEN_TYPES_UNARY ??= Rules::from(
+            Rule::SYMBOL_EXCLAMATIONMARK,
+            Rule::KEYWORD_TRUE,
+            Rule::KEYWORD_FALSE,
+            Rule::KEYWORD_NULL,
+            Rule::KEYWORD_MATCH,
+            Rule::STRING_LITERAL_DELIMITER,
+            Rule::INTEGER_HEXADECIMAL,
+            Rule::INTEGER_DECIMAL,
+            Rule::INTEGER_OCTAL,
+            Rule::INTEGER_BINARY,
+            Rule::WORD,
+            Rule::BRACKET_ANGLE_OPEN,
+            Rule::BRACKET_ROUND_OPEN
         );
-        self::$TOKEN_TYPES_CLOSING_DELIMITERS = TokenTypes::from(
-            TokenType::BRACKET_CURLY_OPEN,
-            TokenType::BRACKET_CURLY_CLOSE,
-            TokenType::BRACKET_ROUND_CLOSE,
-            TokenType::SYMBOL_COLON,
-            TokenType::SYMBOL_COMMA,
-            TokenType::SYMBOL_ARROW_SINGLE
+        self::$TOKEN_TYPES_CLOSING_DELIMITERS = Rules::from(
+            Rule::BRACKET_CURLY_OPEN,
+            Rule::BRACKET_CURLY_CLOSE,
+            Rule::BRACKET_ROUND_CLOSE,
+            Rule::SYMBOL_COLON,
+            Rule::SYMBOL_COMMA,
+            Rule::SYMBOL_ARROW_SINGLE
         );
     }
 
@@ -119,8 +119,8 @@ final class ExpressionParser
                 continue;
             }
 
-            if ($lexer->peek(TokenType::SYMBOL_QUESTIONMARK)) {
-                if ($this->precedence->mustStopAt(TokenType::SYMBOL_QUESTIONMARK)) {
+            if ($lexer->peek(Rule::SYMBOL_QUESTIONMARK)) {
+                if ($this->precedence->mustStopAt(Rule::SYMBOL_QUESTIONMARK)) {
                     return $result;
                 }
 
@@ -145,31 +145,31 @@ final class ExpressionParser
 
     private function parseUnaryStatement(Lexer $lexer): ExpressionNode
     {
-        if ($lexer->peek(TokenType::TEMPLATE_LITERAL_DELIMITER)) {
+        if ($lexer->peek(Rule::TEMPLATE_LITERAL_DELIMITER)) {
             $result = $this->parseTemplateLiteral($lexer);
         } else {
             $result = match ($lexer->expectOneOf(self::$TOKEN_TYPES_UNARY)) {
-                TokenType::SYMBOL_EXCLAMATIONMARK =>
+                Rule::SYMBOL_EXCLAMATIONMARK =>
                     $this->parseUnaryOperation($lexer),
-                TokenType::KEYWORD_TRUE,
-                TokenType::KEYWORD_FALSE =>
+                Rule::KEYWORD_TRUE,
+                Rule::KEYWORD_FALSE =>
                     $this->parseBooleanLiteral($lexer),
-                TokenType::KEYWORD_NULL =>
+                Rule::KEYWORD_NULL =>
                     $this->parseNullLiteral($lexer),
-                TokenType::STRING_LITERAL_DELIMITER =>
+                Rule::STRING_LITERAL_DELIMITER =>
                     $this->parseStringLiteral($lexer),
-                TokenType::INTEGER_HEXADECIMAL,
-                TokenType::INTEGER_DECIMAL,
-                TokenType::INTEGER_OCTAL,
-                TokenType::INTEGER_BINARY =>
+                Rule::INTEGER_HEXADECIMAL,
+                Rule::INTEGER_DECIMAL,
+                Rule::INTEGER_OCTAL,
+                Rule::INTEGER_BINARY =>
                     $this->parseIntegerLiteral($lexer),
-                TokenType::WORD =>
+                Rule::WORD =>
                     $this->parseValueReference($lexer),
-                TokenType::BRACKET_ANGLE_OPEN =>
+                Rule::BRACKET_ANGLE_OPEN =>
                     $this->parseTag($lexer),
-                TokenType::KEYWORD_MATCH =>
+                Rule::KEYWORD_MATCH =>
                     $this->parseMatch($lexer),
-                TokenType::BRACKET_ROUND_OPEN =>
+                Rule::BRACKET_ROUND_OPEN =>
                     $this->parseBracketedExpression($lexer),
                 default => throw new LogicException()
             };
@@ -204,7 +204,7 @@ final class ExpressionParser
 
     private function parseUnaryOperator(Lexer $lexer): UnaryOperator
     {
-        $lexer->read(TokenType::SYMBOL_EXCLAMATIONMARK);
+        $lexer->read(Rule::SYMBOL_EXCLAMATIONMARK);
 
         $unaryOperator = UnaryOperator::NOT;
 
@@ -318,13 +318,13 @@ final class ExpressionParser
 
     private function parseBracketedExpression(Lexer $lexer): ExpressionNode
     {
-        $lexer->read(TokenType::BRACKET_ROUND_OPEN);
+        $lexer->read(Rule::BRACKET_ROUND_OPEN);
         $start = $lexer->getStartPosition();
         $lexer->skipSpaceAndComments();
 
         $innerExpressionNode = $this->parse($lexer);
 
-        $lexer->read(TokenType::BRACKET_ROUND_CLOSE);
+        $lexer->read(Rule::BRACKET_ROUND_CLOSE);
         $end = $lexer->getEndPosition();
         $lexer->skipSpaceAndComments();
 
@@ -339,7 +339,7 @@ final class ExpressionParser
         while (!$lexer->isEnd()) {
             $type = $this->parseAccessType($lexer);
 
-            $lexer->read(TokenType::WORD);
+            $lexer->read(Rule::WORD);
             $accessNode = new AccessNode(
                 rangeInSource: $parent->rangeInSource->start->toRange(
                     $lexer->getEndPosition()
@@ -369,9 +369,9 @@ final class ExpressionParser
 
     private function parseAccessType(Lexer $lexer): AccessType
     {
-        return match ($lexer->getTokenTypeUnderCursor()) {
-            TokenType::SYMBOL_PERIOD => AccessType::MANDATORY,
-            TokenType::SYMBOL_OPTCHAIN => AccessType::OPTIONAL,
+        return match ($lexer->getRuleUnderCursor()) {
+            Rule::SYMBOL_PERIOD => AccessType::MANDATORY,
+            Rule::SYMBOL_OPTCHAIN => AccessType::OPTIONAL,
             default => throw new LogicException()
         };
     }
@@ -400,25 +400,25 @@ final class ExpressionParser
 
     private function parseBinaryOperator(Lexer $lexer): BinaryOperator
     {
-        if ($lexer->probe(TokenType::SYMBOL_GREATER_THAN_OR_EQUAL)) {
+        if ($lexer->probe(Rule::SYMBOL_GREATER_THAN_OR_EQUAL)) {
             $lexer->skipSpaceAndComments();
             return BinaryOperator::GREATER_THAN_OR_EQUAL;
         }
 
-        if ($lexer->probe(TokenType::SYMBOL_LESS_THAN_OR_EQUAL)) {
+        if ($lexer->probe(Rule::SYMBOL_LESS_THAN_OR_EQUAL)) {
             $lexer->skipSpaceAndComments();
             return BinaryOperator::LESS_THAN_OR_EQUAL;
         }
 
         $lexer->readOneOf(self::$TOKEN_TYPES_BINARY_OPERATORS);
-        $operator = match ($lexer->getTokenTypeUnderCursor()) {
-            TokenType::SYMBOL_NULLISH_COALESCE => BinaryOperator::NULLISH_COALESCE,
-            TokenType::SYMBOL_BOOLEAN_AND => BinaryOperator::AND,
-            TokenType::SYMBOL_BOOLEAN_OR => BinaryOperator::OR,
-            TokenType::SYMBOL_STRICT_EQUALS => BinaryOperator::EQUAL,
-            TokenType::SYMBOL_NOT_EQUALS => BinaryOperator::NOT_EQUAL,
-            TokenType::SYMBOL_GREATER_THAN => BinaryOperator::GREATER_THAN,
-            TokenType::SYMBOL_LESS_THAN => BinaryOperator::LESS_THAN,
+        $operator = match ($lexer->getRuleUnderCursor()) {
+            Rule::SYMBOL_NULLISH_COALESCE => BinaryOperator::NULLISH_COALESCE,
+            Rule::SYMBOL_BOOLEAN_AND => BinaryOperator::AND,
+            Rule::SYMBOL_BOOLEAN_OR => BinaryOperator::OR,
+            Rule::SYMBOL_STRICT_EQUALS => BinaryOperator::EQUAL,
+            Rule::SYMBOL_NOT_EQUALS => BinaryOperator::NOT_EQUAL,
+            Rule::SYMBOL_GREATER_THAN => BinaryOperator::GREATER_THAN,
+            Rule::SYMBOL_LESS_THAN => BinaryOperator::LESS_THAN,
             default => throw new LogicException()
         };
 
@@ -429,12 +429,12 @@ final class ExpressionParser
 
     private function parseTernaryOperation(Lexer $lexer, ExpressionNode $condition): ExpressionNode
     {
-        $lexer->read(TokenType::SYMBOL_QUESTIONMARK);
+        $lexer->read(Rule::SYMBOL_QUESTIONMARK);
         $lexer->skipSpaceAndComments();
 
         $trueBranch = $this->parse($lexer);
 
-        $lexer->read(TokenType::SYMBOL_COLON);
+        $lexer->read(Rule::SYMBOL_COLON);
         $lexer->skipSpaceAndComments();
 
         $falseBranch = $this->parse($lexer);

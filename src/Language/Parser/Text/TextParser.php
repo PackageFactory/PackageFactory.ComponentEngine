@@ -25,8 +25,8 @@ namespace PackageFactory\ComponentEngine\Language\Parser\Text;
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
@@ -34,20 +34,20 @@ final class TextParser
 {
     use Singleton;
 
-    private static TokenTypes $TOKEN_TYPES_END_DELIMITERS;
-    private static TokenTypes $TOKEN_TYPES_CONTENT;
+    private static Rules $TOKEN_TYPES_END_DELIMITERS;
+    private static Rules $TOKEN_TYPES_CONTENT;
 
     private function __construct()
     {
-        self::$TOKEN_TYPES_END_DELIMITERS = TokenTypes::from(
-            TokenType::SYMBOL_CLOSE_TAG,
-            TokenType::BRACKET_ANGLE_OPEN,
-            TokenType::BRACKET_CURLY_OPEN
+        self::$TOKEN_TYPES_END_DELIMITERS = Rules::from(
+            Rule::SYMBOL_CLOSE_TAG,
+            Rule::BRACKET_ANGLE_OPEN,
+            Rule::BRACKET_CURLY_OPEN
         );
-        self::$TOKEN_TYPES_CONTENT = TokenTypes::from(
-            TokenType::SPACE,
-            TokenType::END_OF_LINE,
-            TokenType::TEXT
+        self::$TOKEN_TYPES_CONTENT = Rules::from(
+            Rule::SPACE,
+            Rule::END_OF_LINE,
+            Rule::TEXT
         );
     }
 
@@ -57,12 +57,12 @@ final class TextParser
         $start = null;
         $hasLeadingSpace = false;
 
-        if ($lexer->probe(TokenType::SPACE)) {
+        if ($lexer->probe(Rule::SPACE)) {
             $start = $lexer->getStartPosition();
             $hasLeadingSpace = true;
         }
 
-        if ($lexer->probe(TokenType::END_OF_LINE)) {
+        if ($lexer->probe(Rule::END_OF_LINE)) {
             $start ??= $lexer->getStartPosition();
             $hasLeadingSpace = false;
         }
@@ -78,7 +78,7 @@ final class TextParser
         while (!$lexer->isEnd() && !$lexer->peekOneOf(self::$TOKEN_TYPES_END_DELIMITERS)) {
             $lexer->readOneOf(self::$TOKEN_TYPES_CONTENT);
 
-            if ($lexer->getTokenTypeUnderCursor() === TokenType::TEXT) {
+            if ($lexer->getRuleUnderCursor() === Rule::TEXT) {
                 $start ??= $lexer->getStartPosition();
                 if ($hasTrailingSpace) {
                     $value .= ' ';
@@ -89,7 +89,7 @@ final class TextParser
                 continue;
             }
 
-            if ($lexer->getTokenTypeUnderCursor() === TokenType::END_OF_LINE) {
+            if ($lexer->getRuleUnderCursor() === Rule::END_OF_LINE) {
                 $trailingSpaceContainsLineBreaks = true;
             }
 
@@ -102,7 +102,7 @@ final class TextParser
 
         $end = $lexer->getEndPosition();
 
-        if ($hasTrailingSpace && !$trailingSpaceContainsLineBreaks && !$lexer->isEnd() && !$lexer->peek(TokenType::SYMBOL_CLOSE_TAG)) {
+        if ($hasTrailingSpace && !$trailingSpaceContainsLineBreaks && !$lexer->isEnd() && !$lexer->peek(Rule::SYMBOL_CLOSE_TAG)) {
             $value .= ' ';
         }
 

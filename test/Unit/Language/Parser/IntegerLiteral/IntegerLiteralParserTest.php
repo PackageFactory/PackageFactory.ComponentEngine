@@ -26,8 +26,8 @@ use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerForma
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
@@ -128,11 +128,11 @@ final class IntegerLiteralParserTest extends ParserTestCase
             },
             IntegerLiteralCouldNotBeParsed::becauseOfLexerException(
                 cause: LexerException::becauseOfUnexpectedEndOfSource(
-                    expectedTokenTypes: TokenTypes::from(
-                        TokenType::INTEGER_HEXADECIMAL,
-                        TokenType::INTEGER_DECIMAL,
-                        TokenType::INTEGER_OCTAL,
-                        TokenType::INTEGER_BINARY
+                    expectedRules: Rules::from(
+                        Rule::INTEGER_HEXADECIMAL,
+                        Rule::INTEGER_DECIMAL,
+                        Rule::INTEGER_OCTAL,
+                        Rule::INTEGER_BINARY
                     ),
                     affectedRangeInSource: $this->range([0, 0], [0, 0])
                 )
@@ -154,11 +154,11 @@ final class IntegerLiteralParserTest extends ParserTestCase
             },
             IntegerLiteralCouldNotBeParsed::becauseOfLexerException(
                 cause: LexerException::becauseOfUnexpectedCharacterSequence(
-                    expectedTokenTypes: TokenTypes::from(
-                        TokenType::INTEGER_HEXADECIMAL,
-                        TokenType::INTEGER_DECIMAL,
-                        TokenType::INTEGER_OCTAL,
-                        TokenType::INTEGER_BINARY
+                    expectedRules: Rules::from(
+                        Rule::INTEGER_HEXADECIMAL,
+                        Rule::INTEGER_DECIMAL,
+                        Rule::INTEGER_OCTAL,
+                        Rule::INTEGER_BINARY
                     ),
                     affectedRangeInSource: $this->range([0, 0], [0, 0]),
                     actualCharacterSequence: 'f'

@@ -25,7 +25,7 @@ namespace PackageFactory\ComponentEngine\Language\Parser\NullLiteral;
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\NullLiteral\NullLiteralNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 
 final class NullLiteralParser
 {
@@ -33,7 +33,7 @@ final class NullLiteralParser
 
     public function parse(Lexer $lexer): NullLiteralNode
     {
-        $lexer->read(TokenType::KEYWORD_NULL);
+        $lexer->read(Rule::KEYWORD_NULL);
 
         return new NullLiteralNode(
             rangeInSource: $lexer->getCursorRange()

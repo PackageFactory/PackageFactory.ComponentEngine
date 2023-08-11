@@ -27,7 +27,7 @@ use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\PropertyDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\PropertyNameNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 use PackageFactory\ComponentEngine\Language\Parser\TypeReference\TypeReferenceParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
@@ -41,7 +41,7 @@ final class PropertyDeclarationParser
     {
         $name = $this->parsePropertyName($lexer);
 
-        $lexer->read(TokenType::SYMBOL_COLON);
+        $lexer->read(Rule::SYMBOL_COLON);
         $lexer->skipSpace();
 
         $this->typeReferenceParser ??= TypeReferenceParser::singleton();
@@ -59,7 +59,7 @@ final class PropertyDeclarationParser
 
     public function parsePropertyName(Lexer $lexer): PropertyNameNode
     {
-        $lexer->read(TokenType::WORD);
+        $lexer->read(Rule::WORD);
 
         return new PropertyNameNode(
             rangeInSource: $lexer->getCursorRange(),
