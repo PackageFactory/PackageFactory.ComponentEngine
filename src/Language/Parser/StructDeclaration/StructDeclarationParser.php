@@ -29,10 +29,8 @@ use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructDec
 use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructNameNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenType;
-use PackageFactory\ComponentEngine\Language\Lexer\Token\TokenTypes;
 use PackageFactory\ComponentEngine\Language\Parser\PropertyDeclaration\PropertyDeclarationParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token as TokenizerToken;
 
 final class StructDeclarationParser
 {

@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Parser\Module;
 
 use PackageFactory\ComponentEngine\Language\Parser\ParserException;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 
 final class ModuleCouldNotBeParsed extends ParserException
 {

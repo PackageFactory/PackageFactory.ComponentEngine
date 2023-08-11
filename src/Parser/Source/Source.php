@@ -22,10 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Source;
 
-/**
- * @implements \IteratorAggregate<mixed, Fragment>
- */
-final class Source implements \IteratorAggregate
+final class Source
 {
     public function __construct(
         public readonly Path $path,
@@ -50,33 +47,5 @@ final class Source implements \IteratorAggregate
     public function equals(Source $other): bool
     {
         return $this->contents === $other->contents;
-    }
-
-    /**
-     * @return \Iterator<Fragment>
-     */
-    public function getIterator(): \Iterator
-    {
-        $lineNumber = 0;
-        $columnNumber = 0;
-        $length = strlen($this->contents);
-
-        for ($index = 0; $index < $length; $index++) {
-            $character = $this->contents[$index];
-
-            yield Fragment::create(
-                $character,
-                new Position($lineNumber, $columnNumber),
-                new Position($lineNumber, $columnNumber),
-                $this
-            );
-
-            if ($character === "\n") {
-                $lineNumber++;
-                $columnNumber = 0;
-            } else {
-                $columnNumber++;
-            }
-        }
     }
 }

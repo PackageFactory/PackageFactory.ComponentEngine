@@ -27,7 +27,6 @@ use PackageFactory\ComponentEngine\Language\Parser\Module\ModuleParser;
 use PackageFactory\ComponentEngine\Module\Loader\ModuleFile\ModuleFileLoader;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Module\ModuleTranspiler;
 use PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Module\ModuleTestStrategy;
 use PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope\GlobalScope;
