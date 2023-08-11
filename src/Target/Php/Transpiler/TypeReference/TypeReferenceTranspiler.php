@@ -27,7 +27,7 @@ use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
@@ -44,7 +44,7 @@ final class TypeReferenceTranspiler
     {
         $type = $this->scope->resolveTypeReference($typeReferenceNode);
         $phpTypeReference = match ($type::class) {
-            NumberType::class => 'int|float',
+            IntegerType::class => 'int|float',
             StringType::class => 'string',
             BooleanType::class => 'bool',
             SlotType::class => $this->strategy->getPhpTypeReferenceForSlotType($type, $typeReferenceNode),

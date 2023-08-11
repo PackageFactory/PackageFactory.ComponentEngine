@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\UnionType;
 
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PHPUnit\Framework\TestCase;
@@ -39,17 +39,17 @@ final class UnionTypeTest extends TestCase
         $this->assertTrue($unionType->is(StringType::get()));
         $this->assertTrue(StringType::get()->is($unionType));
 
-        $unionType = UnionType::of(NumberType::get());
-        $this->assertTrue($unionType->is(NumberType::get()));
-        $this->assertTrue(NumberType::get()->is($unionType));
+        $unionType = UnionType::of(IntegerType::get());
+        $this->assertTrue($unionType->is(IntegerType::get()));
+        $this->assertTrue(IntegerType::get()->is($unionType));
 
         $unionType = UnionType::of(UnionType::of(StringType::get()));
         $this->assertTrue($unionType->is(StringType::get()));
         $this->assertTrue(StringType::get()->is($unionType));
 
-        $unionType = UnionType::of(UnionType::of(NumberType::get()));
-        $this->assertTrue($unionType->is(NumberType::get()));
-        $this->assertTrue(NumberType::get()->is($unionType));
+        $unionType = UnionType::of(UnionType::of(IntegerType::get()));
+        $this->assertTrue($unionType->is(IntegerType::get()));
+        $this->assertTrue(IntegerType::get()->is($unionType));
     }
 
     /**
@@ -71,8 +71,8 @@ final class UnionTypeTest extends TestCase
      */
     public function isReturnsTrueIfGivenTypeIsCongruentUnionType(): void
     {
-        $unionType = UnionType::of(StringType::get(), NumberType::get());
-        $otherUnionType = UnionType::of(NumberType::get(), StringType::get());
+        $unionType = UnionType::of(StringType::get(), IntegerType::get());
+        $otherUnionType = UnionType::of(IntegerType::get(), StringType::get());
 
         $this->assertTrue($unionType->is($otherUnionType));
     }
@@ -82,8 +82,8 @@ final class UnionTypeTest extends TestCase
      */
     public function isReturnsTrueIfGivenTypeIsCongruentUnionTypeWithRedundantMembers(): void
     {
-        $unionType = UnionType::of(StringType::get(), NumberType::get());
-        $otherUnionType = UnionType::of(NumberType::get(), StringType::get(), NumberType::get(), StringType::get());
+        $unionType = UnionType::of(StringType::get(), IntegerType::get());
+        $otherUnionType = UnionType::of(IntegerType::get(), StringType::get(), IntegerType::get(), StringType::get());
 
         $this->assertTrue($unionType->is($otherUnionType));
     }
@@ -93,9 +93,9 @@ final class UnionTypeTest extends TestCase
      */
     public function isReturnsFalseIfGivenTypeIsNotAUnionType(): void
     {
-        $unionType = UnionType::of(StringType::get(), NumberType::get());
+        $unionType = UnionType::of(StringType::get(), IntegerType::get());
 
-        $this->assertFalse($unionType->is(NumberType::get()));
+        $this->assertFalse($unionType->is(IntegerType::get()));
         $this->assertFalse($unionType->is(StringType::get()));
     }
 
@@ -104,7 +104,7 @@ final class UnionTypeTest extends TestCase
      */
     public function isReturnsFalseIfGivenTypeIsANonCongruentUnionType(): void
     {
-        $unionType = UnionType::of(StringType::get(), NumberType::get());
+        $unionType = UnionType::of(StringType::get(), IntegerType::get());
         $otherUnionType = UnionType::of(StringType::get(), BooleanType::get());
 
         $this->assertFalse($unionType->is($otherUnionType));

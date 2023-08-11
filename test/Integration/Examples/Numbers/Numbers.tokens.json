@@ -68,8 +68,8 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC_PLUS",
-    "value": "+"
+    "type": "OPERATOR_BOOLEAN_OR",
+    "value": "||"
   },
   {
     "type": "END_OF_LINE",
@@ -88,8 +88,8 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC_PLUS",
-    "value": "+"
+    "type": "OPERATOR_BOOLEAN_OR",
+    "value": "||"
   },
   {
     "type": "END_OF_LINE",
@@ -108,8 +108,8 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC_PLUS",
-    "value": "+"
+    "type": "OPERATOR_BOOLEAN_OR",
+    "value": "||"
   },
   {
     "type": "END_OF_LINE",
@@ -144,8 +144,8 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC_PLUS",
-    "value": "+"
+    "type": "OPERATOR_BOOLEAN_OR",
+    "value": "||"
   },
   {
     "type": "END_OF_LINE",
@@ -164,8 +164,8 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC_PLUS",
-    "value": "+"
+    "type": "OPERATOR_BOOLEAN_OR",
+    "value": "||"
   },
   {
     "type": "END_OF_LINE",
@@ -184,8 +184,8 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC_PLUS",
-    "value": "+"
+    "type": "OPERATOR_BOOLEAN_OR",
+    "value": "||"
   },
   {
     "type": "END_OF_LINE",
@@ -220,8 +220,8 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC_PLUS",
-    "value": "+"
+    "type": "OPERATOR_BOOLEAN_OR",
+    "value": "||"
   },
   {
     "type": "END_OF_LINE",
@@ -240,8 +240,8 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC_PLUS",
-    "value": "+"
+    "type": "OPERATOR_BOOLEAN_OR",
+    "value": "||"
   },
   {
     "type": "END_OF_LINE",
@@ -276,8 +276,8 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC_PLUS",
-    "value": "+"
+    "type": "OPERATOR_BOOLEAN_OR",
+    "value": "||"
   },
   {
     "type": "END_OF_LINE",
@@ -296,8 +296,8 @@
     "value": " "
   },
   {
-    "type": "OPERATOR_ARITHMETIC_PLUS",
-    "value": "+"
+    "type": "OPERATOR_BOOLEAN_OR",
+    "value": "||"
   },
   {
     "type": "END_OF_LINE",
@@ -310,138 +310,6 @@
   {
     "type": "NUMBER_HEXADECIMAL",
     "value": "0xA"
-  },
-  {
-    "type": "SPACE",
-    "value": " "
-  },
-  {
-    "type": "OPERATOR_ARITHMETIC_PLUS",
-    "value": "+"
-  },
-  {
-    "type": "END_OF_LINE",
-    "value": "\n"
-  },
-  {
-    "type": "END_OF_LINE",
-    "value": "\n"
-  },
-  {
-    "type": "SPACE",
-    "value": "  "
-  },
-  {
-    "type": "COMMENT",
-    "value": "# With Exponent"
-  },
-  {
-    "type": "END_OF_LINE",
-    "value": "\n"
-  },
-  {
-    "type": "SPACE",
-    "value": "  "
-  },
-  {
-    "type": "NUMBER_DECIMAL",
-    "value": "1E3"
-  },
-  {
-    "type": "SPACE",
-    "value": " "
-  },
-  {
-    "type": "OPERATOR_ARITHMETIC_PLUS",
-    "value": "+"
-  },
-  {
-    "type": "END_OF_LINE",
-    "value": "\n"
-  },
-  {
-    "type": "SPACE",
-    "value": "  "
-  },
-  {
-    "type": "NUMBER_DECIMAL",
-    "value": "2e6"
-  },
-  {
-    "type": "SPACE",
-    "value": " "
-  },
-  {
-    "type": "OPERATOR_ARITHMETIC_PLUS",
-    "value": "+"
-  },
-  {
-    "type": "END_OF_LINE",
-    "value": "\n"
-  },
-  {
-    "type": "END_OF_LINE",
-    "value": "\n"
-  },
-  {
-    "type": "SPACE",
-    "value": "  "
-  },
-  {
-    "type": "COMMENT",
-    "value": "# With Floating Point"
-  },
-  {
-    "type": "END_OF_LINE",
-    "value": "\n"
-  },
-  {
-    "type": "SPACE",
-    "value": "  "
-  },
-  {
-    "type": "NUMBER_DECIMAL",
-    "value": "123.456"
-  },
-  {
-    "type": "SPACE",
-    "value": " "
-  },
-  {
-    "type": "OPERATOR_ARITHMETIC_PLUS",
-    "value": "+"
-  },
-  {
-    "type": "END_OF_LINE",
-    "value": "\n"
-  },
-  {
-    "type": "SPACE",
-    "value": "  "
-  },
-  {
-    "type": "NUMBER_DECIMAL",
-    "value": "0.1e2"
-  },
-  {
-    "type": "SPACE",
-    "value": " "
-  },
-  {
-    "type": "OPERATOR_ARITHMETIC_PLUS",
-    "value": "+"
-  },
-  {
-    "type": "END_OF_LINE",
-    "value": "\n"
-  },
-  {
-    "type": "SPACE",
-    "value": "  "
-  },
-  {
-    "type": "NUMBER_DECIMAL",
-    "value": ".22"
   },
   {
     "type": "END_OF_LINE",

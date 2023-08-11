@@ -11,7 +11,7 @@
             "RED": {
               "name": "RED",
               "value": {
-                "type": "NumberLiteralNode",
+                "type": "IntegerLiteralNode",
                 "payload": {
                   "value": "1",
                   "format": "DECIMAL"
@@ -21,7 +21,7 @@
             "YELLOW": {
               "name": "YELLOW",
               "value": {
-                "type": "NumberLiteralNode",
+                "type": "IntegerLiteralNode",
                 "payload": {
                   "value": "2",
                   "format": "DECIMAL"
@@ -31,7 +31,7 @@
             "GREEN": {
               "name": "GREEN",
               "value": {
-                "type": "NumberLiteralNode",
+                "type": "IntegerLiteralNode",
                 "payload": {
                   "value": "3",
                   "format": "DECIMAL"

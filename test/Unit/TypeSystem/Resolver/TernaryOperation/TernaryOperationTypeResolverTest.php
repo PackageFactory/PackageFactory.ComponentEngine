@@ -26,7 +26,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\TernaryOperation\TernaryOperationTypeResolver;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
@@ -40,12 +40,12 @@ final class TernaryOperationTypeResolverTest extends TestCase
     public static function ternaryOperationExamples(): array
     {
         return [
-            'true ? 42 : "foo"' => ['true ? 42 : "foo"', NumberType::get()],
+            'true ? 42 : "foo"' => ['true ? 42 : "foo"', IntegerType::get()],
             'false ? 42 : "foo"' => ['false ? 42 : "foo"', StringType::get()],
-            '1 < 2 ? 42 : "foo"' => ['1 < 2 ? 42 : "foo"', UnionType::of(NumberType::get(), StringType::get())],
+            '1 < 2 ? 42 : "foo"' => ['1 < 2 ? 42 : "foo"', UnionType::of(IntegerType::get(), StringType::get())],
             '1 < 2 ? variableOfTypeString : variableOfTypeNumber' => [
                 '1 < 2 ? variableOfTypeString : variableOfTypeNumber',
-                UnionType::of(NumberType::get(), StringType::get())
+                UnionType::of(IntegerType::get(), StringType::get())
             ]
         ];
     }
@@ -61,7 +61,7 @@ final class TernaryOperationTypeResolverTest extends TestCase
     {
         $scope = new DummyScope([
             'variableOfTypeString' => StringType::get(),
-            'variableOfTypeNumber' => NumberType::get(),
+            'variableOfTypeNumber' => IntegerType::get(),
         ]);
         $ternaryOperationTypeResolver = new TernaryOperationTypeResolver(
             scope: $scope

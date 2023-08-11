@@ -58,12 +58,6 @@ enum TokenType: string
     case OPERATOR_BOOLEAN_OR = 'OPERATOR_BOOLEAN_OR';
     case OPERATOR_BOOLEAN_NOT = 'OPERATOR_BOOLEAN_NOT';
 
-    case OPERATOR_ARITHMETIC_PLUS = 'OPERATOR_ARITHMETIC_PLUS';
-    case OPERATOR_ARITHMETIC_MINUS = 'OPERATOR_ARITHMETIC_MINUS';
-    case OPERATOR_ARITHMETIC_MULTIPLY_BY = 'OPERATOR_ARITHMETIC_MULTIPLY_BY';
-    case OPERATOR_ARITHMETIC_DIVIDE_BY = 'OPERATOR_ARITHMETIC_DIVIDE_BY';
-    case OPERATOR_ARITHMETIC_MODULO = 'OPERATOR_ARITHMETIC_MODULO';
-
     case COMPARATOR_EQUAL = 'COMPARATOR_EQUAL';
     case COMPARATOR_NOT_EQUAL = 'COMPARATOR_NOT_EQUAL';
     case COMPARATOR_GREATER_THAN = 'COMPARATOR_GREATER_THAN';
@@ -117,6 +111,8 @@ enum TokenType: string
             $value === 'false' => self::KEYWORD_FALSE,
             $value === 'null' => self::KEYWORD_NULL,
 
+            $value === '.' => self::PERIOD,
+
             (bool) preg_match(
                 '/^0[bB][0-1]+$/',
                 $value
@@ -126,7 +122,7 @@ enum TokenType: string
                 $value
             ) => self::NUMBER_OCTAL,
             $value !== '' && preg_match(
-                '/^([-+]?[0-9]+)?(\.[0-9]+)?([eE][0-9]+)?$/',
+                '/^([-+]?[0-9]+)$/',
                 $value
             ) => self::NUMBER_DECIMAL,
             (bool) preg_match(

@@ -22,15 +22,15 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Ast;
 
-use PackageFactory\ComponentEngine\Definition\NumberFormat;
+use PackageFactory\ComponentEngine\Definition\IntegerFormat;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 
-final class NumberLiteralNode implements \JsonSerializable
+final class IntegerLiteralNode implements \JsonSerializable
 {
     private function __construct(
         public readonly string $value,
-        public readonly NumberFormat $format
+        public readonly IntegerFormat $format
     ) {
     }
 
@@ -40,7 +40,7 @@ final class NumberLiteralNode implements \JsonSerializable
      */
     public static function fromTokens(\Iterator $tokens): self
     {
-        $format = NumberFormat::fromTokenType(Scanner::type($tokens));
+        $format = IntegerFormat::fromTokenType(Scanner::type($tokens));
         $value = Scanner::value($tokens);
 
         Scanner::skipOne($tokens);
@@ -54,7 +54,7 @@ final class NumberLiteralNode implements \JsonSerializable
     public function jsonSerialize(): mixed
     {
         return [
-            'type' => 'NumberLiteralNode',
+            'type' => 'IntegerLiteralNode',
             'payload' => [
                 'value' => $this->value,
                 'format' => $this->format->value

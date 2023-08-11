@@ -20,18 +20,35 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\NumberLiteral;
+namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\IntegerType;
 
-use PackageFactory\ComponentEngine\Definition\NumberFormat;
-use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
+use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
+use PHPUnit\Framework\TestCase;
 
-final class NumberLiteralTranspiler
+final class IntegerTypeTest extends TestCase
 {
-    public function transpile(NumberLiteralNode $numberLiteralNode): string
+    /**
+     * @test
+     */
+    public function integerTypeIsSingleton(): void
     {
-        return match ($numberLiteralNode->format) {
-            NumberFormat::BINARY => strtolower($numberLiteralNode->value),
-            default => $numberLiteralNode->value
-        };
+        $this->assertSame(IntegerType::get(), IntegerType::get());
+    }
+
+    /**
+     * @test
+     */
+    public function isReturnsTrueIfGivenTypeIsIntegerType(): void
+    {
+        $this->assertTrue(IntegerType::get()->is(IntegerType::get()));
+    }
+
+    /**
+     * @test
+     */
+    public function isReturnsFalseIfGivenTypeIsNotIntegerType(): void
+    {
+        $this->assertFalse(IntegerType::get()->is(StringType::get()));
     }
 }

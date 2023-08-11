@@ -20,25 +20,18 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\TypeSystem\Type\NumberType;
+namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\IntegerLiteral;
 
-use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
+use PackageFactory\ComponentEngine\Definition\IntegerFormat;
+use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
 
-final class NumberType implements TypeInterface
+final class IntegerLiteralTranspiler
 {
-    private static null|self $instance = null;
-
-    private function __construct()
+    public function transpile(IntegerLiteralNode $integerLiteralNode): string
     {
-    } // @codeCoverageIgnore
-
-    public static function get(): self
-    {
-        return self::$instance ??= new self();
-    }
-
-    public function is(TypeInterface $other): bool
-    {
-        return $other === self::$instance;
+        return match ($integerLiteralNode->format) {
+            IntegerFormat::BINARY => strtolower($integerLiteralNode->value),
+            default => $integerLiteralNode->value
+        };
     }
 }

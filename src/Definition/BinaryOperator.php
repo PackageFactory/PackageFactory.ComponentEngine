@@ -29,12 +29,6 @@ enum BinaryOperator: string
     case AND = 'AND';
     case OR = 'OR';
 
-    case PLUS = 'PLUS';
-    case MINUS = 'MINUS';
-    case MULTIPLY_BY = 'MULTIPLY_BY';
-    case DIVIDE_BY = 'DIVIDE_BY';
-    case MODULO = 'MODULO';
-
     case EQUAL = 'EQUAL';
     case NOT_EQUAL = 'NOT_EQUAL';
     case GREATER_THAN = 'GREATER_THAN';
@@ -47,12 +41,6 @@ enum BinaryOperator: string
         return match ($tokenType) {
             TokenType::OPERATOR_BOOLEAN_AND => self::AND,
             TokenType::OPERATOR_BOOLEAN_OR => self::OR,
-
-            TokenType::OPERATOR_ARITHMETIC_PLUS => self::PLUS,
-            TokenType::OPERATOR_ARITHMETIC_MINUS => self::MINUS,
-            TokenType::OPERATOR_ARITHMETIC_MULTIPLY_BY => self::MULTIPLY_BY,
-            TokenType::OPERATOR_ARITHMETIC_DIVIDE_BY => self::DIVIDE_BY,
-            TokenType::OPERATOR_ARITHMETIC_MODULO => self::MODULO,
 
             TokenType::COMPARATOR_EQUAL => self::EQUAL,
             TokenType::COMPARATOR_NOT_EQUAL => self::NOT_EQUAL,
@@ -71,13 +59,6 @@ enum BinaryOperator: string
             self::AND => Precedence::LOGICAL_AND,
 
             self::OR => Precedence::LOGICAL_OR,
-
-            self::PLUS,
-            self::MINUS => Precedence::DASH,
-
-            self::MULTIPLY_BY,
-            self::DIVIDE_BY,
-            self::MODULO => Precedence::POINT,
 
             self::EQUAL,
             self::NOT_EQUAL => Precedence::EQUALITY,

@@ -29,7 +29,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
 use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
 use PackageFactory\ComponentEngine\Parser\Ast\NullLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
+use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TemplateLiteralNode;
@@ -41,7 +41,7 @@ use PackageFactory\ComponentEngine\Target\Php\Transpiler\BooleanLiteral\BooleanL
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Identifier\IdentifierTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Match\MatchTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\NullLiteral\NullLiteralTranspiler;
-use PackageFactory\ComponentEngine\Target\Php\Transpiler\NumberLiteral\NumberLiteralTranspiler;
+use PackageFactory\ComponentEngine\Target\Php\Transpiler\IntegerLiteral\IntegerLiteralTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\StringLiteral\StringLiteralTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Tag\TagTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\TemplateLiteral\TemplateLiteralTranspiler;
@@ -80,7 +80,7 @@ final class ExpressionTranspiler
                 scope: $this->scope
             ),
             NullLiteralNode::class => new NullLiteralTranspiler(),
-            NumberLiteralNode::class => new NumberLiteralTranspiler(),
+            IntegerLiteralNode::class => new IntegerLiteralTranspiler(),
             StringLiteralNode::class => new StringLiteralTranspiler(
                 shouldAddQuotes: $this->shouldAddQuotesIfNecessary
             ),

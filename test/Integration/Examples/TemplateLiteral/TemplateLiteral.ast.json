@@ -12,21 +12,33 @@
               "name": "expression",
               "type": {
                 "type": "TypeReferenceNode",
-                "payload": { "name": "string", "isArray": false, "isOptional": false }
+                "payload": {
+                  "name": "string",
+                  "isArray": false,
+                  "isOptional": false
+                }
               }
             },
             {
               "name": "isActive",
               "type": {
                 "type": "TypeReferenceNode",
-                "payload": { "name": "boolean", "isArray": false, "isOptional": false }
+                "payload": {
+                  "name": "boolean",
+                  "isArray": false,
+                  "isOptional": false
+                }
               }
             },
             {
               "name": "someNumber",
               "type": {
                 "type": "TypeReferenceNode",
-                "payload": { "name": "number", "isArray": false, "isOptional": false }
+                "payload": {
+                  "name": "number",
+                  "isArray": false,
+                  "isOptional": false
+                }
               }
             }
           ],
@@ -53,36 +65,12 @@
                     "payload": "isActive"
                   },
                   "true": {
-                    "type": "BinaryOperationNode",
-                    "payload": {
-                      "operator": "MULTIPLY_BY",
-                      "operands": [
-                        {
-                          "type": "NumberLiteralNode",
-                          "payload": { "value": "27", "format": "DECIMAL" }
-                        },
-                        {
-                          "type": "Identifier",
-                          "payload": "someNumber"
-                        }
-                      ]
-                    }
+                    "type": "IntegerLiteralNode",
+                    "payload": { "value": "27", "format": "DECIMAL" }
                   },
                   "false": {
-                    "type": "BinaryOperationNode",
-                    "payload": {
-                      "operator": "MODULO",
-                      "operands": [
-                        {
-                          "type": "Identifier",
-                          "payload": "someNumber"
-                        },
-                        {
-                          "type": "NumberLiteralNode",
-                          "payload": { "value": "17", "format": "DECIMAL" }
-                        }
-                      ]
-                    }
+                    "type": "IntegerLiteralNode",
+                    "payload": { "value": "17", "format": "DECIMAL" }
                   }
                 }
               },
@@ -114,7 +102,7 @@
                                   "payload": "someNumber"
                                 },
                                 {
-                                  "type": "NumberLiteralNode",
+                                  "type": "IntegerLiteralNode",
                                   "payload": {
                                     "value": "27",
                                     "format": "DECIMAL"
@@ -140,7 +128,7 @@
                     "payload": [
                       { "type": "StringLiteralNode", "payload": "Number is " },
                       {
-                        "type": "NumberLiteralNode",
+                        "type": "IntegerLiteralNode",
                         "payload": { "value": "27", "format": "DECIMAL" }
                       }
                     ]

@@ -20,19 +20,19 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\NumberLiteral;
+namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\IntegerLiteral;
 
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
-use PackageFactory\ComponentEngine\Target\Php\Transpiler\NumberLiteral\NumberLiteralTranspiler;
+use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
+use PackageFactory\ComponentEngine\Target\Php\Transpiler\IntegerLiteral\IntegerLiteralTranspiler;
 use PHPUnit\Framework\TestCase;
 
-final class NumberLiteralTranspilerTest extends TestCase
+final class IntegerLiteralTranspilerTest extends TestCase
 {
     /**
      * @return array<string,mixed>
      */
-    public static function numberLiteralExamples(): array
+    public static function integerLiteralExamples(): array
     {
         return [
             // Decimal
@@ -53,33 +53,24 @@ final class NumberLiteralTranspilerTest extends TestCase
             ' 0xFFFFFFFFFFFFFFFFF ' => ['0xFFFFFFFFFFFFFFFFF', '0xFFFFFFFFFFFFFFFFF'],
             ' 0x123456789ABCDEF ' => ['0x123456789ABCDEF', '0x123456789ABCDEF'],
             ' 0xA ' => ['0xA', '0xA'],
-
-            // With Exponent
-            ' 1E3 ' => ['1E3', '1E3'],
-            ' 2e6 ' => ['2e6', '2e6'],
-
-            // With Floating Point
-            ' 123.456 ' => ['123.456', '123.456'],
-            ' 0.1e2 ' => ['0.1e2', '0.1e2'],
-            ' .22 ' => ['.22', '.22'],
         ];
     }
 
     /**
-     * @dataProvider numberLiteralExamples
+     * @dataProvider integerLiteralExamples
      * @test
-     * @param string $numberLiteralAsString
+     * @param string $integerLiteralAsString
      * @param string $expectedTranspilationResult
      * @return void
      */
-    public function transpilesNumberLiteralNodes(string $numberLiteralAsString, string $expectedTranspilationResult): void
+    public function transpilesIntegerLiteralNodes(string $integerLiteralAsString, string $expectedTranspilationResult): void
     {
-        $numberLiteralTranspiler = new NumberLiteralTranspiler();
-        $numberLiteralNode = ExpressionNode::fromString($numberLiteralAsString)->root;
-        assert($numberLiteralNode instanceof NumberLiteralNode);
+        $integerLiteralTranspiler = new IntegerLiteralTranspiler();
+        $integerLiteralNode = ExpressionNode::fromString($integerLiteralAsString)->root;
+        assert($integerLiteralNode instanceof IntegerLiteralNode);
 
-        $actualTranspilationResult = $numberLiteralTranspiler->transpile(
-            $numberLiteralNode
+        $actualTranspilationResult = $integerLiteralTranspiler->transpile(
+            $integerLiteralNode
         );
 
         $this->assertEquals(

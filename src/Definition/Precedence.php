@@ -34,8 +34,6 @@ enum Precedence: int
 
     case ACCESS = 18;
     case UNARY = 15;
-    case POINT = 13;
-    case DASH = 12;
     case COMPARISON = 10;
     case EQUALITY = 9;
     case LOGICAL_AND = 5;
@@ -54,13 +52,6 @@ enum Precedence: int
             TokenType::PERIOD => self::ACCESS,
 
             TokenType::OPERATOR_BOOLEAN_NOT => self::UNARY,
-
-            TokenType::OPERATOR_ARITHMETIC_MULTIPLY_BY,
-            TokenType::OPERATOR_ARITHMETIC_DIVIDE_BY,
-            TokenType::OPERATOR_ARITHMETIC_MODULO => self::POINT,
-
-            TokenType::OPERATOR_ARITHMETIC_PLUS,
-            TokenType::OPERATOR_ARITHMETIC_MINUS => self::DASH,
 
             TokenType::COMPARATOR_GREATER_THAN,
             TokenType::COMPARATOR_GREATER_THAN_OR_EQUAL,

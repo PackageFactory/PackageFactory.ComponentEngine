@@ -20,27 +20,16 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Definition;
+namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\IntegerLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
+use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
+use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-enum NumberFormat: string
+final class IntegerLiteralTypeResolver
 {
-    case BINARY = 'BINARY';
-    case OCTAL = 'OCTAL';
-    case DECIMAL = 'DECIMAL';
-    case HEXADECIMAL = 'HEXADECIMAL';
-
-    public static function fromTokenType(TokenType $tokenType): self
+    public function resolveTypeOf(IntegerLiteralNode $IntegerLiteralNode): TypeInterface
     {
-        return match ($tokenType) {
-            TokenType::NUMBER_BINARY => self::BINARY,
-            TokenType::NUMBER_OCTAL => self::OCTAL,
-            TokenType::NUMBER_DECIMAL,
-            TokenType::PERIOD => self::DECIMAL,
-            TokenType::NUMBER_HEXADECIMAL => self::HEXADECIMAL,
-
-            default => throw new \Exception('@TODO: Unknown Number Format: ' . $tokenType->value)
-        };
+        return IntegerType::get();
     }
 }

@@ -27,7 +27,7 @@ use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScop
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
-use PackageFactory\ComponentEngine\TypeSystem\Type\NumberType\NumberType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
@@ -45,14 +45,8 @@ final class ExpressionTypeResolverTest extends TestCase
             'true || false' => ['true || false', BooleanType::get()],
             'true && "foo"' => ['true && "foo"', UnionType::of(BooleanType::get(), StringType::get())],
             'true || "foo"' => ['true || "foo"', UnionType::of(BooleanType::get(), StringType::get())],
-            'true && 42' => ['true && 42', UnionType::of(BooleanType::get(), NumberType::get())],
-            'true || 42' => ['true || 42', UnionType::of(BooleanType::get(), NumberType::get())],
-
-            '1 + 2' => ['1 + 2', NumberType::get()],
-            '2 - 1' => ['2 - 1', NumberType::get()],
-            '2 * 4' => ['2 * 4', NumberType::get()],
-            '2 / 4' => ['2 / 4', NumberType::get()],
-            '2 % 4' => ['2 % 4', NumberType::get()],
+            'true && 42' => ['true && 42', UnionType::of(BooleanType::get(), IntegerType::get())],
+            'true || 42' => ['true || 42', UnionType::of(BooleanType::get(), IntegerType::get())],
 
             '4 === 2' => ['4 === 2', BooleanType::get()],
             '4 !== 2' => ['4 !== 2', BooleanType::get()],
@@ -130,7 +124,7 @@ final class ExpressionTypeResolverTest extends TestCase
         return [
             'match (true) { true -> 42 false -> "foo" }' => [
                 'match (true) { true -> 42 false -> "foo" }',
-                NumberType::get()
+                IntegerType::get()
             ],
             'match (false) { true -> 42 false -> "foo" }' => [
                 'match (false) { true -> 42 false -> "foo" }',
@@ -138,11 +132,11 @@ final class ExpressionTypeResolverTest extends TestCase
             ],
             'match (variableOfTypeBoolean) { true -> 42 false -> "foo" }' => [
                 'match (variableOfTypeBoolean) { true -> 42 false -> "foo" }',
-                UnionType::of(NumberType::get(), StringType::get())
+                UnionType::of(IntegerType::get(), StringType::get())
             ],
             'match (variableOfTypeBoolean) { true -> variableOfTypeNumber false -> variableOfTypeString }' => [
                 'match (variableOfTypeBoolean) { true -> variableOfTypeNumber false -> variableOfTypeString }',
-                UnionType::of(NumberType::get(), StringType::get())
+                UnionType::of(IntegerType::get(), StringType::get())
             ],
         ];
     }
@@ -159,7 +153,7 @@ final class ExpressionTypeResolverTest extends TestCase
         $scope = new DummyScope([
             'variableOfTypeBoolean' => BooleanType::get(),
             'variableOfTypeString' => StringType::get(),
-            'variableOfTypeNumber' => NumberType::get(),
+            'variableOfTypeNumber' => IntegerType::get(),
         ]);
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
         $expressionNode = ExpressionNode::fromString($matchAsString);
@@ -195,13 +189,13 @@ final class ExpressionTypeResolverTest extends TestCase
      * @test
      * @return void
      */
-    public function resolvesNumberLiteralToNumberType(): void
+    public function resolvesNumberLiteralToIntegerType(): void
     {
         $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
         $expressionNode = ExpressionNode::fromString('42');
 
-        $expectedType = NumberType::get();
+        $expectedType = IntegerType::get();
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
 
         $this->assertTrue(
@@ -288,9 +282,9 @@ final class ExpressionTypeResolverTest extends TestCase
     public static function ternaryOperationExamples(): array
     {
         return [
-            'true ? 42 : "foo"' => ['true ? 42 : "foo"', NumberType::get()],
+            'true ? 42 : "foo"' => ['true ? 42 : "foo"', IntegerType::get()],
             'false ? 42 : "foo"' => ['false ? 42 : "foo"', StringType::get()],
-            '1 < 2 ? 42 : "foo"' => ['1 < 2 ? 42 : "foo"', UnionType::of(NumberType::get(), StringType::get())]
+            '1 < 2 ? 42 : "foo"' => ['1 < 2 ? 42 : "foo"', UnionType::of(IntegerType::get(), StringType::get())]
         ];
     }
 

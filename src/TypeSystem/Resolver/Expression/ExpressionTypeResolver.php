@@ -29,7 +29,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Parser\Ast\IdentifierNode;
 use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
 use PackageFactory\ComponentEngine\Parser\Ast\NullLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\NumberLiteralNode;
+use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
 use PackageFactory\ComponentEngine\Parser\Ast\TemplateLiteralNode;
@@ -40,7 +40,7 @@ use PackageFactory\ComponentEngine\TypeSystem\Resolver\BooleanLiteral\BooleanLit
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Identifier\IdentifierTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Match\MatchTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\NullLiteral\NullLiteralTypeResolver;
-use PackageFactory\ComponentEngine\TypeSystem\Resolver\NumberLiteral\NumberLiteralTypeResolver;
+use PackageFactory\ComponentEngine\TypeSystem\Resolver\IntegerLiteral\IntegerLiteralTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\StringLiteral\StringLiteralTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Tag\TagTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\TemplateLiteral\TemplateLiteralTypeResolver;
@@ -72,7 +72,7 @@ final class ExpressionTypeResolver
             ))->resolveTypeOf($rootNode),
             NullLiteralNode::class => (new NullLiteralTypeResolver())
                 ->resolveTypeOf($rootNode),
-            NumberLiteralNode::class => (new NumberLiteralTypeResolver())
+            IntegerLiteralNode::class => (new IntegerLiteralTypeResolver())
                 ->resolveTypeOf($rootNode),
             StringLiteralNode::class => (new StringLiteralTypeResolver())
                 ->resolveTypeOf($rootNode),

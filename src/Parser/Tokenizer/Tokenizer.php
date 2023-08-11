@@ -85,13 +85,7 @@ final class Tokenizer implements \IteratorAggregate
                 CharacterType::TEMPLATE_LITERAL_DELIMITER => self::templateLiteral($fragments),
                 CharacterType::BRACKET_OPEN => self::block($fragments),
                 CharacterType::ANGLE_OPEN => self::angle($fragments),
-                CharacterType::PERIOD => match (TokenType::fromBuffer($buffer)) {
-                    TokenType::NUMBER_BINARY,
-                    TokenType::NUMBER_OCTAL,
-                    TokenType::NUMBER_DECIMAL,
-                    TokenType::NUMBER_HEXADECIMAL => null,
-                    default => self::period($fragments)
-                },
+                CharacterType::PERIOD => self::period($fragments),
                 CharacterType::ANGLE_CLOSE,
                 CharacterType::FORWARD_SLASH,
                 CharacterType::SYMBOL => self::symbol($fragments),
@@ -235,27 +229,6 @@ final class Tokenizer implements \IteratorAggregate
         $buffer = Buffer::empty()->append($fragments->current());
         $fragments->next();
 
-        if ($fragments->valid()) {
-            $fragment = $fragments->current();
-
-            if (CharacterType::DIGIT->is($fragment->value)) {
-                $buffer->append($fragment);
-                $fragments->next();
-
-                while ($fragments->valid()) {
-                    $fragment = $fragments->current();
-
-                    if (CharacterType::DIGIT->is($fragment->value)) {
-                        $buffer->append($fragment);
-                        $fragments->next();
-                    } else {
-                        yield from $buffer->flush(TokenType::NUMBER_DECIMAL);
-                        return;
-                    }
-                }
-            }
-        }
-
         yield from $buffer->flush(TokenType::PERIOD);
     }
 
@@ -287,11 +260,6 @@ final class Tokenizer implements \IteratorAggregate
         }
 
         yield from match ($buffer->value()) {
-            '+' => $buffer->flush(TokenType::OPERATOR_ARITHMETIC_PLUS),
-            '-' => $buffer->flush(TokenType::OPERATOR_ARITHMETIC_MINUS),
-            '*' => $buffer->flush(TokenType::OPERATOR_ARITHMETIC_MULTIPLY_BY),
-            '/' => $buffer->flush(TokenType::OPERATOR_ARITHMETIC_DIVIDE_BY),
-            '%' => $buffer->flush(TokenType::OPERATOR_ARITHMETIC_MODULO),
             '&&' => $buffer->flush(TokenType::OPERATOR_BOOLEAN_AND),
             '||' => $buffer->flush(TokenType::OPERATOR_BOOLEAN_OR),
             '!' => $buffer->flush(TokenType::OPERATOR_BOOLEAN_NOT),

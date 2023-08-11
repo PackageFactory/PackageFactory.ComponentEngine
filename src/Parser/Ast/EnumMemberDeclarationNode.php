@@ -30,7 +30,7 @@ final class EnumMemberDeclarationNode implements \JsonSerializable
 {
     private function __construct(
         public readonly string $name,
-        public readonly null|StringLiteralNode|NumberLiteralNode $value
+        public readonly null|StringLiteralNode|IntegerLiteralNode $value
     ) {
     }
 
@@ -54,7 +54,7 @@ final class EnumMemberDeclarationNode implements \JsonSerializable
                 /** @phpstan-ignore-next-line */
                 TokenType::STRING_QUOTED => StringLiteralNode::fromTokens($tokens),
                 /** @phpstan-ignore-next-line */
-                TokenType::NUMBER_DECIMAL => NumberLiteralNode::fromTokens($tokens),
+                TokenType::NUMBER_DECIMAL => IntegerLiteralNode::fromTokens($tokens),
                 default => throw new \Exception('@TODO: Unexpected Token ' . Scanner::type($tokens)->value)
             };
             /** @phpstan-ignore-next-line */
