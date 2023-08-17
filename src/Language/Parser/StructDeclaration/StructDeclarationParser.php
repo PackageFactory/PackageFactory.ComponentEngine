@@ -41,12 +41,12 @@ final class StructDeclarationParser
     public function parse(Lexer $lexer): StructDeclarationNode
     {
         $lexer->read(Rule::KEYWORD_STRUCT);
-        $start = $lexer->getStartPosition();
+        $start = $lexer->buffer->getStart();
         $lexer->skipSpace();
 
         $structNameNode = $this->parseStructName($lexer);
         $propertyDeclarationNodes = $this->parsePropertyDeclarations($lexer);
-        $end = $lexer->getEndPosition();
+        $end = $lexer->buffer->getEnd();
 
         return new StructDeclarationNode(
             rangeInSource: Range::from($start, $end),
@@ -59,8 +59,8 @@ final class StructDeclarationParser
     {
         $lexer->read(Rule::WORD);
         $structNameNode = new StructNameNode(
-            rangeInSource: $lexer->getCursorRange(),
-            value: StructName::from($lexer->getBuffer())
+            rangeInSource: $lexer->buffer->getRange(),
+            value: StructName::from($lexer->buffer->getContents())
         );
 
         $lexer->skipSpaceAndComments();

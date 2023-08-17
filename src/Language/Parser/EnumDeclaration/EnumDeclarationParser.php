@@ -63,13 +63,13 @@ final class EnumDeclarationParser
     public function parse(Lexer $lexer): EnumDeclarationNode
     {
         $lexer->read(Rule::KEYWORD_ENUM);
-        $start = $lexer->getStartPosition();
+        $start = $lexer->buffer->getStart();
         $lexer->skipSpace();
 
         $enumNameNode = $this->parseEnumName($lexer);
         $enumMemberDeclarations = $this->parseEnumMemberDeclarations($lexer);
 
-        $end = $lexer->getEndPosition();
+        $end = $lexer->buffer->getEnd();
 
         return new EnumDeclarationNode(
             rangeInSource: Range::from($start, $end),
@@ -82,8 +82,8 @@ final class EnumDeclarationParser
     {
         $lexer->read(Rule::WORD);
         $enumNameNode = new EnumNameNode(
-            rangeInSource: $lexer->getCursorRange(),
-            value: EnumName::from($lexer->getBuffer())
+            rangeInSource: $lexer->buffer->getRange(),
+            value: EnumName::from($lexer->buffer->getContents())
         );
         $lexer->skipSpace();
 
@@ -128,15 +128,15 @@ final class EnumDeclarationParser
         $lexer->read(Rule::WORD);
 
         return new EnumMemberNameNode(
-            rangeInSource: $lexer->getCursorRange(),
-            value: EnumMemberName::from($lexer->getBuffer())
+            rangeInSource: $lexer->buffer->getRange(),
+            value: EnumMemberName::from($lexer->buffer->getContents())
         );
     }
 
     private function parseEnumMemberValue(Lexer $lexer): ?EnumMemberValueNode
     {
         if ($lexer->probe(Rule::BRACKET_ROUND_OPEN)) {
-            $start = $lexer->getStartPosition();
+            $start = $lexer->buffer->getStart();
 
             $value = match ($lexer->expectOneOf(self::$RULES_ENUM_MEMBER_VALUE_START)) {
                 Rule::STRING_LITERAL_DELIMITER =>
@@ -146,7 +146,7 @@ final class EnumDeclarationParser
             };
 
             $lexer->read(Rule::BRACKET_ROUND_CLOSE);
-            $end = $lexer->getEndPosition();
+            $end = $lexer->buffer->getEnd();
 
             return new EnumMemberValueNode(
                 rangeInSource: Range::from($start, $end),

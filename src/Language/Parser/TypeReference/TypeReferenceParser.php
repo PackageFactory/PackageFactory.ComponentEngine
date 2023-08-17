@@ -44,11 +44,11 @@ final class TypeReferenceParser
     {
         $this->start = null;
         if ($isOptional = $lexer->probe(Rule::SYMBOL_QUESTIONMARK)) {
-            $this->start = $lexer->getStartPosition();
+            $this->start = $lexer->buffer->getStart();
         }
         $typeNameNodes = $this->parseTypeNames($lexer);
         $isArray = $this->parseIsArray($lexer);
-        $end = $lexer->getEndPosition();
+        $end = $lexer->buffer->getEnd();
 
         assert($this->start !== null);
 
@@ -85,11 +85,11 @@ final class TypeReferenceParser
     public function parseTypeName(Lexer $lexer): TypeNameNode
     {
         $lexer->read(Rule::WORD);
-        $this->start ??= $lexer->getStartPosition();
+        $this->start ??= $lexer->buffer->getStart();
 
         return new TypeNameNode(
-            rangeInSource: $lexer->getCursorRange(),
-            value: TypeName::from($lexer->getBuffer())
+            rangeInSource: $lexer->buffer->getRange(),
+            value: TypeName::from($lexer->buffer->getContents())
         );
     }
 

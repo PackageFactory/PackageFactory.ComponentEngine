@@ -37,8 +37,8 @@ final class ValueReferenceParser
         $lexer->read(Rule::WORD);
 
         return new ValueReferenceNode(
-            rangeInSource: $lexer->getCursorRange(),
-            name: VariableName::from($lexer->getBuffer())
+            rangeInSource: $lexer->buffer->getRange(),
+            name: VariableName::from($lexer->buffer->getContents())
         );
     }
 }

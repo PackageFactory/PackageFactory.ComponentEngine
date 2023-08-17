@@ -55,9 +55,9 @@ final class IntegerLiteralParser
             $rule = $lexer->readOneOf(self::$INTEGER_TOKEN_TYPES);
 
             return new IntegerLiteralNode(
-                rangeInSource: $lexer->getCursorRange(),
+                rangeInSource: $lexer->buffer->getRange(),
                 format: $this->getIntegerFormatFromToken($rule),
-                value: $lexer->getBuffer()
+                value: $lexer->buffer->getContents()
             );
         } catch (LexerException $e) {
             throw IntegerLiteralCouldNotBeParsed::becauseOfLexerException($e);

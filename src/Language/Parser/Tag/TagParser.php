@@ -64,14 +64,14 @@ final class TagParser
     public function parse(Lexer $lexer): TagNode
     {
         $lexer->read(Rule::BRACKET_ANGLE_OPEN);
-        $start = $lexer->getStartPosition();
+        $start = $lexer->buffer->getStart();
 
         $name = $this->parseName($lexer);
         $attributes = $this->parseAttributes($lexer);
 
         if ($lexer->probe(Rule::SYMBOL_SLASH_FORWARD)) {
             $lexer->read(Rule::BRACKET_ANGLE_CLOSE);
-            $end = $lexer->getEndPosition();
+            $end = $lexer->buffer->getEnd();
 
             return new TagNode(
                 rangeInSource: Range::from($start, $end),
@@ -86,7 +86,7 @@ final class TagParser
         $children = $this->parseChildren($lexer);
 
         $this->readClosingTagName($lexer, $name->value);
-        $end = $lexer->getEndPosition();
+        $end = $lexer->buffer->getEnd();
 
         return new TagNode(
             rangeInSource: Range::from($start, $end),
@@ -102,10 +102,10 @@ final class TagParser
         $lexer->read(Rule::WORD);
         $tagNameNode = new TagNameNode(
             rangeInSource: Range::from(
-                $lexer->getStartPosition(),
-                $lexer->getEndPosition()
+                $lexer->buffer->getStart(),
+                $lexer->buffer->getEnd()
             ),
-            value: TagName::from($lexer->getBuffer())
+            value: TagName::from($lexer->buffer->getContents())
         );
 
         $lexer->skipSpace();
@@ -145,8 +145,8 @@ final class TagParser
         $lexer->read(Rule::WORD);
 
         return new AttributeNameNode(
-            rangeInSource: $lexer->getCursorRange(),
-            value: AttributeName::from($lexer->getBuffer())
+            rangeInSource: $lexer->buffer->getRange(),
+            value: AttributeName::from($lexer->buffer->getContents())
         );
     }
 
@@ -219,13 +219,13 @@ final class TagParser
     private function readClosingTagName(Lexer $lexer, TagName $expectedName): void
     {
         $lexer->read(Rule::SYMBOL_CLOSE_TAG);
-        $start = $lexer->getStartPosition();
+        $start = $lexer->buffer->getStart();
 
         $lexer->read(Rule::WORD);
-        $closingName = $lexer->getBuffer();
+        $closingName = $lexer->buffer->getContents();
 
         $lexer->read(Rule::BRACKET_ANGLE_CLOSE);
-        $end = $lexer->getEndPosition();
+        $end = $lexer->buffer->getEnd();
 
         if ($closingName !== $expectedName->value) {
             throw TagCouldNotBeParsed::becauseOfClosingTagNameMismatch(

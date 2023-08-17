@@ -55,7 +55,7 @@ final class ComponentDeclarationParser
     public function parse(Lexer $lexer): ComponentDeclarationNode
     {
         $lexer->read(Rule::KEYWORD_COMPONENT);
-        $start = $lexer->getStartPosition();
+        $start = $lexer->buffer->getStart();
         $lexer->skipSpace();
 
         $name = $this->parseName($lexer);
@@ -63,7 +63,7 @@ final class ComponentDeclarationParser
         $return = $this->parseReturn($lexer);
 
         $lexer->read(Rule::BRACKET_CURLY_CLOSE);
-        $end = $lexer->getEndPosition();
+        $end = $lexer->buffer->getEnd();
 
         return new ComponentDeclarationNode(
             rangeInSource: Range::from($start, $end),
@@ -77,8 +77,8 @@ final class ComponentDeclarationParser
     {
         $lexer->read(Rule::WORD);
         $componentNameNode = new ComponentNameNode(
-            rangeInSource: $lexer->getCursorRange(),
-            value: ComponentName::from($lexer->getBuffer())
+            rangeInSource: $lexer->buffer->getRange(),
+            value: ComponentName::from($lexer->buffer->getContents())
         );
 
         $lexer->skipSpace();

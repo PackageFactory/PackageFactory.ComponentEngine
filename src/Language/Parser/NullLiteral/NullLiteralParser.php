@@ -36,7 +36,7 @@ final class NullLiteralParser
         $lexer->read(Rule::KEYWORD_NULL);
 
         return new NullLiteralNode(
-            rangeInSource: $lexer->getCursorRange()
+            rangeInSource: $lexer->buffer->getRange()
         );
     }
 }

@@ -42,19 +42,19 @@ final class LexerTest extends TestCase
     ): void {
         $this->assertEquals(
             $startPosition,
-            $this->lexer->getStartPosition(),
+            $this->lexer->buffer->getStart(),
             'Failed asserting that start position of lexer equals'
         );
 
         $this->assertEquals(
             $endPosition,
-            $this->lexer->getEndPosition(),
+            $this->lexer->buffer->getEnd(),
             'Failed asserting that end position of lexer equals'
         );
 
         $this->assertEquals(
             $buffer,
-            $this->lexer->getBuffer(),
+            $this->lexer->buffer->getContents(),
             'Failed asserting that buffer of lexer equals'
         );
 

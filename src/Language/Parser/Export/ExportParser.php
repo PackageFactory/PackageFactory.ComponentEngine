@@ -60,7 +60,7 @@ final class ExportParser
     {
         try {
             $lexer->read(Rule::KEYWORD_EXPORT);
-            $start = $lexer->getStartPosition();
+            $start = $lexer->buffer->getStart();
 
             $lexer->skipSpace();
 
@@ -71,7 +71,7 @@ final class ExportParser
                 default => throw new LogicException()
             };
 
-            $end = $lexer->getEndPosition();
+            $end = $lexer->buffer->getEnd();
 
             return new ExportNode(
                 rangeInSource: Range::from($start, $end),

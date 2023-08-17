@@ -35,23 +35,23 @@ final class StringLiteralParser
     public function parse(Lexer $lexer): StringLiteralNode
     {
         $lexer->read(Rule::STRING_LITERAL_DELIMITER);
-        $start = $lexer->getStartPosition();
+        $start = $lexer->buffer->getStart();
 
         $value = '';
         while (!$lexer->peek(Rule::STRING_LITERAL_DELIMITER)) {
             if ($lexer->probe(Rule::STRING_LITERAL_CONTENT)) {
-                $value = $lexer->getBuffer();
+                $value = $lexer->buffer->getContents();
             }
 
             if ($lexer->probe(Rule::ESCAPE_SEQUENCE_SINGLE_CHARACTER)) {
-                $value = $lexer->getBuffer();
+                $value = $lexer->buffer->getContents();
             }
             break;
         }
 
 
         $lexer->read(Rule::STRING_LITERAL_DELIMITER);
-        $end = $lexer->getEndPosition();
+        $end = $lexer->buffer->getEnd();
 
         return new StringLiteralNode(
             rangeInSource: Range::from($start, $end),

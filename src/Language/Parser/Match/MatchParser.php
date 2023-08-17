@@ -45,12 +45,12 @@ final class MatchParser
     public function parse(Lexer $lexer): MatchNode
     {
         $lexer->read(Rule::KEYWORD_MATCH);
-        $start = $lexer->getStartPosition();
+        $start = $lexer->buffer->getStart();
         $lexer->skipSpace();
 
         $subject = $this->parseSubject($lexer);
         $arms = $this->parseArms($lexer);
-        $end = $lexer->getEndPosition();
+        $end = $lexer->buffer->getEnd();
 
         return new MatchNode(
             rangeInSource: Range::from($start, $end),
@@ -69,7 +69,7 @@ final class MatchParser
     private function parseArms(Lexer $lexer): MatchArmNodes
     {
         $lexer->read(Rule::BRACKET_CURLY_OPEN);
-        $start = $lexer->getStartPosition();
+        $start = $lexer->buffer->getStart();
 
         $items = [];
         while (!$lexer->peek(Rule::BRACKET_CURLY_CLOSE)) {
@@ -80,7 +80,7 @@ final class MatchParser
 
         $lexer->skipSpaceAndComments();
         $lexer->read(Rule::BRACKET_CURLY_CLOSE);
-        $end = $lexer->getEndPosition();
+        $end = $lexer->buffer->getEnd();
 
         try {
             return new MatchArmNodes(...$items);
@@ -96,7 +96,7 @@ final class MatchParser
     {
         $left = $this->parseArmLeft($lexer);
         $start = $left?->items[0]?->rangeInSource->start ??
-            $lexer->getStartPosition();
+            $lexer->buffer->getStart();
 
         $lexer->skipSpaceAndComments();
         $lexer->read(Rule::SYMBOL_ARROW_SINGLE);

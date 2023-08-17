@@ -184,7 +184,7 @@ final class ExpressionParser
     private function parseUnaryOperation(Lexer $lexer): ExpressionNode
     {
         $operator = $this->parseUnaryOperator($lexer);
-        $start = $lexer->getStartPosition();
+        $start = $lexer->buffer->getStart();
         $lexer->skipSpaceAndComments();
 
         $operand = $this->parseUnaryStatement($lexer);
@@ -316,13 +316,13 @@ final class ExpressionParser
     private function parseBracketedExpression(Lexer $lexer): ExpressionNode
     {
         $lexer->read(Rule::BRACKET_ROUND_OPEN);
-        $start = $lexer->getStartPosition();
+        $start = $lexer->buffer->getStart();
         $lexer->skipSpaceAndComments();
 
         $innerExpressionNode = $this->parse($lexer);
 
         $lexer->read(Rule::BRACKET_ROUND_CLOSE);
-        $end = $lexer->getEndPosition();
+        $end = $lexer->buffer->getEnd();
         $lexer->skipSpaceAndComments();
 
         return new ExpressionNode(
@@ -337,13 +337,13 @@ final class ExpressionParser
             $lexer->read(Rule::WORD);
             $accessNode = new AccessNode(
                 rangeInSource: $parent->rangeInSource->start->toRange(
-                    $lexer->getEndPosition()
+                    $lexer->buffer->getEnd()
                 ),
                 parent: $parent,
                 type: $type,
                 key: new AccessKeyNode(
-                    rangeInSource: $lexer->getCursorRange(),
-                    value: PropertyName::from($lexer->getBuffer())
+                    rangeInSource: $lexer->buffer->getRange(),
+                    value: PropertyName::from($lexer->buffer->getContents())
                 )
             );
 

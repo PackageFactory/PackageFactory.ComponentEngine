@@ -58,12 +58,12 @@ final class TextParser
         $hasLeadingSpace = false;
 
         if ($lexer->probe(Rule::SPACE)) {
-            $start = $lexer->getStartPosition();
+            $start = $lexer->buffer->getStart();
             $hasLeadingSpace = true;
         }
 
         if ($lexer->probe(Rule::END_OF_LINE)) {
-            $start ??= $lexer->getStartPosition();
+            $start ??= $lexer->buffer->getStart();
             $hasLeadingSpace = false;
         }
 
@@ -79,13 +79,13 @@ final class TextParser
             $rule = $lexer->readOneOf(self::$RULES_CONTENT);
 
             if ($rule === Rule::TEXT) {
-                $start ??= $lexer->getStartPosition();
+                $start ??= $lexer->buffer->getStart();
                 if ($hasTrailingSpace) {
                     $value .= ' ';
                     $hasTrailingSpace = false;
                     $trailingSpaceContainsLineBreaks = false;
                 }
-                $value .= $lexer->getBuffer();
+                $value .= $lexer->buffer->getContents();
                 continue;
             }
 
@@ -100,7 +100,7 @@ final class TextParser
             return null;
         }
 
-        $end = $lexer->getEndPosition();
+        $end = $lexer->buffer->getEnd();
 
         if ($hasTrailingSpace && !$trailingSpaceContainsLineBreaks && !$lexer->isEnd() && !$lexer->peek(Rule::SYMBOL_CLOSE_TAG)) {
             $value .= ' ';

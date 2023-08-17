@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Lexer;
 
+use PackageFactory\ComponentEngine\Language\Lexer\Buffer\Buffer;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\RuleInterface;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
@@ -37,6 +38,8 @@ final class Lexer
 
     private readonly Scanner $scanner;
 
+    public readonly Buffer $buffer;
+
     public function __construct(string $source)
     {
         self::$RULES_SPACE = Rules::from(
@@ -50,11 +53,7 @@ final class Lexer
         );
 
         $this->scanner = new Scanner($source);
-    }
-
-    public function getBuffer(): string
-    {
-        return $this->scanner->getBuffer()->getContents();
+        $this->buffer = $this->scanner->getBuffer();
     }
 
     public function isEnd(): bool
@@ -69,21 +68,6 @@ final class Lexer
         } catch (ScannerException $e) {
             throw LexerException::becauseOfScannerException($e);
         }
-    }
-
-    public function getStartPosition(): Position
-    {
-        return $this->scanner->getBuffer()->getStart();
-    }
-
-    public function getEndPosition(): Position
-    {
-        return $this->scanner->getBuffer()->getEnd();
-    }
-
-    public function getCursorRange(): Range
-    {
-        return $this->scanner->getBuffer()->getRange();
     }
 
     public function read(Rule $rule): void

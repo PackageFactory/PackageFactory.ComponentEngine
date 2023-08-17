@@ -62,8 +62,8 @@ final class PropertyDeclarationParser
         $lexer->read(Rule::WORD);
 
         return new PropertyNameNode(
-            rangeInSource: $lexer->getCursorRange(),
-            value: PropertyName::from($lexer->getBuffer())
+            rangeInSource: $lexer->buffer->getRange(),
+            value: PropertyName::from($lexer->buffer->getContents())
         );
     }
 }

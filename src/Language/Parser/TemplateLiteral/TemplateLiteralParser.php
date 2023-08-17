@@ -43,16 +43,16 @@ final class TemplateLiteralParser
     public function parse(Lexer $lexer): TemplateLiteralNode
     {
         $lexer->read(Rule::TEMPLATE_LITERAL_DELIMITER);
-        $start = $lexer->getStartPosition();
+        $start = $lexer->buffer->getStart();
 
         $lines = $this->parseLines($lexer);
 
         $lexer->read(Rule::TEMPLATE_LITERAL_DELIMITER);
-        $end = $lexer->getEndPosition();
+        $end = $lexer->buffer->getEnd();
 
         return new TemplateLiteralNode(
             rangeInSource: Range::from($start, $end),
-            indentation: $lexer->getStartPosition()->columnNumber,
+            indentation: $lexer->buffer->getStart()->columnNumber,
             lines: $lines
         );
     }
@@ -102,8 +102,8 @@ final class TemplateLiteralParser
         $lexer->read(Rule::TEMPLATE_LITERAL_CONTENT);
 
         return new TemplateLiteralStringSegmentNode(
-            rangeInSource: $lexer->getCursorRange(),
-            value: $lexer->getBuffer()
+            rangeInSource: $lexer->buffer->getRange(),
+            value: $lexer->buffer->getContents()
         );
     }
 
@@ -112,14 +112,14 @@ final class TemplateLiteralParser
         $this->expressionParser ??= new ExpressionParser();
 
         $lexer->read(Rule::BRACKET_CURLY_OPEN);
-        $start = $lexer->getStartPosition();
+        $start = $lexer->buffer->getStart();
         $lexer->skipSpaceAndComments();
 
         $expression = $this->expressionParser->parse($lexer);
 
         $lexer->skipSpaceAndComments();
         $lexer->read(Rule::BRACKET_CURLY_CLOSE);
-        $end = $lexer->getEndPosition();
+        $end = $lexer->buffer->getEnd();
 
         return new TemplateLiteralExpressionSegmentNode(
             rangeInSource: Range::from($start, $end),

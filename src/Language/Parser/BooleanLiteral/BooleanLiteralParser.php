@@ -47,7 +47,7 @@ final class BooleanLiteralParser
         $rule = $lexer->readOneOf(self::$RULES_BOOLEAN_KEYWORDS);
 
         return new BooleanLiteralNode(
-            rangeInSource: $lexer->getCursorRange(),
+            rangeInSource: $lexer->buffer->getRange(),
             value: $rule === Rule::KEYWORD_TRUE
         );
     }

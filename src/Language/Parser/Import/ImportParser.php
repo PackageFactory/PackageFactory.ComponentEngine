@@ -58,7 +58,7 @@ final class ImportParser
     {
         try {
             $lexer->read(Rule::KEYWORD_FROM);
-            $start = $lexer->getStartPosition();
+            $start = $lexer->buffer->getStart();
             $lexer->skipSpace();
 
             $path = $this->parsePath($lexer);
@@ -67,7 +67,7 @@ final class ImportParser
             $lexer->skipSpace();
 
             $names = $this->parseNames($lexer);
-            $end = $lexer->getEndPosition();
+            $end = $lexer->buffer->getEnd();
 
             return new ImportNode(
                 rangeInSource: Range::from($start, $end),
@@ -92,15 +92,15 @@ final class ImportParser
     private function parseNames(Lexer $lexer): ImportedNameNodes
     {
         $lexer->read(Rule::BRACKET_CURLY_OPEN);
-        $start = $lexer->getStartPosition();
+        $start = $lexer->buffer->getStart();
         $lexer->skipSpaceAndComments();
 
         $nameNodes = [];
         while (!$lexer->peek(Rule::BRACKET_CURLY_CLOSE)) {
             $lexer->read(Rule::WORD);
             $nameNodes[] = new ImportedNameNode(
-                rangeInSource: $lexer->getCursorRange(),
-                value: VariableName::from($lexer->getBuffer())
+                rangeInSource: $lexer->buffer->getRange(),
+                value: VariableName::from($lexer->buffer->getContents())
             );
 
             $lexer->skipSpaceAndComments();
@@ -112,7 +112,7 @@ final class ImportParser
         }
 
         $lexer->read(Rule::BRACKET_CURLY_CLOSE);
-        $end = $lexer->getEndPosition();
+        $end = $lexer->buffer->getEnd();
 
         try {
             return new ImportedNameNodes(...$nameNodes);
@@ -129,8 +129,8 @@ final class ImportParser
         $lexer->read(Rule::WORD);
 
         return new ImportedNameNode(
-            rangeInSource: $lexer->getCursorRange(),
-            value: VariableName::from($lexer->getBuffer())
+            rangeInSource: $lexer->buffer->getRange(),
+            value: VariableName::from($lexer->buffer->getContents())
         );
     }
 }
