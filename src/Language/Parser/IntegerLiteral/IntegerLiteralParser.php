@@ -52,11 +52,11 @@ final class IntegerLiteralParser
     public function parse(Lexer $lexer): IntegerLiteralNode
     {
         try {
-            $lexer->readOneOf(self::$INTEGER_TOKEN_TYPES);
+            $rule = $lexer->readOneOf(self::$INTEGER_TOKEN_TYPES);
 
             return new IntegerLiteralNode(
                 rangeInSource: $lexer->getCursorRange(),
-                format: $this->getIntegerFormatFromToken($lexer->getRuleUnderCursor()),
+                format: $this->getIntegerFormatFromToken($rule),
                 value: $lexer->getBuffer()
             );
         } catch (LexerException $e) {

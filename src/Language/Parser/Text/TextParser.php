@@ -76,9 +76,9 @@ final class TextParser
         $trailingSpaceContainsLineBreaks = false;
         $value = $hasLeadingSpace && $preserveLeadingSpace ? ' ' : '';
         while (!$lexer->isEnd() && !$lexer->peekOneOf(self::$RULES_END_DELIMITERS)) {
-            $lexer->readOneOf(self::$RULES_CONTENT);
+            $rule = $lexer->readOneOf(self::$RULES_CONTENT);
 
-            if ($lexer->getRuleUnderCursor() === Rule::TEXT) {
+            if ($rule === Rule::TEXT) {
                 $start ??= $lexer->getStartPosition();
                 if ($hasTrailingSpace) {
                     $value .= ' ';
@@ -89,7 +89,7 @@ final class TextParser
                 continue;
             }
 
-            if ($lexer->getRuleUnderCursor() === Rule::END_OF_LINE) {
+            if ($rule === Rule::END_OF_LINE) {
                 $trailingSpaceContainsLineBreaks = true;
             }
 

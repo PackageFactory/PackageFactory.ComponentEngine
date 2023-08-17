@@ -36,7 +36,6 @@ final class Lexer
     private static Rules $RULES_SPACE_AND_COMMENTS;
 
     private readonly Scanner $scanner;
-    private ?Rule $ruleUnderCursor = null;
 
     public function __construct(string $source)
     {
@@ -51,13 +50,6 @@ final class Lexer
         );
 
         $this->scanner = new Scanner($source);
-    }
-
-    public function getRuleUnderCursor(): Rule
-    {
-        assert($this->ruleUnderCursor !== null);
-
-        return $this->ruleUnderCursor;
     }
 
     public function getBuffer(): string
@@ -98,7 +90,6 @@ final class Lexer
     {
         if ($this->scanner->scan($rule)) {
             $this->scanner->commit();
-            $this->ruleUnderCursor = $rule;
             return;
         }
 
@@ -116,13 +107,13 @@ final class Lexer
         );
     }
 
-    public function readOneOf(Rules $rules): void
+    /** @phpstan-impure */
+    public function readOneOf(Rules $rules): Rule
     {
         if ($rule = $this->scanner->scanOneOf(...$rules->items)) {
             $this->scanner->commit();
             assert($rule instanceof Rule);
-            $this->ruleUnderCursor = $rule;
-            return;
+            return $rule;
         }
 
         if ($this->scanner->isEnd()) {
@@ -143,7 +134,6 @@ final class Lexer
     {
         if ($this->scanner->scan($rule)) {
             $this->scanner->commit();
-            $this->ruleUnderCursor = $rule;
             return true;
         }
 
@@ -151,12 +141,12 @@ final class Lexer
         return false;
     }
 
-    public function probeOneOf(Rules $rules): ?RuleInterface
+    /** @phpstan-impure */
+    public function probeOneOf(Rules $rules): ?Rule
     {
         if ($rule = $this->scanner->scanOneOf(...$rules->items)) {
             $this->scanner->commit();
             assert($rule instanceof Rule);
-            $this->ruleUnderCursor = $rule;
             return $rule;
         }
 
@@ -172,11 +162,13 @@ final class Lexer
         return $result;
     }
 
-    public function peekOneOf(Rules $rules): ?RuleInterface
+    /** @phpstan-impure */
+    public function peekOneOf(Rules $rules): ?Rule
     {
         $rule = $this->scanner->scanOneOf(...$rules->items);
         $this->scanner->dismiss();
 
+        assert($rule === null || $rule instanceof Rule);
         return $rule;
     }
 
@@ -200,7 +192,8 @@ final class Lexer
         $this->scanner->dismiss();
     }
 
-    public function expectOneOf(Rules $rules): RuleInterface
+    /** @phpstan-impure */
+    public function expectOneOf(Rules $rules): Rule
     {
         if ($this->scanner->isEnd()) {
             throw LexerException::becauseOfUnexpectedEndOfSource(
@@ -211,6 +204,7 @@ final class Lexer
 
         if ($rule = $this->scanner->scanOneOf(...$rules->items)) {
             $this->scanner->dismiss();
+            assert($rule instanceof Rule);
             return $rule;
         }
 

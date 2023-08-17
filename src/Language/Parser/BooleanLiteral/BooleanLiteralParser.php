@@ -44,11 +44,11 @@ final class BooleanLiteralParser
 
     public function parse(Lexer $lexer): BooleanLiteralNode
     {
-        $lexer->readOneOf(self::$RULES_BOOLEAN_KEYWORDS);
+        $rule = $lexer->readOneOf(self::$RULES_BOOLEAN_KEYWORDS);
 
         return new BooleanLiteralNode(
             rangeInSource: $lexer->getCursorRange(),
-            value: $lexer->getRuleUnderCursor() === Rule::KEYWORD_TRUE
+            value: $rule === Rule::KEYWORD_TRUE
         );
     }
 }

@@ -37,7 +37,6 @@ final class LexerTest extends TestCase
     protected function assertLexerState(
         Position $startPosition,
         Position $endPosition,
-        Rule $ruleUnderCursor,
         string $buffer,
         bool $isEnd
     ): void {
@@ -51,12 +50,6 @@ final class LexerTest extends TestCase
             $endPosition,
             $this->lexer->getEndPosition(),
             'Failed asserting that end position of lexer equals'
-        );
-
-        $this->assertEquals(
-            $ruleUnderCursor,
-            $this->lexer->getRuleUnderCursor(),
-            'Failed asserting that token type under cursor of lexer equals'
         );
 
         $this->assertEquals(
@@ -253,7 +246,6 @@ final class LexerTest extends TestCase
         $this->assertLexerState(
             startPosition: Position::from(0, 0),
             endPosition: Position::from(0, \mb_strlen($source) - 1),
-            ruleUnderCursor: $expectedRule,
             buffer: $source,
             isEnd: true
         );
@@ -274,7 +266,6 @@ final class LexerTest extends TestCase
         $this->assertLexerState(
             startPosition: Position::from(0, 0),
             endPosition: Position::from(0, \mb_strlen($source) - 1),
-            ruleUnderCursor: $expectedRule,
             buffer: $source,
             isEnd: true
         );
@@ -518,7 +509,6 @@ final class LexerTest extends TestCase
             $this->assertLexerState(
                 startPosition: Position::from(...$expectedLexerState[0]),
                 endPosition: Position::from(...$expectedLexerState[1]),
-                ruleUnderCursor: $expectedLexerState[2],
                 buffer: $expectedLexerState[3],
                 isEnd: $i === count($expectedLexerStates) - 1
             );
@@ -859,7 +849,6 @@ final class LexerTest extends TestCase
         $this->assertLexerState(
             startPosition: Position::from(1, 4),
             endPosition: Position::from(1, 5),
-            ruleUnderCursor: Rule::INTEGER_DECIMAL,
             buffer: '42',
             isEnd: true
         );
@@ -874,7 +863,6 @@ final class LexerTest extends TestCase
         $this->assertLexerState(
             startPosition: Position::from(1, 4),
             endPosition: Position::from(1, 5),
-            ruleUnderCursor: Rule::INTEGER_DECIMAL,
             buffer: '42',
             isEnd: true
         );
@@ -907,7 +895,6 @@ final class LexerTest extends TestCase
         $this->assertLexerState(
             startPosition: Position::from(6, 4),
             endPosition: Position::from(6, 12),
-            ruleUnderCursor: Rule::KEYWORD_COMPONENT,
             buffer: 'component',
             isEnd: true
         );
@@ -941,7 +928,6 @@ final class LexerTest extends TestCase
         $this->assertLexerState(
             startPosition: Position::from(6, 4),
             endPosition: Position::from(6, 12),
-            ruleUnderCursor: Rule::KEYWORD_COMPONENT,
             buffer: 'component',
             isEnd: true
         );

@@ -114,8 +114,8 @@ final class ExpressionParser
                 return $result;
             }
 
-            if ($lexer->probeOneOf(self::$RULES_ACCESS)) {
-                $result = $this->parseAcccess($lexer, $result);
+            if ($lexer->peekOneOf(self::$RULES_ACCESS)) {
+                $result = $this->parseAccess($lexer, $result);
                 continue;
             }
 
@@ -331,11 +331,9 @@ final class ExpressionParser
         );
     }
 
-    private function parseAcccess(Lexer $lexer, ExpressionNode $parent): ExpressionNode
+    private function parseAccess(Lexer $lexer, ExpressionNode $parent): ExpressionNode
     {
-        while (!$lexer->isEnd()) {
-            $type = $this->parseAccessType($lexer);
-
+        while ($type = $this->parseAccessType($lexer)) {
             $lexer->read(Rule::WORD);
             $accessNode = new AccessNode(
                 rangeInSource: $parent->rangeInSource->start->toRange(
@@ -355,21 +353,17 @@ final class ExpressionParser
             );
 
             $lexer->skipSpaceAndComments();
-
-            if (!$lexer->probeOneOf(self::$RULES_ACCESS)) {
-                break;
-            }
         }
 
         return $parent;
     }
 
-    private function parseAccessType(Lexer $lexer): AccessType
+    private function parseAccessType(Lexer $lexer): ?AccessType
     {
-        return match ($lexer->getRuleUnderCursor()) {
+        return match ($lexer->probeOneOf(self::$RULES_ACCESS)) {
             Rule::SYMBOL_PERIOD => AccessType::MANDATORY,
             Rule::SYMBOL_OPTCHAIN => AccessType::OPTIONAL,
-            default => throw new LogicException($lexer->getRuleUnderCursor()->name)
+            default => null
         };
     }
 
@@ -407,8 +401,7 @@ final class ExpressionParser
             return BinaryOperator::LESS_THAN_OR_EQUAL;
         }
 
-        $lexer->readOneOf(self::$RULES_BINARY_OPERATORS);
-        $operator = match ($lexer->getRuleUnderCursor()) {
+        $operator = match ($lexer->readOneOf(self::$RULES_BINARY_OPERATORS)) {
             Rule::SYMBOL_NULLISH_COALESCE => BinaryOperator::NULLISH_COALESCE,
             Rule::SYMBOL_BOOLEAN_AND => BinaryOperator::AND,
             Rule::SYMBOL_BOOLEAN_OR => BinaryOperator::OR,
