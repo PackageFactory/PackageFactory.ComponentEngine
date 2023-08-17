@@ -123,14 +123,8 @@ final class ExpressionNode implements \JsonSerializable
         }
 
         Scanner::skipSpaceAndComments($tokens);
-        if (Scanner::isEnd($tokens) || $precedence->mustStopAt(Scanner::type($tokens))) {
-            return new self(
-                root: $root
-            );
-        }
 
         while (!Scanner::isEnd($tokens) && !$precedence->mustStopAt(Scanner::type($tokens))) {
-            Scanner::skipSpaceAndComments($tokens);
             switch (Scanner::type($tokens)) {
                 case TokenType::OPERATOR_BOOLEAN_AND:
                 case TokenType::OPERATOR_BOOLEAN_OR:
