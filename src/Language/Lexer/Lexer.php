@@ -24,12 +24,9 @@ namespace PackageFactory\ComponentEngine\Language\Lexer;
 
 use PackageFactory\ComponentEngine\Language\Lexer\Buffer\Buffer;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\RuleInterface;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Lexer\Scanner\Scanner;
 use PackageFactory\ComponentEngine\Language\Lexer\Scanner\ScannerException;
-use PackageFactory\ComponentEngine\Parser\Source\Position;
-use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class Lexer
 {
