@@ -43,11 +43,14 @@ final class TypeReferenceParser
     public function parse(Lexer $lexer): TypeReferenceNode
     {
         $this->start = null;
-        $isOptional = $lexer->probe(Rule::SYMBOL_QUESTIONMARK);
-        $this->start = $lexer->getStartPosition();
+        if ($isOptional = $lexer->probe(Rule::SYMBOL_QUESTIONMARK)) {
+            $this->start = $lexer->getStartPosition();
+        }
         $typeNameNodes = $this->parseTypeNames($lexer);
         $isArray = $this->parseIsArray($lexer);
         $end = $lexer->getEndPosition();
+
+        assert($this->start !== null);
 
         try {
             return new TypeReferenceNode(

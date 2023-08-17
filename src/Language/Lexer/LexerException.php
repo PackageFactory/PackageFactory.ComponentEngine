@@ -22,16 +22,19 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Lexer;
 
+use Exception;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
+use PackageFactory\ComponentEngine\Language\Lexer\Scanner\ScannerException;
 use PackageFactory\ComponentEngine\Language\Util\DebugHelper;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
-final class LexerException extends \Exception
+final class LexerException extends Exception
 {
     private function __construct(
         int $code,
         string $message,
-        public readonly Range $affectedRangeInSource
+        public readonly Range $affectedRangeInSource,
+        ?Exception $cause = null
     ) {
         $message = sprintf(
             '[%s:%s] %s',
@@ -40,7 +43,7 @@ final class LexerException extends \Exception
             $message
         );
 
-        parent::__construct($message, $code);
+        parent::__construct($message, $code, $cause);
     }
 
     public static function becauseOfUnexpectedEndOfSource(
@@ -73,17 +76,13 @@ final class LexerException extends \Exception
         );
     }
 
-    public static function becauseOfUnexpectedExceedingSource(
-        Range $affectedRangeInSource,
-        string $exceedingCharacter
-    ): self {
+    public static function becauseOfScannerException(ScannerException $cause): self
+    {
         return new self(
-            code: 1691675396,
-            message: sprintf(
-                'Expected source to end, but found exceeding character "%s".',
-                $exceedingCharacter
-            ),
-            affectedRangeInSource: $affectedRangeInSource
+            code: 1692274173,
+            message: $cause->getMessage(),
+            affectedRangeInSource: $cause->affectedRangeInSource,
+            cause: $cause
         );
     }
 }

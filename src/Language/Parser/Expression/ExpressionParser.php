@@ -129,6 +129,7 @@ final class ExpressionParser
             }
 
             if ($tokenType = $lexer->peekOneOf(self::$TOKEN_TYPES_BINARY_OPERATORS)) {
+                assert($tokenType instanceof Rule);
                 if ($this->precedence->mustStopAt($tokenType)) {
                     return $result;
                 }
@@ -182,9 +183,10 @@ final class ExpressionParser
 
     private function parseUnaryOperation(Lexer $lexer): ExpressionNode
     {
-        $start = $lexer->getStartPosition();
-
         $operator = $this->parseUnaryOperator($lexer);
+        $start = $lexer->getStartPosition();
+        $lexer->skipSpaceAndComments();
+
         $operand = $this->parseUnaryStatement($lexer);
 
         $unaryOperationNode = new UnaryOperationNode(
@@ -205,12 +207,7 @@ final class ExpressionParser
     private function parseUnaryOperator(Lexer $lexer): UnaryOperator
     {
         $lexer->read(Rule::SYMBOL_EXCLAMATIONMARK);
-
-        $unaryOperator = UnaryOperator::NOT;
-
-        $lexer->skipSpaceAndComments();
-
-        return $unaryOperator;
+        return UnaryOperator::NOT;
     }
 
     private function withPrecedence(Precedence $precedence): self
@@ -372,7 +369,7 @@ final class ExpressionParser
         return match ($lexer->getRuleUnderCursor()) {
             Rule::SYMBOL_PERIOD => AccessType::MANDATORY,
             Rule::SYMBOL_OPTCHAIN => AccessType::OPTIONAL,
-            default => throw new LogicException()
+            default => throw new LogicException($lexer->getRuleUnderCursor()->name)
         };
     }
 

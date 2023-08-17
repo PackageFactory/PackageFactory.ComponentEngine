@@ -22,28 +22,25 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Lexer\CharacterStream;
 
-use PackageFactory\ComponentEngine\Parser\Source\Position;
-
 /**
  * @internal
  */
 final class CharacterStream
 {
     private int $byte;
-    private Cursor $cursor;
-    private ?string $characterUnderCursor = null;
+    private ?string $characterUnderCursor = '';
 
     public function __construct(private readonly string $source)
     {
         $this->byte = 0;
-        $this->cursor = new Cursor();
-
         $this->next();
     }
 
     public function next(): void
     {
-        $this->cursor->advance($this->characterUnderCursor);
+        if ($this->characterUnderCursor === null) {
+            return;
+        }
 
         $nextCharacter = $this->source[$this->byte++] ?? null;
         if ($nextCharacter === null) {
@@ -53,13 +50,13 @@ final class CharacterStream
 
         $ord  = ord($nextCharacter);
         if ($ord >= 0x80) {
-            $nextCharacter .= $this->source[$this->byte++];
+            $nextCharacter .= $this->source[$this->byte++] ?? '';
         }
         if ($ord >= 0xe0) {
-            $nextCharacter .= $this->source[$this->byte++];
+            $nextCharacter .= $this->source[$this->byte++] ?? '';
         }
         if ($ord >= 0xf0) {
-            $nextCharacter .= $this->source[$this->byte++];
+            $nextCharacter .= $this->source[$this->byte++] ?? '';
         }
 
         $this->characterUnderCursor = $nextCharacter;
@@ -75,30 +72,10 @@ final class CharacterStream
         return $this->characterUnderCursor === null;
     }
 
-    public function getCurrentPosition(): Position
+    public function overwrite(CharacterStream $other): void
     {
-        return $this->cursor->getCurrentPosition();
-    }
-
-    public function getPreviousPosition(): Position
-    {
-        return $this->cursor->getPreviousPosition();
-    }
-
-    public function makeSnapshot(): CharacterStreamSnapshot
-    {
-        return new CharacterStreamSnapshot(
-            byte: $this->byte,
-            cursor: $this->cursor->makeSnapshot(),
-            characterUnderCursor: $this->characterUnderCursor
-        );
-    }
-
-    public function restoreSnapshot(CharacterStreamSnapshot $snapshot): void
-    {
-        $this->byte = $snapshot->byte;
-        $this->cursor->restoreSnapshot($snapshot->cursor);
-        $this->characterUnderCursor = $snapshot->characterUnderCursor;
+        $other->byte = $this->byte;
+        $other->characterUnderCursor = $this->characterUnderCursor;
     }
 
     public function getRest(): string

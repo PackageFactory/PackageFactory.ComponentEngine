@@ -91,7 +91,6 @@ final class ModuleParser
         $this->exportParser ??= ExportParser::singleton();
 
         $export = $this->exportParser->parse($lexer);
-        $lexer->skipSpaceAndComments();
 
         return $export;
     }

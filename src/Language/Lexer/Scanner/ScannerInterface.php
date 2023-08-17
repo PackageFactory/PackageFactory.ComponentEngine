@@ -20,16 +20,18 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\Lexer\CharacterStream;
+namespace PackageFactory\ComponentEngine\Language\Lexer\Scanner;
 
-/**
- * @internal
- */
-final class CharacterStreamSnapshot
+use PackageFactory\ComponentEngine\Language\Lexer\Buffer\Buffer;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\RuleInterface;
+
+interface ScannerInterface
 {
-    public function __construct(
-        public readonly int $byte,
-        public readonly ?string $characterUnderCursor = null
-    ) {
-    }
+    public function getBuffer(): Buffer;
+    public function isEnd(): bool;
+
+    public function scan(RuleInterface $rule): bool;
+    public function scanOneOf(RuleInterface ...$rules): ?RuleInterface;
+    public function commit(): void;
+    public function dismiss(): void;
 }

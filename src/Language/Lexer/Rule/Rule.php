@@ -22,7 +22,9 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Lexer\Rule;
 
-enum Rule: string
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Matcher;
+
+enum Rule: string implements RuleInterface
 {
     case COMMENT = 'COMMENT';
 
@@ -91,4 +93,9 @@ enum Rule: string
 
     case SPACE = 'SPACE';
     case END_OF_LINE = 'END_OF_LINE';
+
+    public function getMatcher(): Matcher
+    {
+        return Matcher::for($this);
+    }
 }

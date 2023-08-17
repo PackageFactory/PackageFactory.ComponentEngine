@@ -20,16 +20,22 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\Lexer\CharacterStream;
+namespace PackageFactory\ComponentEngine\Language\Lexer\Scanner;
 
-/**
- * @internal
- */
-final class CharacterStreamSnapshot
+use PackageFactory\ComponentEngine\Language\Lexer\Buffer\Buffer;
+use PackageFactory\ComponentEngine\Language\Lexer\CharacterStream\CharacterStream;
+
+final class ScannerState
 {
     public function __construct(
-        public readonly int $byte,
-        public readonly ?string $characterUnderCursor = null
+        public readonly CharacterStream $characterStream,
+        public readonly Buffer $buffer
     ) {
+    }
+
+    public function overwrite(ScannerState $other): void
+    {
+        $this->characterStream->overwrite($other->characterStream);
+        $this->buffer->overwrite($other->buffer);
     }
 }

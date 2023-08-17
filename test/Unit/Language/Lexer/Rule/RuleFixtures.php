@@ -20,16 +20,25 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Language\Lexer\CharacterStream;
+namespace PackageFactory\ComponentEngine\Test\Unit\Language\Lexer\Rule;
 
-/**
- * @internal
- */
-final class CharacterStreamSnapshot
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Matcher;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\RuleInterface;
+
+final class RuleFixtures
 {
-    public function __construct(
-        public readonly int $byte,
-        public readonly ?string $characterUnderCursor = null
-    ) {
+    public static function withMatcher(Matcher $matcher): RuleInterface
+    {
+        return new class($matcher) implements RuleInterface
+        {
+            public function __construct(private readonly Matcher $matcher)
+            {
+            }
+
+            public function getMatcher(): Matcher
+            {
+                return $this->matcher;
+            }
+        };
     }
 }

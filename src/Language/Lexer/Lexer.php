@@ -22,333 +22,228 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Lexer;
 
-use LogicException;
-use PackageFactory\ComponentEngine\Language\Lexer\CharacterStream\CharacterStream;
-use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Matcher;
-use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Result;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\Token;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\RuleInterface;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
+use PackageFactory\ComponentEngine\Language\Lexer\Scanner\Scanner;
+use PackageFactory\ComponentEngine\Language\Lexer\Scanner\ScannerException;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class Lexer
 {
-    private readonly Rules $TOKEN_TYPES_SPACE;
-    private readonly Rules $TOKEN_TYPES_SPACE_AND_COMMENTS;
+    private static Rules $TOKEN_TYPES_SPACE;
+    private static Rules $TOKEN_TYPES_SPACE_AND_COMMENTS;
 
-    private readonly CharacterStream $characterStream;
-    private Position $startPosition;
-    private int $offset = 0;
-    private string $buffer = '';
-    private ?Rule $tokenTypeUnderCursor = null;
+    private readonly Scanner $scanner;
+    private ?Rule $ruleUnderCursor = null;
 
     public function __construct(string $source)
     {
-        $this->TOKEN_TYPES_SPACE = Rules::from(
+        self::$TOKEN_TYPES_SPACE = Rules::from(
             Rule::SPACE,
             Rule::END_OF_LINE
         );
-        $this->TOKEN_TYPES_SPACE_AND_COMMENTS = Rules::from(
+        self::$TOKEN_TYPES_SPACE_AND_COMMENTS = Rules::from(
             Rule::SPACE,
             Rule::END_OF_LINE,
             Rule::COMMENT
         );
 
-        $this->characterStream = new CharacterStream($source);
-        $this->startPosition = Position::zero();
+        $this->scanner = new Scanner($source);
     }
 
     public function getRuleUnderCursor(): Rule
     {
-        assert($this->tokenTypeUnderCursor !== null);
+        assert($this->ruleUnderCursor !== null);
 
-        return $this->tokenTypeUnderCursor;
+        return $this->ruleUnderCursor;
     }
 
     public function getBuffer(): string
     {
-        return $this->buffer;
+        return $this->scanner->getBuffer()->getContents();
     }
 
     public function isEnd(): bool
     {
-        return $this->characterStream->isEnd();
+        return $this->scanner->isEnd();
     }
 
     public function assertIsEnd(): void
     {
-        if (!$this->isEnd()) {
-            throw LexerException::becauseOfUnexpectedExceedingSource(
-                affectedRangeInSource: $this->characterStream->getCurrentPosition()->toRange(),
-                exceedingCharacter: $this->characterStream->current() ?? ''
-            );
+        try {
+            $this->scanner->assertIsEnd();
+        } catch (ScannerException $e) {
+            throw LexerException::becauseOfScannerException($e);
         }
     }
 
     public function getStartPosition(): Position
     {
-        return $this->startPosition;
+        return $this->scanner->getBuffer()->getStart();
     }
 
     public function getEndPosition(): Position
     {
-        return $this->characterStream->getPreviousPosition();
+        return $this->scanner->getBuffer()->getEnd();
     }
 
     public function getCursorRange(): Range
     {
-        return $this->getStartPosition()->toRange($this->getEndPosition());
+        return $this->scanner->getBuffer()->getRange();
     }
 
-    public function read(Rule $tokenType): void
+    public function read(Rule $rule): void
     {
-
-        if ($this->characterStream->isEnd()) {
-            throw LexerException::becauseOfUnexpectedEndOfSource(
-                expectedRules: Rules::from($tokenType),
-                affectedRangeInSource: $this->characterStream->getCurrentPosition()->toRange()
-            );
-        }
-
-        if ($this->extract($tokenType)) {
-            $this->tokenTypeUnderCursor = $tokenType;
+        if ($this->scanner->scan($rule)) {
+            $this->scanner->commit();
+            $this->ruleUnderCursor = $rule;
             return;
         }
 
+        if ($this->scanner->isEnd()) {
+            throw LexerException::becauseOfUnexpectedEndOfSource(
+                expectedRules: Rules::from($rule),
+                affectedRangeInSource: $this->scanner->getBuffer()->getRange()
+            );
+        }
+
         throw LexerException::becauseOfUnexpectedCharacterSequence(
-            expectedRules: Rules::from($tokenType),
-            affectedRangeInSource: Range::from(
-                $this->startPosition,
-                $this->characterStream->getCurrentPosition()
-            ),
-            actualCharacterSequence: $this->buffer . $this->characterStream->current()
+            expectedRules: Rules::from($rule),
+            affectedRangeInSource: $this->scanner->getBuffer()->getRange(),
+            actualCharacterSequence: $this->scanner->getBuffer()->getContents()
         );
     }
 
-    public function readOneOf(Rules $tokenTypes): void
+    public function readOneOf(Rules $rules): void
     {
+        if ($rule = $this->scanner->scanOneOf(...$rules->items)) {
+            $this->scanner->commit();
+            assert($rule instanceof Rule);
+            $this->ruleUnderCursor = $rule;
+            return;
+        }
 
-        if ($this->characterStream->isEnd()) {
+        if ($this->scanner->isEnd()) {
             throw LexerException::becauseOfUnexpectedEndOfSource(
-                expectedRules: $tokenTypes,
-                affectedRangeInSource: $this->characterStream->getCurrentPosition()->toRange()
+                expectedRules: $rules,
+                affectedRangeInSource: $this->scanner->getBuffer()->getRange()
             );
         }
 
-        $foundRule = $this->extractOneOf($tokenTypes);
-        if ($foundRule === null) {
-            throw LexerException::becauseOfUnexpectedCharacterSequence(
-                expectedRules: $tokenTypes,
-                affectedRangeInSource: Range::from(
-                    $this->startPosition,
-                    $this->characterStream->getPreviousPosition()
-                ),
-                actualCharacterSequence: $this->buffer
-            );
-        }
-
-        $this->tokenTypeUnderCursor = $foundRule;
+        throw LexerException::becauseOfUnexpectedCharacterSequence(
+            expectedRules: $rules,
+            affectedRangeInSource: $this->scanner->getBuffer()->getRange(),
+            actualCharacterSequence: $this->scanner->getBuffer()->getContents()
+        );
     }
 
-    public function probe(Rule $tokenType): bool
+    public function probe(Rule $rule): bool
     {
-
-        if ($this->characterStream->isEnd()) {
-            return false;
-        }
-
-        $snapshot = $this->characterStream->makeSnapshot();
-
-        if ($tokenType = $this->extract($tokenType)) {
-            $this->tokenTypeUnderCursor = $tokenType;
+        if ($this->scanner->scan($rule)) {
+            $this->scanner->commit();
+            $this->ruleUnderCursor = $rule;
             return true;
         }
 
-        $this->characterStream->restoreSnapshot($snapshot);
+        $this->scanner->dismiss();
         return false;
     }
 
-    public function probeOneOf(Rules $tokenTypes): bool
+    public function probeOneOf(Rules $rules): ?RuleInterface
     {
-        if ($this->characterStream->isEnd()) {
-            return false;
+        if ($rule = $this->scanner->scanOneOf(...$rules->items)) {
+            $this->scanner->commit();
+            assert($rule instanceof Rule);
+            $this->ruleUnderCursor = $rule;
+            return $rule;
         }
 
-        $snapshot = $this->characterStream->makeSnapshot();
-
-        if ($tokenType = $this->extractOneOf($tokenTypes)) {
-            $this->tokenTypeUnderCursor = $tokenType;
-            return true;
-        }
-
-        $this->characterStream->restoreSnapshot($snapshot);
-        return false;
+        $this->scanner->dismiss();
+        return null;
     }
 
-    public function peek(Rule $tokenType): bool
+    public function peek(Rule $rule): bool
     {
-        if ($this->characterStream->isEnd()) {
-            return false;
-        }
-
-        $snapshot = $this->characterStream->makeSnapshot();
-        $result = $this->extract($tokenType) !== null;
-        $this->characterStream->restoreSnapshot($snapshot);
+        $result = $this->scanner->scan($rule);
+        $this->scanner->dismiss();
 
         return $result;
     }
 
-    public function peekOneOf(Rules $tokenTypes): ?Rule
+    public function peekOneOf(Rules $rules): ?RuleInterface
     {
-        if ($this->characterStream->isEnd()) {
-            return null;
-        }
+        $rule = $this->scanner->scanOneOf(...$rules->items);
+        $this->scanner->dismiss();
 
-        $snapshot = $this->characterStream->makeSnapshot();
-        $foundRule = $this->extractOneOf($tokenTypes);
-        $this->characterStream->restoreSnapshot($snapshot);
-
-        return $foundRule;
+        return $rule;
     }
 
-    public function expect(Rule $tokenType): void
+    public function expect(Rule $rule): void
     {
-        if ($this->characterStream->isEnd()) {
+        if ($this->scanner->isEnd()) {
             throw LexerException::becauseOfUnexpectedEndOfSource(
-                expectedRules: Rules::from($tokenType),
-                affectedRangeInSource: $this->characterStream->getCurrentPosition()->toRange()
+                expectedRules: Rules::from($rule),
+                affectedRangeInSource: $this->scanner->getBuffer()->getRange()
             );
         }
 
-        $snapshot = $this->characterStream->makeSnapshot();
-        if ($this->extract($tokenType) === null) {
+        if (!$this->scanner->scan($rule)) {
             throw LexerException::becauseOfUnexpectedCharacterSequence(
-                expectedRules: Rules::from($tokenType),
-                affectedRangeInSource: Range::from(
-                    $this->startPosition,
-                    $this->characterStream->getPreviousPosition()
-                ),
-                actualCharacterSequence: $this->buffer
+                expectedRules: Rules::from($rule),
+                affectedRangeInSource: $this->scanner->getBuffer()->getRange(),
+                actualCharacterSequence: $this->scanner->getBuffer()->getContents()
             );
         }
 
-        $this->characterStream->restoreSnapshot($snapshot);
+        $this->scanner->dismiss();
     }
 
-    public function expectOneOf(Rules $tokenTypes): Rule
+    public function expectOneOf(Rules $rules): RuleInterface
     {
-        if ($this->characterStream->isEnd()) {
+        if ($this->scanner->isEnd()) {
             throw LexerException::becauseOfUnexpectedEndOfSource(
-                expectedRules: $tokenTypes,
-                affectedRangeInSource: $this->characterStream->getCurrentPosition()->toRange()
+                expectedRules: $rules,
+                affectedRangeInSource: $this->scanner->getBuffer()->getRange()
             );
         }
 
-        $snapshot = $this->characterStream->makeSnapshot();
-        $foundRule = $this->extractOneOf($tokenTypes);
-        if ($foundRule === null) {
-            throw LexerException::becauseOfUnexpectedCharacterSequence(
-                expectedRules: $tokenTypes,
-                affectedRangeInSource: Range::from(
-                    $this->startPosition,
-                    $this->characterStream->getPreviousPosition()
-                ),
-                actualCharacterSequence: $this->buffer
-            );
+        if ($rule = $this->scanner->scanOneOf(...$rules->items)) {
+            $this->scanner->dismiss();
+            return $rule;
         }
 
-        $this->characterStream->restoreSnapshot($snapshot);
-
-        return $foundRule;
+        throw LexerException::becauseOfUnexpectedCharacterSequence(
+            expectedRules: $rules,
+            affectedRangeInSource: $this->scanner->getBuffer()->getRange(),
+            actualCharacterSequence: $this->scanner->getBuffer()->getContents()
+        );
     }
 
     public function skipSpace(): void
     {
-        $this->skipAnyOf($this->TOKEN_TYPES_SPACE);
+        while ($this->scanner->scanOneOf(...self::$TOKEN_TYPES_SPACE->items)) {
+            $this->scanner->commit();
+        }
+
+        if ($this->scanner->isEnd()) {
+            $this->scanner->commit();
+        } else {
+            $this->scanner->dismiss();
+        }
     }
 
     public function skipSpaceAndComments(): void
     {
-        $this->skipAnyOf($this->TOKEN_TYPES_SPACE_AND_COMMENTS);
-    }
-
-    private function skipAnyOf(Rules $tokenTypes): void
-    {
-        while (true) {
-            $character = $this->characterStream->current();
-
-            foreach ($tokenTypes->items as $tokenType) {
-                $matcher = Matcher::for($tokenType);
-
-                if ($matcher->match($character, 0) === Result::KEEP) {
-                    $this->read($tokenType);
-                    continue 2;
-                }
-            }
-
-            break;
-        }
-    }
-
-    private function extract(Rule $tokenType): ?Rule
-    {
-        $this->startPosition = $this->characterStream->getCurrentPosition();
-        $this->offset = 0;
-        $this->buffer = '';
-
-        while (true) {
-            $character = $this->characterStream->current();
-            $result = Matcher::for($tokenType)->match($character, $this->offset);
-
-            if ($result === Result::SATISFIED) {
-                return $tokenType;
-            }
-
-            if ($result === Result::CANCEL) {
-                return null;
-            }
-
-            $this->offset++;
-            $this->buffer .= $character;
-            $this->characterStream->next();
-        }
-    }
-
-    private function extractOneOf(Rules $tokenTypes): ?Rule
-    {
-        $this->startPosition = $this->characterStream->getCurrentPosition();
-        $this->offset = 0;
-        $this->buffer = '';
-
-        $tokenTypeCandidates = $tokenTypes->items;
-        while (count($tokenTypeCandidates)) {
-            $character = $this->characterStream->current();
-
-            $nextRuleCandidates = [];
-            foreach ($tokenTypeCandidates as $tokenType) {
-                $result = Matcher::for($tokenType)->match($character, $this->offset);
-
-                if ($result === Result::SATISFIED) {
-                    return $tokenType;
-                }
-
-                if ($result === Result::KEEP) {
-                    $nextRuleCandidates[] = $tokenType;
-                }
-            }
-
-            $this->offset++;
-            $this->buffer .= $character;
-            $tokenTypeCandidates = $nextRuleCandidates;
-            $this->characterStream->next();
+        while ($this->scanner->scanOneOf(...self::$TOKEN_TYPES_SPACE_AND_COMMENTS->items)) {
+            $this->scanner->commit();
         }
 
-        return null;
-    }
-
-    public function dumpRest(): string
-    {
-        return $this->characterStream->getRest();
+        if ($this->scanner->isEnd()) {
+            $this->scanner->commit();
+        } else {
+            $this->scanner->dismiss();
+        }
     }
 }

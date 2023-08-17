@@ -36,6 +36,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructDec
 use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructNameNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
+use PackageFactory\ComponentEngine\Language\Lexer\Scanner\ScannerException;
 use PackageFactory\ComponentEngine\Language\Parser\Module\ModuleCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Language\Parser\Module\ModuleParser;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
@@ -301,9 +302,11 @@ final class ModuleParserTest extends ParserTestCase
                 $moduleParser->parse($lexer);
             },
             ModuleCouldNotBeParsed::becauseOfLexerException(
-                cause: LexerException::becauseOfUnexpectedExceedingSource(
-                    affectedRangeInSource: $this->range([4, 0], [4, 0]),
-                    exceedingCharacter: 'e'
+                cause: LexerException::becauseOfScannerException(
+                    cause: ScannerException::becauseOfUnexpectedExceedingSource(
+                        affectedRangeInSource: $this->range([4, 0], [4, 0]),
+                        exceedingCharacter: 'e'
+                    )
                 )
             )
         );
