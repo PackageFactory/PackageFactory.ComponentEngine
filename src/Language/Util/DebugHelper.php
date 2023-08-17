@@ -34,7 +34,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLit
 use PackageFactory\ComponentEngine\Language\AST\Node\TernaryOperation\TernaryOperationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 
 final class DebugHelper
 {
@@ -111,14 +110,14 @@ final class DebugHelper
         };
     }
 
-    public static function describeRules(Rules $rules): string
+    public static function describeRules(Rule ...$rules): string
     {
-        if (count($rules->items) === 1) {
-            return self::describeRule($rules->items[0]);
+        if (count($rules) === 1) {
+            return self::describeRule($rules[0]);
         }
 
-        $leadingItems = array_slice($rules->items, 0, -1);
-        $trailingItem = array_slice($rules->items, -1)[0];
+        $leadingItems = array_slice($rules, 0, -1);
+        $trailingItem = array_slice($rules, -1)[0];
 
         return join(', ', array_map(
             static fn (Rule $rule) => self::describeRule($rule),

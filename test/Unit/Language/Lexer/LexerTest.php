@@ -25,7 +25,6 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 use PHPUnit\Framework\TestCase;
@@ -261,7 +260,7 @@ final class LexerTest extends TestCase
     public function readOneOfSavesTokenOfGivenTypeIfMatchIsFound(string $source, Rule $expectedRule): void
     {
         $this->lexer = new Lexer($source);
-        $this->lexer->readOneOf(Rules::from($expectedRule));
+        $this->lexer->readOneOf($expectedRule);
 
         $this->assertLexerState(
             startPosition: Position::from(0, 0),
@@ -272,13 +271,13 @@ final class LexerTest extends TestCase
     }
 
     /**
-     * @return iterable<string,array{string,Rules,array{array{int,int},array{int,int},Rule,string}}>
+     * @return iterable<string,array{string,Rule[],array{array{int,int},array{int,int},Rule,string}}>
      */
     public static function multipleTokensExamples(): iterable
     {
         yield ($source = "# This is a comment\n# This is also a comment") => [
             $source,
-            Rules::from(Rule::COMMENT, Rule::END_OF_LINE),
+            [Rule::COMMENT, Rule::END_OF_LINE],
             [[0,  0], [0, 18], Rule::COMMENT, '# This is a comment'],
             [[0, 19], [0, 19], Rule::END_OF_LINE, "\n"],
             [[1,  0], [1, 23], Rule::COMMENT, '# This is also a comment'],
@@ -286,7 +285,7 @@ final class LexerTest extends TestCase
 
         yield ($source = "1765224, -0xAB89CD, true\nnull") => [
             $source,
-            Rules::from(
+            [
                 Rule::SYMBOL_DASH,
                 Rule::SYMBOL_COMMA,
                 Rule::INTEGER_HEXADECIMAL,
@@ -295,7 +294,7 @@ final class LexerTest extends TestCase
                 Rule::END_OF_LINE,
                 Rule::KEYWORD_TRUE,
                 Rule::KEYWORD_NULL
-            ),
+            ],
             [[0,  0], [0,  6], Rule::INTEGER_DECIMAL, '1765224'],
             [[0,  7], [0,  7], Rule::SYMBOL_COMMA, ','],
             [[0,  8], [0,  8], Rule::SPACE, ' '],
@@ -310,13 +309,13 @@ final class LexerTest extends TestCase
 
         yield ($source = '0b100101 892837 0xFFAAEE 0o75374') => [
             $source,
-            Rules::from(
+            [
                 Rule::INTEGER_BINARY,
                 Rule::INTEGER_OCTAL,
                 Rule::INTEGER_HEXADECIMAL,
                 Rule::INTEGER_DECIMAL,
                 Rule::SPACE
-            ),
+            ],
             [[0,  0], [0,  7], Rule::INTEGER_BINARY, '0b100101'],
             [[0,  8], [0,  8], Rule::SPACE, ' '],
             [[0,  9], [0, 14], Rule::INTEGER_DECIMAL, '892837'],
@@ -328,14 +327,14 @@ final class LexerTest extends TestCase
 
         yield ($source = '"This is a string literal with \\n escapes \\xB1 \\u5FA9 \\u{1343E}!"') => [
             $source,
-            Rules::from(
+            [
                 Rule::STRING_LITERAL_DELIMITER,
                 Rule::STRING_LITERAL_CONTENT,
                 Rule::ESCAPE_SEQUENCE_SINGLE_CHARACTER,
                 Rule::ESCAPE_SEQUENCE_HEXADECIMAL,
                 Rule::ESCAPE_SEQUENCE_UNICODE,
                 Rule::ESCAPE_SEQUENCE_UNICODE_CODEPOINT
-            ),
+            ],
             [[0,  0], [0,  0], Rule::STRING_LITERAL_DELIMITER, '"'],
             [[0,  1], [0, 30], Rule::STRING_LITERAL_CONTENT, 'This is a string literal with '],
             [[0, 31], [0, 32], Rule::ESCAPE_SEQUENCE_SINGLE_CHARACTER, '\\n'],
@@ -357,7 +356,7 @@ final class LexerTest extends TestCase
         AFX;
         yield $source => [
             $source,
-            Rules::from(
+            [
                 Rule::TEMPLATE_LITERAL_DELIMITER,
                 Rule::SPACE,
                 Rule::TEMPLATE_LITERAL_CONTENT,
@@ -368,7 +367,7 @@ final class LexerTest extends TestCase
                 Rule::END_OF_LINE,
                 Rule::BRACKET_CURLY_OPEN,
                 Rule::BRACKET_CURLY_CLOSE
-            ),
+            ],
             [[0,  0], [0,  2], Rule::TEMPLATE_LITERAL_DELIMITER, '"""'],
             [[0,  3], [0,  3], Rule::END_OF_LINE, "\n"],
             [[1,  0], [1,  3], Rule::SPACE, '    '],
@@ -402,7 +401,7 @@ final class LexerTest extends TestCase
         AFX;
         yield $source => [
             $source,
-            Rules::from(
+            [
                 Rule::BRACKET_ANGLE_OPEN,
                 Rule::WORD,
                 Rule::SPACE,
@@ -415,7 +414,7 @@ final class LexerTest extends TestCase
                 Rule::BRACKET_CURLY_OPEN,
                 Rule::BRACKET_CURLY_CLOSE,
                 Rule::SYMBOL_COLON
-            ),
+            ],
             [[0,  0], [0,  0], Rule::BRACKET_ANGLE_OPEN, '<'],
             [[0,  1], [0,  1], Rule::WORD, 'a'],
             [[0,  2], [0,  2], Rule::SPACE, ' '],
@@ -465,7 +464,7 @@ final class LexerTest extends TestCase
         AFX;
         yield $source => [
             $source,
-            Rules::from(
+            [
                 Rule::TEXT,
                 Rule::BRACKET_CURLY_OPEN,
                 Rule::BRACKET_CURLY_CLOSE,
@@ -473,7 +472,7 @@ final class LexerTest extends TestCase
                 Rule::END_OF_LINE,
                 Rule::BRACKET_ANGLE_OPEN,
                 Rule::BRACKET_ANGLE_CLOSE
-            ),
+            ],
             [[0,  0], [0, 30], Rule::TEXT, 'ThisIsSomeText-with-expressions'],
             [[0, 31], [0, 31], Rule::BRACKET_CURLY_OPEN, '{'],
             [[0, 32], [0, 32], Rule::BRACKET_CURLY_CLOSE, '}'],
@@ -493,18 +492,19 @@ final class LexerTest extends TestCase
      * @dataProvider multipleTokensExamples
      * @test
      * @param string $source
+     * @param Rule[] $rules
      * @param array{array{int,int},array{int,int},Rule,string} ...$expectedLexerStates
      * @return void
      */
     public function testReadOneOfWithMultipleRules(
         string $source,
-        Rules $rules,
+        array $rules,
         array ...$expectedLexerStates
     ): void {
         $this->lexer = new Lexer($source);
 
         foreach ($expectedLexerStates as $i => $expectedLexerState) {
-            $this->lexer->readOneOf($rules);
+            $this->lexer->readOneOf(...$rules);
 
             $this->assertLexerState(
                 startPosition: Position::from(...$expectedLexerState[0]),
@@ -661,7 +661,7 @@ final class LexerTest extends TestCase
                 $this->lexer->read($expectedRule);
             },
             LexerException::becauseOfUnexpectedCharacterSequence(
-                expectedRules: Rules::from($expectedRule),
+                expectedRules: [$expectedRule],
                 affectedRangeInSource: $affectedRangeInSource,
                 actualCharacterSequence: $actualTokenValue
             )
@@ -675,7 +675,7 @@ final class LexerTest extends TestCase
     {
         yield ($source = "# This is a comment\nThis is not a comment") => [
             $source,
-            $rules = Rules::from(Rule::COMMENT, Rule::END_OF_LINE),
+            $rules = [Rule::COMMENT, Rule::END_OF_LINE],
             3,
             LexerException::becauseOfUnexpectedCharacterSequence(
                 expectedRules: $rules,
@@ -692,14 +692,14 @@ final class LexerTest extends TestCase
      * @dataProvider failingMultipleTokensExamples
      * @test
      * @param string $source
-     * @param Rules $rules
+     * @param Rule[] $rules
      * @param integer $numberOfReadOperations
      * @param LexerException $expectedLexerException
      * @return void
      */
     public function throwsIfCharacterSequenceDoesNotMatchMultipleRules(
         string $source,
-        Rules $rules,
+        array $rules,
         int $numberOfReadOperations,
         LexerException $expectedLexerException
     ): void {
@@ -708,7 +708,7 @@ final class LexerTest extends TestCase
                 $this->lexer = new Lexer($source);
 
                 foreach(range(0, $numberOfReadOperations) as $i) {
-                    $this->lexer->readOneOf($rules);
+                    $this->lexer->readOneOf(...$rules);
                 }
             },
             $expectedLexerException
@@ -726,7 +726,7 @@ final class LexerTest extends TestCase
                 $this->lexer->read(Rule::KEYWORD_NULL);
             },
             LexerException::becauseOfUnexpectedEndOfSource(
-                expectedRules: Rules::from(Rule::KEYWORD_NULL),
+                expectedRules: [Rule::KEYWORD_NULL],
                 affectedRangeInSource: Range::from(
                     Position::from(0, 0),
                     Position::from(0, 0)
@@ -741,7 +741,7 @@ final class LexerTest extends TestCase
                 $lexer->read(Rule::KEYWORD_NULL);
             },
             LexerException::becauseOfUnexpectedEndOfSource(
-                expectedRules: Rules::from(Rule::KEYWORD_NULL),
+                expectedRules: [Rule::KEYWORD_NULL],
                 affectedRangeInSource: Range::from(
                     Position::from(0, 0),
                     Position::from(0, 4)
@@ -757,11 +757,11 @@ final class LexerTest extends TestCase
     {
         yield ($source = '') => [
             $source,
-            $rules = Rules::from(
+            $rules = [
                 Rule::KEYWORD_RETURN,
                 Rule::KEYWORD_NULL,
                 Rule::SPACE
-            ),
+            ],
             1,
             LexerException::becauseOfUnexpectedEndOfSource(
                 expectedRules: $rules,
@@ -774,11 +774,11 @@ final class LexerTest extends TestCase
 
         yield ($source = 'return') => [
             $source,
-            $rules = Rules::from(
+            $rules = [
                 Rule::KEYWORD_RETURN,
                 Rule::KEYWORD_NULL,
                 Rule::SPACE
-            ),
+            ],
             2,
             LexerException::becauseOfUnexpectedEndOfSource(
                 expectedRules: $rules,
@@ -791,11 +791,11 @@ final class LexerTest extends TestCase
 
         yield ($source = 'return ') => [
             $source,
-            $rules = Rules::from(
+            $rules = [
                 Rule::KEYWORD_RETURN,
                 Rule::KEYWORD_NULL,
                 Rule::SPACE
-            ),
+            ],
             3,
             LexerException::becauseOfUnexpectedEndOfSource(
                 expectedRules: $rules,
@@ -811,14 +811,14 @@ final class LexerTest extends TestCase
      * @dataProvider multipleRuleUnexpectedEndOfSourceExamples
      * @test
      * @param string $source
-     * @param Rules $rules
+     * @param Rule[] $rules
      * @param integer $numberOfReadOperations
      * @param LexerException $expectedLexerException
      * @return void
      */
     public function throwsIfSourceEndsUnexpectedlyWhileReadingMultipleRules(
         string $source,
-        Rules $rules,
+        array $rules,
         int $numberOfReadOperations,
         LexerException $expectedLexerException
     ): void {
@@ -827,7 +827,7 @@ final class LexerTest extends TestCase
                 $this->lexer = new Lexer($source);
 
                 foreach(range(0, $numberOfReadOperations) as $i) {
-                    $this->lexer->readOneOf($rules);
+                    $this->lexer->readOneOf(...$rules);
                 }
             },
             $expectedLexerException
@@ -856,9 +856,9 @@ final class LexerTest extends TestCase
         // Multiple
         $this->lexer = new Lexer('return   ' . "\t\n\t" . '   42');
 
-        $this->lexer->readOneOf(Rules::from(Rule::KEYWORD_RETURN, Rule::INTEGER_DECIMAL));
+        $this->lexer->readOneOf(Rule::KEYWORD_RETURN, Rule::INTEGER_DECIMAL);
         $this->lexer->skipSpace();
-        $this->lexer->readOneOf(Rules::from(Rule::KEYWORD_RETURN, Rule::INTEGER_DECIMAL));
+        $this->lexer->readOneOf(Rule::KEYWORD_RETURN, Rule::INTEGER_DECIMAL);
 
         $this->assertLexerState(
             startPosition: Position::from(1, 4),
@@ -902,27 +902,21 @@ final class LexerTest extends TestCase
         // Multiple
         $this->lexer = new Lexer($source);
         $this->lexer->readOneOf(
-            Rules::from(
-                Rule::KEYWORD_IMPORT,
-                Rule::KEYWORD_EXPORT,
-                Rule::KEYWORD_COMPONENT
-            )
+            Rule::KEYWORD_IMPORT,
+            Rule::KEYWORD_EXPORT,
+            Rule::KEYWORD_COMPONENT
         );
         $this->lexer->skipSpaceAndComments();
         $this->lexer->readOneOf(
-            Rules::from(
-                Rule::KEYWORD_IMPORT,
-                Rule::KEYWORD_EXPORT,
-                Rule::KEYWORD_COMPONENT
-            )
+            Rule::KEYWORD_IMPORT,
+            Rule::KEYWORD_EXPORT,
+            Rule::KEYWORD_COMPONENT
         );
         $this->lexer->skipSpaceAndComments();
         $this->lexer->readOneOf(
-            Rules::from(
-                Rule::KEYWORD_IMPORT,
-                Rule::KEYWORD_EXPORT,
-                Rule::KEYWORD_COMPONENT
-            )
+            Rule::KEYWORD_IMPORT,
+            Rule::KEYWORD_EXPORT,
+            Rule::KEYWORD_COMPONENT
         );
 
         $this->assertLexerState(

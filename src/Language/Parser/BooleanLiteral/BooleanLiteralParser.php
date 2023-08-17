@@ -32,19 +32,14 @@ final class BooleanLiteralParser
 {
     use Singleton;
 
-    private static Rules $RULES_BOOLEAN_KEYWORDS;
-
-    private function __construct()
-    {
-        self::$RULES_BOOLEAN_KEYWORDS ??= Rules::from(
-            Rule::KEYWORD_TRUE,
-            Rule::KEYWORD_FALSE
-        );
-    }
+    private const RULES_BOOLEAN_KEYWORDS = [
+        Rule::KEYWORD_TRUE,
+        Rule::KEYWORD_FALSE
+    ];
 
     public function parse(Lexer $lexer): BooleanLiteralNode
     {
-        $rule = $lexer->readOneOf(self::$RULES_BOOLEAN_KEYWORDS);
+        $rule = $lexer->readOneOf(...self::RULES_BOOLEAN_KEYWORDS);
 
         return new BooleanLiteralNode(
             rangeInSource: $lexer->buffer->getRange(),

@@ -24,14 +24,20 @@ namespace PackageFactory\ComponentEngine\Language\Lexer;
 
 use PackageFactory\ComponentEngine\Language\Lexer\Buffer\Buffer;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Lexer\Scanner\Scanner;
 use PackageFactory\ComponentEngine\Language\Lexer\Scanner\ScannerException;
 
 final class Lexer
 {
-    private static Rules $RULES_SPACE;
-    private static Rules $RULES_SPACE_AND_COMMENTS;
+    private const RULES_SPACE = [
+        Rule::SPACE,
+        Rule::END_OF_LINE
+    ];
+    private const RULES_SPACE_AND_COMMENTS = [
+        Rule::SPACE,
+        Rule::END_OF_LINE,
+        Rule::COMMENT
+    ];
 
     private readonly Scanner $scanner;
 
@@ -39,16 +45,6 @@ final class Lexer
 
     public function __construct(string $source)
     {
-        self::$RULES_SPACE = Rules::from(
-            Rule::SPACE,
-            Rule::END_OF_LINE
-        );
-        self::$RULES_SPACE_AND_COMMENTS = Rules::from(
-            Rule::SPACE,
-            Rule::END_OF_LINE,
-            Rule::COMMENT
-        );
-
         $this->scanner = new Scanner($source);
         $this->buffer = $this->scanner->getBuffer();
     }
@@ -76,22 +72,22 @@ final class Lexer
 
         if ($this->scanner->isEnd()) {
             throw LexerException::becauseOfUnexpectedEndOfSource(
-                expectedRules: Rules::from($rule),
+                expectedRules: [$rule],
                 affectedRangeInSource: $this->scanner->getBuffer()->getRange()
             );
         }
 
         throw LexerException::becauseOfUnexpectedCharacterSequence(
-            expectedRules: Rules::from($rule),
+            expectedRules: [$rule],
             affectedRangeInSource: $this->scanner->getBuffer()->getRange(),
             actualCharacterSequence: $this->scanner->getBuffer()->getContents()
         );
     }
 
     /** @phpstan-impure */
-    public function readOneOf(Rules $rules): Rule
+    public function readOneOf(Rule ...$rules): Rule
     {
-        if ($rule = $this->scanner->scanOneOf(...$rules->items)) {
+        if ($rule = $this->scanner->scanOneOf(...$rules)) {
             $this->scanner->commit();
             assert($rule instanceof Rule);
             return $rule;
@@ -123,9 +119,9 @@ final class Lexer
     }
 
     /** @phpstan-impure */
-    public function probeOneOf(Rules $rules): ?Rule
+    public function probeOneOf(Rule ...$rules): ?Rule
     {
-        if ($rule = $this->scanner->scanOneOf(...$rules->items)) {
+        if ($rule = $this->scanner->scanOneOf(...$rules)) {
             $this->scanner->commit();
             assert($rule instanceof Rule);
             return $rule;
@@ -144,9 +140,9 @@ final class Lexer
     }
 
     /** @phpstan-impure */
-    public function peekOneOf(Rules $rules): ?Rule
+    public function peekOneOf(Rule ...$rules): ?Rule
     {
-        $rule = $this->scanner->scanOneOf(...$rules->items);
+        $rule = $this->scanner->scanOneOf(...$rules);
         $this->scanner->dismiss();
 
         assert($rule === null || $rule instanceof Rule);
@@ -157,14 +153,14 @@ final class Lexer
     {
         if ($this->scanner->isEnd()) {
             throw LexerException::becauseOfUnexpectedEndOfSource(
-                expectedRules: Rules::from($rule),
+                expectedRules: [$rule],
                 affectedRangeInSource: $this->scanner->getBuffer()->getRange()
             );
         }
 
         if (!$this->scanner->scan($rule)) {
             throw LexerException::becauseOfUnexpectedCharacterSequence(
-                expectedRules: Rules::from($rule),
+                expectedRules: [$rule],
                 affectedRangeInSource: $this->scanner->getBuffer()->getRange(),
                 actualCharacterSequence: $this->scanner->getBuffer()->getContents()
             );
@@ -174,7 +170,7 @@ final class Lexer
     }
 
     /** @phpstan-impure */
-    public function expectOneOf(Rules $rules): Rule
+    public function expectOneOf(Rule ...$rules): Rule
     {
         if ($this->scanner->isEnd()) {
             throw LexerException::becauseOfUnexpectedEndOfSource(
@@ -183,7 +179,7 @@ final class Lexer
             );
         }
 
-        if ($rule = $this->scanner->scanOneOf(...$rules->items)) {
+        if ($rule = $this->scanner->scanOneOf(...$rules)) {
             $this->scanner->dismiss();
             assert($rule instanceof Rule);
             return $rule;
@@ -198,7 +194,7 @@ final class Lexer
 
     public function skipSpace(): void
     {
-        while ($this->scanner->scanOneOf(...self::$RULES_SPACE->items)) {
+        while ($this->scanner->scanOneOf(...self::RULES_SPACE)) {
             $this->scanner->commit();
         }
 
@@ -211,7 +207,7 @@ final class Lexer
 
     public function skipSpaceAndComments(): void
     {
-        while ($this->scanner->scanOneOf(...self::$RULES_SPACE_AND_COMMENTS->items)) {
+        while ($this->scanner->scanOneOf(...self::RULES_SPACE_AND_COMMENTS)) {
             $this->scanner->commit();
         }
 

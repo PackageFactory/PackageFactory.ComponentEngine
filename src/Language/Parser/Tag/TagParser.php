@@ -47,19 +47,14 @@ final class TagParser
 {
     use Singleton;
 
-    private static Rules $RULES_ATTRIBUTE_DELIMITERS;
+    private const RULES_ATTRIBUTE_DELIMITERS = [
+        Rule::STRING_LITERAL_DELIMITER,
+        Rule::BRACKET_CURLY_OPEN
+    ];
 
     private ?StringLiteralParser $stringLiteralParser = null;
     private ?TextParser $textParser = null;
     private ?ExpressionParser $expressionParser = null;
-
-    private function __construct()
-    {
-        self::$RULES_ATTRIBUTE_DELIMITERS ??= Rules::from(
-            Rule::STRING_LITERAL_DELIMITER,
-            Rule::BRACKET_CURLY_OPEN
-        );
-    }
 
     public function parse(Lexer $lexer): TagNode
     {
@@ -153,7 +148,7 @@ final class TagParser
     private function parseAttributeValue(Lexer $lexer): null|StringLiteralNode|ExpressionNode
     {
         if ($lexer->probe(Rule::SYMBOL_EQUALS)) {
-            return match ($lexer->expectOneOf(self::$RULES_ATTRIBUTE_DELIMITERS)) {
+            return match ($lexer->expectOneOf(...self::RULES_ATTRIBUTE_DELIMITERS)) {
                 Rule::STRING_LITERAL_DELIMITER =>
                     $this->parseString($lexer),
                 Rule::BRACKET_CURLY_OPEN =>

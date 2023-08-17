@@ -31,9 +31,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Import\InvalidImportedNameN
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\Token;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
@@ -41,18 +39,7 @@ final class ImportParser
 {
     use Singleton;
 
-    private static Rules $RULES_NAME_BOUNDARIES;
-
     private ?StringLiteralParser $pathParser = null;
-
-    private function __construct()
-    {
-        self::$RULES_NAME_BOUNDARIES ??= Rules::from(
-            Rule::WORD,
-            Rule::SYMBOL_COMMA,
-            Rule::BRACKET_CURLY_CLOSE
-        );
-    }
 
     public function parse(Lexer $lexer): ImportNode
     {

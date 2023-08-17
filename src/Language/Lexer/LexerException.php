@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Lexer;
 
 use Exception;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 use PackageFactory\ComponentEngine\Language\Lexer\Scanner\ScannerException;
 use PackageFactory\ComponentEngine\Language\Util\DebugHelper;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
@@ -46,22 +46,33 @@ final class LexerException extends Exception
         parent::__construct($message, $code, $cause);
     }
 
+    /**
+     * @param Rule[] $expectedRules
+     * @param Range $affectedRangeInSource
+     * @return self
+     */
     public static function becauseOfUnexpectedEndOfSource(
-        Rules $expectedRules,
+        array $expectedRules,
         Range $affectedRangeInSource
     ): self {
         return new self(
             code: 1691489789,
             message: sprintf(
                 'Source ended unexpectedly. Expected %s instead.',
-                DebugHelper::describeRules($expectedRules)
+                DebugHelper::describeRules(...$expectedRules)
             ),
             affectedRangeInSource: $affectedRangeInSource
         );
     }
 
+    /**
+     * @param Rule[] $expectedRules
+     * @param Range $affectedRangeInSource
+     * @param string $actualCharacterSequence
+     * @return self
+     */
     public static function becauseOfUnexpectedCharacterSequence(
-        Rules $expectedRules,
+        array $expectedRules,
         Range $affectedRangeInSource,
         string $actualCharacterSequence
     ): self {
@@ -70,7 +81,7 @@ final class LexerException extends Exception
             message: sprintf(
                 'Unexpected character sequence "%s" was encountered. Expected %s instead.',
                 $actualCharacterSequence,
-                DebugHelper::describeRules($expectedRules)
+                DebugHelper::describeRules(...$expectedRules)
             ),
             affectedRangeInSource: $affectedRangeInSource
         );

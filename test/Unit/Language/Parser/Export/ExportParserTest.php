@@ -190,11 +190,11 @@ final class ExportParserTest extends ParserTestCase
             },
             ExportCouldNotBeParsed::becauseOfLexerException(
                 cause: LexerException::becauseOfUnexpectedCharacterSequence(
-                    expectedRules: Rules::from(
+                    expectedRules: [
                         Rule::KEYWORD_COMPONENT,
                         Rule::KEYWORD_ENUM,
                         Rule::KEYWORD_STRUCT
-                    ),
+                    ],
                     affectedRangeInSource: $this->range([0, 7], [0, 7]),
                     actualCharacterSequence: 'n'
                 ),

@@ -44,21 +44,16 @@ final class EnumDeclarationParser
 {
     use Singleton;
 
-    private static Rules $RULES_ENUM_MEMBER_VALUE_START;
+    private const RULES_ENUM_MEMBER_VALUE_START = [
+        Rule::STRING_LITERAL_DELIMITER,
+        Rule::INTEGER_BINARY,
+        Rule::INTEGER_OCTAL,
+        Rule::INTEGER_DECIMAL,
+        Rule::INTEGER_HEXADECIMAL
+    ];
 
     private ?StringLiteralParser $stringLiteralParser = null;
     private ?IntegerLiteralParser $integerLiteralParser = null;
-
-    private function __construct()
-    {
-        self::$RULES_ENUM_MEMBER_VALUE_START ??= Rules::from(
-            Rule::STRING_LITERAL_DELIMITER,
-            Rule::INTEGER_BINARY,
-            Rule::INTEGER_OCTAL,
-            Rule::INTEGER_DECIMAL,
-            Rule::INTEGER_HEXADECIMAL
-        );
-    }
 
     public function parse(Lexer $lexer): EnumDeclarationNode
     {
@@ -138,7 +133,7 @@ final class EnumDeclarationParser
         if ($lexer->probe(Rule::BRACKET_ROUND_OPEN)) {
             $start = $lexer->buffer->getStart();
 
-            $value = match ($lexer->expectOneOf(self::$RULES_ENUM_MEMBER_VALUE_START)) {
+            $value = match ($lexer->expectOneOf(...self::RULES_ENUM_MEMBER_VALUE_START)) {
                 Rule::STRING_LITERAL_DELIMITER =>
                     $this->parseStringLiteral($lexer),
                 default =>

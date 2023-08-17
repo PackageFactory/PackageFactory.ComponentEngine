@@ -22,37 +22,28 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral;
 
-use LogicException;
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerFormat;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
-use PackageFactory\ComponentEngine\Language\Util\DebugHelper;
-use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class IntegerLiteralParser
 {
     use Singleton;
 
-    private static Rules $INTEGER_TOKEN_TYPES;
-
-    private function __construct()
-    {
-        self::$INTEGER_TOKEN_TYPES ??= Rules::from(
-            Rule::INTEGER_HEXADECIMAL,
-            Rule::INTEGER_DECIMAL,
-            Rule::INTEGER_OCTAL,
-            Rule::INTEGER_BINARY
-        );
-    }
+    private const RULES_INTEGER_FORMATS = [
+        Rule::INTEGER_HEXADECIMAL,
+        Rule::INTEGER_DECIMAL,
+        Rule::INTEGER_OCTAL,
+        Rule::INTEGER_BINARY
+    ];
 
     public function parse(Lexer $lexer): IntegerLiteralNode
     {
         try {
-            $rule = $lexer->readOneOf(self::$INTEGER_TOKEN_TYPES);
+            $rule = $lexer->readOneOf(...self::RULES_INTEGER_FORMATS);
 
             return new IntegerLiteralNode(
                 rangeInSource: $lexer->buffer->getRange(),
@@ -67,17 +58,10 @@ final class IntegerLiteralParser
     private function getIntegerFormatFromToken(Rule $rule): IntegerFormat
     {
         return match ($rule) {
+            Rule::INTEGER_HEXADECIMAL => IntegerFormat::HEXADECIMAL,
             Rule::INTEGER_BINARY => IntegerFormat::BINARY,
             Rule::INTEGER_OCTAL => IntegerFormat::OCTAL,
-            Rule::INTEGER_DECIMAL => IntegerFormat::DECIMAL,
-            Rule::INTEGER_HEXADECIMAL => IntegerFormat::HEXADECIMAL,
-            default => throw new LogicException(
-                sprintf(
-                    'Expected %s to be one of %s',
-                    $rule->value,
-                    DebugHelper::describeRules($this->INTEGER_TOKEN_TYPES)
-                )
-            )
+            default => IntegerFormat::DECIMAL,
         };
     }
 }

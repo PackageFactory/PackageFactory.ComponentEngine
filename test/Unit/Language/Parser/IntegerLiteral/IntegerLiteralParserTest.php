@@ -128,12 +128,12 @@ final class IntegerLiteralParserTest extends ParserTestCase
             },
             IntegerLiteralCouldNotBeParsed::becauseOfLexerException(
                 cause: LexerException::becauseOfUnexpectedEndOfSource(
-                    expectedRules: Rules::from(
+                    expectedRules: [
                         Rule::INTEGER_HEXADECIMAL,
                         Rule::INTEGER_DECIMAL,
                         Rule::INTEGER_OCTAL,
                         Rule::INTEGER_BINARY
-                    ),
+                    ],
                     affectedRangeInSource: $this->range([0, 0], [0, 0])
                 )
             )
@@ -154,12 +154,12 @@ final class IntegerLiteralParserTest extends ParserTestCase
             },
             IntegerLiteralCouldNotBeParsed::becauseOfLexerException(
                 cause: LexerException::becauseOfUnexpectedCharacterSequence(
-                    expectedRules: Rules::from(
+                    expectedRules: [
                         Rule::INTEGER_HEXADECIMAL,
                         Rule::INTEGER_DECIMAL,
                         Rule::INTEGER_OCTAL,
                         Rule::INTEGER_BINARY
-                    ),
+                    ],
                     affectedRangeInSource: $this->range([0, 0], [0, 0]),
                     actualCharacterSequence: 'f'
                 )

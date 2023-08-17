@@ -26,7 +26,6 @@ use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
 
@@ -34,22 +33,16 @@ final class TextParser
 {
     use Singleton;
 
-    private static Rules $RULES_END_DELIMITERS;
-    private static Rules $RULES_CONTENT;
-
-    private function __construct()
-    {
-        self::$RULES_END_DELIMITERS = Rules::from(
-            Rule::SYMBOL_CLOSE_TAG,
-            Rule::BRACKET_ANGLE_OPEN,
-            Rule::BRACKET_CURLY_OPEN
-        );
-        self::$RULES_CONTENT = Rules::from(
-            Rule::SPACE,
-            Rule::END_OF_LINE,
-            Rule::TEXT
-        );
-    }
+    private const RULES_END_DELIMITERS = [
+        Rule::SYMBOL_CLOSE_TAG,
+        Rule::BRACKET_ANGLE_OPEN,
+        Rule::BRACKET_CURLY_OPEN
+    ];
+    private const RULES_CONTENT = [
+        Rule::SPACE,
+        Rule::END_OF_LINE,
+        Rule::TEXT
+    ];
 
     public function parse(Lexer $lexer, bool $preserveLeadingSpace = false): ?TextNode
     {
@@ -68,15 +61,15 @@ final class TextParser
         }
 
         $lexer->skipSpace();
-        if ($lexer->isEnd() || $lexer->peekOneOf(self::$RULES_END_DELIMITERS)) {
+        if ($lexer->isEnd() || $lexer->peekOneOf(...self::RULES_END_DELIMITERS)) {
             return null;
         }
 
         $hasTrailingSpace = false;
         $trailingSpaceContainsLineBreaks = false;
         $value = $hasLeadingSpace && $preserveLeadingSpace ? ' ' : '';
-        while (!$lexer->isEnd() && !$lexer->peekOneOf(self::$RULES_END_DELIMITERS)) {
-            $rule = $lexer->readOneOf(self::$RULES_CONTENT);
+        while (!$lexer->isEnd() && !$lexer->peekOneOf(...self::RULES_END_DELIMITERS)) {
+            $rule = $lexer->readOneOf(...self::RULES_CONTENT);
 
             if ($rule === Rule::TEXT) {
                 $start ??= $lexer->buffer->getStart();

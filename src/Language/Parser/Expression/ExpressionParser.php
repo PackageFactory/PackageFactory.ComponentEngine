@@ -48,10 +48,42 @@ use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class ExpressionParser
 {
-    private static Rules $RULES_ACCESS;
-    private static Rules $RULES_BINARY_OPERATORS;
-    private static Rules $RULES_UNARY;
-    private static Rules $RULES_CLOSING_DELIMITERS;
+    private const RULES_ACCESS = [
+        Rule::SYMBOL_PERIOD,
+        Rule::SYMBOL_OPTCHAIN
+    ];
+    private const RULES_BINARY_OPERATORS = [
+        Rule::SYMBOL_NULLISH_COALESCE,
+        Rule::SYMBOL_BOOLEAN_AND,
+        Rule::SYMBOL_BOOLEAN_OR,
+        Rule::SYMBOL_STRICT_EQUALS,
+        Rule::SYMBOL_NOT_EQUALS,
+        Rule::SYMBOL_GREATER_THAN,
+        Rule::SYMBOL_LESS_THAN
+    ];
+    private const RULES_UNARY = [
+        Rule::SYMBOL_EXCLAMATIONMARK,
+        Rule::KEYWORD_TRUE,
+        Rule::KEYWORD_FALSE,
+        Rule::KEYWORD_NULL,
+        Rule::KEYWORD_MATCH,
+        Rule::STRING_LITERAL_DELIMITER,
+        Rule::INTEGER_HEXADECIMAL,
+        Rule::INTEGER_DECIMAL,
+        Rule::INTEGER_OCTAL,
+        Rule::INTEGER_BINARY,
+        Rule::WORD,
+        Rule::BRACKET_ANGLE_OPEN,
+        Rule::BRACKET_ROUND_OPEN
+    ];
+    private const RULES_CLOSING_DELIMITERS = [
+        Rule::BRACKET_CURLY_OPEN,
+        Rule::BRACKET_CURLY_CLOSE,
+        Rule::BRACKET_ROUND_CLOSE,
+        Rule::SYMBOL_COLON,
+        Rule::SYMBOL_COMMA,
+        Rule::SYMBOL_ARROW_SINGLE
+    ];
 
     private ?BooleanLiteralParser $booleanLiteralParser = null;
     private ?IntegerLiteralParser $integerLiteralParser = null;
@@ -65,42 +97,6 @@ final class ExpressionParser
     public function __construct(
         private Precedence $precedence = Precedence::SEQUENCE
     ) {
-        self::$RULES_ACCESS ??= Rules::from(
-            Rule::SYMBOL_PERIOD,
-            Rule::SYMBOL_OPTCHAIN
-        );
-        self::$RULES_BINARY_OPERATORS ??= Rules::from(
-            Rule::SYMBOL_NULLISH_COALESCE,
-            Rule::SYMBOL_BOOLEAN_AND,
-            Rule::SYMBOL_BOOLEAN_OR,
-            Rule::SYMBOL_STRICT_EQUALS,
-            Rule::SYMBOL_NOT_EQUALS,
-            Rule::SYMBOL_GREATER_THAN,
-            Rule::SYMBOL_LESS_THAN
-        );
-        self::$RULES_UNARY ??= Rules::from(
-            Rule::SYMBOL_EXCLAMATIONMARK,
-            Rule::KEYWORD_TRUE,
-            Rule::KEYWORD_FALSE,
-            Rule::KEYWORD_NULL,
-            Rule::KEYWORD_MATCH,
-            Rule::STRING_LITERAL_DELIMITER,
-            Rule::INTEGER_HEXADECIMAL,
-            Rule::INTEGER_DECIMAL,
-            Rule::INTEGER_OCTAL,
-            Rule::INTEGER_BINARY,
-            Rule::WORD,
-            Rule::BRACKET_ANGLE_OPEN,
-            Rule::BRACKET_ROUND_OPEN
-        );
-        self::$RULES_CLOSING_DELIMITERS = Rules::from(
-            Rule::BRACKET_CURLY_OPEN,
-            Rule::BRACKET_CURLY_CLOSE,
-            Rule::BRACKET_ROUND_CLOSE,
-            Rule::SYMBOL_COLON,
-            Rule::SYMBOL_COMMA,
-            Rule::SYMBOL_ARROW_SINGLE
-        );
     }
 
     public function parse(Lexer $lexer): ExpressionNode
@@ -110,11 +106,11 @@ final class ExpressionParser
         while (!$lexer->isEnd()) {
             $lexer->skipSpaceAndComments();
 
-            if ($lexer->peekOneOf(self::$RULES_CLOSING_DELIMITERS)) {
+            if ($lexer->peekOneOf(...self::RULES_CLOSING_DELIMITERS)) {
                 return $result;
             }
 
-            if ($lexer->peekOneOf(self::$RULES_ACCESS)) {
+            if ($lexer->peekOneOf(...self::RULES_ACCESS)) {
                 $result = $this->parseAccess($lexer, $result);
                 continue;
             }
@@ -128,7 +124,7 @@ final class ExpressionParser
                 continue;
             }
 
-            if ($rule = $lexer->peekOneOf(self::$RULES_BINARY_OPERATORS)) {
+            if ($rule = $lexer->peekOneOf(...self::RULES_BINARY_OPERATORS)) {
                 assert($rule instanceof Rule);
                 if ($this->precedence->mustStopAt($rule)) {
                     return $result;
@@ -149,7 +145,7 @@ final class ExpressionParser
         if ($lexer->peek(Rule::TEMPLATE_LITERAL_DELIMITER)) {
             $result = $this->parseTemplateLiteral($lexer);
         } else {
-            $result = match ($lexer->expectOneOf(self::$RULES_UNARY)) {
+            $result = match ($lexer->expectOneOf(...self::RULES_UNARY)) {
                 Rule::SYMBOL_EXCLAMATIONMARK =>
                     $this->parseUnaryOperation($lexer),
                 Rule::KEYWORD_TRUE,
@@ -360,7 +356,7 @@ final class ExpressionParser
 
     private function parseAccessType(Lexer $lexer): ?AccessType
     {
-        return match ($lexer->probeOneOf(self::$RULES_ACCESS)) {
+        return match ($lexer->probeOneOf(...self::RULES_ACCESS)) {
             Rule::SYMBOL_PERIOD => AccessType::MANDATORY,
             Rule::SYMBOL_OPTCHAIN => AccessType::OPTIONAL,
             default => null
@@ -401,7 +397,7 @@ final class ExpressionParser
             return BinaryOperator::LESS_THAN_OR_EQUAL;
         }
 
-        $operator = match ($lexer->readOneOf(self::$RULES_BINARY_OPERATORS)) {
+        $operator = match ($lexer->readOneOf(...self::RULES_BINARY_OPERATORS)) {
             Rule::SYMBOL_NULLISH_COALESCE => BinaryOperator::NULLISH_COALESCE,
             Rule::SYMBOL_BOOLEAN_AND => BinaryOperator::AND,
             Rule::SYMBOL_BOOLEAN_OR => BinaryOperator::OR,
