@@ -41,13 +41,13 @@ final class ImportParser
 {
     use Singleton;
 
-    private static Rules $TOKEN_TYPES_NAME_BOUNDARIES;
+    private static Rules $RULES_NAME_BOUNDARIES;
 
     private ?StringLiteralParser $pathParser = null;
 
     private function __construct()
     {
-        self::$TOKEN_TYPES_NAME_BOUNDARIES ??= Rules::from(
+        self::$RULES_NAME_BOUNDARIES ??= Rules::from(
             Rule::WORD,
             Rule::SYMBOL_COMMA,
             Rule::BRACKET_CURLY_CLOSE

@@ -48,10 +48,10 @@ use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class ExpressionParser
 {
-    private static Rules $TOKEN_TYPES_ACCESS;
-    private static Rules $TOKEN_TYPES_BINARY_OPERATORS;
-    private static Rules $TOKEN_TYPES_UNARY;
-    private static Rules $TOKEN_TYPES_CLOSING_DELIMITERS;
+    private static Rules $RULES_ACCESS;
+    private static Rules $RULES_BINARY_OPERATORS;
+    private static Rules $RULES_UNARY;
+    private static Rules $RULES_CLOSING_DELIMITERS;
 
     private ?BooleanLiteralParser $booleanLiteralParser = null;
     private ?IntegerLiteralParser $integerLiteralParser = null;
@@ -65,11 +65,11 @@ final class ExpressionParser
     public function __construct(
         private Precedence $precedence = Precedence::SEQUENCE
     ) {
-        self::$TOKEN_TYPES_ACCESS ??= Rules::from(
+        self::$RULES_ACCESS ??= Rules::from(
             Rule::SYMBOL_PERIOD,
             Rule::SYMBOL_OPTCHAIN
         );
-        self::$TOKEN_TYPES_BINARY_OPERATORS ??= Rules::from(
+        self::$RULES_BINARY_OPERATORS ??= Rules::from(
             Rule::SYMBOL_NULLISH_COALESCE,
             Rule::SYMBOL_BOOLEAN_AND,
             Rule::SYMBOL_BOOLEAN_OR,
@@ -78,7 +78,7 @@ final class ExpressionParser
             Rule::SYMBOL_GREATER_THAN,
             Rule::SYMBOL_LESS_THAN
         );
-        self::$TOKEN_TYPES_UNARY ??= Rules::from(
+        self::$RULES_UNARY ??= Rules::from(
             Rule::SYMBOL_EXCLAMATIONMARK,
             Rule::KEYWORD_TRUE,
             Rule::KEYWORD_FALSE,
@@ -93,7 +93,7 @@ final class ExpressionParser
             Rule::BRACKET_ANGLE_OPEN,
             Rule::BRACKET_ROUND_OPEN
         );
-        self::$TOKEN_TYPES_CLOSING_DELIMITERS = Rules::from(
+        self::$RULES_CLOSING_DELIMITERS = Rules::from(
             Rule::BRACKET_CURLY_OPEN,
             Rule::BRACKET_CURLY_CLOSE,
             Rule::BRACKET_ROUND_CLOSE,
@@ -110,11 +110,11 @@ final class ExpressionParser
         while (!$lexer->isEnd()) {
             $lexer->skipSpaceAndComments();
 
-            if ($lexer->peekOneOf(self::$TOKEN_TYPES_CLOSING_DELIMITERS)) {
+            if ($lexer->peekOneOf(self::$RULES_CLOSING_DELIMITERS)) {
                 return $result;
             }
 
-            if ($lexer->probeOneOf(self::$TOKEN_TYPES_ACCESS)) {
+            if ($lexer->probeOneOf(self::$RULES_ACCESS)) {
                 $result = $this->parseAcccess($lexer, $result);
                 continue;
             }
@@ -128,9 +128,9 @@ final class ExpressionParser
                 continue;
             }
 
-            if ($tokenType = $lexer->peekOneOf(self::$TOKEN_TYPES_BINARY_OPERATORS)) {
-                assert($tokenType instanceof Rule);
-                if ($this->precedence->mustStopAt($tokenType)) {
+            if ($rule = $lexer->peekOneOf(self::$RULES_BINARY_OPERATORS)) {
+                assert($rule instanceof Rule);
+                if ($this->precedence->mustStopAt($rule)) {
                     return $result;
                 }
 
@@ -149,7 +149,7 @@ final class ExpressionParser
         if ($lexer->peek(Rule::TEMPLATE_LITERAL_DELIMITER)) {
             $result = $this->parseTemplateLiteral($lexer);
         } else {
-            $result = match ($lexer->expectOneOf(self::$TOKEN_TYPES_UNARY)) {
+            $result = match ($lexer->expectOneOf(self::$RULES_UNARY)) {
                 Rule::SYMBOL_EXCLAMATIONMARK =>
                     $this->parseUnaryOperation($lexer),
                 Rule::KEYWORD_TRUE,
@@ -356,7 +356,7 @@ final class ExpressionParser
 
             $lexer->skipSpaceAndComments();
 
-            if (!$lexer->probeOneOf(self::$TOKEN_TYPES_ACCESS)) {
+            if (!$lexer->probeOneOf(self::$RULES_ACCESS)) {
                 break;
             }
         }
@@ -407,7 +407,7 @@ final class ExpressionParser
             return BinaryOperator::LESS_THAN_OR_EQUAL;
         }
 
-        $lexer->readOneOf(self::$TOKEN_TYPES_BINARY_OPERATORS);
+        $lexer->readOneOf(self::$RULES_BINARY_OPERATORS);
         $operator = match ($lexer->getRuleUnderCursor()) {
             Rule::SYMBOL_NULLISH_COALESCE => BinaryOperator::NULLISH_COALESCE,
             Rule::SYMBOL_BOOLEAN_AND => BinaryOperator::AND,

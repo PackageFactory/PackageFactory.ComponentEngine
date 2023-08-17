@@ -37,9 +37,9 @@ abstract class Matcher
      */
     private static $instancesByRule = [];
 
-    final public static function for(Rule $tokenType): self
+    final public static function for(Rule $rule): self
     {
-        return self::$instancesByRule[$tokenType->value] ??= match ($tokenType) {
+        return self::$instancesByRule[$rule->value] ??= match ($rule) {
             Rule::COMMENT =>
                 new Sequence(
                     new Exact('#'),

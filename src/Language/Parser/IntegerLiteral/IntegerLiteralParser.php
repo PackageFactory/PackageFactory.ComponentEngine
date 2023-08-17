@@ -64,9 +64,9 @@ final class IntegerLiteralParser
         }
     }
 
-    private function getIntegerFormatFromToken(Rule $tokenType): IntegerFormat
+    private function getIntegerFormatFromToken(Rule $rule): IntegerFormat
     {
-        return match ($tokenType) {
+        return match ($rule) {
             Rule::INTEGER_BINARY => IntegerFormat::BINARY,
             Rule::INTEGER_OCTAL => IntegerFormat::OCTAL,
             Rule::INTEGER_DECIMAL => IntegerFormat::DECIMAL,
@@ -74,7 +74,7 @@ final class IntegerLiteralParser
             default => throw new LogicException(
                 sprintf(
                     'Expected %s to be one of %s',
-                    $tokenType->value,
+                    $rule->value,
                     DebugHelper::describeRules($this->INTEGER_TOKEN_TYPES)
                 )
             )

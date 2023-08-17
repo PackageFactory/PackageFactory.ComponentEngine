@@ -37,7 +37,7 @@ final class LexerTest extends TestCase
     protected function assertLexerState(
         Position $startPosition,
         Position $endPosition,
-        Rule $tokenTypeUnderCursor,
+        Rule $ruleUnderCursor,
         string $buffer,
         bool $isEnd
     ): void {
@@ -54,7 +54,7 @@ final class LexerTest extends TestCase
         );
 
         $this->assertEquals(
-            $tokenTypeUnderCursor,
+            $ruleUnderCursor,
             $this->lexer->getRuleUnderCursor(),
             'Failed asserting that token type under cursor of lexer equals'
         );
@@ -253,7 +253,7 @@ final class LexerTest extends TestCase
         $this->assertLexerState(
             startPosition: Position::from(0, 0),
             endPosition: Position::from(0, \mb_strlen($source) - 1),
-            tokenTypeUnderCursor: $expectedRule,
+            ruleUnderCursor: $expectedRule,
             buffer: $source,
             isEnd: true
         );
@@ -274,7 +274,7 @@ final class LexerTest extends TestCase
         $this->assertLexerState(
             startPosition: Position::from(0, 0),
             endPosition: Position::from(0, \mb_strlen($source) - 1),
-            tokenTypeUnderCursor: $expectedRule,
+            ruleUnderCursor: $expectedRule,
             buffer: $source,
             isEnd: true
         );
@@ -507,18 +507,18 @@ final class LexerTest extends TestCase
      */
     public function testReadOneOfWithMultipleRules(
         string $source,
-        Rules $tokenTypes,
+        Rules $rules,
         array ...$expectedLexerStates
     ): void {
         $this->lexer = new Lexer($source);
 
         foreach ($expectedLexerStates as $i => $expectedLexerState) {
-            $this->lexer->readOneOf($tokenTypes);
+            $this->lexer->readOneOf($rules);
 
             $this->assertLexerState(
                 startPosition: Position::from(...$expectedLexerState[0]),
                 endPosition: Position::from(...$expectedLexerState[1]),
-                tokenTypeUnderCursor: $expectedLexerState[2],
+                ruleUnderCursor: $expectedLexerState[2],
                 buffer: $expectedLexerState[3],
                 isEnd: $i === count($expectedLexerStates) - 1
             );
@@ -685,10 +685,10 @@ final class LexerTest extends TestCase
     {
         yield ($source = "# This is a comment\nThis is not a comment") => [
             $source,
-            $tokenTypes = Rules::from(Rule::COMMENT, Rule::END_OF_LINE),
+            $rules = Rules::from(Rule::COMMENT, Rule::END_OF_LINE),
             3,
             LexerException::becauseOfUnexpectedCharacterSequence(
-                expectedRules: $tokenTypes,
+                expectedRules: $rules,
                 affectedRangeInSource: Range::from(
                     Position::from(1, 0),
                     Position::from(1, 0)
@@ -702,23 +702,23 @@ final class LexerTest extends TestCase
      * @dataProvider failingMultipleTokensExamples
      * @test
      * @param string $source
-     * @param Rules $tokenTypes
+     * @param Rules $rules
      * @param integer $numberOfReadOperations
      * @param LexerException $expectedLexerException
      * @return void
      */
     public function throwsIfCharacterSequenceDoesNotMatchMultipleRules(
         string $source,
-        Rules $tokenTypes,
+        Rules $rules,
         int $numberOfReadOperations,
         LexerException $expectedLexerException
     ): void {
         $this->assertThrowsLexerException(
-            function () use ($source, $tokenTypes, $numberOfReadOperations) {
+            function () use ($source, $rules, $numberOfReadOperations) {
                 $this->lexer = new Lexer($source);
 
                 foreach(range(0, $numberOfReadOperations) as $i) {
-                    $this->lexer->readOneOf($tokenTypes);
+                    $this->lexer->readOneOf($rules);
                 }
             },
             $expectedLexerException
@@ -767,14 +767,14 @@ final class LexerTest extends TestCase
     {
         yield ($source = '') => [
             $source,
-            $tokenTypes = Rules::from(
+            $rules = Rules::from(
                 Rule::KEYWORD_RETURN,
                 Rule::KEYWORD_NULL,
                 Rule::SPACE
             ),
             1,
             LexerException::becauseOfUnexpectedEndOfSource(
-                expectedRules: $tokenTypes,
+                expectedRules: $rules,
                 affectedRangeInSource: Range::from(
                     Position::from(0, 0),
                     Position::from(0, 0)
@@ -784,14 +784,14 @@ final class LexerTest extends TestCase
 
         yield ($source = 'return') => [
             $source,
-            $tokenTypes = Rules::from(
+            $rules = Rules::from(
                 Rule::KEYWORD_RETURN,
                 Rule::KEYWORD_NULL,
                 Rule::SPACE
             ),
             2,
             LexerException::becauseOfUnexpectedEndOfSource(
-                expectedRules: $tokenTypes,
+                expectedRules: $rules,
                 affectedRangeInSource: Range::from(
                     Position::from(0, 6),
                     Position::from(0, 6)
@@ -801,14 +801,14 @@ final class LexerTest extends TestCase
 
         yield ($source = 'return ') => [
             $source,
-            $tokenTypes = Rules::from(
+            $rules = Rules::from(
                 Rule::KEYWORD_RETURN,
                 Rule::KEYWORD_NULL,
                 Rule::SPACE
             ),
             3,
             LexerException::becauseOfUnexpectedEndOfSource(
-                expectedRules: $tokenTypes,
+                expectedRules: $rules,
                 affectedRangeInSource: Range::from(
                     Position::from(0, 7),
                     Position::from(0, 7)
@@ -821,23 +821,23 @@ final class LexerTest extends TestCase
      * @dataProvider multipleRuleUnexpectedEndOfSourceExamples
      * @test
      * @param string $source
-     * @param Rules $tokenTypes
+     * @param Rules $rules
      * @param integer $numberOfReadOperations
      * @param LexerException $expectedLexerException
      * @return void
      */
     public function throwsIfSourceEndsUnexpectedlyWhileReadingMultipleRules(
         string $source,
-        Rules $tokenTypes,
+        Rules $rules,
         int $numberOfReadOperations,
         LexerException $expectedLexerException
     ): void {
         $this->assertThrowsLexerException(
-            function () use ($source, $tokenTypes, $numberOfReadOperations) {
+            function () use ($source, $rules, $numberOfReadOperations) {
                 $this->lexer = new Lexer($source);
 
                 foreach(range(0, $numberOfReadOperations) as $i) {
-                    $this->lexer->readOneOf($tokenTypes);
+                    $this->lexer->readOneOf($rules);
                 }
             },
             $expectedLexerException
@@ -859,7 +859,7 @@ final class LexerTest extends TestCase
         $this->assertLexerState(
             startPosition: Position::from(1, 4),
             endPosition: Position::from(1, 5),
-            tokenTypeUnderCursor: Rule::INTEGER_DECIMAL,
+            ruleUnderCursor: Rule::INTEGER_DECIMAL,
             buffer: '42',
             isEnd: true
         );
@@ -874,7 +874,7 @@ final class LexerTest extends TestCase
         $this->assertLexerState(
             startPosition: Position::from(1, 4),
             endPosition: Position::from(1, 5),
-            tokenTypeUnderCursor: Rule::INTEGER_DECIMAL,
+            ruleUnderCursor: Rule::INTEGER_DECIMAL,
             buffer: '42',
             isEnd: true
         );
@@ -907,7 +907,7 @@ final class LexerTest extends TestCase
         $this->assertLexerState(
             startPosition: Position::from(6, 4),
             endPosition: Position::from(6, 12),
-            tokenTypeUnderCursor: Rule::KEYWORD_COMPONENT,
+            ruleUnderCursor: Rule::KEYWORD_COMPONENT,
             buffer: 'component',
             isEnd: true
         );
@@ -941,7 +941,7 @@ final class LexerTest extends TestCase
         $this->assertLexerState(
             startPosition: Position::from(6, 4),
             endPosition: Position::from(6, 12),
-            tokenTypeUnderCursor: Rule::KEYWORD_COMPONENT,
+            ruleUnderCursor: Rule::KEYWORD_COMPONENT,
             buffer: 'component',
             isEnd: true
         );

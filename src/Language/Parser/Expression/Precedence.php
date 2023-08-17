@@ -40,9 +40,9 @@ enum Precedence: int
     case TERNARY = 3;
     case SEQUENCE = 1;
 
-    public static function forRule(Rule $tokenType): self
+    public static function forRule(Rule $rule): self
     {
-        return match ($tokenType) {
+        return match ($rule) {
             Rule::BRACKET_ROUND_OPEN,
             Rule::BRACKET_ROUND_CLOSE,
             Rule::BRACKET_SQUARE_OPEN,
@@ -90,8 +90,8 @@ enum Precedence: int
         };
     }
 
-    public function mustStopAt(Rule $tokenType): bool
+    public function mustStopAt(Rule $rule): bool
     {
-        return self::forRule($tokenType)->value <= $this->value;
+        return self::forRule($rule)->value <= $this->value;
     }
 }

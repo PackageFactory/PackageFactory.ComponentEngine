@@ -38,9 +38,9 @@ use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 
 final class DebugHelper
 {
-    public static function describeRule(Rule $tokenType): string
+    public static function describeRule(Rule $rule): string
     {
-        return $tokenType->value . match ($tokenType) {
+        return $rule->value . match ($rule) {
             Rule::COMMENT => ' (e.g. "# ...")',
 
             Rule::KEYWORD_FROM => ' ("from")',
@@ -111,17 +111,17 @@ final class DebugHelper
         };
     }
 
-    public static function describeRules(Rules $tokenTypes): string
+    public static function describeRules(Rules $rules): string
     {
-        if (count($tokenTypes->items) === 1) {
-            return self::describeRule($tokenTypes->items[0]);
+        if (count($rules->items) === 1) {
+            return self::describeRule($rules->items[0]);
         }
 
-        $leadingItems = array_slice($tokenTypes->items, 0, -1);
-        $trailingItem = array_slice($tokenTypes->items, -1)[0];
+        $leadingItems = array_slice($rules->items, 0, -1);
+        $trailingItem = array_slice($rules->items, -1)[0];
 
         return join(', ', array_map(
-            static fn (Rule $tokenType) => self::describeRule($tokenType),
+            static fn (Rule $rule) => self::describeRule($rule),
             $leadingItems
         )) . ' or ' . self::describeRule($trailingItem);
     }

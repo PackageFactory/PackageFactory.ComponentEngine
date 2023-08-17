@@ -34,17 +34,17 @@ final class TextParser
 {
     use Singleton;
 
-    private static Rules $TOKEN_TYPES_END_DELIMITERS;
-    private static Rules $TOKEN_TYPES_CONTENT;
+    private static Rules $RULES_END_DELIMITERS;
+    private static Rules $RULES_CONTENT;
 
     private function __construct()
     {
-        self::$TOKEN_TYPES_END_DELIMITERS = Rules::from(
+        self::$RULES_END_DELIMITERS = Rules::from(
             Rule::SYMBOL_CLOSE_TAG,
             Rule::BRACKET_ANGLE_OPEN,
             Rule::BRACKET_CURLY_OPEN
         );
-        self::$TOKEN_TYPES_CONTENT = Rules::from(
+        self::$RULES_CONTENT = Rules::from(
             Rule::SPACE,
             Rule::END_OF_LINE,
             Rule::TEXT
@@ -68,15 +68,15 @@ final class TextParser
         }
 
         $lexer->skipSpace();
-        if ($lexer->isEnd() || $lexer->peekOneOf(self::$TOKEN_TYPES_END_DELIMITERS)) {
+        if ($lexer->isEnd() || $lexer->peekOneOf(self::$RULES_END_DELIMITERS)) {
             return null;
         }
 
         $hasTrailingSpace = false;
         $trailingSpaceContainsLineBreaks = false;
         $value = $hasLeadingSpace && $preserveLeadingSpace ? ' ' : '';
-        while (!$lexer->isEnd() && !$lexer->peekOneOf(self::$TOKEN_TYPES_END_DELIMITERS)) {
-            $lexer->readOneOf(self::$TOKEN_TYPES_CONTENT);
+        while (!$lexer->isEnd() && !$lexer->peekOneOf(self::$RULES_END_DELIMITERS)) {
+            $lexer->readOneOf(self::$RULES_CONTENT);
 
             if ($lexer->getRuleUnderCursor() === Rule::TEXT) {
                 $start ??= $lexer->getStartPosition();

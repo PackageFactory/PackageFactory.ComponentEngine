@@ -39,14 +39,14 @@ final class ComponentDeclarationParser
 {
     use Singleton;
 
-    private static Rules $TOKEN_TYPES_SPACE;
+    private static Rules $RULES_SPACE;
 
     private ?PropertyDeclarationParser $propertyDeclarationParser = null;
     private ?ExpressionParser $returnParser = null;
 
     private function __construct()
     {
-        self::$TOKEN_TYPES_SPACE ??= Rules::from(
+        self::$RULES_SPACE ??= Rules::from(
             Rule::SPACE,
             Rule::END_OF_LINE
         );
@@ -108,7 +108,7 @@ final class ComponentDeclarationParser
         $this->returnParser ??= new ExpressionParser();
 
         $lexer->read(Rule::KEYWORD_RETURN);
-        $lexer->readOneOf(self::$TOKEN_TYPES_SPACE);
+        $lexer->readOneOf(self::$RULES_SPACE);
         $lexer->skipSpaceAndComments();
 
         return $this->returnParser->parse($lexer);

@@ -41,7 +41,7 @@ final class ExportParser
 {
     use Singleton;
 
-    private static Rules $TOKEN_TYPES_DECLARATION_KEYWORDS;
+    private static Rules $RULES_DECLARATION_KEYWORDS;
 
     private ?ComponentDeclarationParser $componentDeclarationParser = null;
     private ?EnumDeclarationParser $enumDeclarationParser = null;
@@ -49,7 +49,7 @@ final class ExportParser
 
     private function __construct()
     {
-        self::$TOKEN_TYPES_DECLARATION_KEYWORDS ??= Rules::from(
+        self::$RULES_DECLARATION_KEYWORDS ??= Rules::from(
             Rule::KEYWORD_COMPONENT,
             Rule::KEYWORD_ENUM,
             Rule::KEYWORD_STRUCT
@@ -64,7 +64,7 @@ final class ExportParser
 
             $lexer->skipSpace();
 
-            $declaration = match ($lexer->expectOneOf(self::$TOKEN_TYPES_DECLARATION_KEYWORDS)) {
+            $declaration = match ($lexer->expectOneOf(self::$RULES_DECLARATION_KEYWORDS)) {
                 Rule::KEYWORD_COMPONENT => $this->parseComponentDeclaration($lexer),
                 Rule::KEYWORD_ENUM => $this->parseEnumDeclaration($lexer),
                 Rule::KEYWORD_STRUCT => $this->parseStructDeclaration($lexer),

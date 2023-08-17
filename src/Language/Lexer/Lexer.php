@@ -32,19 +32,19 @@ use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class Lexer
 {
-    private static Rules $TOKEN_TYPES_SPACE;
-    private static Rules $TOKEN_TYPES_SPACE_AND_COMMENTS;
+    private static Rules $RULES_SPACE;
+    private static Rules $RULES_SPACE_AND_COMMENTS;
 
     private readonly Scanner $scanner;
     private ?Rule $ruleUnderCursor = null;
 
     public function __construct(string $source)
     {
-        self::$TOKEN_TYPES_SPACE = Rules::from(
+        self::$RULES_SPACE = Rules::from(
             Rule::SPACE,
             Rule::END_OF_LINE
         );
-        self::$TOKEN_TYPES_SPACE_AND_COMMENTS = Rules::from(
+        self::$RULES_SPACE_AND_COMMENTS = Rules::from(
             Rule::SPACE,
             Rule::END_OF_LINE,
             Rule::COMMENT
@@ -223,7 +223,7 @@ final class Lexer
 
     public function skipSpace(): void
     {
-        while ($this->scanner->scanOneOf(...self::$TOKEN_TYPES_SPACE->items)) {
+        while ($this->scanner->scanOneOf(...self::$RULES_SPACE->items)) {
             $this->scanner->commit();
         }
 
@@ -236,7 +236,7 @@ final class Lexer
 
     public function skipSpaceAndComments(): void
     {
-        while ($this->scanner->scanOneOf(...self::$TOKEN_TYPES_SPACE_AND_COMMENTS->items)) {
+        while ($this->scanner->scanOneOf(...self::$RULES_SPACE_AND_COMMENTS->items)) {
             $this->scanner->commit();
         }
 
