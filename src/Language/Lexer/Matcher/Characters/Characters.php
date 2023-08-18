@@ -23,9 +23,9 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Lexer\Matcher\Characters;
 
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Result;
-use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Matcher;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\MatcherInterface;
 
-final class Characters extends Matcher
+final class Characters implements MatcherInterface
 {
     public function __construct(
         private readonly string $allowedCharacters,

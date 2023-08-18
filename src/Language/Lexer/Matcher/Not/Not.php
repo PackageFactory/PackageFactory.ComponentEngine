@@ -23,11 +23,11 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Lexer\Matcher\Not;
 
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Result;
-use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Matcher;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\MatcherInterface;
 
-final class Not extends Matcher
+final class Not implements MatcherInterface
 {
-    public function __construct(private readonly Matcher $innerMatcher)
+    public function __construct(private readonly MatcherInterface $innerMatcher)
     {
     }
 

@@ -22,9 +22,9 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Lexer\Rule;
 
-use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Matcher;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\MatcherInterface;
 
 interface RuleInterface
 {
-    public function getMatcher(): Matcher;
+    public function getMatcher(): MatcherInterface;
 }

@@ -24,14 +24,18 @@ namespace PackageFactory\ComponentEngine\Language\Lexer\Scanner;
 
 use PackageFactory\ComponentEngine\Language\Lexer\Buffer\Buffer;
 use PackageFactory\ComponentEngine\Language\Lexer\CharacterStream\CharacterStream;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\MatcherInterface;
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Result;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\RuleInterface;
+use SplObjectStorage;
 
 final class Scanner implements ScannerInterface
 {
     private readonly ScannerState $main;
     private readonly ScannerState $branch;
 
+    /** @var SplObjectStorage<RuleInterface,MatcherInterface> */
+    private SplObjectStorage $ruleCache;
     private bool $isHalted;
     private int $offset;
 
@@ -46,6 +50,7 @@ final class Scanner implements ScannerInterface
             buffer: new Buffer()
         );
 
+        $this->ruleCache = new SplObjectStorage();
         $this->isHalted = false;
         $this->offset = 0;
     }
@@ -87,7 +92,7 @@ final class Scanner implements ScannerInterface
 
             $nextCandidates = [];
             foreach ($candidates as $candidate) {
-                $matcher = $candidate->getMatcher();
+                $matcher = $this->ruleCache[$candidate] ??= $candidate->getMatcher();
                 $result = $matcher->match($character, $this->offset);
 
                 if ($result === Result::SATISFIED) {

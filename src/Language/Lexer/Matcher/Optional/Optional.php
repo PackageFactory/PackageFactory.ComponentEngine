@@ -23,11 +23,11 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Lexer\Matcher\Optional;
 
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Result;
-use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Matcher;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\MatcherInterface;
 
-final class Optional extends Matcher
+final class Optional implements MatcherInterface
 {
-    public function __construct(private readonly Matcher $innerMatcher)
+    public function __construct(private readonly MatcherInterface $innerMatcher)
     {
     }
 

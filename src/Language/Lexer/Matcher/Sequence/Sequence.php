@@ -23,20 +23,20 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Lexer\Matcher\Sequence;
 
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Result;
-use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Matcher;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\MatcherInterface;
 
-final class Sequence extends Matcher
+final class Sequence implements MatcherInterface
 {
     private int $lastStop = 0;
     private int $matcherIndex = 0;
     private int $numberOfMatchers;
 
     /**
-     * @var Matcher[]
+     * @var MatcherInterface[]
      */
     private readonly array $matchers;
 
-    public function __construct(Matcher ...$matchers)
+    public function __construct(MatcherInterface ...$matchers)
     {
         $this->matchers = $matchers;
         $this->numberOfMatchers = count($matchers);

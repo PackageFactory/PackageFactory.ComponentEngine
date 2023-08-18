@@ -20,25 +20,9 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Test\Unit\Language\Lexer\Rule;
+namespace PackageFactory\ComponentEngine\Language\Lexer\Matcher;
 
-use PackageFactory\ComponentEngine\Language\Lexer\Matcher\MatcherInterface;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\RuleInterface;
-
-final class RuleFixtures
+interface MatcherInterface
 {
-    public static function withMatcher(MatcherInterface $matcher): RuleInterface
-    {
-        return new class($matcher) implements RuleInterface
-        {
-            public function __construct(private readonly MatcherInterface $matcher)
-            {
-            }
-
-            public function getMatcher(): MatcherInterface
-            {
-                return $this->matcher;
-            }
-        };
-    }
+    public function match(?string $character, int $offset): Result;
 }

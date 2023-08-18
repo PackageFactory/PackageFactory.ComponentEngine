@@ -23,9 +23,9 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Lexer\Matcher\Exact;
 
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Result;
-use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Matcher;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\MatcherInterface;
 
-final class Exact extends Matcher
+final class Exact implements MatcherInterface
 {
     private int $length;
 

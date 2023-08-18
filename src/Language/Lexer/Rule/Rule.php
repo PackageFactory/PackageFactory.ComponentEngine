@@ -22,7 +22,13 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Lexer\Rule;
 
-use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Matcher;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Characters\Characters;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Exact\Exact;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Fixed\Fixed;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\MatcherInterface;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Not\Not;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Optional\Optional;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Sequence\Sequence;
 
 enum Rule: string implements RuleInterface
 {
@@ -94,8 +100,152 @@ enum Rule: string implements RuleInterface
     case SPACE = 'SPACE';
     case END_OF_LINE = 'END_OF_LINE';
 
-    public function getMatcher(): Matcher
+    public function getMatcher(): MatcherInterface
     {
-        return Matcher::for($this);
+        return match ($this) {
+            self::COMMENT =>
+                new Sequence(
+                    new Exact('#'),
+                    new Optional(new Not(new Exact("\n")))
+                ),
+
+            self::KEYWORD_FROM =>
+                new Exact('from'),
+            self::KEYWORD_IMPORT =>
+                new Exact('import'),
+            self::KEYWORD_EXPORT =>
+                new Exact('export'),
+            self::KEYWORD_ENUM =>
+                new Exact('enum'),
+            self::KEYWORD_STRUCT =>
+                new Exact('struct'),
+            self::KEYWORD_COMPONENT =>
+                new Exact('component'),
+            self::KEYWORD_MATCH =>
+                new Exact('match'),
+            self::KEYWORD_DEFAULT =>
+                new Exact('default'),
+            self::KEYWORD_RETURN =>
+                new Exact('return'),
+            self::KEYWORD_TRUE =>
+                new Exact('true'),
+            self::KEYWORD_FALSE =>
+                new Exact('false'),
+            self::KEYWORD_NULL =>
+                new Exact('null'),
+
+            self::STRING_LITERAL_DELIMITER =>
+                new Exact('"'),
+            self::STRING_LITERAL_CONTENT =>
+                new Not(new Characters('"\\')),
+
+            self::INTEGER_BINARY =>
+                new Sequence(new Exact('0b'), new Characters('01')),
+            self::INTEGER_OCTAL =>
+                new Sequence(new Exact('0o'), new Characters('01234567')),
+            self::INTEGER_DECIMAL =>
+                new Characters('0123456789', 'box'),
+            self::INTEGER_HEXADECIMAL =>
+                new Sequence(new Exact('0x'), new Characters('0123456789ABCDEF')),
+
+            self::TEMPLATE_LITERAL_DELIMITER =>
+                new Exact('"""'),
+            self::TEMPLATE_LITERAL_CONTENT =>
+                new Not(new Characters('{}\\' . "\n")),
+
+            self::ESCAPE_SEQUENCE_SINGLE_CHARACTER =>
+                new Sequence(
+                    new Exact('\\'),
+                    new Fixed(1, new Characters('nrtvef\\$"'))
+                ),
+            self::ESCAPE_SEQUENCE_HEXADECIMAL =>
+                new Sequence(
+                    new Exact('\\x'),
+                    new Fixed(2, new Characters('abcdefABCDEF0123456789'))
+                ),
+            self::ESCAPE_SEQUENCE_UNICODE =>
+                new Sequence(
+                    new Exact('\\u'),
+                    new Fixed(4, new Characters('abcdefABCDEF0123456789'))
+                ),
+            self::ESCAPE_SEQUENCE_UNICODE_CODEPOINT =>
+                new Sequence(
+                    new Exact('\\u{'),
+                    new Characters('abcdefABCDEF0123456789'),
+                    new Exact('}')
+                ),
+
+            self::BRACKET_CURLY_OPEN =>
+                new Exact('{'),
+            self::BRACKET_CURLY_CLOSE =>
+                new Exact('}'),
+            self::BRACKET_ROUND_OPEN =>
+                new Exact('('),
+            self::BRACKET_ROUND_CLOSE =>
+                new Exact(')'),
+            self::BRACKET_SQUARE_OPEN =>
+                new Exact('['),
+            self::BRACKET_SQUARE_CLOSE =>
+                new Exact(']'),
+            self::BRACKET_ANGLE_OPEN =>
+                new Exact('<'),
+            self::BRACKET_ANGLE_CLOSE =>
+                new Exact('>'),
+
+            self::SYMBOL_COLON =>
+                new Exact(':'),
+            self::SYMBOL_PERIOD =>
+                new Exact('.'),
+            self::SYMBOL_QUESTIONMARK =>
+                new Exact('?'),
+            self::SYMBOL_EXCLAMATIONMARK =>
+                new Exact('!'),
+            self::SYMBOL_COMMA =>
+                new Exact(','),
+            self::SYMBOL_DASH =>
+                new Exact('-'),
+            self::SYMBOL_EQUALS =>
+                new Exact('='),
+            self::SYMBOL_SLASH_FORWARD =>
+                new Exact('/'),
+            self::SYMBOL_PIPE =>
+                new Exact('|'),
+            self::SYMBOL_BOOLEAN_AND =>
+                new Exact('&&'),
+            self::SYMBOL_BOOLEAN_OR =>
+                new Exact('||'),
+            self::SYMBOL_STRICT_EQUALS =>
+                new Exact('==='),
+            self::SYMBOL_NOT_EQUALS =>
+                new Exact('!=='),
+            self::SYMBOL_GREATER_THAN =>
+                new Exact('>'),
+            self::SYMBOL_GREATER_THAN_OR_EQUAL =>
+                new Exact('>='),
+            self::SYMBOL_LESS_THAN =>
+                new Exact('<'),
+            self::SYMBOL_LESS_THAN_OR_EQUAL =>
+                new Exact('<='),
+            self::SYMBOL_ARROW_SINGLE =>
+                new Exact('->'),
+            self::SYMBOL_OPTCHAIN =>
+                new Exact('?.'),
+            self::SYMBOL_NULLISH_COALESCE =>
+                new Exact('??'),
+            self::SYMBOL_CLOSE_TAG =>
+                new Exact('</'),
+
+            self::WORD =>
+                new Characters(
+                    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+                ),
+            self::TEXT =>
+                new Not(new Characters('<{}>' . " \t\n")),
+
+            self::SPACE =>
+                new Characters(" \t"),
+            self::END_OF_LINE =>
+                new Exact("\n")
+        };
     }
 }

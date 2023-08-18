@@ -23,13 +23,13 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Lexer\Matcher\Fixed;
 
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Result;
-use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Matcher;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\MatcherInterface;
 
-final class Fixed extends Matcher
+final class Fixed implements MatcherInterface
 {
     public function __construct(
         private readonly int $fixedLength,
-        private readonly Matcher $innerMatcher
+        private readonly MatcherInterface $innerMatcher
     ) {
         assert($this->fixedLength > 0);
     }

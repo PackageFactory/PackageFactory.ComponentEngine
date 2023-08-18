@@ -22,14 +22,14 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\Lexer\Matcher;
 
-use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Matcher;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\MatcherInterface;
 use PackageFactory\ComponentEngine\Language\Lexer\Matcher\Result;
 
 final class MatcherFixtures
 {
-    public static function everything(): Matcher
+    public static function everything(): MatcherInterface
     {
-        return new class extends Matcher
+        return new class implements MatcherInterface
         {
             public function match(?string $character, int $offset): Result
             {
@@ -42,9 +42,9 @@ final class MatcherFixtures
         };
     }
 
-    public static function nothing(): Matcher
+    public static function nothing(): MatcherInterface
     {
-        return new class extends Matcher
+        return new class implements MatcherInterface
         {
             public function match(?string $character, int $offset): Result
             {
@@ -53,9 +53,9 @@ final class MatcherFixtures
         };
     }
 
-    public static function satisfiedAtOffset(int $matchingOffset): Matcher
+    public static function satisfiedAtOffset(int $matchingOffset): MatcherInterface
     {
-        return new class($matchingOffset) extends Matcher
+        return new class($matchingOffset) implements MatcherInterface
         {
             public function __construct(private readonly int $matchingOffset)
             {
@@ -72,9 +72,9 @@ final class MatcherFixtures
         };
     }
 
-    public static function cancelAtOffset(int $matchingOffset): Matcher
+    public static function cancelAtOffset(int $matchingOffset): MatcherInterface
     {
-        return new class($matchingOffset) extends Matcher
+        return new class($matchingOffset) implements MatcherInterface
         {
             public function __construct(private readonly int $matchingOffset)
             {
