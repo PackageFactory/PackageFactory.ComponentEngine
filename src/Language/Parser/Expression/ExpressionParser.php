@@ -67,6 +67,7 @@ final class ExpressionParser
         Rule::KEYWORD_NULL,
         Rule::KEYWORD_MATCH,
         Rule::STRING_LITERAL_DELIMITER,
+        Rule::SYMBOL_DASH,
         Rule::INTEGER_HEXADECIMAL,
         Rule::INTEGER_DECIMAL,
         Rule::INTEGER_OCTAL,
@@ -154,6 +155,7 @@ final class ExpressionParser
                     $this->parseNullLiteral($lexer),
                 Rule::STRING_LITERAL_DELIMITER =>
                     $this->parseStringLiteral($lexer),
+                Rule::SYMBOL_DASH,
                 Rule::INTEGER_HEXADECIMAL,
                 Rule::INTEGER_DECIMAL,
                 Rule::INTEGER_OCTAL,

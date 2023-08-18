@@ -43,12 +43,22 @@ final class IntegerLiteralParser
     public function parse(Lexer $lexer): IntegerLiteralNode
     {
         try {
+            $start = null;
+            $value = '';
+
+            if ($lexer->probe(Rule::SYMBOL_DASH)) {
+                $start = $lexer->buffer->getStart();
+                $value = $lexer->buffer->getContents();
+            }
+
             $rule = $lexer->read(...self::RULES_INTEGER_FORMATS);
+            $start ??= $lexer->buffer->getStart();
+            $value .= $lexer->buffer->getContents();
 
             return new IntegerLiteralNode(
-                rangeInSource: $lexer->buffer->getRange(),
+                rangeInSource: $start->toRange($lexer->buffer->getEnd()),
                 format: $this->getIntegerFormatFromToken($rule),
-                value: $lexer->buffer->getContents()
+                value: $value
             );
         } catch (LexerException $e) {
             throw IntegerLiteralCouldNotBeParsed::becauseOfLexerException($e);

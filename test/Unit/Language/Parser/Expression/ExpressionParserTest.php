@@ -884,6 +884,29 @@ final class ExpressionParserTest extends ParserTestCase
     /**
      * @test
      */
+    public function parsesNegativeBinaryIntegerLiteral(): void
+    {
+        $expressionParser = new ExpressionParser();
+        $lexer = new Lexer('-0b1001');
+
+        $expectedExpressioNode = new ExpressionNode(
+            rangeInSource: $this->range([0, 0], [0, 6]),
+            root: new IntegerLiteralNode(
+                rangeInSource: $this->range([0, 0], [0, 6]),
+                format: IntegerFormat::BINARY,
+                value: '-0b1001'
+            )
+        );
+
+        $this->assertEquals(
+            $expectedExpressioNode,
+            $expressionParser->parse($lexer)
+        );
+    }
+
+    /**
+     * @test
+     */
     public function parsesOctalIntegerLiteral(): void
     {
         $expressionParser = new ExpressionParser();
@@ -895,6 +918,29 @@ final class ExpressionParserTest extends ParserTestCase
                 rangeInSource: $this->range([0, 0], [0, 4]),
                 format: IntegerFormat::OCTAL,
                 value: '0o755'
+            )
+        );
+
+        $this->assertEquals(
+            $expectedExpressioNode,
+            $expressionParser->parse($lexer)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function parsesNegativeOctalIntegerLiteral(): void
+    {
+        $expressionParser = new ExpressionParser();
+        $lexer = new Lexer('-0o755');
+
+        $expectedExpressioNode = new ExpressionNode(
+            rangeInSource: $this->range([0, 0], [0, 5]),
+            root: new IntegerLiteralNode(
+                rangeInSource: $this->range([0, 0], [0, 5]),
+                format: IntegerFormat::OCTAL,
+                value: '-0o755'
             )
         );
 
@@ -930,6 +976,29 @@ final class ExpressionParserTest extends ParserTestCase
     /**
      * @test
      */
+    public function parsesNegativeDecimalIntegerLiteral(): void
+    {
+        $expressionParser = new ExpressionParser();
+        $lexer = new Lexer('-42');
+
+        $expectedExpressioNode = new ExpressionNode(
+            rangeInSource: $this->range([0, 0], [0, 2]),
+            root: new IntegerLiteralNode(
+                rangeInSource: $this->range([0, 0], [0, 2]),
+                format: IntegerFormat::DECIMAL,
+                value: '-42'
+            )
+        );
+
+        $this->assertEquals(
+            $expectedExpressioNode,
+            $expressionParser->parse($lexer)
+        );
+    }
+
+    /**
+     * @test
+     */
     public function parsesHexadecimalIntegerLiteral(): void
     {
         $expressionParser = new ExpressionParser();
@@ -941,6 +1010,29 @@ final class ExpressionParserTest extends ParserTestCase
                 rangeInSource: $this->range([0, 0], [0, 4]),
                 format: IntegerFormat::HEXADECIMAL,
                 value: '0xABC'
+            )
+        );
+
+        $this->assertEquals(
+            $expectedExpressioNode,
+            $expressionParser->parse($lexer)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function parsesNegativeHexadecimalIntegerLiteral(): void
+    {
+        $expressionParser = new ExpressionParser();
+        $lexer = new Lexer('-0xABC');
+
+        $expectedExpressioNode = new ExpressionNode(
+            rangeInSource: $this->range([0, 0], [0, 5]),
+            root: new IntegerLiteralNode(
+                rangeInSource: $this->range([0, 0], [0, 5]),
+                format: IntegerFormat::HEXADECIMAL,
+                value: '-0xABC'
             )
         );
 

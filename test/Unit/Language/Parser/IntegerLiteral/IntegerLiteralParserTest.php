@@ -56,6 +56,26 @@ final class IntegerLiteralParserTest extends ParserTestCase
     /**
      * @test
      */
+    public function parsesNegativeBinaryInteger(): void
+    {
+        $integerLiteralParser = IntegerLiteralParser::singleton();
+        $lexer = new Lexer('-0b1010110101');
+
+        $expectedIntegerLiteralNode = new IntegerLiteralNode(
+            rangeInSource: $this->range([0, 0], [0, 12]),
+            format: IntegerFormat::BINARY,
+            value: '-0b1010110101'
+        );
+
+        $this->assertEquals(
+            $expectedIntegerLiteralNode,
+            $integerLiteralParser->parse($lexer)
+        );
+    }
+
+    /**
+     * @test
+     */
     public function parsesOctalInteger(): void
     {
         $integerLiteralParser = IntegerLiteralParser::singleton();
@@ -65,6 +85,26 @@ final class IntegerLiteralParserTest extends ParserTestCase
             rangeInSource: $this->range([0, 0], [0, 4]),
             format: IntegerFormat::OCTAL,
             value: '0o755'
+        );
+
+        $this->assertEquals(
+            $expectedIntegerLiteralNode,
+            $integerLiteralParser->parse($lexer)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function parsesNegativeOctalInteger(): void
+    {
+        $integerLiteralParser = IntegerLiteralParser::singleton();
+        $lexer = new Lexer('-0o755');
+
+        $expectedIntegerLiteralNode = new IntegerLiteralNode(
+            rangeInSource: $this->range([0, 0], [0, 5]),
+            format: IntegerFormat::OCTAL,
+            value: '-0o755'
         );
 
         $this->assertEquals(
@@ -96,6 +136,26 @@ final class IntegerLiteralParserTest extends ParserTestCase
     /**
      * @test
      */
+    public function parsesNegativeDecimalInteger(): void
+    {
+        $integerLiteralParser = IntegerLiteralParser::singleton();
+        $lexer = new Lexer('-1234567890');
+
+        $expectedIntegerLiteralNode = new IntegerLiteralNode(
+            rangeInSource: $this->range([0, 0], [0, 10]),
+            format: IntegerFormat::DECIMAL,
+            value: '-1234567890'
+        );
+
+        $this->assertEquals(
+            $expectedIntegerLiteralNode,
+            $integerLiteralParser->parse($lexer)
+        );
+    }
+
+    /**
+     * @test
+     */
     public function parsesHexadecimalInteger(): void
     {
         $integerLiteralParser = IntegerLiteralParser::singleton();
@@ -105,6 +165,26 @@ final class IntegerLiteralParserTest extends ParserTestCase
             rangeInSource: $this->range([0, 0], [0, 16]),
             format: IntegerFormat::HEXADECIMAL,
             value: '0x123456789ABCDEF'
+        );
+
+        $this->assertEquals(
+            $expectedIntegerLiteralNode,
+            $integerLiteralParser->parse($lexer)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function parsesNegativeHexadecimalInteger(): void
+    {
+        $integerLiteralParser = IntegerLiteralParser::singleton();
+        $lexer = new Lexer('-0x123456789ABCDEF');
+
+        $expectedIntegerLiteralNode = new IntegerLiteralNode(
+            rangeInSource: $this->range([0, 0], [0, 17]),
+            format: IntegerFormat::HEXADECIMAL,
+            value: '-0x123456789ABCDEF'
         );
 
         $this->assertEquals(
