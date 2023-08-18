@@ -26,7 +26,6 @@ use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral\BooleanLiteralNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 
 final class BooleanLiteralParser
 {
@@ -39,7 +38,7 @@ final class BooleanLiteralParser
 
     public function parse(Lexer $lexer): BooleanLiteralNode
     {
-        $rule = $lexer->readOneOf(...self::RULES_BOOLEAN_KEYWORDS);
+        $rule = $lexer->read(...self::RULES_BOOLEAN_KEYWORDS);
 
         return new BooleanLiteralNode(
             rangeInSource: $lexer->buffer->getRange(),

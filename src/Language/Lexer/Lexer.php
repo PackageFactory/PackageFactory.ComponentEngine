@@ -63,29 +63,8 @@ final class Lexer
         }
     }
 
-    public function read(Rule $rule): void
-    {
-        if ($this->scanner->scan($rule)) {
-            $this->scanner->commit();
-            return;
-        }
-
-        if ($this->scanner->isEnd()) {
-            throw LexerException::becauseOfUnexpectedEndOfSource(
-                expectedRules: [$rule],
-                affectedRangeInSource: $this->scanner->getBuffer()->getRange()
-            );
-        }
-
-        throw LexerException::becauseOfUnexpectedCharacterSequence(
-            expectedRules: [$rule],
-            affectedRangeInSource: $this->scanner->getBuffer()->getRange(),
-            actualCharacterSequence: $this->scanner->getBuffer()->getContents()
-        );
-    }
-
     /** @phpstan-impure */
-    public function readOneOf(Rule ...$rules): Rule
+    public function read(Rule ...$rules): Rule
     {
         if ($rule = $this->scanner->scan(...$rules)) {
             $this->scanner->commit();
@@ -107,19 +86,8 @@ final class Lexer
         );
     }
 
-    public function probe(Rule $rule): bool
-    {
-        if ($this->scanner->scan($rule)) {
-            $this->scanner->commit();
-            return true;
-        }
-
-        $this->scanner->dismiss();
-        return false;
-    }
-
     /** @phpstan-impure */
-    public function probeOneOf(Rule ...$rules): ?Rule
+    public function probe(Rule ...$rules): ?Rule
     {
         if ($rule = $this->scanner->scan(...$rules)) {
             $this->scanner->commit();
@@ -131,16 +99,8 @@ final class Lexer
         return null;
     }
 
-    public function peek(Rule $rule): bool
-    {
-        $result = $this->scanner->scan($rule);
-        $this->scanner->dismiss();
-
-        return (bool) $result;
-    }
-
     /** @phpstan-impure */
-    public function peekOneOf(Rule ...$rules): ?Rule
+    public function peek(Rule ...$rules): ?Rule
     {
         $rule = $this->scanner->scan(...$rules);
         $this->scanner->dismiss();
@@ -149,28 +109,8 @@ final class Lexer
         return $rule;
     }
 
-    public function expect(Rule $rule): void
-    {
-        if ($this->scanner->isEnd()) {
-            throw LexerException::becauseOfUnexpectedEndOfSource(
-                expectedRules: [$rule],
-                affectedRangeInSource: $this->scanner->getBuffer()->getRange()
-            );
-        }
-
-        if (!$this->scanner->scan($rule)) {
-            throw LexerException::becauseOfUnexpectedCharacterSequence(
-                expectedRules: [$rule],
-                affectedRangeInSource: $this->scanner->getBuffer()->getRange(),
-                actualCharacterSequence: $this->scanner->getBuffer()->getContents()
-            );
-        }
-
-        $this->scanner->dismiss();
-    }
-
     /** @phpstan-impure */
-    public function expectOneOf(Rule ...$rules): Rule
+    public function expect(Rule ...$rules): Rule
     {
         if ($this->scanner->isEnd()) {
             throw LexerException::becauseOfUnexpectedEndOfSource(

@@ -35,7 +35,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperati
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperator;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Parser\BooleanLiteral\BooleanLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\Match\MatchParser;
@@ -106,11 +105,11 @@ final class ExpressionParser
         while (!$lexer->isEnd()) {
             $lexer->skipSpaceAndComments();
 
-            if ($lexer->peekOneOf(...self::RULES_CLOSING_DELIMITERS)) {
+            if ($lexer->peek(...self::RULES_CLOSING_DELIMITERS)) {
                 return $result;
             }
 
-            if ($lexer->peekOneOf(...self::RULES_ACCESS)) {
+            if ($lexer->peek(...self::RULES_ACCESS)) {
                 $result = $this->parseAccess($lexer, $result);
                 continue;
             }
@@ -124,7 +123,7 @@ final class ExpressionParser
                 continue;
             }
 
-            if ($rule = $lexer->peekOneOf(...self::RULES_BINARY_OPERATORS)) {
+            if ($rule = $lexer->peek(...self::RULES_BINARY_OPERATORS)) {
                 assert($rule instanceof Rule);
                 if ($this->precedence->mustStopAt($rule)) {
                     return $result;
@@ -145,7 +144,7 @@ final class ExpressionParser
         if ($lexer->peek(Rule::TEMPLATE_LITERAL_DELIMITER)) {
             $result = $this->parseTemplateLiteral($lexer);
         } else {
-            $result = match ($lexer->expectOneOf(...self::RULES_UNARY)) {
+            $result = match ($lexer->expect(...self::RULES_UNARY)) {
                 Rule::SYMBOL_EXCLAMATIONMARK =>
                     $this->parseUnaryOperation($lexer),
                 Rule::KEYWORD_TRUE,
@@ -356,7 +355,7 @@ final class ExpressionParser
 
     private function parseAccessType(Lexer $lexer): ?AccessType
     {
-        return match ($lexer->probeOneOf(...self::RULES_ACCESS)) {
+        return match ($lexer->probe(...self::RULES_ACCESS)) {
             Rule::SYMBOL_PERIOD => AccessType::MANDATORY,
             Rule::SYMBOL_OPTCHAIN => AccessType::OPTIONAL,
             default => null
@@ -397,7 +396,7 @@ final class ExpressionParser
             return BinaryOperator::LESS_THAN_OR_EQUAL;
         }
 
-        $operator = match ($lexer->readOneOf(...self::RULES_BINARY_OPERATORS)) {
+        $operator = match ($lexer->read(...self::RULES_BINARY_OPERATORS)) {
             Rule::SYMBOL_NULLISH_COALESCE => BinaryOperator::NULLISH_COALESCE,
             Rule::SYMBOL_BOOLEAN_AND => BinaryOperator::AND,
             Rule::SYMBOL_BOOLEAN_OR => BinaryOperator::OR,

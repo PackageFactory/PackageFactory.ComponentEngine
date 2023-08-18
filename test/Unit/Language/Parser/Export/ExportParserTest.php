@@ -50,7 +50,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferen
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Parser\Export\ExportCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Language\Parser\Export\ExportParser;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;

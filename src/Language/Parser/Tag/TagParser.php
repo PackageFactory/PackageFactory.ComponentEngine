@@ -37,7 +37,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Parser\Expression\ExpressionParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\Text\TextParser;
@@ -148,7 +147,7 @@ final class TagParser
     private function parseAttributeValue(Lexer $lexer): null|StringLiteralNode|ExpressionNode
     {
         if ($lexer->probe(Rule::SYMBOL_EQUALS)) {
-            return match ($lexer->expectOneOf(...self::RULES_ATTRIBUTE_DELIMITERS)) {
+            return match ($lexer->expect(...self::RULES_ATTRIBUTE_DELIMITERS)) {
                 Rule::STRING_LITERAL_DELIMITER =>
                     $this->parseString($lexer),
                 Rule::BRACKET_CURLY_OPEN =>

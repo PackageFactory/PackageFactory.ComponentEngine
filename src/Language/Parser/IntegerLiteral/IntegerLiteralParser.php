@@ -43,7 +43,7 @@ final class IntegerLiteralParser
     public function parse(Lexer $lexer): IntegerLiteralNode
     {
         try {
-            $rule = $lexer->readOneOf(...self::RULES_INTEGER_FORMATS);
+            $rule = $lexer->read(...self::RULES_INTEGER_FORMATS);
 
             return new IntegerLiteralNode(
                 rangeInSource: $lexer->buffer->getRange(),

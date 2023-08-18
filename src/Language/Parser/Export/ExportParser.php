@@ -31,7 +31,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructDec
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Parser\ComponentDeclaration\ComponentDeclarationParser;
 use PackageFactory\ComponentEngine\Language\Parser\EnumDeclaration\EnumDeclarationParser;
 use PackageFactory\ComponentEngine\Language\Parser\StructDeclaration\StructDeclarationParser;
@@ -59,7 +58,7 @@ final class ExportParser
 
             $lexer->skipSpace();
 
-            $declaration = match ($lexer->expectOneOf(...self::RULES_DECLARATION_KEYWORDS)) {
+            $declaration = match ($lexer->expect(...self::RULES_DECLARATION_KEYWORDS)) {
                 Rule::KEYWORD_COMPONENT => $this->parseComponentDeclaration($lexer),
                 Rule::KEYWORD_ENUM => $this->parseEnumDeclaration($lexer),
                 Rule::KEYWORD_STRUCT => $this->parseStructDeclaration($lexer),

@@ -30,7 +30,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\PropertyDeclarationNodes;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Parser\Expression\ExpressionParser;
 use PackageFactory\ComponentEngine\Language\Parser\PropertyDeclaration\PropertyDeclarationParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
@@ -103,7 +102,7 @@ final class ComponentDeclarationParser
         $this->returnParser ??= new ExpressionParser();
 
         $lexer->read(Rule::KEYWORD_RETURN);
-        $lexer->readOneOf(...self::RULES_SPACE);
+        $lexer->read(...self::RULES_SPACE);
         $lexer->skipSpaceAndComments();
 
         return $this->returnParser->parse($lexer);

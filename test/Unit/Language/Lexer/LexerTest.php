@@ -251,26 +251,6 @@ final class LexerTest extends TestCase
     }
 
     /**
-     * @dataProvider singleTokenExamples
-     * @test
-     * @param string $source
-     * @param Rule $expectedRule
-     * @return void
-     */
-    public function readOneOfSavesTokenOfGivenTypeIfMatchIsFound(string $source, Rule $expectedRule): void
-    {
-        $this->lexer = new Lexer($source);
-        $this->lexer->readOneOf($expectedRule);
-
-        $this->assertLexerState(
-            startPosition: Position::from(0, 0),
-            endPosition: Position::from(0, \mb_strlen($source) - 1),
-            buffer: $source,
-            isEnd: true
-        );
-    }
-
-    /**
      * @return iterable<string,array{string,Rule[],array{array{int,int},array{int,int},Rule,string}}>
      */
     public static function multipleTokensExamples(): iterable
@@ -504,7 +484,7 @@ final class LexerTest extends TestCase
         $this->lexer = new Lexer($source);
 
         foreach ($expectedLexerStates as $i => $expectedLexerState) {
-            $this->lexer->readOneOf(...$rules);
+            $this->lexer->read(...$rules);
 
             $this->assertLexerState(
                 startPosition: Position::from(...$expectedLexerState[0]),
@@ -708,7 +688,7 @@ final class LexerTest extends TestCase
                 $this->lexer = new Lexer($source);
 
                 foreach(range(0, $numberOfReadOperations) as $i) {
-                    $this->lexer->readOneOf(...$rules);
+                    $this->lexer->read(...$rules);
                 }
             },
             $expectedLexerException
@@ -827,7 +807,7 @@ final class LexerTest extends TestCase
                 $this->lexer = new Lexer($source);
 
                 foreach(range(0, $numberOfReadOperations) as $i) {
-                    $this->lexer->readOneOf(...$rules);
+                    $this->lexer->read(...$rules);
                 }
             },
             $expectedLexerException
@@ -856,9 +836,9 @@ final class LexerTest extends TestCase
         // Multiple
         $this->lexer = new Lexer('return   ' . "\t\n\t" . '   42');
 
-        $this->lexer->readOneOf(Rule::KEYWORD_RETURN, Rule::INTEGER_DECIMAL);
+        $this->lexer->read(Rule::KEYWORD_RETURN, Rule::INTEGER_DECIMAL);
         $this->lexer->skipSpace();
-        $this->lexer->readOneOf(Rule::KEYWORD_RETURN, Rule::INTEGER_DECIMAL);
+        $this->lexer->read(Rule::KEYWORD_RETURN, Rule::INTEGER_DECIMAL);
 
         $this->assertLexerState(
             startPosition: Position::from(1, 4),
@@ -901,19 +881,19 @@ final class LexerTest extends TestCase
 
         // Multiple
         $this->lexer = new Lexer($source);
-        $this->lexer->readOneOf(
+        $this->lexer->read(
             Rule::KEYWORD_IMPORT,
             Rule::KEYWORD_EXPORT,
             Rule::KEYWORD_COMPONENT
         );
         $this->lexer->skipSpaceAndComments();
-        $this->lexer->readOneOf(
+        $this->lexer->read(
             Rule::KEYWORD_IMPORT,
             Rule::KEYWORD_EXPORT,
             Rule::KEYWORD_COMPONENT
         );
         $this->lexer->skipSpaceAndComments();
-        $this->lexer->readOneOf(
+        $this->lexer->read(
             Rule::KEYWORD_IMPORT,
             Rule::KEYWORD_EXPORT,
             Rule::KEYWORD_COMPONENT

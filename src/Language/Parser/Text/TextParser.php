@@ -61,15 +61,15 @@ final class TextParser
         }
 
         $lexer->skipSpace();
-        if ($lexer->isEnd() || $lexer->peekOneOf(...self::RULES_END_DELIMITERS)) {
+        if ($lexer->isEnd() || $lexer->peek(...self::RULES_END_DELIMITERS)) {
             return null;
         }
 
         $hasTrailingSpace = false;
         $trailingSpaceContainsLineBreaks = false;
         $value = $hasLeadingSpace && $preserveLeadingSpace ? ' ' : '';
-        while (!$lexer->isEnd() && !$lexer->peekOneOf(...self::RULES_END_DELIMITERS)) {
-            $rule = $lexer->readOneOf(...self::RULES_CONTENT);
+        while (!$lexer->isEnd() && !$lexer->peek(...self::RULES_END_DELIMITERS)) {
+            $rule = $lexer->read(...self::RULES_CONTENT);
 
             if ($rule === Rule::TEXT) {
                 $start ??= $lexer->buffer->getStart();

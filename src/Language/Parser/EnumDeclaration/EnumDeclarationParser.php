@@ -35,7 +35,6 @@ use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiter
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
-use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rules;
 use PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral\IntegerLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
@@ -133,7 +132,7 @@ final class EnumDeclarationParser
         if ($lexer->probe(Rule::BRACKET_ROUND_OPEN)) {
             $start = $lexer->buffer->getStart();
 
-            $value = match ($lexer->expectOneOf(...self::RULES_ENUM_MEMBER_VALUE_START)) {
+            $value = match ($lexer->expect(...self::RULES_ENUM_MEMBER_VALUE_START)) {
                 Rule::STRING_LITERAL_DELIMITER =>
                     $this->parseStringLiteral($lexer),
                 default =>
