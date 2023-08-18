@@ -74,36 +74,7 @@ final class Scanner implements ScannerInterface
         }
     }
 
-    public function scan(RuleInterface $rule): bool
-    {
-        assert(!$this->isHalted);
-
-        $this->branch->buffer->flush();
-        $this->offset = 0;
-
-        $matcher = $rule->getMatcher();
-        while (true) {
-            $character = $this->branch->characterStream->current();
-            $result = $matcher->match($character, $this->offset);
-
-            if ($result === Result::SATISFIED) {
-                $this->isHalted = true;
-                return true;
-            }
-
-            if ($result === Result::CANCEL) {
-                $this->branch->buffer->append($character);
-                $this->isHalted = true;
-                return false;
-            }
-
-            $this->offset++;
-            $this->branch->buffer->append($character);
-            $this->branch->characterStream->next();
-        }
-    }
-
-    public function scanOneOf(RuleInterface ...$rules): ?RuleInterface
+    public function scan(RuleInterface ...$rules): ?RuleInterface
     {
         assert(!$this->isHalted);
 

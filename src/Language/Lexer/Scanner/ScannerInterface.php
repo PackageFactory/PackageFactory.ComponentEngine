@@ -30,8 +30,7 @@ interface ScannerInterface
     public function getBuffer(): Buffer;
     public function isEnd(): bool;
 
-    public function scan(RuleInterface $rule): bool;
-    public function scanOneOf(RuleInterface ...$rules): ?RuleInterface;
+    public function scan(RuleInterface ...$rules): ?RuleInterface;
     public function commit(): void;
     public function dismiss(): void;
 }

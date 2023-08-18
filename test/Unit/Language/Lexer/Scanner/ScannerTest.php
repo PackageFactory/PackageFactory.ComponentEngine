@@ -64,14 +64,14 @@ final class ScannerTest extends TestCase
     /**
      * @test
      */
-    public function scanReturnsTrueAndCapturesMatchingCharactersIfGivenRuleMatches(): void
+    public function scanReturnsGivenRuleAndCapturesMatchingCharactersIfGivenRuleMatches(): void
     {
         $scanner = new Scanner('ABC');
         $rule = RuleFixtures::withMatcher(
             MatcherFixtures::everything()
         );
 
-        $this->assertTrue($scanner->scan($rule));
+        $this->assertSame($rule, $scanner->scan($rule));
         $this->assertScannerState(
             expectedBufferStart: Position::from(0, 0),
             expectedBufferEnd: Position::from(0, 2),
@@ -91,7 +91,7 @@ final class ScannerTest extends TestCase
             MatcherFixtures::satisfiedAtOffset(1)
         );
 
-        $this->assertTrue($scanner->scan($rule));
+        $this->assertSame($rule, $scanner->scan($rule));
         $this->assertScannerState(
             expectedBufferStart: Position::from(0, 0),
             expectedBufferEnd: Position::from(0, 0),
@@ -102,7 +102,7 @@ final class ScannerTest extends TestCase
 
         $scanner->commit();
 
-        $this->assertTrue($scanner->scan($rule));
+        $this->assertSame($rule, $scanner->scan($rule));
         $this->assertScannerState(
             expectedBufferStart: Position::from(0, 1),
             expectedBufferEnd: Position::from(0, 1),
@@ -113,7 +113,7 @@ final class ScannerTest extends TestCase
 
         $scanner->commit();
 
-        $this->assertTrue($scanner->scan($rule));
+        $this->assertSame($rule, $scanner->scan($rule));
         $this->assertScannerState(
             expectedBufferStart: Position::from(0, 2),
             expectedBufferEnd: Position::from(0, 2),
@@ -126,14 +126,14 @@ final class ScannerTest extends TestCase
     /**
      * @test
      */
-    public function scanReturnsFalseButCapturesAllMatchingCharactersUntilFailureIfGivenRuleDoesNotMatch(): void
+    public function scanReturnsNullAndCapturesAllMatchingCharactersUntilFailureIfGivenRuleDoesNotMatch(): void
     {
         $scanner = new Scanner('AABBCC');
         $rule = RuleFixtures::withMatcher(
             MatcherFixtures::cancelAtOffset(3)
         );
 
-        $this->assertFalse($scanner->scan($rule));
+        $this->assertNull($scanner->scan($rule));
         $this->assertScannerState(
             expectedBufferStart: Position::from(0, 0),
             expectedBufferEnd: Position::from(0, 3),
@@ -162,7 +162,7 @@ final class ScannerTest extends TestCase
     /**
      * @test
      */
-    public function scanReturnsTrueAndCapturesMatchingCharactersIfGivenRuleDoesNotMatchButTheNextRuleDoes(): void
+    public function scanCapturesMatchingCharactersIfGivenRuleDoesNotMatchButTheNextRuleDoes(): void
     {
         $scanner = new Scanner('ABC');
         $notMatchingRule = RuleFixtures::withMatcher(
@@ -188,7 +188,7 @@ final class ScannerTest extends TestCase
     /**
      * @test
      */
-    public function scanOneOfCapturesMatchingCharactersAndReturnsTheMatchingRuleIfAnyOfTheGivenRulesMatch(): void
+    public function scanCapturesMatchingCharactersAndReturnsTheMatchingRuleIfAnyOfTheGivenRulesMatch(): void
     {
         $scanner = new Scanner('ABC');
         $notMatchingRule1 = RuleFixtures::withMatcher(
@@ -203,7 +203,7 @@ final class ScannerTest extends TestCase
 
         $this->assertSame(
             $matchingRule,
-            $scanner->scanOneOf($notMatchingRule1, $matchingRule, $notMatchingRule2)
+            $scanner->scan($notMatchingRule1, $matchingRule, $notMatchingRule2)
         );
         $this->assertScannerState(
             expectedBufferStart: Position::from(0, 0),
@@ -217,7 +217,7 @@ final class ScannerTest extends TestCase
     /**
      * @test
      */
-    public function scanOneOfReturnsNullButCapturesAllMatchingCharactersUntilFailureIfNoneOfTheGivenRulesMatch(): void
+    public function scanReturnsNullAndCapturesAllMatchingCharactersUntilFailureIfNoneOfTheGivenRulesMatch(): void
     {
         //
         // Non-Match first
@@ -235,7 +235,7 @@ final class ScannerTest extends TestCase
         );
 
         $this->assertNull(
-            $scanner->scanOneOf($notMatchingRule1, $notMatchingRule2, $notMatchingRule3)
+            $scanner->scan($notMatchingRule1, $notMatchingRule2, $notMatchingRule3)
         );
         $this->assertScannerState(
             expectedBufferStart: Position::from(0, 0),
@@ -260,9 +260,9 @@ final class ScannerTest extends TestCase
             MatcherFixtures::satisfiedAtOffset(3)
         );
 
-        $scanner->scanOneOf($notMatchingRule1, $notMatchingRule2, $matchingRule);
+        $scanner->scan($notMatchingRule1, $notMatchingRule2, $matchingRule);
         $scanner->commit();
-        $scanner->scanOneOf($notMatchingRule1, $notMatchingRule2);
+        $scanner->scan($notMatchingRule1, $notMatchingRule2);
 
         $this->assertScannerState(
             expectedBufferStart: Position::from(0, 3),
@@ -276,7 +276,7 @@ final class ScannerTest extends TestCase
     /**
      * @test
      */
-    public function scanOneOfIfTwoCompetingRulesBothMatchAtTheSameOffsetTheFirstOneThatMatchesWins(): void
+    public function scanIfTwoCompetingRulesBothMatchAtTheSameOffsetTheFirstOneThatMatchesWins(): void
     {
         $scanner = new Scanner('ABC');
         $matchingRule1 = RuleFixtures::withMatcher(
@@ -291,7 +291,7 @@ final class ScannerTest extends TestCase
 
         $this->assertSame(
             $matchingRule1,
-            $scanner->scanOneOf($matchingRule1, $matchingRule2, $notMatchingRule)
+            $scanner->scan($matchingRule1, $matchingRule2, $notMatchingRule)
         );
         $this->assertScannerState(
             expectedBufferStart: Position::from(0, 0),
@@ -305,7 +305,7 @@ final class ScannerTest extends TestCase
     /**
      * @test
      */
-    public function scanOneOfIfTwoCompetingRulesBothMatchAtDifferentOffsetsTheFirstOneThatMatchesWins(): void
+    public function scanIfTwoCompetingRulesBothMatchAtDifferentOffsetsTheFirstOneThatMatchesWins(): void
     {
         $scanner = new Scanner('ABC');
         $matchingRule1 = RuleFixtures::withMatcher(
@@ -320,7 +320,7 @@ final class ScannerTest extends TestCase
 
         $this->assertSame(
             $matchingRule2,
-            $scanner->scanOneOf($matchingRule1, $matchingRule2, $notMatchingRule)
+            $scanner->scan($matchingRule1, $matchingRule2, $notMatchingRule)
         );
         $this->assertScannerState(
             expectedBufferStart: Position::from(0, 0),
@@ -334,7 +334,7 @@ final class ScannerTest extends TestCase
     /**
      * @test
      */
-    public function scanOneOfCannotContinueOnceScannerIsHalted(): void
+    public function scanCannotContinueOnceScannerIsHalted(): void
     {
         $scanner = new Scanner('ABC');
         $rule1 = RuleFixtures::withMatcher(
@@ -344,10 +344,10 @@ final class ScannerTest extends TestCase
             MatcherFixtures::nothing()
         );
 
-        $scanner->scanOneOf($rule1, $rule2);
+        $scanner->scan($rule1, $rule2);
 
         $this->expectException(AssertionError::class);
-        $scanner->scanOneOf($rule1, $rule2);
+        $scanner->scan($rule1, $rule2);
     }
 
     /**
@@ -436,9 +436,9 @@ final class ScannerTest extends TestCase
             MatcherFixtures::satisfiedAtOffset(4)
         );
 
-        $scanner->scanOneOf($rule1, $rule2, $rule3);
+        $scanner->scan($rule1, $rule2, $rule3);
         $scanner->commit();
-        $scanner->scanOneOf($rule1, $rule2, $rule3);
+        $scanner->scan($rule1, $rule2, $rule3);
 
         $this->assertScannerState(
             expectedBufferStart: Position::from(0, 2),
@@ -475,9 +475,9 @@ final class ScannerTest extends TestCase
             MatcherFixtures::cancelAtOffset(3)
         );
 
-        $scanner->scanOneOf($rule1, $rule2, $rule3);
+        $scanner->scan($rule1, $rule2, $rule3);
         $scanner->commit();
-        $scanner->scanOneOf($rule2, $rule3);
+        $scanner->scan($rule2, $rule3);
 
         $this->assertScannerState(
             expectedBufferStart: Position::from(0, 2),

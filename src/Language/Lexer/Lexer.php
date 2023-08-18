@@ -87,7 +87,7 @@ final class Lexer
     /** @phpstan-impure */
     public function readOneOf(Rule ...$rules): Rule
     {
-        if ($rule = $this->scanner->scanOneOf(...$rules)) {
+        if ($rule = $this->scanner->scan(...$rules)) {
             $this->scanner->commit();
             assert($rule instanceof Rule);
             return $rule;
@@ -121,7 +121,7 @@ final class Lexer
     /** @phpstan-impure */
     public function probeOneOf(Rule ...$rules): ?Rule
     {
-        if ($rule = $this->scanner->scanOneOf(...$rules)) {
+        if ($rule = $this->scanner->scan(...$rules)) {
             $this->scanner->commit();
             assert($rule instanceof Rule);
             return $rule;
@@ -136,13 +136,13 @@ final class Lexer
         $result = $this->scanner->scan($rule);
         $this->scanner->dismiss();
 
-        return $result;
+        return (bool) $result;
     }
 
     /** @phpstan-impure */
     public function peekOneOf(Rule ...$rules): ?Rule
     {
-        $rule = $this->scanner->scanOneOf(...$rules);
+        $rule = $this->scanner->scan(...$rules);
         $this->scanner->dismiss();
 
         assert($rule === null || $rule instanceof Rule);
@@ -179,7 +179,7 @@ final class Lexer
             );
         }
 
-        if ($rule = $this->scanner->scanOneOf(...$rules)) {
+        if ($rule = $this->scanner->scan(...$rules)) {
             $this->scanner->dismiss();
             assert($rule instanceof Rule);
             return $rule;
@@ -194,7 +194,7 @@ final class Lexer
 
     public function skipSpace(): void
     {
-        while ($this->scanner->scanOneOf(...self::RULES_SPACE)) {
+        while ($this->scanner->scan(...self::RULES_SPACE)) {
             $this->scanner->commit();
         }
 
@@ -207,7 +207,7 @@ final class Lexer
 
     public function skipSpaceAndComments(): void
     {
-        while ($this->scanner->scanOneOf(...self::RULES_SPACE_AND_COMMENTS)) {
+        while ($this->scanner->scan(...self::RULES_SPACE_AND_COMMENTS)) {
             $this->scanner->commit();
         }
 
