@@ -78,7 +78,7 @@ final class CharacterStream
         $other->characterUnderCursor = $this->characterUnderCursor;
     }
 
-    public function getRest(): string
+    public function getRemainder(): string
     {
         return $this->characterUnderCursor . substr($this->source, $this->byte);
     }

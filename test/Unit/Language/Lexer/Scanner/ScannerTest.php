@@ -42,6 +42,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 0),
             expectedBufferEnd: Position::from(0, 0),
             expectedBufferContents: '',
+            expectedRemainder: '',
             expectedIsEnd: true,
             actualScanner: new Scanner(''),
         );
@@ -56,6 +57,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 0),
             expectedBufferEnd: Position::from(0, 0),
             expectedBufferContents: '',
+            expectedRemainder: 'A',
             expectedIsEnd: false,
             actualScanner: new Scanner('A'),
         );
@@ -76,6 +78,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 0),
             expectedBufferEnd: Position::from(0, 2),
             expectedBufferContents: 'ABC',
+            expectedRemainder: '',
             expectedIsEnd: true,
             actualScanner: $scanner,
         );
@@ -96,6 +99,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 0),
             expectedBufferEnd: Position::from(0, 0),
             expectedBufferContents: 'A',
+            expectedRemainder: 'BC',
             expectedIsEnd: false,
             actualScanner: $scanner,
         );
@@ -107,6 +111,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 1),
             expectedBufferEnd: Position::from(0, 1),
             expectedBufferContents: 'B',
+            expectedRemainder: 'C',
             expectedIsEnd: false,
             actualScanner: $scanner,
         );
@@ -118,6 +123,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 2),
             expectedBufferEnd: Position::from(0, 2),
             expectedBufferContents: 'C',
+            expectedRemainder: '',
             expectedIsEnd: true,
             actualScanner: $scanner,
         );
@@ -138,6 +144,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 0),
             expectedBufferEnd: Position::from(0, 3),
             expectedBufferContents: 'AABB',
+            expectedRemainder: 'BCC',
             expectedIsEnd: false,
             actualScanner: $scanner,
         );
@@ -180,6 +187,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 0),
             expectedBufferEnd: Position::from(0, 2),
             expectedBufferContents: 'ABC',
+            expectedRemainder: '',
             expectedIsEnd: true,
             actualScanner: $scanner,
         );
@@ -209,6 +217,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 0),
             expectedBufferEnd: Position::from(0, 2),
             expectedBufferContents: 'ABC',
+            expectedRemainder: '',
             expectedIsEnd: true,
             actualScanner: $scanner,
         );
@@ -241,6 +250,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 0),
             expectedBufferEnd: Position::from(0, 4),
             expectedBufferContents: 'AABBC',
+            expectedRemainder: 'CC',
             expectedIsEnd: false,
             actualScanner: $scanner,
         );
@@ -268,6 +278,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 3),
             expectedBufferEnd: Position::from(0, 5),
             expectedBufferContents: 'BBB',
+            expectedRemainder: 'BCCC',
             expectedIsEnd: false,
             actualScanner: $scanner,
         );
@@ -297,6 +308,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 0),
             expectedBufferEnd: Position::from(0, 1),
             expectedBufferContents: 'AB',
+            expectedRemainder: 'C',
             expectedIsEnd: false,
             actualScanner: $scanner,
         );
@@ -326,6 +338,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 0),
             expectedBufferEnd: Position::from(0, 1),
             expectedBufferContents: 'AB',
+            expectedRemainder: 'C',
             expectedIsEnd: false,
             actualScanner: $scanner,
         );
@@ -368,6 +381,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 3),
             expectedBufferEnd: Position::from(0, 5),
             expectedBufferContents: 'BCC',
+            expectedRemainder: '',
             expectedIsEnd: true,
             actualScanner: $scanner,
         );
@@ -378,6 +392,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 0),
             expectedBufferEnd: Position::from(0, 2),
             expectedBufferContents: 'AAB',
+            expectedRemainder: 'BCC',
             expectedIsEnd: false,
             actualScanner: $scanner,
         );
@@ -388,6 +403,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 3),
             expectedBufferEnd: Position::from(0, 5),
             expectedBufferContents: 'BCC',
+            expectedRemainder: '',
             expectedIsEnd: true,
             actualScanner: $scanner,
         );
@@ -415,6 +431,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 0),
             expectedBufferEnd: Position::from(0, 2),
             expectedBufferContents: 'AAA',
+            expectedRemainder: 'BBBCCC',
             expectedIsEnd: false,
             actualScanner: $scanner,
         );
@@ -423,7 +440,7 @@ final class ScannerTest extends TestCase
     /**
      * @test
      */
-    public function backspaceReturnsToLastPositionAfterScanOneOfMatch(): void
+    public function dismissReturnsToLastPositionAfterScanOneOfMatch(): void
     {
         $scanner = new Scanner('AABBCC');
         $rule1 = RuleFixtures::withMatcher(
@@ -444,6 +461,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 2),
             expectedBufferEnd: Position::from(0, 3),
             expectedBufferContents: 'BB',
+            expectedRemainder: 'CC',
             expectedIsEnd: false,
             actualScanner: $scanner,
         );
@@ -454,6 +472,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 0),
             expectedBufferEnd: Position::from(0, 1),
             expectedBufferContents: 'AA',
+            expectedRemainder: 'BBCC',
             expectedIsEnd: false,
             actualScanner: $scanner,
         );
@@ -462,7 +481,7 @@ final class ScannerTest extends TestCase
     /**
      * @test
      */
-    public function backspaceReturnsToLastPositionAfterScanOneOfMismatch(): void
+    public function dismissReturnsToLastPositionAfterScanMismatchWithMultipleRules(): void
     {
         $scanner = new Scanner('AAABBBCCC');
         $rule1 = RuleFixtures::withMatcher(
@@ -483,6 +502,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 2),
             expectedBufferEnd: Position::from(0, 5),
             expectedBufferContents: 'ABBB',
+            expectedRemainder: 'BCCC',
             expectedIsEnd: false,
             actualScanner: $scanner,
         );
@@ -493,6 +513,7 @@ final class ScannerTest extends TestCase
             expectedBufferStart: Position::from(0, 0),
             expectedBufferEnd: Position::from(0, 1),
             expectedBufferContents: 'AA',
+            expectedRemainder: 'ABBBCCC',
             expectedIsEnd: false,
             actualScanner: $scanner,
         );
@@ -503,6 +524,7 @@ final class ScannerTest extends TestCase
         Position $expectedBufferStart,
         Position $expectedBufferEnd,
         string $expectedBufferContents,
+        string $expectedRemainder,
         bool $expectedIsEnd,
         ScannerInterface $actualScanner,
     ): void {
@@ -514,6 +536,11 @@ final class ScannerTest extends TestCase
             message: 'Buffer of scanner was incorrect'
         );
 
+        self::assertEquals(
+            $expectedRemainder,
+            $actualScanner->getRemainder(),
+            'Remaining source of scanner was incorrect'
+        );
         self::assertEquals(
             $expectedIsEnd,
             $actualScanner->isEnd(),

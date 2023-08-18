@@ -60,6 +60,11 @@ final class Scanner implements ScannerInterface
         return $this->branch->buffer;
     }
 
+    public function getRemainder(): string
+    {
+        return $this->branch->characterStream->getRemainder();
+    }
+
     public function isEnd(): bool
     {
         return $this->branch->characterStream->isEnd();

@@ -28,6 +28,7 @@ use PackageFactory\ComponentEngine\Language\Lexer\Rule\RuleInterface;
 interface ScannerInterface
 {
     public function getBuffer(): Buffer;
+    public function getRemainder(): string;
     public function isEnd(): bool;
 
     public function scan(RuleInterface ...$rules): ?RuleInterface;
