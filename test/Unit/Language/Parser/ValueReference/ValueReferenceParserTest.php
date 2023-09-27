@@ -24,6 +24,7 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ValueReferenc
 
 use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Parser\ValueReference\ValueReferenceParser;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
@@ -35,7 +36,7 @@ final class ValueReferenceParserTest extends ParserTestCase
     public function parsesValueReference(): void
     {
         $valueReferenceParser = ValueReferenceParser::singleton();
-        $tokens = $this->createTokenIterator('foo');
+        $lexer = new Lexer('foo');
 
         $expectedValueReferenceNode = new ValueReferenceNode(
             rangeInSource: $this->range([0, 0], [0, 2]),
@@ -44,7 +45,7 @@ final class ValueReferenceParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedValueReferenceNode,
-            $valueReferenceParser->parse($tokens)
+            $valueReferenceParser->parse($lexer)
         );
     }
 }

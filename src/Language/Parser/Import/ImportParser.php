@@ -29,11 +29,11 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Import\ImportedNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Import\ImportNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Import\InvalidImportedNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class ImportParser
 {
@@ -41,108 +41,83 @@ final class ImportParser
 
     private ?StringLiteralParser $pathParser = null;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ImportNode
-     */
-    public function parse(\Iterator &$tokens): ImportNode
+    public function parse(Lexer $lexer): ImportNode
     {
-        $fromKeywordToken = $this->extractToken($tokens, TokenType::KEYWORD_FROM);
-        $path = $this->parsePath($tokens);
-
-        $this->skipToken($tokens, TokenType::KEYWORD_IMPORT);
-        $openingBracketToken = $this->extractToken($tokens, TokenType::BRACKET_CURLY_OPEN);
-
         try {
-            $names = $this->parseNames($tokens);
-            $closingBracketToken = $this->extractToken($tokens, TokenType::BRACKET_CURLY_CLOSE);
+            $lexer->read(Rule::KEYWORD_FROM);
+            $start = $lexer->buffer->getStart();
+            $lexer->skipSpace();
+
+            $path = $this->parsePath($lexer);
+
+            $lexer->read(Rule::KEYWORD_IMPORT);
+            $lexer->skipSpace();
+
+            $names = $this->parseNames($lexer);
+            $end = $lexer->buffer->getEnd();
 
             return new ImportNode(
-                rangeInSource: Range::from(
-                    $fromKeywordToken->boundaries->start,
-                    $closingBracketToken->boundaries->end
-                ),
+                rangeInSource: Range::from($start, $end),
                 path: $path,
                 names: $names
             );
-        } catch (InvalidImportedNameNodes $e) {
-            throw ImportCouldNotBeParsed::becauseOfInvalidImportedNameNodes(
-                cause: $e,
-                affectedRangeInSource: $openingBracketToken->boundaries
-            );
+        } catch (LexerException $e) {
+            throw ImportCouldNotBeParsed::becauseOfLexerException($e);
         }
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @param TokenType $tokenType
-     * @return Token
-     */
-    private function extractToken(\Iterator &$tokens, TokenType $tokenType): Token
-    {
-        Scanner::assertType($tokens, $tokenType);
-        $token = $tokens->current();
-        Scanner::skipOne($tokens);
-        Scanner::skipSpace($tokens);
-
-        return $token;
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @param TokenType $tokenType
-     * @return void
-     */
-    private function skipToken(\Iterator &$tokens, TokenType $tokenType): void
-    {
-        Scanner::assertType($tokens, $tokenType);
-        Scanner::skipOne($tokens);
-        Scanner::skipSpace($tokens);
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return StringLiteralNode
-     */
-    private function parsePath(\Iterator &$tokens): StringLiteralNode
+    private function parsePath(Lexer $lexer): StringLiteralNode
     {
         $this->pathParser ??= StringLiteralParser::singleton();
 
-        $path = $this->pathParser->parse($tokens);
-        Scanner::skipSpace($tokens);
+        $path = $this->pathParser->parse($lexer);
+        $lexer->skipSpace();
 
         return $path;
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ImportedNameNodes
-     */
-    private function parseNames(\Iterator &$tokens): ImportedNameNodes
+    private function parseNames(Lexer $lexer): ImportedNameNodes
     {
-        $items = [];
-        while (Scanner::type($tokens) !== TokenType::BRACKET_CURLY_CLOSE) {
-            $items[] = $this->parseName($tokens);
+        $lexer->read(Rule::BRACKET_CURLY_OPEN);
+        $start = $lexer->buffer->getStart();
+        $lexer->skipSpaceAndComments();
 
-            if (Scanner::type($tokens) !== TokenType::BRACKET_CURLY_CLOSE) {
-                $this->skipToken($tokens, TokenType::COMMA);
+        $nameNodes = [];
+        while (!$lexer->peek(Rule::BRACKET_CURLY_CLOSE)) {
+            $lexer->read(Rule::WORD);
+            $nameNodes[] = new ImportedNameNode(
+                rangeInSource: $lexer->buffer->getRange(),
+                value: VariableName::from($lexer->buffer->getContents())
+            );
+
+            $lexer->skipSpaceAndComments();
+            if ($lexer->probe(Rule::SYMBOL_COMMA)) {
+                $lexer->skipSpaceAndComments();
+            } else {
+                break;
             }
         }
 
-        return new ImportedNameNodes(...$items);
+        $lexer->read(Rule::BRACKET_CURLY_CLOSE);
+        $end = $lexer->buffer->getEnd();
+
+        try {
+            return new ImportedNameNodes(...$nameNodes);
+        }  catch (InvalidImportedNameNodes $e) {
+            throw ImportCouldNotBeParsed::becauseOfInvalidImportedNameNodes(
+                cause: $e,
+                affectedRangeInSource: $e->affectedRangeInSource ?? Range::from($start, $end)
+            );
+        }
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ImportedNameNode
-     */
-    private function parseName(\Iterator &$tokens): ImportedNameNode
+    public function parseName(Lexer $lexer): ImportedNameNode
     {
-        $nameToken = $this->extractToken($tokens, TokenType::STRING);
+        $lexer->read(Rule::WORD);
 
         return new ImportedNameNode(
-            rangeInSource: $nameToken->boundaries,
-            value: VariableName::from($nameToken->value)
+            rangeInSource: $lexer->buffer->getRange(),
+            value: VariableName::from($lexer->buffer->getContents())
         );
     }
 }

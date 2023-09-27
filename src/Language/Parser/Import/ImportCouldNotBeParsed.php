@@ -28,16 +28,15 @@ use PackageFactory\ComponentEngine\Parser\Source\Range;
 
 final class ImportCouldNotBeParsed extends ParserException
 {
+    protected const TITLE = 'Import could not be parsed';
+
     public static function becauseOfInvalidImportedNameNodes(
         InvalidImportedNameNodes $cause,
         Range $affectedRangeInSource
     ): self {
         return new self(
             code: 1691181627,
-            message: sprintf(
-                'Import could not be parsed, because of invalid imported names: %s',
-                $cause->getMessage()
-            ),
+            message: $cause->getMessage(),
             affectedRangeInSource: $cause->affectedRangeInSource ?? $affectedRangeInSource
         );
     }

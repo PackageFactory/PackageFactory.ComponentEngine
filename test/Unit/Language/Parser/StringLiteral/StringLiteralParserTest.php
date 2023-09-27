@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\StringLiteral;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
@@ -31,19 +32,38 @@ final class StringLiteralParserTest extends ParserTestCase
     /**
      * @test
      */
+    public function parsesEmptyString(): void
+    {
+        $stringLiteralParser = StringLiteralParser::singleton();
+        $lexer = new Lexer('""');
+
+        $expectedStringLiteralNode = new StringLiteralNode(
+            rangeInSource: $this->range([0, 0], [0, 1]),
+            value: ''
+        );
+
+        $this->assertEquals(
+            $expectedStringLiteralNode,
+            $stringLiteralParser->parse($lexer)
+        );
+    }
+
+    /**
+     * @test
+     */
     public function parsesString(): void
     {
         $stringLiteralParser = StringLiteralParser::singleton();
-        $tokens = $this->createTokenIterator('"Hello World"');
+        $lexer = new Lexer('"Hello World"');
 
         $expectedStringLiteralNode = new StringLiteralNode(
-            rangeInSource: $this->range([0, 1], [0, 11]),
+            rangeInSource: $this->range([0, 0], [0, 12]),
             value: 'Hello World'
         );
 
         $this->assertEquals(
             $expectedStringLiteralNode,
-            $stringLiteralParser->parse($tokens)
+            $stringLiteralParser->parse($lexer)
         );
     }
 }

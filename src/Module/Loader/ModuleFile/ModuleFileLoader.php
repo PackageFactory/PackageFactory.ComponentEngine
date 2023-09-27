@@ -22,13 +22,13 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Module\Loader\ModuleFile;
 
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Parser\Module\ModuleParser;
 use PackageFactory\ComponentEngine\Module\LoaderInterface;
 use PackageFactory\ComponentEngine\Module\ModuleId;
 use PackageFactory\ComponentEngine\Module\ModuleInterface;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 
 final class ModuleFileLoader implements LoaderInterface
 {
@@ -43,13 +43,12 @@ final class ModuleFileLoader implements LoaderInterface
             Path::fromString($pathToModule)
         );
         $source = Source::fromFile($pathToImportFrom->value);
-        $tokenizer = Tokenizer::fromSource($source);
-        $tokens = $tokenizer->getIterator();
+        $lexer = new Lexer($source->contents);
 
         $moduleParser = ModuleParser::singleton();
 
         $moduleId = ModuleId::fromSource($source);
-        $moduleNode = $moduleParser->parse($tokens);
+        $moduleNode = $moduleParser->parse($lexer);
 
 
         return new Module(

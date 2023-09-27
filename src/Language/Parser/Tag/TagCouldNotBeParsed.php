@@ -25,11 +25,11 @@ namespace PackageFactory\ComponentEngine\Language\Parser\Tag;
 use PackageFactory\ComponentEngine\Domain\TagName\TagName;
 use PackageFactory\ComponentEngine\Language\Parser\ParserException;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
 
 final class TagCouldNotBeParsed extends ParserException
 {
+    protected const TITLE = 'Tag could not be parsed';
+
     public static function becauseOfClosingTagNameMismatch(
         TagName $expectedTagName,
         string $actualTagName,
@@ -38,27 +38,11 @@ final class TagCouldNotBeParsed extends ParserException
         return new self(
             code: 1690976372,
             message: sprintf(
-                'Tag could not be parsed, because the closing tag name "%s" did not match the opening tag name "%s".',
+                'Closing tag name "%s" did not match the opening tag name "%s".',
                 $actualTagName,
                 $expectedTagName->value
             ),
             affectedRangeInSource: $affectedRangeInSource
-        );
-    }
-
-    public static function becauseOfUnexpectedToken(
-        TokenTypes $expectedTokenTypes,
-        Token $actualToken
-    ): self {
-        return new self(
-            code: 1691156112,
-            message: sprintf(
-                'Tag could not be parsed because of unexpected token %s. '
-                . 'Expected %s instead.',
-                $actualToken->toDebugString(),
-                $expectedTokenTypes->toDebugString()
-            ),
-            affectedRangeInSource: $actualToken->boundaries
         );
     }
 }

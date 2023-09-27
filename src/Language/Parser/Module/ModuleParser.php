@@ -27,13 +27,13 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Export\ExportNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Import\ImportNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Import\ImportNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Module\ModuleNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 use PackageFactory\ComponentEngine\Language\Parser\Export\ExportParser;
 use PackageFactory\ComponentEngine\Language\Parser\Import\ImportParser;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class ModuleParser
 {
@@ -42,71 +42,55 @@ final class ModuleParser
     private ?ImportParser $importParser = null;
     private ?ExportParser $exportParser = null;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ModuleNode
-     */
-    public function parse(\Iterator &$tokens): ModuleNode
+    public function parse(Lexer $lexer): ModuleNode
     {
-        Scanner::skipSpaceAndComments($tokens);
+        try {
+            $lexer->skipSpaceAndComments();
 
-        $imports = $this->parseImports($tokens);
-        $export = $this->parseExport($tokens);
+            $imports = $this->parseImports($lexer);
+            $export = $this->parseExport($lexer);
 
-        if (!Scanner::isEnd($tokens)) {
-            throw ModuleCouldNotBeParsed::becauseOfUnexpectedExceedingToken(
-                exceedingToken: $tokens->current()
+            $lexer->skipSpaceAndComments();
+            $lexer->assertIsEnd();
+
+            return new ModuleNode(
+                rangeInSource: Range::from(
+                    new Position(0, 0),
+                    $export->rangeInSource->end
+                ),
+                imports: $imports,
+                export: $export
             );
+        } catch (LexerException $e) {
+            throw ModuleCouldNotBeParsed::becauseOfLexerException($e);
         }
-
-        return new ModuleNode(
-            rangeInSource: Range::from(
-                new Position(0, 0),
-                $export->rangeInSource->end
-            ),
-            imports: $imports,
-            export: $export
-        );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ImportNodes
-     */
-    private function parseImports(\Iterator &$tokens): ImportNodes
+    private function parseImports(Lexer $lexer): ImportNodes
     {
         $items = [];
-        while (Scanner::type($tokens) !== TokenType::KEYWORD_EXPORT) {
-            $items[] = $this->parseImport($tokens);
+        while ($lexer->peek(Rule::KEYWORD_FROM)) {
+            $items[] = $this->parseImport($lexer);
         }
 
         return new ImportNodes(...$items);
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ImportNode
-     */
-    private function parseImport(\Iterator &$tokens): ImportNode
+    private function parseImport(Lexer $lexer): ImportNode
     {
         $this->importParser ??= ImportParser::singleton();
 
-        $import = $this->importParser->parse($tokens);
-        Scanner::skipSpaceAndComments($tokens);
+        $import = $this->importParser->parse($lexer);
+        $lexer->skipSpaceAndComments();
 
         return $import;
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExportNode
-     */
-    private function parseExport(\Iterator &$tokens): ExportNode
+    private function parseExport(Lexer $lexer): ExportNode
     {
         $this->exportParser ??= ExportParser::singleton();
 
-        $export = $this->exportParser->parse($tokens);
-        Scanner::skipSpaceAndComments($tokens);
+        $export = $this->exportParser->parse($lexer);
 
         return $export;
     }

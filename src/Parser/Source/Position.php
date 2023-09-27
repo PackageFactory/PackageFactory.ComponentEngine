@@ -37,8 +37,18 @@ final class Position
         return self::$zero ??= new self(0, 0);
     }
 
+    public static function from(int $lineNumber, int $columnNumber): self
+    {
+        return new self($lineNumber, $columnNumber);
+    }
+
     public function toDebugString(): string
     {
         return sprintf('line %s, column %s', $this->lineNumber, $this->columnNumber);
+    }
+
+    public function toRange(?Position $endPosition = null): Range
+    {
+        return Range::from($this, $endPosition ?? $this);
     }
 }

@@ -28,6 +28,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Import\ImportedNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Import\ImportNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Import\InvalidImportedNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Parser\Import\ImportCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Language\Parser\Import\ImportParser;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
@@ -40,14 +41,14 @@ final class ImportParserTest extends ParserTestCase
     public function parsesImportWithOneName(): void
     {
         $importParser = ImportParser::singleton();
-        $tokens = $this->createTokenIterator(
+        $lexer = new Lexer(
             'from "/some/where/in/the/filesystem" import { Foo }'
         );
 
         $expectedImportNode = new ImportNode(
             rangeInSource: $this->range([0, 0], [0, 50]),
             path: new StringLiteralNode(
-                rangeInSource: $this->range([0, 6], [0, 34]),
+                rangeInSource: $this->range([0, 5], [0, 35]),
                 value: '/some/where/in/the/filesystem'
             ),
             names: new ImportedNameNodes(
@@ -60,7 +61,7 @@ final class ImportParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedImportNode,
-            $importParser->parse($tokens)
+            $importParser->parse($lexer)
         );
     }
 
@@ -70,14 +71,14 @@ final class ImportParserTest extends ParserTestCase
     public function parsesImportWithMultipleNames(): void
     {
         $importParser = ImportParser::singleton();
-        $tokens = $this->createTokenIterator(
+        $lexer = new Lexer(
             'from "./some/other.component" import { Foo, Bar, Baz }'
         );
 
         $expectedImportNode = new ImportNode(
             rangeInSource: $this->range([0, 0], [0, 53]),
             path: new StringLiteralNode(
-                rangeInSource: $this->range([0, 6], [0, 27]),
+                rangeInSource: $this->range([0, 5], [0, 28]),
                 value: './some/other.component'
             ),
             names: new ImportedNameNodes(
@@ -98,7 +99,7 @@ final class ImportParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedImportNode,
-            $importParser->parse($tokens)
+            $importParser->parse($lexer)
         );
     }
 
@@ -110,15 +111,15 @@ final class ImportParserTest extends ParserTestCase
         $this->assertThrowsParserException(
             function () {
                 $importParser = ImportParser::singleton();
-                $tokens = $this->createTokenIterator(
+                $lexer = new Lexer(
                     'from "/some/where" import {}'
                 );
 
-                $importParser->parse($tokens);
+                $importParser->parse($lexer);
             },
             ImportCouldNotBeParsed::becauseOfInvalidImportedNameNodes(
                 cause: InvalidImportedNameNodes::becauseTheyWereEmpty(),
-                affectedRangeInSource: $this->range([0, 26], [0, 26])
+                affectedRangeInSource: $this->range([0, 26], [0, 27])
             )
         );
     }
@@ -131,11 +132,11 @@ final class ImportParserTest extends ParserTestCase
         $this->assertThrowsParserException(
             function () {
                 $importParser = ImportParser::singleton();
-                $tokens = $this->createTokenIterator(
+                $lexer = new Lexer(
                     'from "/some/where" import { Foo, Bar, Baz, Bar, Qux }'
                 );
 
-                $importParser->parse($tokens);
+                $importParser->parse($lexer);
             },
             ImportCouldNotBeParsed::becauseOfInvalidImportedNameNodes(
                 cause: InvalidImportedNameNodes::becauseTheyContainDuplicates(

@@ -40,6 +40,7 @@ final class BinaryOperationTypeResolver
     public function resolveTypeOf(BinaryOperationNode $binaryOperationNode): TypeInterface
     {
         return match ($binaryOperationNode->operator) {
+            BinaryOperator::NULLISH_COALESCE,
             BinaryOperator::AND,
             BinaryOperator::OR => $this->resolveTypeOfBooleanOperation($binaryOperationNode),
 

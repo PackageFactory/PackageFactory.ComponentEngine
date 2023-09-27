@@ -35,6 +35,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Parser\Tag\TagParser;
 use PackageFactory\ComponentEngine\Language\Parser\Tag\TagCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
@@ -47,7 +48,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesSelfClosingTagWithoutAttributes(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<a/>');
+        $lexer = new Lexer('<a/>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 3]),
@@ -62,7 +63,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -72,7 +73,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesSelfClosingTagWithValuelessAttribute(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<table foo/>');
+        $lexer = new Lexer('<table foo/>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 11]),
@@ -96,7 +97,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -106,7 +107,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesSelfClosingTagWithMultipleValuelessAttributes(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<table foo bar baz/>');
+        $lexer = new Lexer('<table foo bar baz/>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 19]),
@@ -146,7 +147,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -156,7 +157,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesSelfClosingTagWithStringAttribute(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<a foo="bar"/>');
+        $lexer = new Lexer('<a foo="bar"/>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 13]),
@@ -166,13 +167,13 @@ final class TagParserTest extends ParserTestCase
             ),
             attributes: new AttributeNodes(
                 new AttributeNode(
-                    rangeInSource: $this->range([0, 3], [0, 10]),
+                    rangeInSource: $this->range([0, 3], [0, 11]),
                     name: new AttributeNameNode(
                         rangeInSource: $this->range([0, 3], [0, 5]),
                         value: AttributeName::from('foo')
                     ),
                     value: new StringLiteralNode(
-                        rangeInSource: $this->range([0, 8], [0, 10]),
+                        rangeInSource: $this->range([0, 7], [0, 11]),
                         value: 'bar'
                     )
                 )
@@ -183,7 +184,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -193,7 +194,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesSelfClosingTagWithMultipleStringAttributes(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<div foo="bar" baz="qux" quux="corge"/>');
+        $lexer = new Lexer('<div foo="bar" baz="qux" quux="corge"/>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 38]),
@@ -203,35 +204,35 @@ final class TagParserTest extends ParserTestCase
             ),
             attributes: new AttributeNodes(
                 new AttributeNode(
-                    rangeInSource: $this->range([0, 5], [0, 12]),
+                    rangeInSource: $this->range([0, 5], [0, 13]),
                     name: new AttributeNameNode(
                         rangeInSource: $this->range([0, 5], [0, 7]),
                         value: AttributeName::from('foo')
                     ),
                     value: new StringLiteralNode(
-                        rangeInSource: $this->range([0, 10], [0, 12]),
+                        rangeInSource: $this->range([0, 9], [0, 13]),
                         value: 'bar'
                     )
                 ),
                 new AttributeNode(
-                    rangeInSource: $this->range([0, 15], [0, 22]),
+                    rangeInSource: $this->range([0, 15], [0, 23]),
                     name: new AttributeNameNode(
                         rangeInSource: $this->range([0, 15], [0, 17]),
                         value: AttributeName::from('baz')
                     ),
                     value: new StringLiteralNode(
-                        rangeInSource: $this->range([0, 20], [0, 22]),
+                        rangeInSource: $this->range([0, 19], [0, 23]),
                         value: 'qux'
                     )
                 ),
                 new AttributeNode(
-                    rangeInSource: $this->range([0, 25], [0, 35]),
+                    rangeInSource: $this->range([0, 25], [0, 36]),
                     name: new AttributeNameNode(
                         rangeInSource: $this->range([0, 25], [0, 28]),
                         value: AttributeName::from('quux')
                     ),
                     value: new StringLiteralNode(
-                        rangeInSource: $this->range([0, 31], [0, 35]),
+                        rangeInSource: $this->range([0, 30], [0, 36]),
                         value: 'corge'
                     )
                 )
@@ -242,7 +243,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -252,7 +253,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesSelfClosingTagWithExpressionAttribute(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<a foo={bar}/>');
+        $lexer = new Lexer('<a foo={bar}/>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 13]),
@@ -282,7 +283,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -292,7 +293,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesSelfClosingTagWithMultipleExpressionAttributes(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<div foo={bar} baz={qux} quux={corge}/>');
+        $lexer = new Lexer('<div foo={bar} baz={qux} quux={corge}/>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 38]),
@@ -350,7 +351,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -360,7 +361,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesTagWithEmptyContentAndWithoutAttributes(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<a></a>');
+        $lexer = new Lexer('<a></a>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 6]),
@@ -375,7 +376,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -387,14 +388,14 @@ final class TagParserTest extends ParserTestCase
         $this->assertThrowsParserException(
             function () {
                 $tagParser = TagParser::singleton();
-                $tokens = $this->createTokenIterator('<a></b>');
+                $lexer = new Lexer('<a></b>');
 
-                $tagParser->parse($tokens);
+                $tagParser->parse($lexer);
             },
             TagCouldNotBeParsed::becauseOfClosingTagNameMismatch(
                 expectedTagName: TagName::from('a'),
                 actualTagName: 'b',
-                affectedRangeInSource: $this->range([0, 5], [0, 5])
+                affectedRangeInSource: $this->range([0, 3], [0, 6])
             )
         );
     }
@@ -405,7 +406,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesTagWithEmptyContentAndValuelessAttribute(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<a foo></a>');
+        $lexer = new Lexer('<a foo></a>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 10]),
@@ -429,7 +430,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -439,7 +440,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesTagWithEmptyContentAndMultipleValuelessAttributes(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<a foo bar baz></a>');
+        $lexer = new Lexer('<a foo bar baz></a>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 18]),
@@ -479,7 +480,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -489,7 +490,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesTagWithEmptyContentAndStringAttribute(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<audio foo="bar"></audio>');
+        $lexer = new Lexer('<audio foo="bar"></audio>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 24]),
@@ -499,13 +500,13 @@ final class TagParserTest extends ParserTestCase
             ),
             attributes: new AttributeNodes(
                 new AttributeNode(
-                    rangeInSource: $this->range([0, 7], [0, 14]),
+                    rangeInSource: $this->range([0, 7], [0, 15]),
                     name: new AttributeNameNode(
                         rangeInSource: $this->range([0, 7], [0, 9]),
                         value: AttributeName::from('foo')
                     ),
                     value: new StringLiteralNode(
-                        rangeInSource: $this->range([0, 12], [0, 14]),
+                        rangeInSource: $this->range([0, 11], [0, 15]),
                         value: 'bar'
                     )
                 ),
@@ -516,7 +517,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -526,7 +527,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesTagWithEmptyContentAndMultipleStringAttributes(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<video foo="bar" baz="qux" quux="corge"></video>');
+        $lexer = new Lexer('<video foo="bar" baz="qux" quux="corge"></video>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 47]),
@@ -536,35 +537,35 @@ final class TagParserTest extends ParserTestCase
             ),
             attributes: new AttributeNodes(
                 new AttributeNode(
-                    rangeInSource: $this->range([0, 7], [0, 14]),
+                    rangeInSource: $this->range([0, 7], [0, 15]),
                     name: new AttributeNameNode(
                         rangeInSource: $this->range([0, 7], [0, 9]),
                         value: AttributeName::from('foo')
                     ),
                     value: new StringLiteralNode(
-                        rangeInSource: $this->range([0, 12], [0, 14]),
+                        rangeInSource: $this->range([0, 11], [0, 15]),
                         value: 'bar'
                     )
                 ),
                 new AttributeNode(
-                    rangeInSource: $this->range([0, 17], [0, 24]),
+                    rangeInSource: $this->range([0, 17], [0, 25]),
                     name: new AttributeNameNode(
                         rangeInSource: $this->range([0, 17], [0, 19]),
                         value: AttributeName::from('baz')
                     ),
                     value: new StringLiteralNode(
-                        rangeInSource: $this->range([0, 22], [0, 24]),
+                        rangeInSource: $this->range([0, 21], [0, 25]),
                         value: 'qux'
                     )
                 ),
                 new AttributeNode(
-                    rangeInSource: $this->range([0, 27], [0, 37]),
+                    rangeInSource: $this->range([0, 27], [0, 38]),
                     name: new AttributeNameNode(
                         rangeInSource: $this->range([0, 27], [0, 30]),
                         value: AttributeName::from('quux')
                     ),
                     value: new StringLiteralNode(
-                        rangeInSource: $this->range([0, 33], [0, 37]),
+                        rangeInSource: $this->range([0, 32], [0, 38]),
                         value: 'corge'
                     )
                 ),
@@ -575,7 +576,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -585,7 +586,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesTagWithEmptyContentAndExpressionAttribute(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<audio foo={bar}></audio>');
+        $lexer = new Lexer('<audio foo={bar}></audio>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 24]),
@@ -615,7 +616,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -625,7 +626,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesTagWithEmptyContentAndMultipleExpressionAttributes(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<video foo={bar} baz={qux} quux={corge}></video>');
+        $lexer = new Lexer('<video foo={bar} baz={qux} quux={corge}></video>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 47]),
@@ -683,7 +684,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -693,7 +694,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesTagWithTextContentAndWithoutAttributes(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<a>Lorem ipsum...</a>');
+        $lexer = new Lexer('<a>Lorem ipsum...</a>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 20]),
@@ -713,7 +714,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -723,7 +724,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesTagWithExpressionContentAndWithoutAttributes(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<a>{someExpression}</a>');
+        $lexer = new Lexer('<a>{someExpression}</a>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 22]),
@@ -746,7 +747,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -756,7 +757,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesTagWithNestedSelfClosingTagContentAndWithoutAttributes(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<a><b/></a>');
+        $lexer = new Lexer('<a><b/></a>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 10]),
@@ -782,7 +783,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -792,7 +793,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesTagWithNestedTagAndWithoutAttributes(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<a><b></b></a>');
+        $lexer = new Lexer('<a><b></b></a>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 13]),
@@ -818,7 +819,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -828,7 +829,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesTagWithNestedTagsOnMultipleLevelsAndWithoutAttributes(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<a><b><c><d/></c></b></a>');
+        $lexer = new Lexer('<a><b><c><d/></c></b></a>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 24]),
@@ -876,7 +877,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -886,7 +887,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesTagWithNestedTagInBetweenSpacesAndWithoutAttributes(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<a>   <b></b>   </a>');
+        $lexer = new Lexer('<a>   <b></b>   </a>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 19]),
@@ -912,7 +913,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -922,7 +923,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesTagWithNestedTagInBetweenTextContentPreservingSpaceAroundTheNestedTag(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<a>Something <b>important</b> happened.</a>');
+        $lexer = new Lexer('<a>Something <b>important</b> happened.</a>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 42]),
@@ -961,7 +962,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -971,7 +972,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesTagWithExpressionInBetweenTextContentPreservingSpaceAroundTheExpression(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<a>Something {variable} happened.</a>');
+        $lexer = new Lexer('<a>Something {variable} happened.</a>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 36]),
@@ -1002,7 +1003,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -1012,7 +1013,7 @@ final class TagParserTest extends ParserTestCase
     public function parsesTagWithMultipleNestedTagsAsImmediateChildren(): void
     {
         $tagParser = TagParser::singleton();
-        $tokens = $this->createTokenIterator('<a><b></b><c/><d></d></a>');
+        $lexer = new Lexer('<a><b></b><c/><d></d></a>');
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [0, 24]),
@@ -1058,7 +1059,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 
@@ -1079,7 +1080,7 @@ final class TagParserTest extends ParserTestCase
             Some closing text
         </div>
         AFX;
-        $tokens = $this->createTokenIterator($tagAsString);
+        $lexer = new Lexer($tagAsString);
 
         $expectedTagNode = new TagNode(
             rangeInSource: $this->range([0, 0], [8, 5]),
@@ -1089,13 +1090,13 @@ final class TagParserTest extends ParserTestCase
             ),
             attributes: new AttributeNodes(
                 new AttributeNode(
-                    rangeInSource: $this->range([0, 5], [0, 15]),
+                    rangeInSource: $this->range([0, 5], [0, 16]),
                     name: new AttributeNameNode(
                         rangeInSource: $this->range([0, 5], [0, 9]),
                         value: AttributeName::from('class')
                     ),
                     value: new StringLiteralNode(
-                        rangeInSource: $this->range([0, 12], [0, 15]),
+                        rangeInSource: $this->range([0, 11], [0, 16]),
                         value: 'test'
                     )
                 ),
@@ -1136,24 +1137,24 @@ final class TagParserTest extends ParserTestCase
                     ),
                     attributes: new AttributeNodes(
                         new AttributeNode(
-                            rangeInSource: $this->range([3, 7], [3, 23]),
+                            rangeInSource: $this->range([3, 7], [3, 24]),
                             name: new AttributeNameNode(
                                 rangeInSource: $this->range([3, 7], [3, 10]),
                                 value: AttributeName::from('href')
                             ),
                             value: new StringLiteralNode(
-                                rangeInSource: $this->range([3, 13], [3, 23]),
+                                rangeInSource: $this->range([3, 12], [3, 24]),
                                 value: 'about:blank'
                             )
                         ),
                         new AttributeNode(
-                            rangeInSource: $this->range([3, 26], [3, 39]),
+                            rangeInSource: $this->range([3, 26], [3, 40]),
                             name: new AttributeNameNode(
                                 rangeInSource: $this->range([3, 26], [3, 31]),
                                 value: AttributeName::from('target')
                             ),
                             value: new StringLiteralNode(
-                                rangeInSource: $this->range([3, 34], [3, 39]),
+                                rangeInSource: $this->range([3, 33], [3, 40]),
                                 value: '_blank'
                             )
                         ),
@@ -1255,7 +1256,7 @@ final class TagParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedTagNode,
-            $tagParser->parse($tokens)
+            $tagParser->parse($lexer)
         );
     }
 }

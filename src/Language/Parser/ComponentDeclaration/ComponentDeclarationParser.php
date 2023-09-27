@@ -28,150 +28,83 @@ use PackageFactory\ComponentEngine\Language\AST\Node\ComponentDeclaration\Compon
 use PackageFactory\ComponentEngine\Language\AST\Node\ComponentDeclaration\ComponentNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Expression\ExpressionNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\PropertyDeclarationNodes;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 use PackageFactory\ComponentEngine\Language\Parser\Expression\ExpressionParser;
 use PackageFactory\ComponentEngine\Language\Parser\PropertyDeclaration\PropertyDeclarationParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class ComponentDeclarationParser
 {
     use Singleton;
 
+    private const RULES_SPACE = [
+        Rule::SPACE,
+        Rule::END_OF_LINE
+    ];
+
     private ?PropertyDeclarationParser $propertyDeclarationParser = null;
     private ?ExpressionParser $returnParser = null;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ComponentDeclarationNode
-     */
-    public function parse(\Iterator &$tokens): ComponentDeclarationNode
+    public function parse(Lexer $lexer): ComponentDeclarationNode
     {
-        $componentKeywordToken = $this->extractComponentKeywordToken($tokens);
-        $name = $this->parseName($tokens);
+        $lexer->read(Rule::KEYWORD_COMPONENT);
+        $start = $lexer->buffer->getStart();
+        $lexer->skipSpace();
 
-        $this->skipOpeningBracketToken($tokens);
+        $name = $this->parseName($lexer);
+        $props = $this->parseProps($lexer);
+        $return = $this->parseReturn($lexer);
 
-        $props = $this->parseProps($tokens);
-
-        $this->skipReturnKeywordToken($tokens);
-
-        $return = $this->parseReturn($tokens);
-        $closingBracketToken = $this->extractClosingBracketToken($tokens);
+        $lexer->read(Rule::BRACKET_CURLY_CLOSE);
+        $end = $lexer->buffer->getEnd();
 
         return new ComponentDeclarationNode(
-            rangeInSource: Range::from(
-                $componentKeywordToken->boundaries->start,
-                $closingBracketToken->boundaries->end
-            ),
+            rangeInSource: Range::from($start, $end),
             name: $name,
             props: $props,
             return: $return
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return Token
-     */
-    private function extractComponentKeywordToken(\Iterator &$tokens): Token
+    private function parseName(Lexer $lexer): ComponentNameNode
     {
-        Scanner::assertType($tokens, TokenType::KEYWORD_COMPONENT);
-
-        $componentKeywordToken = $tokens->current();
-
-        Scanner::skipOne($tokens);
-        Scanner::skipSpace($tokens);
-
-        return $componentKeywordToken;
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ComponentNameNode
-     */
-    private function parseName(\Iterator &$tokens): ComponentNameNode
-    {
-        Scanner::assertType($tokens, TokenType::STRING);
-
-        $componentNameToken = $tokens->current();
-
-        Scanner::skipOne($tokens);
-        Scanner::skipSpace($tokens);
-
-        return new ComponentNameNode(
-            rangeInSource: $componentNameToken->boundaries,
-            value: ComponentName::from($componentNameToken->value)
+        $lexer->read(Rule::WORD);
+        $componentNameNode = new ComponentNameNode(
+            rangeInSource: $lexer->buffer->getRange(),
+            value: ComponentName::from($lexer->buffer->getContents())
         );
+
+        $lexer->skipSpace();
+
+        return $componentNameNode;
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return void
-     */
-    private function skipOpeningBracketToken(\Iterator &$tokens): void
-    {
-        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_OPEN);
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return PropertyDeclarationNodes
-     */
-    private function parseProps(\Iterator &$tokens): PropertyDeclarationNodes
+    private function parseProps(Lexer $lexer): PropertyDeclarationNodes
     {
         $this->propertyDeclarationParser ??= PropertyDeclarationParser::singleton();
 
-        $items = [];
-        while (Scanner::type($tokens) !== TokenType::KEYWORD_RETURN) {
-            assert($this->propertyDeclarationParser !== null);
-            $items[] = $this->propertyDeclarationParser->parse($tokens);
+        $lexer->read(Rule::BRACKET_CURLY_OPEN);
+        $lexer->skipSpaceAndComments();
 
-            Scanner::skipSpaceAndComments($tokens);
+        $items = [];
+        while (!$lexer->peek(Rule::KEYWORD_RETURN)) {
+            $lexer->expect(Rule::WORD);
+            $items[] = $this->propertyDeclarationParser->parse($lexer);
+            $lexer->skipSpaceAndComments();
         }
 
         return new PropertyDeclarationNodes(...$items);
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return void
-     */
-    private function skipReturnKeywordToken(\Iterator &$tokens): void
+    private function parseReturn(Lexer $lexer): ExpressionNode
     {
-        Scanner::assertType($tokens, TokenType::KEYWORD_RETURN);
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
-    }
+        $this->returnParser ??= new ExpressionParser();
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExpressionNode
-     */
-    private function parseReturn(\Iterator &$tokens): ExpressionNode
-    {
-        $this->returnParser ??= new ExpressionParser(
-            stopAt: TokenType::BRACKET_CURLY_CLOSE
-        );
+        $lexer->read(Rule::KEYWORD_RETURN);
+        $lexer->read(...self::RULES_SPACE);
+        $lexer->skipSpaceAndComments();
 
-        return $this->returnParser->parse($tokens);
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return Token
-     */
-    private function extractClosingBracketToken(\Iterator &$tokens): Token
-    {
-        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
-
-        $closingBracketToken = $tokens->current();
-
-        Scanner::skipOne($tokens);
-
-        return $closingBracketToken;
+        return $this->returnParser->parse($lexer);
     }
 }
