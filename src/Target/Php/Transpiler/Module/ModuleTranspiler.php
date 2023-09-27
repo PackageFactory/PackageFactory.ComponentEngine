@@ -22,11 +22,11 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\Module;
 
+use PackageFactory\ComponentEngine\Language\AST\Node\ComponentDeclaration\ComponentDeclarationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumDeclarationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Module\ModuleNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Module\LoaderInterface;
-use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
-use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\ComponentDeclaration\ComponentDeclarationTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\EnumDeclaration\EnumDeclarationTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\StructDeclaration\StructDeclarationTranspiler;
@@ -44,31 +44,29 @@ final class ModuleTranspiler
 
     public function transpile(ModuleNode $moduleNode): string
     {
-        foreach ($moduleNode->exports->items as $exportNode) {
-            return match ($exportNode->declaration::class) {
-                ComponentDeclarationNode::class => (new ComponentDeclarationTranspiler(
-                    scope: new ModuleScope(
-                        loader: $this->loader,
-                        moduleNode: $moduleNode,
-                        parentScope: $this->globalScope
-                    ),
-                    module: $moduleNode,
-                    strategy: $this->strategy->getComponentDeclarationStrategyFor($moduleNode)
-                ))->transpile($exportNode->declaration),
-                EnumDeclarationNode::class => (new EnumDeclarationTranspiler(
-                    strategy: $this->strategy->getEnumDeclarationStrategyFor($moduleNode)
-                ))->transpile($exportNode->declaration),
-                StructDeclarationNode::class => (new StructDeclarationTranspiler(
-                    scope: new ModuleScope(
-                        loader: $this->loader,
-                        moduleNode: $moduleNode,
-                        parentScope: $this->globalScope
-                    ),
-                    strategy: $this->strategy->getStructDeclarationStrategyFor($moduleNode)
-                ))->transpile($exportNode->declaration)
-            };
-        }
+        $declarationNode = $moduleNode->export->declaration;
 
-        return '';
+        return match ($declarationNode::class) {
+            ComponentDeclarationNode::class => (new ComponentDeclarationTranspiler(
+                scope: new ModuleScope(
+                    loader: $this->loader,
+                    moduleNode: $moduleNode,
+                    parentScope: $this->globalScope
+                ),
+                module: $moduleNode,
+                strategy: $this->strategy->getComponentDeclarationStrategyFor($moduleNode)
+            ))->transpile($declarationNode),
+            EnumDeclarationNode::class => (new EnumDeclarationTranspiler(
+                strategy: $this->strategy->getEnumDeclarationStrategyFor($moduleNode)
+            ))->transpile($declarationNode),
+            StructDeclarationNode::class => (new StructDeclarationTranspiler(
+                scope: new ModuleScope(
+                    loader: $this->loader,
+                    moduleNode: $moduleNode,
+                    parentScope: $this->globalScope
+                ),
+                strategy: $this->strategy->getStructDeclarationStrategyFor($moduleNode)
+            ))->transpile($declarationNode)
+        };
     }
 }

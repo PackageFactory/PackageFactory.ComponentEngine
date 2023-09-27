@@ -22,8 +22,9 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Integration;
 
+use PackageFactory\ComponentEngine\Language\Parser\Module\ModuleParser;
 use PackageFactory\ComponentEngine\Module\Loader\ModuleFile\ModuleFileLoader;
-use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
+use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
 use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Module\ModuleTranspiler;
@@ -64,15 +65,20 @@ final class PhpTranspilerIntegrationTest extends TestCase
      */
     public function testTranspiler(string $example): void
     {
-        $source = Source::fromFile(__DIR__ . '/Examples/' . $example . '/' . $example . '.afx');
+        $sourcePath = Path::fromString(__DIR__ . '/Examples/' . $example . '/' . $example . '.afx');
+        $source = Source::fromFile($sourcePath->value);
         $tokenizer = Tokenizer::fromSource($source);
-        $module = ModuleNode::fromTokens($tokenizer->getIterator());
+        $tokens = $tokenizer->getIterator();
+
+        $module = ModuleParser::singleton()->parse($tokens);
 
         $expected = file_get_contents(__DIR__ . '/Examples/' . $example . '/' . $example . '.php');
 
         $transpiler = new ModuleTranspiler(
-            loader: new ModuleFileLoader(),
-            globalScope: GlobalScope::get(),
+            loader: new ModuleFileLoader(
+                sourcePath: $sourcePath
+            ),
+            globalScope: GlobalScope::singleton(),
             strategy: new ModuleTestStrategy()
         );
 

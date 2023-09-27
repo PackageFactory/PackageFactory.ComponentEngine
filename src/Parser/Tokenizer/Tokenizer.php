@@ -56,6 +56,10 @@ final class Tokenizer implements \IteratorAggregate
      */
     private static function block(\Iterator $fragments): \Iterator
     {
+        if (!$fragments->valid()) {
+            return;
+        }
+
         $bracket = TokenType::tryBracketOpenFromFragment($fragments->current());
         $buffer = Buffer::empty();
 
@@ -277,6 +281,7 @@ final class Tokenizer implements \IteratorAggregate
             '=' => $buffer->flush(TokenType::EQUALS),
             '?' => $buffer->flush(TokenType::QUESTIONMARK),
             '$' => $buffer->flush(TokenType::DOLLAR),
+            '|' => $buffer->flush(TokenType::PIPE),
             default => self::flushRemainder($buffer)
         };
     }

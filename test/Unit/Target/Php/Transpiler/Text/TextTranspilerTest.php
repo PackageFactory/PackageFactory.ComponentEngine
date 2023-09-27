@@ -22,8 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Text;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TextNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Text\TextTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PHPUnit\Framework\TestCase;
 
 final class TextTranspilerTest extends TestCase
@@ -35,13 +35,11 @@ final class TextTranspilerTest extends TestCase
     public function transpilesTextNodes(): void
     {
         $textTranspiler = new TextTranspiler();
-        $textNode = TextNode::fromString('Hello World!');
+        $textNode = ASTNodeFixtures::Text('Hello World!');
         assert($textNode !== null);
 
         $expectedTranspilationResult = 'Hello World!';
-        $actualTranspilationResult = $textTranspiler->transpile(
-            $textNode
-        );
+        $actualTranspilationResult = $textTranspiler->transpile($textNode);
 
         $this->assertEquals(
             $expectedTranspilationResult,

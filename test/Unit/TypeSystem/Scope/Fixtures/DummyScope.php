@@ -22,33 +22,47 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class DummyScope implements ScopeInterface
 {
     /**
-     * @param array<string,TypeInterface> $identifierToTypeMap
-     * @param array<string,TypeInterface> $typeNameToTypeMap
+     * @var array<string,AtomicTypeInterface>
+     */
+    private readonly array $typeNameToTypeMap;
+
+    /**
+     * @param AtomicTypeInterface[] $knownTypes
+     * @param array<string,TypeInterface> $identifierToTypeReferenceMap
      */
     public function __construct(
-        private readonly array $identifierToTypeMap = [],
-        private readonly array $typeNameToTypeMap = []
+        array $knownTypes = [],
+        private readonly array $identifierToTypeReferenceMap = [],
     ) {
+        $typeNameToTypeMap = [];
+        foreach ($knownTypes as $type) {
+            /** @var AtomicTypeInterface $type */
+            $typeNameToTypeMap[$type->getName()->value] = $type;
+        }
+
+        $this->typeNameToTypeMap = $typeNameToTypeMap;
     }
 
-    public function lookupTypeFor(string $name): ?TypeInterface
+    public function getType(TypeName $typeName): AtomicTypeInterface
     {
-        return $this->identifierToTypeMap[$name] ?? null;
-    }
-
-    public function resolveTypeReference(TypeReferenceNode $typeReferenceNode): TypeInterface
-    {
-        if ($type = $this->typeNameToTypeMap[$typeReferenceNode->name] ?? null) {
+        if ($type = $this->typeNameToTypeMap[$typeName->value] ?? null) {
             return $type;
         }
 
-        throw new \Exception('DummyScope: Unknown type ' . $typeReferenceNode->name);
+        throw new \Exception('DummyScope: Unknown type ' . $typeName->value);
+    }
+
+    public function getTypeOf(VariableName $variableName): ?TypeInterface
+    {
+        return $this->identifierToTypeReferenceMap[$variableName->value] ?? null;
     }
 }

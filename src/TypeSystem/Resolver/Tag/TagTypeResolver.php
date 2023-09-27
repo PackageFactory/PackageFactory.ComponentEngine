@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\Tag;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNode;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
@@ -30,6 +30,6 @@ final class TagTypeResolver
 {
     public function resolveTypeOf(TagNode $tagNode): TypeInterface
     {
-        return StringType::get();
+        return StringType::singleton();
     }
 }

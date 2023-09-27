@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\TernaryOperation;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TernaryOperation\TernaryOperationNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Expression\ExpressionTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 
@@ -46,8 +46,8 @@ final class TernaryOperationTranspiler
         return sprintf(
             '(%s ? %s : %s)',
             $conditionTranspiler->transpile($ternaryOperationNode->condition),
-            $branchTranspiler->transpile($ternaryOperationNode->true),
-            $branchTranspiler->transpile($ternaryOperationNode->false)
+            $branchTranspiler->transpile($ternaryOperationNode->trueBranch),
+            $branchTranspiler->transpile($ternaryOperationNode->falseBranch)
         );
     }
 }

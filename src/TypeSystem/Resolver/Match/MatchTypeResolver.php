@@ -22,8 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\Match;
 
-use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\MatchNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral\BooleanLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Match\MatchNode;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
@@ -66,23 +66,13 @@ final class MatchTypeResolver
             throw new \Exception('@TODO: Not implemented: Incomplete Match');
         } else {
             $types = [];
-
-            $defaultArmPresent = false;
             foreach ($matchNode->arms->items as $matchArmNode) {
-                if ($defaultArmPresent) {
-                    throw new \Exception('@TODO: Multiple illegal default arms');
-                }
-                if ($matchArmNode->left === null) {
-                    $defaultArmPresent = true;
-                }
-                $types[] = $expressionTypeResolver->resolveTypeOf(
-                    $matchArmNode->right
-                );
+                $types[] = $expressionTypeResolver->resolveTypeOf($matchArmNode->right);
             }
 
             // @TODO: Ensure that match is complete
 
-            return UnionType::of(...$types);
+            return UnionType::merge(...$types);
         }
     }
 
@@ -97,9 +87,6 @@ final class MatchTypeResolver
         $referencedEnumMembers = [];
 
         foreach ($matchNode->arms->items as $matchArmNode) {
-            if ($defaultArmPresent) {
-                throw new \Exception('@TODO Error: Multiple illegal default arms');
-            }
             if ($matchArmNode->left === null) {
                 $defaultArmPresent = true;
             } else {
@@ -114,14 +101,14 @@ final class MatchTypeResolver
                     }
 
                     if (!$enumMemberType->enumStaticType->is($subjectEnumType->enumStaticType)) {
-                        throw new \Error('@TODO Error: incompatible enum match: got ' . $enumMemberType->enumStaticType->enumName . ' expected ' . $subjectEnumType->enumStaticType->enumName);
+                        throw new \Error('@TODO Error: incompatible enum match: got ' . $enumMemberType->enumStaticType->getName()->value . ' expected ' . $subjectEnumType->enumStaticType->getName()->value);
                     }
 
-                    if (isset($referencedEnumMembers[$enumMemberType->getMemberName()])) {
-                        throw new \Error('@TODO Error: Enum path ' . $enumMemberType->getMemberName() . ' was already defined once in this match and cannot be used twice');
+                    if (isset($referencedEnumMembers[$enumMemberType->getMemberName()->value])) {
+                        throw new \Error('@TODO Error: Enum path ' . $enumMemberType->getMemberName()->value . ' was already defined once in this match and cannot be used twice');
                     }
 
-                    $referencedEnumMembers[$enumMemberType->getMemberName()] = true;
+                    $referencedEnumMembers[$enumMemberType->getMemberName()->value] = true;
                 }
             }
 
@@ -138,7 +125,7 @@ final class MatchTypeResolver
             }
         }
 
-        return UnionType::of(...$types);
+        return UnionType::merge(...$types);
     }
 
     public function resolveTypeOf(MatchNode $matchNode): TypeInterface
@@ -151,7 +138,7 @@ final class MatchTypeResolver
         );
 
         return match (true) {
-            BooleanType::get()->is($typeOfSubject) => $this->resolveTypeOfBooleanMatch($matchNode),
+            BooleanType::singleton()->is($typeOfSubject) => $this->resolveTypeOfBooleanMatch($matchNode),
             $typeOfSubject instanceof EnumInstanceType => $this->resolveTypeOfEnumMatch($matchNode, $typeOfSubject),
             default => throw new \Exception('@TODO: Not handled ' . $typeOfSubject::class)
         };

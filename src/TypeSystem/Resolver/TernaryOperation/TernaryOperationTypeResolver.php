@@ -22,8 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Resolver\TernaryOperation;
 
-use PackageFactory\ComponentEngine\Parser\Ast\BooleanLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral\BooleanLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TernaryOperation\TernaryOperationNode;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
@@ -45,13 +45,13 @@ final class TernaryOperationTypeResolver
 
         if ($conditionNode instanceof BooleanLiteralNode) {
             return $conditionNode->value
-                ? $expressionTypeResolver->resolveTypeOf($ternaryOperationNode->true)
-                : $expressionTypeResolver->resolveTypeOf($ternaryOperationNode->false);
+                ? $expressionTypeResolver->resolveTypeOf($ternaryOperationNode->trueBranch)
+                : $expressionTypeResolver->resolveTypeOf($ternaryOperationNode->falseBranch);
         }
 
-        return UnionType::of(
-            $expressionTypeResolver->resolveTypeOf($ternaryOperationNode->true),
-            $expressionTypeResolver->resolveTypeOf($ternaryOperationNode->false)
+        return UnionType::merge(
+            $expressionTypeResolver->resolveTypeOf($ternaryOperationNode->trueBranch),
+            $expressionTypeResolver->resolveTypeOf($ternaryOperationNode->falseBranch)
         );
     }
 }

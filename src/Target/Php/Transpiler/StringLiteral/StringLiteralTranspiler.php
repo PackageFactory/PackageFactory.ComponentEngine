@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\StringLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
 
 final class StringLiteralTranspiler
 {

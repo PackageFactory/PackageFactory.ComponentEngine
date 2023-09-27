@@ -26,6 +26,7 @@ use PackageFactory\ComponentEngine\Parser\Ast\BinaryOperationNode;
 use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\BinaryOperation\BinaryOperationTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PHPUnit\Framework\TestCase;
 
 final class BinaryOperationTranspilerTest extends TestCase
@@ -91,8 +92,7 @@ final class BinaryOperationTranspilerTest extends TestCase
         $binaryOperationTranspiler = new BinaryOperationTranspiler(
             scope: new DummyScope()
         );
-        $binaryOperationNode = ExpressionNode::fromString($binaryOperationAsString)->root;
-        assert($binaryOperationNode instanceof BinaryOperationNode);
+        $binaryOperationNode = ASTNodeFixtures::BinaryOperation($binaryOperationAsString);
 
         $actualTranspilationResult = $binaryOperationTranspiler->transpile(
             $binaryOperationNode

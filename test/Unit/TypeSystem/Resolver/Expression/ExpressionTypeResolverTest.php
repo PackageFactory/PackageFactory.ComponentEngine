@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\Expression;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
@@ -41,19 +41,19 @@ final class ExpressionTypeResolverTest extends TestCase
     public static function binaryOperationExamples(): array
     {
         return [
-            'true && false' => ['true && false', BooleanType::get()],
-            'true || false' => ['true || false', BooleanType::get()],
-            'true && "foo"' => ['true && "foo"', UnionType::of(BooleanType::get(), StringType::get())],
-            'true || "foo"' => ['true || "foo"', UnionType::of(BooleanType::get(), StringType::get())],
-            'true && 42' => ['true && 42', UnionType::of(BooleanType::get(), IntegerType::get())],
-            'true || 42' => ['true || 42', UnionType::of(BooleanType::get(), IntegerType::get())],
+            'true && false' => ['true && false', BooleanType::singleton()],
+            'true || false' => ['true || false', BooleanType::singleton()],
+            'true && "foo"' => ['true && "foo"', UnionType::of(BooleanType::singleton(), StringType::singleton())],
+            'true || "foo"' => ['true || "foo"', UnionType::of(BooleanType::singleton(), StringType::singleton())],
+            'true && 42' => ['true && 42', UnionType::of(BooleanType::singleton(), IntegerType::singleton())],
+            'true || 42' => ['true || 42', UnionType::of(BooleanType::singleton(), IntegerType::singleton())],
 
-            '4 === 2' => ['4 === 2', BooleanType::get()],
-            '4 !== 2' => ['4 !== 2', BooleanType::get()],
-            '4 > 2' => ['4 > 2', BooleanType::get()],
-            '4 >= 2' => ['4 >= 2', BooleanType::get()],
-            '4 < 2' => ['4 < 2', BooleanType::get()],
-            '4 <= 2' => ['4 <= 2', BooleanType::get()],
+            '4 === 2' => ['4 === 2', BooleanType::singleton()],
+            '4 !== 2' => ['4 !== 2', BooleanType::singleton()],
+            '4 > 2' => ['4 > 2', BooleanType::singleton()],
+            '4 >= 2' => ['4 >= 2', BooleanType::singleton()],
+            '4 < 2' => ['4 < 2', BooleanType::singleton()],
+            '4 <= 2' => ['4 <= 2', BooleanType::singleton()],
         ];
     }
 
@@ -68,7 +68,7 @@ final class ExpressionTypeResolverTest extends TestCase
     {
         $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString($binaryExpressionAsString);
+        $expressionNode = ASTNodeFixtures::Expression($binaryExpressionAsString);
 
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
 
@@ -86,9 +86,9 @@ final class ExpressionTypeResolverTest extends TestCase
     {
         $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString('true');
+        $expressionNode = ASTNodeFixtures::Expression('true');
 
-        $expectedType = BooleanType::get();
+        $expectedType = BooleanType::singleton();
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
 
         $this->assertTrue(
@@ -103,11 +103,11 @@ final class ExpressionTypeResolverTest extends TestCase
      */
     public function resolvesKnownIdentifierToItsType(): void
     {
-        $scope = new DummyScope(['foo' => StringType::get()]);
+        $scope = new DummyScope([StringType::singleton()], ['foo' => StringType::singleton()]);
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString('foo');
+        $expressionNode = ASTNodeFixtures::Expression('foo');
 
-        $expectedType = StringType::get();
+        $expectedType = StringType::singleton();
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
 
         $this->assertTrue(
@@ -124,19 +124,19 @@ final class ExpressionTypeResolverTest extends TestCase
         return [
             'match (true) { true -> 42 false -> "foo" }' => [
                 'match (true) { true -> 42 false -> "foo" }',
-                IntegerType::get()
+                IntegerType::singleton()
             ],
             'match (false) { true -> 42 false -> "foo" }' => [
                 'match (false) { true -> 42 false -> "foo" }',
-                StringType::get()
+                StringType::singleton()
             ],
             'match (variableOfTypeBoolean) { true -> 42 false -> "foo" }' => [
                 'match (variableOfTypeBoolean) { true -> 42 false -> "foo" }',
-                UnionType::of(IntegerType::get(), StringType::get())
+                UnionType::of(IntegerType::singleton(), StringType::singleton())
             ],
             'match (variableOfTypeBoolean) { true -> variableOfTypeNumber false -> variableOfTypeString }' => [
                 'match (variableOfTypeBoolean) { true -> variableOfTypeNumber false -> variableOfTypeString }',
-                UnionType::of(IntegerType::get(), StringType::get())
+                UnionType::of(IntegerType::singleton(), StringType::singleton())
             ],
         ];
     }
@@ -150,13 +150,16 @@ final class ExpressionTypeResolverTest extends TestCase
      */
     public function resolvesMatchToResultingType(string $matchAsString, TypeInterface $expectedType): void
     {
-        $scope = new DummyScope([
-            'variableOfTypeBoolean' => BooleanType::get(),
-            'variableOfTypeString' => StringType::get(),
-            'variableOfTypeNumber' => IntegerType::get(),
-        ]);
+        $scope = new DummyScope(
+            [BooleanType::singleton(), StringType::singleton(), IntegerType::singleton()],
+            [
+                'variableOfTypeBoolean' => BooleanType::singleton(),
+                'variableOfTypeString' => StringType::singleton(),
+                'variableOfTypeNumber' => IntegerType::singleton()
+            ]
+        );
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString($matchAsString);
+        $expressionNode = ASTNodeFixtures::Expression($matchAsString);
 
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
 
@@ -174,9 +177,9 @@ final class ExpressionTypeResolverTest extends TestCase
     {
         $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString('null');
+        $expressionNode = ASTNodeFixtures::Expression('null');
 
-        $expectedType = NullType::get();
+        $expectedType = NullType::singleton();
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
 
         $this->assertTrue(
@@ -193,9 +196,9 @@ final class ExpressionTypeResolverTest extends TestCase
     {
         $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString('42');
+        $expressionNode = ASTNodeFixtures::Expression('42');
 
-        $expectedType = IntegerType::get();
+        $expectedType = IntegerType::singleton();
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
 
         $this->assertTrue(
@@ -212,9 +215,9 @@ final class ExpressionTypeResolverTest extends TestCase
     {
         $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString('"foo"');
+        $expressionNode = ASTNodeFixtures::Expression('"foo"');
 
-        $expectedType = StringType::get();
+        $expectedType = StringType::singleton();
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
 
         $this->assertTrue(
@@ -231,9 +234,9 @@ final class ExpressionTypeResolverTest extends TestCase
     {
         $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString('<div></div>');
+        $expressionNode = ASTNodeFixtures::Expression('<div></div>');
 
-        $expectedType = StringType::get();
+        $expectedType = StringType::singleton();
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
 
         $this->assertTrue(
@@ -265,9 +268,9 @@ final class ExpressionTypeResolverTest extends TestCase
     {
         $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString($templateLiteralAsString);
+        $expressionNode = ASTNodeFixtures::Expression($templateLiteralAsString);
 
-        $expectedType = StringType::get();
+        $expectedType = StringType::singleton();
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
 
         $this->assertTrue(
@@ -282,9 +285,9 @@ final class ExpressionTypeResolverTest extends TestCase
     public static function ternaryOperationExamples(): array
     {
         return [
-            'true ? 42 : "foo"' => ['true ? 42 : "foo"', IntegerType::get()],
-            'false ? 42 : "foo"' => ['false ? 42 : "foo"', StringType::get()],
-            '1 < 2 ? 42 : "foo"' => ['1 < 2 ? 42 : "foo"', UnionType::of(IntegerType::get(), StringType::get())]
+            'true ? 42 : "foo"' => ['true ? 42 : "foo"', IntegerType::singleton()],
+            'false ? 42 : "foo"' => ['false ? 42 : "foo"', StringType::singleton()],
+            '1 < 2 ? 42 : "foo"' => ['1 < 2 ? 42 : "foo"', UnionType::of(IntegerType::singleton(), StringType::singleton())]
         ];
     }
 
@@ -299,7 +302,7 @@ final class ExpressionTypeResolverTest extends TestCase
     {
         $scope = new DummyScope();
         $expressionTypeResolver = new ExpressionTypeResolver(scope: $scope);
-        $expressionNode = ExpressionNode::fromString($ternaryOperationAsString);
+        $expressionNode = ASTNodeFixtures::Expression($ternaryOperationAsString);
 
         $actualType = $expressionTypeResolver->resolveTypeOf($expressionNode);
 

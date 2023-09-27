@@ -22,24 +22,37 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Type\StructType;
 
-use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
+use PackageFactory\ComponentEngine\Domain\PropertyName\PropertyName;
+use PackageFactory\ComponentEngine\Domain\StructName\StructName;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
+use PackageFactory\ComponentEngine\TypeSystem\TypeReference;
 
-final class StructType implements TypeInterface
+final class StructType implements AtomicTypeInterface
 {
-    private function __construct(public readonly string $structName)
-    {
+    public function __construct(
+        private readonly StructName $name,
+        private readonly Properties $properties
+    ) {
     }
 
-    public static function fromStructDeclarationNode(StructDeclarationNode $structDeclarationNode): self
+    public function getName(): TypeName
     {
-        return new self(
-            structName: $structDeclarationNode->structName
-        );
+        return $this->name->toTypeName();
     }
 
     public function is(TypeInterface $other): bool
     {
         return $other === $this;
+    }
+
+    public function getTypeOfProperty(PropertyName $propertyName): TypeReference
+    {
+        if ($property = $this->properties->get($propertyName)) {
+            return $property->type;
+        }
+
+        throw new \Exception('@TODO: Unknown struct property: ' . $propertyName->value);
     }
 }

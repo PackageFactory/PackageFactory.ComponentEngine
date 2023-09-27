@@ -22,8 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\EnumDeclaration;
 
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\EnumDeclaration\EnumDeclarationTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PHPUnit\Framework\TestCase;
 
 final class EnumDeclarationTranspilerTest extends TestCase
@@ -43,7 +43,7 @@ final class EnumDeclarationTranspilerTest extends TestCase
         $enumDeclarationTranspiler = new EnumDeclarationTranspiler(
             strategy: new EnumDeclarationTestStrategy()
         );
-        $enumDeclarationNode = EnumDeclarationNode::fromString($enumDeclarationAsString);
+        $enumDeclarationNode = ASTNodeFixtures::EnumDeclaration($enumDeclarationAsString);
 
         $expectedTranspilationResult = <<<EOT
         <?php

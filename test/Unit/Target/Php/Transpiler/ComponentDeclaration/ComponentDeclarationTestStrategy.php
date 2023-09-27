@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\ComponentDeclaration;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\ComponentDeclaration\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Target\Php\TargetSpecific\ClassName;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\ComponentDeclaration\ComponentDeclarationStrategyInterface;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference\TypeReferenceStrategyInterface;
@@ -32,7 +32,7 @@ final class ComponentDeclarationTestStrategy implements ComponentDeclarationStra
 {
     public function getClassNameFor(ComponentDeclarationNode $componentDeclarationNode): ClassName
     {
-        return ClassName::fromString('Vendor\\Project\\Component\\' . $componentDeclarationNode->componentName);
+        return ClassName::fromString('Vendor\\Project\\Component\\' . $componentDeclarationNode->name->value->value);
     }
 
     public function getBaseClassNameFor(ComponentDeclarationNode $componentDeclarationNode): ?ClassName

@@ -22,9 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\ComponentDeclaration;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
-use PackageFactory\ComponentEngine\Parser\Ast\PropertyDeclarationNodes;
+use PackageFactory\ComponentEngine\Language\AST\Node\ComponentDeclaration\ComponentDeclarationNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Module\ModuleNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Expression\ExpressionTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference\TypeReferenceTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Expression\ExpressionTypeResolver;
@@ -61,7 +60,9 @@ final class ComponentDeclarationTranspiler
 
         foreach ($this->module->imports->items as $importNode) {
             // @TODO: Generate Namespaces + Name via TypeReferenceStrategyInterface Dynamically
-            $lines[] = 'use Vendor\\Project\\Component\\' . $importNode->name->value . ';';
+            foreach ($importNode->names->items as $name) {
+                $lines[] = 'use Vendor\\Project\\Component\\' . $name->value->value . ';';
+            }
         }
 
         $lines[] = '';
@@ -70,7 +71,7 @@ final class ComponentDeclarationTranspiler
             : 'final class ' . $className->getShortClassName();
         $lines[] = '{';
 
-        if (!$componentDeclarationNode->propertyDeclarations->isEmpty()) {
+        if (!$componentDeclarationNode->props->isEmpty()) {
             $lines[] = '    public function __construct(';
             $lines[] = $this->writeConstructorPropertyDeclarations($componentDeclarationNode);
             $lines[] = '    ) {';
@@ -94,11 +95,11 @@ final class ComponentDeclarationTranspiler
             scope: $this->scope,
             strategy: $this->strategy->getTypeReferenceStrategyFor($componentDeclarationNode)
         );
-        $propertyDeclarations = $componentDeclarationNode->propertyDeclarations;
+        $propertyDeclarations = $componentDeclarationNode->props;
         $lines = [];
 
         foreach ($propertyDeclarations->items as $propertyDeclaration) {
-            $lines[] = '        public readonly ' . $typeReferenceTranspiler->transpile($propertyDeclaration->type) . ' $' . $propertyDeclaration->name . ',';
+            $lines[] = '        public readonly ' . $typeReferenceTranspiler->transpile($propertyDeclaration->type) . ' $' . $propertyDeclaration->name->value->value . ',';
         }
 
         if ($length = count($lines)) {
@@ -122,8 +123,8 @@ final class ComponentDeclarationTranspiler
             shouldAddQuotesIfNecessary: true
         );
 
-        $returnExpression = $componentDeclarationNode->returnExpression;
-        $returnTypeIsString = StringType::get()->is(
+        $returnExpression = $componentDeclarationNode->return;
+        $returnTypeIsString = StringType::singleton()->is(
             $expressionTypeResolver->resolveTypeOf($returnExpression)
         );
         $transpiledReturnExpression = $expressionTranspiler->transpile($returnExpression);

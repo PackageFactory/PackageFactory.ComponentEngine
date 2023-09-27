@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Parser\Tokenizer;
 
-use PackageFactory\ComponentEngine\Parser\Source\Source;
+use PackageFactory\ComponentEngine\Parser\Source\Path;
 
 final class Scanner
 {
@@ -57,9 +57,9 @@ final class Scanner
             "@TODO: Unexpected token: "
                 . $actualType->value
                 . " at "
-                . ($tokens->current()->boundaries->start->rowIndex + 1)
+                . ($tokens->current()->boundaries->start->lineNumber + 1)
                 . ":"
-                . ($tokens->current()->boundaries->start->columnIndex + 1)
+                . ($tokens->current()->boundaries->start->columnNumber + 1)
         );
     }
 
@@ -86,7 +86,7 @@ final class Scanner
      * @param \Iterator<mixed,Token> $tokens
      * @return \Iterator<mixed,Token>
      */
-    public static function skipOne(\Iterator $tokens): \Iterator
+    public static function skipOne(\Iterator &$tokens): \Iterator
     {
         $tokens->next();
         return $tokens;
@@ -149,12 +149,12 @@ final class Scanner
 
     /**
      * @param \Iterator<mixed,Token> $tokens
-     * @return Source
+     * @return Path
      */
-    public static function source(\Iterator $tokens): Source
+    public static function sourcePath(\Iterator $tokens): Path
     {
         self::assertValid($tokens);
-        return $tokens->current()->source;
+        return $tokens->current()->sourcePath;
     }
 
     /**

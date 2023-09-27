@@ -22,10 +22,10 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\ComponentScope;
 
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
 use PackageFactory\ComponentEngine\Module\ModuleId;
-use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Scope\ComponentScope\ComponentScope;
 use PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope\GlobalScope;
@@ -49,14 +49,16 @@ final class ComponentScopeTest extends TestCase
             return <div>{foo}</div>
         }
         EOT;
-        $componentDeclarationNode = ComponentDeclarationNode::fromString($componentDeclarationAsString);
+        $componentDeclarationNode = ASTNodeFixtures::ComponentDeclaration(
+            $componentDeclarationAsString
+        );
         $componentScope = new ComponentScope(
             componentDeclarationNode: $componentDeclarationNode,
-            parentScope: GlobalScope::get()
+            parentScope: GlobalScope::singleton()
         );
 
-        $expectedType = StringType::get();
-        $actualType = $componentScope->lookupTypeFor('foo');
+        $expectedType = StringType::singleton();
+        $actualType = $componentScope->getTypeOf(VariableName::from('foo'));
 
         $this->assertNotNull($actualType);
 
@@ -72,6 +74,10 @@ final class ComponentScopeTest extends TestCase
      */
     public function providesTheEnumInstanceTypeWhenAnStaticEnumTypeIsReferencedInTheComponentApi(): void
     {
+        $enumStaticType = EnumStaticType::fromModuleIdAndDeclaration(
+            ModuleId::fromString('module-a'),
+            ASTNodeFixtures::EnumDeclaration('enum SomeEnum { A B C }')
+        );
         $componentDeclarationAsString = <<<EOT
         component Foo {
             foo: SomeEnum
@@ -79,21 +85,16 @@ final class ComponentScopeTest extends TestCase
             return <div>{foo}</div>
         }
         EOT;
-        $componentDeclarationNode = ComponentDeclarationNode::fromString($componentDeclarationAsString);
+        $componentDeclarationNode = ASTNodeFixtures::ComponentDeclaration(
+            $componentDeclarationAsString
+        );
         $componentScope = new ComponentScope(
             componentDeclarationNode: $componentDeclarationNode,
-            parentScope: new DummyScope([], [
-                'SomeEnum' => $enumStaticType = EnumStaticType::fromModuleIdAndDeclaration(
-                    ModuleId::fromString("module-a"),
-                    EnumDeclarationNode::fromString(
-                        'enum SomeEnum { A B C }'
-                    )
-                )
-            ])
+            parentScope: new DummyScope([$enumStaticType->toEnumInstanceType()])
         );
 
         $expectedType = $enumStaticType->toEnumInstanceType();
-        $actualType = $componentScope->lookupTypeFor('foo');
+        $actualType = $componentScope->getTypeOf(VariableName::from('foo'));
 
         $this->assertNotNull($actualType);
 
@@ -116,14 +117,19 @@ final class ComponentScopeTest extends TestCase
             return <div>{foo}</div>
         }
         EOT;
-        $componentDeclarationNode = ComponentDeclarationNode::fromString($componentDeclarationAsString);
+        $componentDeclarationNode = ASTNodeFixtures::ComponentDeclaration(
+            $componentDeclarationAsString
+        );
         $componentScope = new ComponentScope(
             componentDeclarationNode: $componentDeclarationNode,
-            parentScope: new DummyScope(['bar' => IntegerType::get()], [])
+            parentScope: new DummyScope(
+                [IntegerType::singleton()],
+                ['bar' => IntegerType::singleton()]
+            )
         );
 
-        $expectedType = IntegerType::get();
-        $actualType = $componentScope->lookupTypeFor('bar');
+        $expectedType = IntegerType::singleton();
+        $actualType = $componentScope->getTypeOf(VariableName::from('bar'));
 
         $this->assertNotNull($actualType);
 
@@ -146,16 +152,16 @@ final class ComponentScopeTest extends TestCase
             return <div>{foo}</div>
         }
         EOT;
-        $componentDeclarationNode = ComponentDeclarationNode::fromString($componentDeclarationAsString);
+        $componentDeclarationNode = ASTNodeFixtures::ComponentDeclaration(
+            $componentDeclarationAsString
+        );
         $componentScope = new ComponentScope(
             componentDeclarationNode: $componentDeclarationNode,
-            parentScope: new DummyScope([], ['StringAlias' => StringType::get()])
+            parentScope: new DummyScope([StringType::singleton()])
         );
 
-        $expectedType = StringType::get();
-        $actualType = $componentScope->resolveTypeReference(
-            TypeReferenceNode::fromString('StringAlias')
-        );
+        $expectedType = StringType::singleton();
+        $actualType = $componentScope->getType(TypeName::from('string'));
 
         $this->assertTrue(
             $expectedType->is($actualType),

@@ -22,9 +22,9 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\ComponentDeclaration;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\ComponentDeclaration\ComponentDeclarationNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\ComponentDeclaration\ComponentDeclarationTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope\GlobalScope;
 use PHPUnit\Framework\TestCase;
 
@@ -43,13 +43,13 @@ final class ComponentDeclarationTranspilerTest extends TestCase
             return <h1>Hello, {name}</h1>
         }
         EOT;
-        $moduleNode = ModuleNode::fromString($componentModuleAsString);
+        $moduleNode = ASTNodeFixtures::Module($componentModuleAsString);
         $componentDeclarationTranspiler = new ComponentDeclarationTranspiler(
-            scope: GlobalScope::get(),
+            scope: GlobalScope::singleton(),
             module: $moduleNode,
             strategy: new ComponentDeclarationTestStrategy()
         );
-        $componentDeclarationNode = $moduleNode->exports->get('Greeter')?->declaration;
+        $componentDeclarationNode = $moduleNode->export->declaration;
         assert($componentDeclarationNode instanceof ComponentDeclarationNode);
 
         $expectedTranspilationResult = <<<'PHP'

@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Module;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Module\ModuleNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\ComponentDeclaration\ComponentDeclarationStrategyInterface;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\EnumDeclaration\EnumDeclarationStrategyInterface;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Module\ModuleStrategyInterface;

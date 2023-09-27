@@ -22,9 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\UnaryOperation;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\UnaryOperationNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\UnaryOperation\UnaryOperationTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
@@ -51,14 +50,11 @@ final class UnaryOperationTranspilerTest extends TestCase
     public function transpilesUnaryOperationNodes(string $unaryOperationAsString, string $expectedTranspilationResult): void
     {
         $transpiler = new UnaryOperationTranspiler(
-            scope: new DummyScope(['foo' => StringType::get()])
+            scope: new DummyScope([StringType::singleton()], ['foo' => StringType::singleton()])
         );
-        $node = ExpressionNode::fromString($unaryOperationAsString)->root;
-        assert($node instanceof UnaryOperationNode);
+        $node = ASTNodeFixtures::UnaryOperation($unaryOperationAsString);
 
-        $actualTranspilationResult = $transpiler->transpile(
-            $node
-        );
+        $actualTranspilationResult = $transpiler->transpile($node);
 
         $this->assertEquals(
             $expectedTranspilationResult,

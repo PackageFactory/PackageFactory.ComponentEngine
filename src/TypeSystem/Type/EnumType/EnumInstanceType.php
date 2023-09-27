@@ -22,16 +22,19 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Type\EnumType;
 
+use PackageFactory\ComponentEngine\Domain\EnumMemberName\EnumMemberName;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class EnumInstanceType implements TypeInterface
+final class EnumInstanceType implements AtomicTypeInterface
 {
     private function __construct(
         public readonly EnumStaticType $enumStaticType,
-        private readonly ?string $memberName
+        private readonly ?EnumMemberName $name
     ) {
-        if ($memberName !== null && !$enumStaticType->hasMember($memberName)) {
-            throw new \Exception('@TODO cannot access member ' . $memberName . ' of enum ' . $enumStaticType->enumName);
+        if ($name !== null && !$enumStaticType->hasMember($name)) {
+            throw new \Exception('@TODO cannot access member ' . $name->value . ' of enum ' . $enumStaticType->getName()->value);
         }
     }
 
@@ -39,26 +42,31 @@ final class EnumInstanceType implements TypeInterface
     {
         return new self(
             enumStaticType: $enumStaticType,
-            memberName: null
+            name: null
         );
     }
 
-    public static function fromStaticEnumTypeAndMemberName(EnumStaticType $enumStaticType, string $enumMemberName): self
+    public static function fromStaticEnumTypeAndMemberName(EnumStaticType $enumStaticType, EnumMemberName $enumMemberName): self
     {
         return new self(
             enumStaticType: $enumStaticType,
-            memberName: $enumMemberName
+            name: $enumMemberName
         );
     }
 
     public function isUnspecified(): bool
     {
-        return $this->memberName === null;
+        return $this->name === null;
     }
 
-    public function getMemberName(): string
+    public function getMemberName(): EnumMemberName
     {
-        return $this->memberName ?? throw new \Exception('@TODO Error cannot access memberName of unspecified instance');
+        return $this->name ?? throw new \Exception('@TODO Error cannot access name of unspecified instance');
+    }
+
+    public function getName(): TypeName
+    {
+        return $this->enumStaticType->getName();
     }
 
     public function is(TypeInterface $other): bool
@@ -68,7 +76,7 @@ final class EnumInstanceType implements TypeInterface
         }
         if ($other instanceof EnumInstanceType) {
             return $other->enumStaticType->is($other->enumStaticType)
-                && $other->memberName === $this->memberName;
+                && $other->name === $this->name;
         }
         return false;
     }

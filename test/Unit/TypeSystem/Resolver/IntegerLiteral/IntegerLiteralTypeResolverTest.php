@@ -22,8 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\NumberLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\IntegerLiteral\IntegerLiteralTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PHPUnit\Framework\TestCase;
@@ -36,10 +35,9 @@ final class IntegerLiteralTypeResolverTest extends TestCase
     public function resolvesIntegerLiteralToIntegerType(): void
     {
         $integerLiteralTypeResolver = new IntegerLiteralTypeResolver();
-        $integerLiteralNode = ExpressionNode::fromString('42')->root;
-        assert($integerLiteralNode instanceof IntegerLiteralNode);
+        $integerLiteralNode = ASTNodeFixtures::IntegerLiteral('42');
 
-        $expectedType = IntegerType::get();
+        $expectedType = IntegerType::singleton();
         $actualType = $integerLiteralTypeResolver->resolveTypeOf($integerLiteralNode);
 
         $this->assertTrue(

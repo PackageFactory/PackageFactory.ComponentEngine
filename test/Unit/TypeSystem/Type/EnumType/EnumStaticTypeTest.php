@@ -22,8 +22,10 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\EnumType;
 
+use PackageFactory\ComponentEngine\Domain\EnumMemberName\EnumMemberName;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
 use PackageFactory\ComponentEngine\Module\ModuleId;
-use PackageFactory\ComponentEngine\Parser\Ast\EnumDeclarationNode;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumInstanceType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PHPUnit\Framework\TestCase;
@@ -36,7 +38,7 @@ final class EnumStaticTypeTest extends TestCase
      */
     public function canBeCreatedFromEnumDeclarationNode(): void
     {
-        $enumDeclarationNode = EnumDeclarationNode::fromString(
+        $enumDeclarationNode = ASTNodeFixtures::EnumDeclaration(
             'enum Foo { BAR BAZ }'
         );
         $enumStaticType = EnumStaticType::fromModuleIdAndDeclaration(
@@ -53,7 +55,7 @@ final class EnumStaticTypeTest extends TestCase
      */
     public function providesNameOfTheEnum(): void
     {
-        $enumDeclarationNode = EnumDeclarationNode::fromString(
+        $enumDeclarationNode = ASTNodeFixtures::EnumDeclaration(
             'enum SomeEnum {}'
         );
         $enumStaticType = EnumStaticType::fromModuleIdAndDeclaration(
@@ -61,7 +63,10 @@ final class EnumStaticTypeTest extends TestCase
             $enumDeclarationNode
         );
 
-        $this->assertEquals('SomeEnum', $enumStaticType->enumName);
+        $this->assertEquals(
+            TypeName::from('SomeEnum'),
+            $enumStaticType->getName()
+        );
     }
 
     /**
@@ -71,7 +76,7 @@ final class EnumStaticTypeTest extends TestCase
     {
         $enumStaticType = EnumStaticType::fromModuleIdAndDeclaration(
             ModuleId::fromString("module-a"),
-            EnumDeclarationNode::fromString(
+            ASTNodeFixtures::EnumDeclaration(
                 'enum SomeEnum { A B C }'
             )
         );
@@ -86,16 +91,16 @@ final class EnumStaticTypeTest extends TestCase
     {
         $enumStaticType = EnumStaticType::fromModuleIdAndDeclaration(
             ModuleId::fromString("module-a"),
-            EnumDeclarationNode::fromString(
+            ASTNodeFixtures::EnumDeclaration(
                 'enum SomeEnum { A B C }'
             )
         );
 
-        $enumMemberType = $enumStaticType->getMemberType('A');
+        $enumMemberType = $enumStaticType->getMemberType(EnumMemberName::from('A'));
         $this->assertInstanceOf(EnumInstanceType::class, $enumMemberType);
 
-        $this->assertSame($enumStaticType, $enumMemberType->enumStaticType);
-        $this->assertSame('A', $enumMemberType->getMemberName());
+        $this->assertEquals($enumStaticType, $enumMemberType->enumStaticType);
+        $this->assertEquals(EnumMemberName::from('A'), $enumMemberType->getMemberName());
     }
 
     /**
@@ -107,12 +112,12 @@ final class EnumStaticTypeTest extends TestCase
 
         $enumStaticType = EnumStaticType::fromModuleIdAndDeclaration(
             ModuleId::fromString("module-a"),
-            EnumDeclarationNode::fromString(
+            ASTNodeFixtures::EnumDeclaration(
                 'enum SomeEnum { A B C }'
             )
         );
 
-        $enumStaticType->getMemberType('NonExistent');
+        $enumStaticType->getMemberType(EnumMemberName::from('NonExistent'));
     }
 
     /**
@@ -121,7 +126,7 @@ final class EnumStaticTypeTest extends TestCase
      */
     public function canBeTransformedIntoInstanceType(): void
     {
-        $enumDeclarationNode = EnumDeclarationNode::fromString(
+        $enumDeclarationNode = ASTNodeFixtures::EnumDeclaration(
             'enum SomeEnum { A }'
         );
         $enumStaticType = EnumStaticType::fromModuleIdAndDeclaration(
@@ -144,7 +149,7 @@ final class EnumStaticTypeTest extends TestCase
      */
     public function isEquivalentToItself(): void
     {
-        $enumDeclarationNode = EnumDeclarationNode::fromString(
+        $enumDeclarationNode = ASTNodeFixtures::EnumDeclaration(
             'enum SomeEnum { A }'
         );
         $enumStaticType = EnumStaticType::fromModuleIdAndDeclaration(
@@ -161,14 +166,14 @@ final class EnumStaticTypeTest extends TestCase
      */
     public function canBeComparedToOther(): void
     {
-        $enumDeclarationNode1 = EnumDeclarationNode::fromString(
+        $enumDeclarationNode1 = ASTNodeFixtures::EnumDeclaration(
             'enum SomeEnum { A }'
         );
         $enumStaticType1 = EnumStaticType::fromModuleIdAndDeclaration(
             ModuleId::fromString("module-a"),
             $enumDeclarationNode1
         );
-        $enumDeclarationNode2 = EnumDeclarationNode::fromString(
+        $enumDeclarationNode2 = ASTNodeFixtures::EnumDeclaration(
             'enum SomeEnum { A }'
         );
         $enumStaticType2 = EnumStaticType::fromModuleIdAndDeclaration(

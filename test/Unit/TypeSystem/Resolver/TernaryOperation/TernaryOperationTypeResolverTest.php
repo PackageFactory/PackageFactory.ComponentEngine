@@ -22,8 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\TernaryOperation;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\TernaryOperation\TernaryOperationTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
@@ -40,12 +39,12 @@ final class TernaryOperationTypeResolverTest extends TestCase
     public static function ternaryOperationExamples(): array
     {
         return [
-            'true ? 42 : "foo"' => ['true ? 42 : "foo"', IntegerType::get()],
-            'false ? 42 : "foo"' => ['false ? 42 : "foo"', StringType::get()],
-            '1 < 2 ? 42 : "foo"' => ['1 < 2 ? 42 : "foo"', UnionType::of(IntegerType::get(), StringType::get())],
+            'true ? 42 : "foo"' => ['true ? 42 : "foo"', IntegerType::singleton()],
+            'false ? 42 : "foo"' => ['false ? 42 : "foo"', StringType::singleton()],
+            '1 < 2 ? 42 : "foo"' => ['1 < 2 ? 42 : "foo"', UnionType::of(IntegerType::singleton(), StringType::singleton())],
             '1 < 2 ? variableOfTypeString : variableOfTypeNumber' => [
                 '1 < 2 ? variableOfTypeString : variableOfTypeNumber',
-                UnionType::of(IntegerType::get(), StringType::get())
+                UnionType::of(IntegerType::singleton(), StringType::singleton())
             ]
         ];
     }
@@ -59,15 +58,19 @@ final class TernaryOperationTypeResolverTest extends TestCase
      */
     public function resolvesTernaryOperationToResultingType(string $ternaryExpressionAsString, TypeInterface $expectedType): void
     {
-        $scope = new DummyScope([
-            'variableOfTypeString' => StringType::get(),
-            'variableOfTypeNumber' => IntegerType::get(),
-        ]);
+        $scope = new DummyScope(
+            [StringType::singleton(), IntegerType::singleton()],
+            [
+                'variableOfTypeString' => StringType::singleton(),
+                'variableOfTypeNumber' => IntegerType::singleton()
+            ]
+        );
         $ternaryOperationTypeResolver = new TernaryOperationTypeResolver(
             scope: $scope
         );
-        $ternaryOperationNode = ExpressionNode::fromString($ternaryExpressionAsString)->root;
-        assert($ternaryOperationNode instanceof TernaryOperationNode);
+        $ternaryOperationNode = ASTNodeFixtures::TernaryOperation(
+            $ternaryExpressionAsString
+        );
 
         $actualType = $ternaryOperationTypeResolver->resolveTypeOf($ternaryOperationNode);
 

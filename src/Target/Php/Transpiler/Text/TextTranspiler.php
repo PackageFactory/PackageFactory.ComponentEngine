@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\Text;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TextNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
 
 final class TextTranspiler
 {

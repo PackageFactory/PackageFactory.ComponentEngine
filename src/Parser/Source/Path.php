@@ -113,6 +113,11 @@ final class Path implements \JsonSerializable
         }
     }
 
+    public function equals(Path $other): bool
+    {
+        return $this->value === $other->value;
+    }
+
     public function __toString(): string
     {
         return $this->value;

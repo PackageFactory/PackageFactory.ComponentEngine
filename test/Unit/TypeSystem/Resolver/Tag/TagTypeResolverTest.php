@@ -22,8 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\Tag;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\Tag\TagTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
@@ -37,10 +36,9 @@ final class TagTypeResolverTest extends TestCase
     public function resolvesTagToStringType(): void
     {
         $tagTypeResolver = new TagTypeResolver();
-        $tagNode = ExpressionNode::fromString('<div></div>')->root;
-        assert($tagNode instanceof TagNode);
+        $tagNode = ASTNodeFixtures::Tag('<div></div>');
 
-        $expectedType = StringType::get();
+        $expectedType = StringType::singleton();
         $actualType = $tagTypeResolver->resolveTypeOf($tagNode);
 
         $this->assertTrue(

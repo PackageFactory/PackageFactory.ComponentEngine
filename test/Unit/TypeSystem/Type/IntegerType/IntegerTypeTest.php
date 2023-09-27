@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\IntegerType;
 
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
 use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
@@ -30,10 +31,19 @@ final class IntegerTypeTest extends TestCase
 {
     /**
      * @test
+     * @return void
+     */
+    public function providesItsTypeName(): void
+    {
+        $this->assertEquals(TypeName::from('number'), IntegerType::singleton()->getName());
+    }
+
+    /**
+     * @test
      */
     public function integerTypeIsSingleton(): void
     {
-        $this->assertSame(IntegerType::get(), IntegerType::get());
+        $this->assertSame(IntegerType::singleton(), IntegerType::singleton());
     }
 
     /**
@@ -41,7 +51,7 @@ final class IntegerTypeTest extends TestCase
      */
     public function isReturnsTrueIfGivenTypeIsIntegerType(): void
     {
-        $this->assertTrue(IntegerType::get()->is(IntegerType::get()));
+        $this->assertTrue(IntegerType::singleton()->is(IntegerType::singleton()));
     }
 
     /**
@@ -49,6 +59,6 @@ final class IntegerTypeTest extends TestCase
      */
     public function isReturnsFalseIfGivenTypeIsNotIntegerType(): void
     {
-        $this->assertFalse(IntegerType::get()->is(StringType::get()));
+        $this->assertFalse(IntegerType::singleton()->is(StringType::singleton()));
     }
 }

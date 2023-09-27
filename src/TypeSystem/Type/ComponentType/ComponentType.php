@@ -22,20 +22,26 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ComponentDeclarationNode;
+use PackageFactory\ComponentEngine\Domain\ComponentName\ComponentName;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Language\AST\Node\ComponentDeclaration\ComponentDeclarationNode;
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class ComponentType implements TypeInterface
+final class ComponentType implements AtomicTypeInterface
 {
-    private function __construct(public readonly string $componentName)
+    private function __construct(private readonly ComponentName $name)
     {
     }
 
     public static function fromComponentDeclarationNode(ComponentDeclarationNode $componentDeclarationNode): self
     {
-        return new self(
-            componentName: $componentDeclarationNode->componentName
-        );
+        return new self($componentDeclarationNode->name->value);
+    }
+
+    public function getName(): TypeName
+    {
+        return $this->name->toTypeName();
     }
 
     public function is(TypeInterface $other): bool

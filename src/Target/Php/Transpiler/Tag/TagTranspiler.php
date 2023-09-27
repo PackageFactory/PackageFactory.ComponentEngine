@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\Tag;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TagNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Attribute\AttributeTranspiler;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\TagContent\TagContentTranspiler;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
@@ -37,7 +37,7 @@ final class TagTranspiler
 
     public function transpile(TagNode $tagNode): string
     {
-        $result = sprintf('<%s', $tagNode->tagName);
+        $result = sprintf('<%s', $tagNode->name->value->value);
 
         $attributeTranspiler = null;
         foreach ($tagNode->attributes->items as $attribute) {
@@ -60,7 +60,7 @@ final class TagTranspiler
                 $result .= $tagContentTranspiler->transpile($child);
             }
 
-            $result .= sprintf('</%s>', $tagNode->tagName);
+            $result .= sprintf('</%s>', $tagNode->name->value->value);
         }
 
         return $this->shouldAddQuotes

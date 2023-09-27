@@ -36,7 +36,7 @@ final class LookAhead implements  \IteratorAggregate
      * @param \Iterator<Token> $tokens
      */
     private function __construct(
-        public readonly \Iterator $tokens
+        public \Iterator $tokens
     ) {
     }
 

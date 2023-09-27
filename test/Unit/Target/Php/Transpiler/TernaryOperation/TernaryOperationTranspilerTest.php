@@ -22,13 +22,18 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\TernaryOperation;
 
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
-use PackageFactory\ComponentEngine\Parser\Ast\StructDeclarationNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TernaryOperationNode;
+use PackageFactory\ComponentEngine\Domain\PropertyName\PropertyName;
+use PackageFactory\ComponentEngine\Domain\StructName\StructName;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeNames;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\TernaryOperation\TernaryOperationTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\Properties;
+use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\Property;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
+use PackageFactory\ComponentEngine\TypeSystem\TypeReference;
 use PHPUnit\Framework\TestCase;
 
 final class TernaryOperationTranspilerTest extends TestCase
@@ -76,20 +81,38 @@ final class TernaryOperationTranspilerTest extends TestCase
     public function transpilesTernaryOperationNodes(string $ternaryOperationAsString, string $expectedTranspilationResult): void
     {
         $ternaryOperationTranspiler = new TernaryOperationTranspiler(
-            scope: new DummyScope([
-                "someString" => StringType::get(),
-                "someStruct" => StructType::fromStructDeclarationNode(
-                    StructDeclarationNode::fromString(<<<'AFX'
-                    struct SomeStruct {
-                        foo: string
-                        deep: ?SomeStruct
-                    }
-                    AFX)
-                )
-            ])
+            scope: new DummyScope(
+                [
+                    StringType::singleton(),
+                    $someStructType = new StructType(
+                        name: StructName::from('SomeStruct'),
+                        properties: new Properties(
+                            new Property(
+                                name: PropertyName::from('foo'),
+                                type: new TypeReference(
+                                    names: new TypeNames(TypeName::from('string')),
+                                    isOptional: false,
+                                    isArray: false
+                                )
+                            ),
+                            new Property(
+                                name: PropertyName::from('deep'),
+                                type: new TypeReference(
+                                    names: new TypeNames(TypeName::from('SomeStruct')),
+                                    isOptional: true,
+                                    isArray: false
+                                )
+                            )
+                        )
+                    )
+                ],
+                [
+                    'someString' => StringType::singleton(),
+                    'someStruct' => $someStructType
+                ]
+            )
         );
-        $ternaryOperationNode = ExpressionNode::fromString($ternaryOperationAsString)->root;
-        assert($ternaryOperationNode instanceof TernaryOperationNode);
+        $ternaryOperationNode = ASTNodeFixtures::TernaryOperation($ternaryOperationAsString);
 
         $actualTranspilationResult = $ternaryOperationTranspiler->transpile(
             $ternaryOperationNode

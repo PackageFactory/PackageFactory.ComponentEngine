@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Resolver\TemplateLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TemplateLiteralNode;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PackageFactory\ComponentEngine\TypeSystem\Resolver\TemplateLiteral\TemplateLiteralTypeResolver;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
@@ -51,9 +51,9 @@ final class TemplateLiteralTypeResolverTest extends TestCase
     public function resolvesTemplateLiteralToStringType(string $templateLiteralAsString): void
     {
         $templateLiteralTypeResolver = new TemplateLiteralTypeResolver();
-        $templateLiteralNode = TemplateLiteralNode::fromString($templateLiteralAsString);
+        $templateLiteralNode = ASTNodeFixtures::TemplateLiteral($templateLiteralAsString);
 
-        $expectedType = StringType::get();
+        $expectedType = StringType::singleton();
         $actualType = $templateLiteralTypeResolver->resolveTypeOf($templateLiteralNode);
 
         $this->assertTrue(

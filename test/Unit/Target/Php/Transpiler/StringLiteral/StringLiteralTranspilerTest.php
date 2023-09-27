@@ -22,8 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\StringLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Ast\StringLiteralNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\StringLiteral\StringLiteralTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PHPUnit\Framework\TestCase;
 
 final class StringLiteralTranspilerTest extends TestCase
@@ -67,7 +67,7 @@ final class StringLiteralTranspilerTest extends TestCase
     public function transpilesStringLiteralNodes(string $stringLiteralAsString, string $expectedTranspilationResult): void
     {
         $stringLiteralTranspiler = new StringLiteralTranspiler();
-        $stringLiteralNode = StringLiteralNode::fromString($stringLiteralAsString);
+        $stringLiteralNode = ASTNodeFixtures::StringLiteral($stringLiteralAsString);
 
         $actualTranspilationResult = $stringLiteralTranspiler->transpile(
             $stringLiteralNode
@@ -120,7 +120,7 @@ final class StringLiteralTranspilerTest extends TestCase
         $stringLiteralTranspiler = new StringLiteralTranspiler(
             shouldAddQuotes: true
         );
-        $stringLiteralNode = StringLiteralNode::fromString($stringLiteralAsString);
+        $stringLiteralNode = ASTNodeFixtures::StringLiteral($stringLiteralAsString);
 
         $actualTranspilationResult = $stringLiteralTranspiler->transpile(
             $stringLiteralNode

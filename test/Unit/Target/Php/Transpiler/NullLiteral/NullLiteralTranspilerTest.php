@@ -22,9 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\NullLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Ast\NullLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Ast\ExpressionNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\NullLiteral\NullLiteralTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PHPUnit\Framework\TestCase;
 
 final class NullLiteralTranspilerTest extends TestCase
@@ -36,8 +35,7 @@ final class NullLiteralTranspilerTest extends TestCase
     public function transpilesNullLiteralNodes(): void
     {
         $nullLiteralTranspiler = new NullLiteralTranspiler();
-        $nullLiteralNode = ExpressionNode::fromString('null')->root;
-        assert($nullLiteralNode instanceof NullLiteralNode);
+        $nullLiteralNode = ASTNodeFixtures::NullLiteral('null');
 
         $expectedTranspilationResult = 'null';
         $actualTranspilationResult = $nullLiteralTranspiler->transpile(

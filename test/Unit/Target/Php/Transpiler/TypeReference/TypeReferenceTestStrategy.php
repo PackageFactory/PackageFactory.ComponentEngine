@@ -22,13 +22,13 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\TypeReference;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference\TypeReferenceStrategyInterface;
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\EnumType\EnumStaticType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
-use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class TypeReferenceTestStrategy implements TypeReferenceStrategyInterface
 {
@@ -39,21 +39,21 @@ final class TypeReferenceTestStrategy implements TypeReferenceStrategyInterface
 
     public function getPhpTypeReferenceForComponentType(ComponentType $componentType, TypeReferenceNode $typeReferenceNode): string
     {
-        return $componentType->componentName . 'Component';
+        return $componentType->getName()->value . 'Component';
     }
 
     public function getPhpTypeReferenceForEnumType(EnumStaticType $enumType, TypeReferenceNode $typeReferenceNode): string
     {
-        return $enumType->enumName . 'Enum';
+        return $enumType->getName()->value . 'Enum';
     }
 
     public function getPhpTypeReferenceForStructType(StructType $structType, TypeReferenceNode $typeReferenceNode): string
     {
-        return $structType->structName . 'Struct';
+        return $structType->getName()->value . 'Struct';
     }
 
-    public function getPhpTypeReferenceForCustomType(TypeInterface $customType, TypeReferenceNode $typeReferenceNode): string
+    public function getPhpTypeReferenceForCustomType(AtomicTypeInterface $customType, TypeReferenceNode $typeReferenceNode): string
     {
-        return $typeReferenceNode->name . 'Custom';
+        return $customType->getName()->value . 'Custom';
     }
 }

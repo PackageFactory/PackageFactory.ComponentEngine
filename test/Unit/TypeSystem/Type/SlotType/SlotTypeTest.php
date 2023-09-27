@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\SlotType;
 
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
 use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
 use PHPUnit\Framework\TestCase;
@@ -30,10 +31,19 @@ final class SlotTypeTest extends TestCase
 {
     /**
      * @test
+     * @return void
+     */
+    public function providesItsTypeName(): void
+    {
+        $this->assertEquals(TypeName::from('slot'), SlotType::singleton()->getName());
+    }
+
+    /**
+     * @test
      */
     public function stringTypeIsSingleton(): void
     {
-        $this->assertSame(SlotType::get(), SlotType::get());
+        $this->assertSame(SlotType::singleton(), SlotType::singleton());
     }
 
     /**
@@ -41,7 +51,7 @@ final class SlotTypeTest extends TestCase
      */
     public function isReturnsTrueIfGivenTypeIsSlotType(): void
     {
-        $this->assertTrue(SlotType::get()->is(SlotType::get()));
+        $this->assertTrue(SlotType::singleton()->is(SlotType::singleton()));
     }
 
     /**
@@ -49,6 +59,6 @@ final class SlotTypeTest extends TestCase
      */
     public function isReturnsFalseIfGivenTypeIsNotSlotType(): void
     {
-        $this->assertFalse(SlotType::get()->is(IntegerType::get()));
+        $this->assertFalse(SlotType::singleton()->is(IntegerType::singleton()));
     }
 }

@@ -22,9 +22,11 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Scope\ModuleScope;
 
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
+use PackageFactory\ComponentEngine\Language\AST\Node\Module\ModuleNode;
 use PackageFactory\ComponentEngine\Module\LoaderInterface;
-use PackageFactory\ComponentEngine\Parser\Ast\ModuleNode;
-use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
@@ -37,20 +39,33 @@ final class ModuleScope implements ScopeInterface
     ) {
     }
 
-    public function lookupTypeFor(string $name): ?TypeInterface
+    public function getType(TypeName $typeName): AtomicTypeInterface
     {
-        if ($importNode = $this->moduleNode->imports->get($name)) {
-            return $this->loader->resolveTypeOfImport($importNode);
+        foreach ($this->moduleNode->imports->items as $importNode) {
+            foreach ($importNode->names->items as $importedNameNode) {
+                if ($importedNameNode->value->value === $typeName->value) {
+                    $module = $this->loader->loadModule($importNode->path->value);
+
+                    return $module->getTypeOf($typeName->toVariableName());
+                }
+            }
         }
-        return $this->parentScope->lookupTypeFor($name);
+
+        return $this->parentScope->getType($typeName);
     }
 
-    public function resolveTypeReference(TypeReferenceNode $typeReferenceNode): TypeInterface
+    public function getTypeOf(VariableName $variableName): ?TypeInterface
     {
-        if ($importNode = $this->moduleNode->imports->get($typeReferenceNode->name)) {
-            return $this->loader->resolveTypeOfImport($importNode);
+        foreach ($this->moduleNode->imports->items as $importNode) {
+            foreach ($importNode->names->items as $importedNameNode) {
+                if ($importedNameNode->value->value === $variableName->value) {
+                    $module = $this->loader->loadModule($importNode->path->value);
+
+                    return $module->getTypeOf($variableName);
+                }
+            }
         }
 
-        return $this->parentScope->resolveTypeReference($typeReferenceNode);
+        return $this->parentScope->getTypeOf($variableName);
     }
 }

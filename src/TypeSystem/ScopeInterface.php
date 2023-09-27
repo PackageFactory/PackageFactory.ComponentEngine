@@ -22,10 +22,11 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Domain\VariableName\VariableName;
 
 interface ScopeInterface
 {
-    public function lookupTypeFor(string $name): ?TypeInterface;
-    public function resolveTypeReference(TypeReferenceNode $typeReferenceNode): TypeInterface;
+    public function getType(TypeName $typeName): AtomicTypeInterface;
+    public function getTypeOf(VariableName $variableName): ?TypeInterface;
 }

@@ -22,8 +22,8 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\IntegerLiteral;
 
-use PackageFactory\ComponentEngine\Definition\IntegerFormat;
-use PackageFactory\ComponentEngine\Parser\Ast\IntegerLiteralNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerFormat;
+use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 
 final class IntegerLiteralTranspiler
 {

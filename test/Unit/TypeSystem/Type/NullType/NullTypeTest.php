@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Type\NullType;
 
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
 use PackageFactory\ComponentEngine\TypeSystem\Type\NullType\NullType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PHPUnit\Framework\TestCase;
@@ -30,10 +31,19 @@ final class NullTypeTest extends TestCase
 {
     /**
      * @test
+     * @return void
+     */
+    public function providesItsTypeName(): void
+    {
+        $this->assertEquals(TypeName::from('null'), NullType::singleton()->getName());
+    }
+
+    /**
+     * @test
      */
     public function nullTypeIsSingleton(): void
     {
-        $this->assertSame(NullType::get(), NullType::get());
+        $this->assertSame(NullType::singleton(), NullType::singleton());
     }
 
     /**
@@ -41,7 +51,7 @@ final class NullTypeTest extends TestCase
      */
     public function isReturnsTrueIfGivenTypeIsNullType(): void
     {
-        $this->assertTrue(NullType::get()->is(NullType::get()));
+        $this->assertTrue(NullType::singleton()->is(NullType::singleton()));
     }
 
     /**
@@ -49,6 +59,6 @@ final class NullTypeTest extends TestCase
      */
     public function isReturnsFalseIfGivenTypeIsNotNullType(): void
     {
-        $this->assertFalse(NullType::get()->is(StringType::get()));
+        $this->assertFalse(NullType::singleton()->is(StringType::singleton()));
     }
 }

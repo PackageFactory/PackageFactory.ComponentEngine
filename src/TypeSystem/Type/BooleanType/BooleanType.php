@@ -22,19 +22,18 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType;
 
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class BooleanType implements TypeInterface
+final class BooleanType implements AtomicTypeInterface
 {
-    private static null|self $instance = null;
+    use Singleton;
 
-    private function __construct()
+    public function getName(): TypeName
     {
-    } // @codeCoverageIgnore
-
-    public static function get(): self
-    {
-        return self::$instance ??= new self();
+        return TypeName::from('boolean');
     }
 
     public function is(TypeInterface $other): bool

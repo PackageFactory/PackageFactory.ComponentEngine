@@ -22,19 +22,18 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\TypeSystem\Type\SlotType;
 
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
-final class SlotType implements TypeInterface
+final class SlotType implements AtomicTypeInterface
 {
-    private static null|self $instance = null;
+    use Singleton;
 
-    private function __construct()
+    public function getName(): TypeName
     {
-    }
-
-    public static function get(): self
-    {
-        return self::$instance ??= new self();
+        return TypeName::from('slot');
     }
 
     public function is(TypeInterface $other): bool

@@ -22,7 +22,9 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Target\Php\Transpiler\TypeReference;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TypeReferenceNode;
+use PackageFactory\ComponentEngine\Domain\TypeName\TypeName;
+use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
+use PackageFactory\ComponentEngine\TypeSystem\AtomicTypeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\ScopeInterface;
 use PackageFactory\ComponentEngine\TypeSystem\Type\BooleanType\BooleanType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\ComponentType\ComponentType;
@@ -31,6 +33,8 @@ use PackageFactory\ComponentEngine\TypeSystem\Type\IntegerType\IntegerType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\SlotType\SlotType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StringType\StringType;
 use PackageFactory\ComponentEngine\TypeSystem\Type\StructType\StructType;
+use PackageFactory\ComponentEngine\TypeSystem\Type\UnionType\UnionType;
+use PackageFactory\ComponentEngine\TypeSystem\TypeInterface;
 
 final class TypeReferenceTranspiler
 {
@@ -42,8 +46,44 @@ final class TypeReferenceTranspiler
 
     public function transpile(TypeReferenceNode $typeReferenceNode): string
     {
-        $type = $this->scope->resolveTypeReference($typeReferenceNode);
-        $phpTypeReference = match ($type::class) {
+        $type = $this->getTypeFromTypeReferenceNode($typeReferenceNode);
+        $phpTypeReference = $this->transpileTypeToPHPTypeReference($type, $typeReferenceNode);
+
+        if ($typeReferenceNode->isOptional) {
+            if (str_contains($phpTypeReference, '|')) {
+                $phpTypeReference = 'null|' . $phpTypeReference;
+            } else {
+                $phpTypeReference = '?' . $phpTypeReference;
+            }
+        }
+
+        return $phpTypeReference;
+    }
+
+    private function getTypeFromTypeReferenceNode(TypeReferenceNode $typeReferenceNode): TypeInterface
+    {
+        $types = array_map(
+            fn (TypeName $typeName) => $this->scope->getType($typeName),
+            $typeReferenceNode->names->toTypeNames()->items
+        );
+
+        return UnionType::of(...$types);
+    }
+
+    private function transpileTypeToPHPTypeReference(TypeInterface $type, TypeReferenceNode $typeReferenceNode): string
+    {
+        if ($type instanceof UnionType) {
+            return join('|', array_map(
+                fn (TypeInterface $type) => $this->transpileTypeToPHPTypeReference($type, $typeReferenceNode),
+                $type->members
+            ));
+        }
+
+        if (!($type instanceof AtomicTypeInterface)) {
+            throw new \Exception('@TODO: Cannot transpile type ' . $type::class);
+        }
+
+        return match ($type::class) {
             IntegerType::class => 'int|float',
             StringType::class => 'string',
             BooleanType::class => 'bool',
@@ -53,12 +93,5 @@ final class TypeReferenceTranspiler
             StructType::class => $this->strategy->getPhpTypeReferenceForStructType($type, $typeReferenceNode),
             default => $this->strategy->getPhpTypeReferenceForCustomType($type, $typeReferenceNode)
         };
-
-        return $typeReferenceNode->isOptional
-            ? match ($phpTypeReference) {
-                'int|float' => 'null|int|float',
-                default => '?' . $phpTypeReference
-            }
-            : $phpTypeReference;
     }
 }

@@ -22,9 +22,9 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\TemplateLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Ast\TemplateLiteralNode;
 use PackageFactory\ComponentEngine\Test\Unit\TypeSystem\Scope\Fixtures\DummyScope;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\TemplateLiteral\TemplateLiteralTranspiler;
+use PackageFactory\ComponentEngine\Test\Unit\Language\ASTNodeFixtures;
 use PHPUnit\Framework\TestCase;
 
 final class TemplateLiteralTranspilerTest extends TestCase
@@ -70,7 +70,7 @@ final class TemplateLiteralTranspilerTest extends TestCase
         $templateLiteralTranspiler = new TemplateLiteralTranspiler(
             scope: new DummyScope()
         );
-        $templateLiteralNode = TemplateLiteralNode::fromString($templateLiteralAsString);
+        $templateLiteralNode = ASTNodeFixtures::TemplateLiteral($templateLiteralAsString);
 
         $actualTranspilationResult = $templateLiteralTranspiler->transpile(
             $templateLiteralNode
