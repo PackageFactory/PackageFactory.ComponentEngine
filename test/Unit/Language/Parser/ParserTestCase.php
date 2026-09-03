@@ -25,25 +25,10 @@ namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser;
 use PackageFactory\ComponentEngine\Language\Parser\ParserException;
 use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PHPUnit\Framework\TestCase;
 
 abstract class ParserTestCase extends TestCase
 {
-    /**
-     * @param string $sourceAsString
-     * @return \Iterator<Token>
-     */
-    protected function createTokenIterator(string $sourceAsString): \Iterator
-    {
-        $source = Source::fromString($sourceAsString);
-        $tokenizer = Tokenizer::fromSource($source);
-
-        return $tokenizer->getIterator();
-    }
-
     /**
      * @param array{int,int} $startAsArray
      * @param array{int,int} $endAsArray

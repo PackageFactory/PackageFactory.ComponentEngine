@@ -22,8 +22,6 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral;
 
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
-
 enum IntegerFormat: string
 {
     case BINARY = 'BINARY';

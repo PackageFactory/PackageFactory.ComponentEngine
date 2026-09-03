@@ -23,24 +23,8 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Language\Parser\Export;
 
 use PackageFactory\ComponentEngine\Language\Parser\ParserException;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
 
 final class ExportCouldNotBeParsed extends ParserException
 {
-    public static function becauseOfUnexpectedToken(
-        TokenTypes $expectedTokenTypes,
-        Token $actualToken
-    ): self {
-        return new self(
-            code: 1691184282,
-            message: sprintf(
-                'Export could not be parsed because of unexpected token %s. '
-                . 'Expected %s instead.',
-                $actualToken->toDebugString(),
-                $expectedTokenTypes->toDebugString()
-            ),
-            affectedRangeInSource: $actualToken->boundaries
-        );
-    }
+    protected const TITLE = 'Export could not be parsed';
 }

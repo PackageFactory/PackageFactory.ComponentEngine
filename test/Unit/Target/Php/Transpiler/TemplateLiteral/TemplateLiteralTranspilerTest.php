@@ -30,32 +30,39 @@ use PHPUnit\Framework\TestCase;
 final class TemplateLiteralTranspilerTest extends TestCase
 {
     /**
-     * @return array<string,mixed>
+     * @return iterable<mixed>
      */
-    public static function templateLiteralExamples(): array
+    public static function templateLiteralExamples(): iterable
     {
-        return [
-            '`Hello World`' => [
-                '`Hello World`',
-                '\'Hello World\''
-            ],
-            '`Hello ${name}`' => [
-                '`Hello ${name}`',
-                '\'Hello \' . $this->name'
-            ],
-            '`${greeting} World`' => [
-                '`${greeting} World`',
-                '$this->greeting . \' World\''
-            ],
-            '`Hello ${name}! How are you?`' => [
-                '`Hello ${name}! How are you?`',
-                '\'Hello \' . $this->name . \'! How are you?\''
-            ],
-            '`Hello ${name}! ${question}?`' => [
-                '`Hello ${name}! ${question}?`',
-                '\'Hello \' . $this->name . \'! \' . $this->question . \'?\''
-            ],
-        ];
+        yield $source = <<<EOF
+        """
+        Hello World
+        """
+        EOF => [$source, '\'Hello World\''];
+
+        yield $source = <<<EOF
+        """
+        Hello {name}
+        """
+        EOF => [$source, '\'Hello \' . $this->name'];
+
+        yield $source = <<<EOF
+        """
+        {greeting} World
+        """
+        EOF => [$source, '$this->greeting . \' World\''];
+
+        yield $source = <<<EOF
+        """
+        Hello {name}! How are you?
+        """
+        EOF => [$source, '\'Hello \' . $this->name . \'! How are you?\''];
+
+        yield $source = <<<EOF
+        """
+        Hello {name}! {question}?
+        """
+        EOF => [$source, '\'Hello \' . $this->name . \'! \' . $this->question . \'?\''];
     }
 
     /**

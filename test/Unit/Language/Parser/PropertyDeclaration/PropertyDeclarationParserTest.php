@@ -29,6 +29,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\Propert
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Parser\PropertyDeclaration\PropertyDeclarationParser;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
@@ -40,7 +41,7 @@ final class PropertyDeclarationParserTest extends ParserTestCase
     public function parsesPropertyDeclarationWithSimpleType(): void
     {
         $propertyDeclarationParser = PropertyDeclarationParser::singleton();
-        $tokens = $this->createTokenIterator('foo: Bar');
+        $lexer = new Lexer('foo: Bar');
 
         $expectedPropertyDeclarationNode = new PropertyDeclarationNode(
             rangeInSource: $this->range([0, 0], [0, 7]),
@@ -63,7 +64,7 @@ final class PropertyDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedPropertyDeclarationNode,
-            $propertyDeclarationParser->parse($tokens)
+            $propertyDeclarationParser->parse($lexer)
         );
     }
 
@@ -73,7 +74,7 @@ final class PropertyDeclarationParserTest extends ParserTestCase
     public function parsesPropertyDeclarationWithOptionalType(): void
     {
         $propertyDeclarationParser = PropertyDeclarationParser::singleton();
-        $tokens = $this->createTokenIterator('foo: ?Bar');
+        $lexer = new Lexer('foo: ?Bar');
 
         $expectedPropertyDeclarationNode = new PropertyDeclarationNode(
             rangeInSource: $this->range([0, 0], [0, 8]),
@@ -96,7 +97,7 @@ final class PropertyDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedPropertyDeclarationNode,
-            $propertyDeclarationParser->parse($tokens)
+            $propertyDeclarationParser->parse($lexer)
         );
     }
 
@@ -106,7 +107,7 @@ final class PropertyDeclarationParserTest extends ParserTestCase
     public function parsesPropertyDeclarationWithArrayType(): void
     {
         $propertyDeclarationParser = PropertyDeclarationParser::singleton();
-        $tokens = $this->createTokenIterator('foo: Bar[]');
+        $lexer = new Lexer('foo: Bar[]');
 
         $expectedPropertyDeclarationNode = new PropertyDeclarationNode(
             rangeInSource: $this->range([0, 0], [0, 9]),
@@ -129,7 +130,7 @@ final class PropertyDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedPropertyDeclarationNode,
-            $propertyDeclarationParser->parse($tokens)
+            $propertyDeclarationParser->parse($lexer)
         );
     }
 
@@ -139,7 +140,7 @@ final class PropertyDeclarationParserTest extends ParserTestCase
     public function parsesPropertyDeclarationWithUnionType(): void
     {
         $propertyDeclarationParser = PropertyDeclarationParser::singleton();
-        $tokens = $this->createTokenIterator('foo: Bar|Baz|Qux');
+        $lexer = new Lexer('foo: Bar|Baz|Qux');
 
         $expectedPropertyDeclarationNode = new PropertyDeclarationNode(
             rangeInSource: $this->range([0, 0], [0, 15]),
@@ -170,7 +171,7 @@ final class PropertyDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedPropertyDeclarationNode,
-            $propertyDeclarationParser->parse($tokens)
+            $propertyDeclarationParser->parse($lexer)
         );
     }
 }

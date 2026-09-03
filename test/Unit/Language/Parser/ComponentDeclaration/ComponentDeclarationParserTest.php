@@ -45,6 +45,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Parser\ComponentDeclaration\ComponentDeclarationParser;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
@@ -56,7 +57,7 @@ final class ComponentDeclarationParserTest extends ParserTestCase
     public function parsesComponentDeclarationWithNoProps(): void
     {
         $componentDeclarationParser = ComponentDeclarationParser::singleton();
-        $tokens = $this->createTokenIterator('component Foo { return "bar" }');
+        $lexer = new Lexer('component Foo { return "bar" }');
 
         $expectedComponentDeclarationNode = new ComponentDeclarationNode(
             rangeInSource: $this->range([0, 0], [0, 29]),
@@ -66,9 +67,9 @@ final class ComponentDeclarationParserTest extends ParserTestCase
             ),
             props: new PropertyDeclarationNodes(),
             return: new ExpressionNode(
-                rangeInSource: $this->range([0, 24], [0, 26]),
+                rangeInSource: $this->range([0, 23], [0, 27]),
                 root: new StringLiteralNode(
-                    rangeInSource: $this->range([0, 24], [0, 26]),
+                    rangeInSource: $this->range([0, 23], [0, 27]),
                     value: 'bar'
                 )
             )
@@ -76,7 +77,7 @@ final class ComponentDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedComponentDeclarationNode,
-            $componentDeclarationParser->parse($tokens)
+            $componentDeclarationParser->parse($lexer)
         );
     }
 
@@ -86,7 +87,7 @@ final class ComponentDeclarationParserTest extends ParserTestCase
     public function parsesComponentDeclarationWithOneProp(): void
     {
         $componentDeclarationParser = ComponentDeclarationParser::singleton();
-        $tokens = $this->createTokenIterator('component Foo { bar: string return bar }');
+        $lexer = new Lexer('component Foo { bar: string return bar }');
 
         $expectedComponentDeclarationNode = new ComponentDeclarationNode(
             rangeInSource: $this->range([0, 0], [0, 39]),
@@ -125,7 +126,7 @@ final class ComponentDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedComponentDeclarationNode,
-            $componentDeclarationParser->parse($tokens)
+            $componentDeclarationParser->parse($lexer)
         );
     }
 
@@ -145,7 +146,7 @@ final class ComponentDeclarationParserTest extends ParserTestCase
             return <a href={href} target={target} rel={rel}>{children}</a>
         }
         AFX;
-        $tokens = $this->createTokenIterator($componentAsString);
+        $lexer = new Lexer($componentAsString);
 
         $expectedComponentDeclarationNode = new ComponentDeclarationNode(
             rangeInSource: $this->range([0, 0], [7, 0]),
@@ -299,7 +300,7 @@ final class ComponentDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedComponentDeclarationNode,
-            $componentDeclarationParser->parse($tokens)
+            $componentDeclarationParser->parse($lexer)
         );
     }
 }

@@ -25,53 +25,53 @@ namespace PackageFactory\ComponentEngine\Language\Parser\IntegerLiteral;
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerFormat;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\LexerException;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 
 final class IntegerLiteralParser
 {
     use Singleton;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return IntegerLiteralNode
-     */
-    public function parse(\Iterator &$tokens): IntegerLiteralNode
+    private const RULES_INTEGER_FORMATS = [
+        Rule::INTEGER_HEXADECIMAL,
+        Rule::INTEGER_DECIMAL,
+        Rule::INTEGER_OCTAL,
+        Rule::INTEGER_BINARY
+    ];
+
+    public function parse(Lexer $lexer): IntegerLiteralNode
     {
-        if (Scanner::isEnd($tokens)) {
-            throw IntegerLiteralCouldNotBeParsed::becauseOfUnexpectedEndOfFile();
+        try {
+            $start = null;
+            $value = '';
+
+            if ($lexer->probe(Rule::SYMBOL_DASH)) {
+                $start = $lexer->buffer->getStart();
+                $value = $lexer->buffer->getContents();
+            }
+
+            $rule = $lexer->read(...self::RULES_INTEGER_FORMATS);
+            $start ??= $lexer->buffer->getStart();
+            $value .= $lexer->buffer->getContents();
+
+            return new IntegerLiteralNode(
+                rangeInSource: $start->toRange($lexer->buffer->getEnd()),
+                format: $this->getIntegerFormatFromToken($rule),
+                value: $value
+            );
+        } catch (LexerException $e) {
+            throw IntegerLiteralCouldNotBeParsed::becauseOfLexerException($e);
         }
-
-        $token = $tokens->current();
-
-        Scanner::skipOne($tokens);
-
-        return new IntegerLiteralNode(
-            rangeInSource: $token->boundaries,
-            format: $this->getIntegerFormatFromToken($token),
-            value: $token->value
-        );
     }
 
-    private function getIntegerFormatFromToken(Token $token): IntegerFormat
+    private function getIntegerFormatFromToken(Rule $rule): IntegerFormat
     {
-        return match ($token->type) {
-            TokenType::NUMBER_BINARY => IntegerFormat::BINARY,
-            TokenType::NUMBER_OCTAL => IntegerFormat::OCTAL,
-            TokenType::NUMBER_DECIMAL => IntegerFormat::DECIMAL,
-            TokenType::NUMBER_HEXADECIMAL => IntegerFormat::HEXADECIMAL,
-
-            default => throw IntegerLiteralCouldNotBeParsed::becauseOfUnexpectedToken(
-                expectedTokenTypes: TokenTypes::from(
-                    TokenType::NUMBER_BINARY,
-                    TokenType::NUMBER_OCTAL,
-                    TokenType::NUMBER_DECIMAL,
-                    TokenType::NUMBER_HEXADECIMAL
-                ),
-                actualToken: $token
-            )
+        return match ($rule) {
+            Rule::INTEGER_HEXADECIMAL => IntegerFormat::HEXADECIMAL,
+            Rule::INTEGER_BINARY => IntegerFormat::BINARY,
+            Rule::INTEGER_OCTAL => IntegerFormat::OCTAL,
+            default => IntegerFormat::DECIMAL,
         };
     }
 }

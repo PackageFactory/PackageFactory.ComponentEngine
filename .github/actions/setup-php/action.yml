@@ -12,6 +12,7 @@ runs:
       with:
         php-version: ${{ inputs.php-version }}
         coverage: xdebug
+        ini-values: zend.assertions=1
 
     - id: composer-cache
       run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT

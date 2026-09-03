@@ -24,136 +24,84 @@ namespace PackageFactory\ComponentEngine\Language\Parser\Text;
 
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
+use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class TextParser
 {
     use Singleton;
 
-    private string $value;
+    private const RULES_END_DELIMITERS = [
+        Rule::SYMBOL_CLOSE_TAG,
+        Rule::BRACKET_ANGLE_OPEN,
+        Rule::BRACKET_CURLY_OPEN
+    ];
+    private const RULES_CONTENT = [
+        Rule::SPACE,
+        Rule::END_OF_LINE,
+        Rule::TEXT
+    ];
 
-    private ?Token $startingToken;
-    private ?Token $finalToken;
-
-    private bool $trimLeadingSpace;
-    private bool $trimTrailingSpace;
-    private bool $currentlyCapturingSpace;
-    private bool $trailingSpaceContainsLineBreak;
-    private bool $terminated;
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @param boolean $preserveLeadingSpace
-     * @return null|TextNode
-     */
-    public function parse(\Iterator &$tokens, bool $preserveLeadingSpace = false): ?TextNode
+    public function parse(Lexer $lexer, bool $preserveLeadingSpace = false): ?TextNode
     {
-        $this->reset($preserveLeadingSpace);
+        /** @var null|Position $start */
+        $start = null;
+        $hasLeadingSpace = false;
 
-        while (!Scanner::isEnd($tokens) && !$this->terminated) {
-            $this->startingToken ??= $tokens->current();
+        if ($lexer->probe(Rule::SPACE)) {
+            $start = $lexer->buffer->getStart();
+            $hasLeadingSpace = true;
+        }
 
-            match (Scanner::type($tokens)) {
-                TokenType::BRACKET_CURLY_OPEN,
-                TokenType::TAG_START_OPENING =>
-                    $this->terminateAtAdjacentChildNode(),
-                TokenType::TAG_START_CLOSING =>
-                    $this->terminateAtClosingTag(),
-                TokenType::SPACE =>
-                    $this->captureSpace($tokens->current()),
-                TokenType::END_OF_LINE =>
-                    $this->captureLineBreak($tokens->current()),
-                default =>
-                    $this->captureText($tokens->current()),
-            };
+        if ($lexer->probe(Rule::END_OF_LINE)) {
+            $start ??= $lexer->buffer->getStart();
+            $hasLeadingSpace = false;
+        }
 
-            if (!$this->terminated) {
-                Scanner::skipOne($tokens);
+        $lexer->skipSpace();
+        if ($lexer->isEnd() || $lexer->peek(...self::RULES_END_DELIMITERS)) {
+            return null;
+        }
+
+        $hasTrailingSpace = false;
+        $trailingSpaceContainsLineBreaks = false;
+        $value = $hasLeadingSpace && $preserveLeadingSpace ? ' ' : '';
+        while (!$lexer->isEnd() && !$lexer->peek(...self::RULES_END_DELIMITERS)) {
+            $rule = $lexer->read(...self::RULES_CONTENT);
+
+            if ($rule === Rule::TEXT) {
+                $start ??= $lexer->buffer->getStart();
+                if ($hasTrailingSpace) {
+                    $value .= ' ';
+                    $hasTrailingSpace = false;
+                    $trailingSpaceContainsLineBreaks = false;
+                }
+                $value .= $lexer->buffer->getContents();
+                continue;
             }
+
+            if ($rule === Rule::END_OF_LINE) {
+                $trailingSpaceContainsLineBreaks = true;
+            }
+
+            $hasTrailingSpace = true;
         }
 
-        return $this->build();
-    }
-
-    private function reset(bool $preserveLeadingSpace): void
-    {
-        $this->value = '';
-
-        $this->startingToken = null;
-        $this->finalToken = null;
-
-        $this->trimLeadingSpace = !$preserveLeadingSpace;
-        $this->trimTrailingSpace = true;
-        $this->currentlyCapturingSpace = false;
-        $this->trailingSpaceContainsLineBreak = false;
-        $this->terminated = false;
-    }
-
-    private function terminateAtAdjacentChildNode(): void
-    {
-        $this->terminated = true;
-        $this->trimTrailingSpace = $this->trailingSpaceContainsLineBreak;
-    }
-
-    private function terminateAtClosingTag(): void
-    {
-        $this->terminated = true;
-    }
-
-    private function captureSpace(Token $token): void
-    {
-        $this->finalToken = $token;
-
-        if ($this->currentlyCapturingSpace) {
-            return;
-        }
-
-        $this->currentlyCapturingSpace = true;
-        $this->value .= ' ';
-    }
-
-    private function captureLineBreak(Token $token): void
-    {
-        $this->captureSpace($token);
-        $this->trailingSpaceContainsLineBreak = true;
-    }
-
-    private function captureText(Token $token): void
-    {
-        $this->finalToken = $token;
-        $this->currentlyCapturingSpace = false;
-        $this->trailingSpaceContainsLineBreak = false;
-
-        $this->value .= $token->value;
-    }
-
-    private function build(): ?TextNode
-    {
-        if (is_null($this->startingToken) || is_null($this->finalToken)) {
+        if ($start === null) {
             return null;
         }
 
-        if ($this->trimLeadingSpace) {
-            $this->value = ltrim($this->value);
-        }
+        $end = $lexer->buffer->getEnd();
 
-        if ($this->trimTrailingSpace) {
-            $this->value = rtrim($this->value);
-        }
-
-        if ($this->value === '' || $this->value === ' ') {
-            return null;
+        if ($hasTrailingSpace && !$trailingSpaceContainsLineBreaks && !$lexer->isEnd() && !$lexer->peek(Rule::SYMBOL_CLOSE_TAG)) {
+            $value .= ' ';
         }
 
         return new TextNode(
-            rangeInSource: Range::from(
-                $this->startingToken->boundaries->start,
-                $this->finalToken->boundaries->end
-            ),
-            value: $this->value
+            rangeInSource: Range::from($start, $end),
+            value: $value
         );
     }
 }

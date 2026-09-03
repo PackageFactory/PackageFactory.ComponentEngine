@@ -43,6 +43,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Parser\BooleanLiteral\BooleanLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\ComponentDeclaration\ComponentDeclarationParser;
 use PackageFactory\ComponentEngine\Language\Parser\EnumDeclaration\EnumDeclarationParser;
@@ -59,7 +60,6 @@ use PackageFactory\ComponentEngine\Language\Parser\TemplateLiteral\TemplateLiter
 use PackageFactory\ComponentEngine\Language\Parser\Text\TextParser;
 use PackageFactory\ComponentEngine\Language\Parser\TypeReference\TypeReferenceParser;
 use PackageFactory\ComponentEngine\Language\Parser\ValueReference\ValueReferenceParser;
-use PackageFactory\ComponentEngine\Test\Unit\Parser\Tokenizer\Fixtures as TokenizerFixtures;
 
 final class ASTNodeFixtures
 {
@@ -91,87 +91,87 @@ final class ASTNodeFixtures
     public static function BooleanLiteral(string $sourceAsString): BooleanLiteralNode
     {
         $booleanLiteralParser = BooleanLiteralParser::singleton();
-        $tokens = TokenizerFixtures::tokens($sourceAsString);
+        $lexer = new Lexer($sourceAsString);
 
-        return $booleanLiteralParser->parse($tokens);
+        return $booleanLiteralParser->parse($lexer);
     }
 
     public static function ComponentDeclaration(string $sourceAsString): ComponentDeclarationNode
     {
         $componentDeclarationParser = ComponentDeclarationParser::singleton();
-        $tokens = TokenizerFixtures::tokens($sourceAsString);
+        $lexer = new Lexer($sourceAsString);
 
-        return $componentDeclarationParser->parse($tokens);
+        return $componentDeclarationParser->parse($lexer);
     }
 
     public static function EnumDeclaration(string $sourceAsString): EnumDeclarationNode
     {
         $enumDeclarationParser = EnumDeclarationParser::singleton();
-        $tokens = TokenizerFixtures::tokens($sourceAsString);
+        $lexer = new Lexer($sourceAsString);
 
-        return $enumDeclarationParser->parse($tokens);
+        return $enumDeclarationParser->parse($lexer);
     }
 
     public static function Expression(string $sourceAsString): ExpressionNode
     {
         $epxressionParser = new ExpressionParser();
-        $tokens = TokenizerFixtures::tokens($sourceAsString);
+        $lexer = new Lexer($sourceAsString);
 
-        return $epxressionParser->parse($tokens);
+        return $epxressionParser->parse($lexer);
     }
 
     public static function IntegerLiteral(string $sourceAsString): IntegerLiteralNode
     {
         $integerLiteralParser = IntegerLiteralParser::singleton();
-        $tokens = TokenizerFixtures::tokens($sourceAsString);
+        $lexer = new Lexer($sourceAsString);
 
-        return $integerLiteralParser->parse($tokens);
+        return $integerLiteralParser->parse($lexer);
     }
 
     public static function Match(string $sourceAsString): MatchNode
     {
         $matchParser = MatchParser::singleton();
-        $tokens = TokenizerFixtures::tokens($sourceAsString);
+        $lexer = new Lexer($sourceAsString);
 
-        return $matchParser->parse($tokens);
+        return $matchParser->parse($lexer);
     }
 
     public static function Module(string $sourceAsString): ModuleNode
     {
         $moduleParser = ModuleParser::singleton();
-        $tokens = TokenizerFixtures::tokens($sourceAsString);
+        $lexer = new Lexer($sourceAsString);
 
-        return $moduleParser->parse($tokens);
+        return $moduleParser->parse($lexer);
     }
 
     public static function NullLiteral(string $sourceAsString): NullLiteralNode
     {
         $nullLiteralParser = NullLiteralParser::singleton();
-        $tokens = TokenizerFixtures::tokens($sourceAsString);
+        $lexer = new Lexer($sourceAsString);
 
-        return $nullLiteralParser->parse($tokens);
+        return $nullLiteralParser->parse($lexer);
     }
 
     public static function PropertyDeclaration(string $sourceAsString): PropertyDeclarationNode
     {
         $propertyDeclarationParser = PropertyDeclarationParser::singleton();
-        $tokens = TokenizerFixtures::tokens($sourceAsString);
+        $lexer = new Lexer($sourceAsString);
 
-        return $propertyDeclarationParser->parse($tokens);
+        return $propertyDeclarationParser->parse($lexer);
     }
 
     public static function StringLiteral(string $sourceAsString): StringLiteralNode
     {
         $stringLiteralParser = StringLiteralParser::singleton();
-        $tokens = TokenizerFixtures::tokens($sourceAsString);
+        $lexer = new Lexer($sourceAsString);
 
-        return $stringLiteralParser->parse($tokens);
+        return $stringLiteralParser->parse($lexer);
     }
 
     public static function StructDeclaration(string $sourceAsString): StructDeclarationNode
     {
         $structDeclarationParser = StructDeclarationParser::singleton();
-        $tokens = TokenizerFixtures::tokens($sourceAsString);
+        $tokens = new Lexer($sourceAsString);
 
         return $structDeclarationParser->parse($tokens);
     }
@@ -179,9 +179,9 @@ final class ASTNodeFixtures
     public static function Tag(string $sourceAsString): TagNode
     {
         $tagParser = TagParser::singleton();
-        $tokens = TokenizerFixtures::tokens($sourceAsString);
+        $lexer = new Lexer($sourceAsString);
 
-        return $tagParser->parse($tokens);
+        return $tagParser->parse($lexer);
     }
 
     public static function TagContent(string $sourceAsString): null|TextNode|ExpressionNode|TagNode
@@ -194,9 +194,9 @@ final class ASTNodeFixtures
     public static function TemplateLiteral(string $sourceAsString): TemplateLiteralNode
     {
         $templateLiteralParser = TemplateLiteralParser::singleton();
-        $tokens = TokenizerFixtures::tokens($sourceAsString);
+        $lexer = new Lexer($sourceAsString);
 
-        return $templateLiteralParser->parse($tokens);
+        return $templateLiteralParser->parse($lexer);
     }
 
     public static function TernaryOperation(string $sourceAsString): TernaryOperationNode
@@ -211,25 +211,25 @@ final class ASTNodeFixtures
     public static function Text(string $sourceAsString): ?TextNode
     {
         $textParser = TextParser::singleton();
-        $tokens = TokenizerFixtures::tokens($sourceAsString);
+        $lexer = new Lexer($sourceAsString);
 
-        return $textParser->parse($tokens);
+        return $textParser->parse($lexer);
     }
 
     public static function TypeReference(string $sourceAsString): TypeReferenceNode
     {
         $typeReferenceParser = TypeReferenceParser::singleton();
-        $tokens = TokenizerFixtures::tokens($sourceAsString);
+        $lexer = new Lexer($sourceAsString);
 
-        return $typeReferenceParser->parse($tokens);
+        return $typeReferenceParser->parse($lexer);
     }
 
     public static function ValueReference(string $sourceAsString): ValueReferenceNode
     {
         $valueReferenceParser = ValueReferenceParser::singleton();
-        $tokens = TokenizerFixtures::tokens($sourceAsString);
+        $lexer = new Lexer($sourceAsString);
 
-        return $valueReferenceParser->parse($tokens);
+        return $valueReferenceParser->parse($lexer);
     }
 
     public static function UnaryOperation(string $sourceAsString): UnaryOperationNode

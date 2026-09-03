@@ -36,6 +36,7 @@ final class BinaryOperationTranspiler
     private function transpileBinaryOperator(BinaryOperator $binaryOperator): string
     {
         return match ($binaryOperator) {
+            BinaryOperator::NULLISH_COALESCE => '??',
             BinaryOperator::AND => '&&',
             BinaryOperator::OR => '||',
             BinaryOperator::EQUAL => '===',

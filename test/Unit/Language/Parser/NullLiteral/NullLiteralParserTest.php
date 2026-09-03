@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\NullLiteral;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\NullLiteral\NullLiteralNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Parser\NullLiteral\NullLiteralParser;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
@@ -34,7 +35,7 @@ final class NullLiteralParserTest extends ParserTestCase
     public function parsesNull(): void
     {
         $nullLiteralParser = NullLiteralParser::singleton();
-        $tokens = $this->createTokenIterator('null');
+        $lexer = new Lexer('null');
 
         $expectedNullLiteralNode = new NullLiteralNode(
             rangeInSource: $this->range([0, 0], [0, 3])
@@ -42,7 +43,7 @@ final class NullLiteralParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedNullLiteralNode,
-            $nullLiteralParser->parse($tokens)
+            $nullLiteralParser->parse($lexer)
         );
     }
 }

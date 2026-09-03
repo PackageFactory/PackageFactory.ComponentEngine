@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\BooleanLiteral;
 
 use PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral\BooleanLiteralNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Parser\BooleanLiteral\BooleanLiteralParser;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
@@ -34,7 +35,7 @@ final class BooleanLiteralParserTest extends ParserTestCase
     public function parsesTrue(): void
     {
         $booleanLiteralParser = BooleanLiteralParser::singleton();
-        $tokens = $this->createTokenIterator('true');
+        $lexer = new Lexer('true');
 
         $expectedBooleanLiteralNode = new BooleanLiteralNode(
             rangeInSource: $this->range([0, 0], [0, 3]),
@@ -43,7 +44,7 @@ final class BooleanLiteralParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedBooleanLiteralNode,
-            $booleanLiteralParser->parse($tokens)
+            $booleanLiteralParser->parse($lexer)
         );
     }
 
@@ -53,7 +54,7 @@ final class BooleanLiteralParserTest extends ParserTestCase
     public function parsesFalse(): void
     {
         $booleanLiteralParser = BooleanLiteralParser::singleton();
-        $tokens = $this->createTokenIterator('false');
+        $lexer = new Lexer('false');
 
         $expectedBooleanLiteralNode = new BooleanLiteralNode(
             rangeInSource: $this->range([0, 0], [0, 4]),
@@ -62,7 +63,7 @@ final class BooleanLiteralParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedBooleanLiteralNode,
-            $booleanLiteralParser->parse($tokens)
+            $booleanLiteralParser->parse($lexer)
         );
     }
 }

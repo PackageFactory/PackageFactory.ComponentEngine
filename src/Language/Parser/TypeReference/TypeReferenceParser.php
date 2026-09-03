@@ -29,39 +29,32 @@ use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\InvalidTypeRe
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeNameNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\TypeReference\TypeReferenceNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
+use PackageFactory\ComponentEngine\Parser\Source\Position;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class TypeReferenceParser
 {
     use Singleton;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return TypeReferenceNode
-     */
-    public function parse(\Iterator &$tokens): TypeReferenceNode
+    private ?Position $start = null;
+
+    public function parse(Lexer $lexer): TypeReferenceNode
     {
-        $startingToken = $tokens->current();
-        $questionmarkToken = $this->extractQuestionmarkToken($tokens);
-        $isOptional = !is_null($questionmarkToken);
+        $this->start = null;
+        if ($isOptional = (bool) $lexer->probe(Rule::SYMBOL_QUESTIONMARK)) {
+            $this->start = $lexer->buffer->getStart();
+        }
+        $typeNameNodes = $this->parseTypeNames($lexer);
+        $isArray = $this->parseIsArray($lexer);
+        $end = $lexer->buffer->getEnd();
 
-        $typeNameNodes = $this->parseTypeNames($tokens);
-
-        $closingArrayToken = $this->extractClosingArrayToken($tokens);
-        $isArray = !is_null($closingArrayToken);
-
-        $rangeInSource = Range::from(
-            $startingToken->boundaries->start,
-            $closingArrayToken?->boundaries->end
-                ?? $typeNameNodes->getLast()->rangeInSource->end
-        );
+        assert($this->start !== null);
 
         try {
             return new TypeReferenceNode(
-                rangeInSource: $rangeInSource,
+                rangeInSource: Range::from($this->start, $end),
                 names: $typeNameNodes,
                 isArray: $isArray,
                 isOptional: $isOptional
@@ -71,37 +64,15 @@ final class TypeReferenceParser
         }
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return Token
-     */
-    public function extractQuestionmarkToken(\Iterator &$tokens): ?Token
-    {
-        if (Scanner::type($tokens) === TokenType::QUESTIONMARK) {
-            $questionmarkToken = $tokens->current();
-            Scanner::skipOne($tokens);
-
-            return $questionmarkToken;
-        }
-
-        return null;
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return TypeNameNodes
-     */
-    public function parseTypeNames(\Iterator &$tokens): TypeNameNodes
+    public function parseTypeNames(Lexer $lexer): TypeNameNodes
     {
         $items = [];
         while (true) {
-            $items[] = $this->parseTypeName($tokens);
+            $items[] = $this->parseTypeName($lexer);
 
-            if (Scanner::isEnd($tokens) || Scanner::type($tokens) !== TokenType::PIPE) {
+            if ($lexer->isEnd() || !$lexer->probe(Rule::SYMBOL_PIPE)) {
                 break;
             }
-
-            Scanner::skipOne($tokens);
         }
 
         try {
@@ -111,41 +82,28 @@ final class TypeReferenceParser
         }
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return TypeNameNode
-     */
-    public function parseTypeName(\Iterator &$tokens): TypeNameNode
+    public function parseTypeName(Lexer $lexer): TypeNameNode
     {
-        Scanner::assertType($tokens, TokenType::STRING);
-
-        $typeNameToken = $tokens->current();
-
-        Scanner::skipOne($tokens);
+        $lexer->read(Rule::WORD);
+        $this->start ??= $lexer->buffer->getStart();
 
         return new TypeNameNode(
-            rangeInSource: $typeNameToken->boundaries,
-            value: TypeName::from($typeNameToken->value)
+            rangeInSource: $lexer->buffer->getRange(),
+            value: TypeName::from($lexer->buffer->getContents())
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return Token
-     */
-    public function extractClosingArrayToken(\Iterator &$tokens): ?Token
+    public function parseIsArray(Lexer $lexer): bool
     {
-        if (!Scanner::isEnd($tokens) && Scanner::type($tokens) === TokenType::BRACKET_SQUARE_OPEN) {
-            Scanner::skipOne($tokens);
-            Scanner::assertType($tokens, TokenType::BRACKET_SQUARE_CLOSE);
-
-            $closingArrayToken = $tokens->current();
-
-            Scanner::skipOne($tokens);
-
-            return $closingArrayToken;
+        if ($lexer->isEnd()) {
+            return false;
         }
 
-        return null;
+        if ($lexer->probe(Rule::BRACKET_SQUARE_OPEN)) {
+            $lexer->read(Rule::BRACKET_SQUARE_CLOSE);
+            return true;
+        }
+
+        return false;
     }
 }

@@ -27,11 +27,10 @@ use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\PropertyDeclaration\PropertyDeclarationNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructDeclarationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StructDeclaration\StructNameNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 use PackageFactory\ComponentEngine\Language\Parser\PropertyDeclaration\PropertyDeclarationParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
 
 final class StructDeclarationParser
 {
@@ -39,104 +38,50 @@ final class StructDeclarationParser
 
     private ?PropertyDeclarationParser $propertyDeclarationParser = null;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return StructDeclarationNode
-     */
-    public function parse(\Iterator &$tokens): StructDeclarationNode
+    public function parse(Lexer $lexer): StructDeclarationNode
     {
-        $structKeywordToken = $this->extractStructKeywordToken($tokens);
-        $structNameNode = $this->parseStructName($tokens);
-        $this->skipOpeningBracketToken($tokens);
-        $propertyDeclarationNodes = $this->parsePropertyDeclarations($tokens);
-        $closingBracketToken = $this->extractClosingBracketToken($tokens);
+        $lexer->read(Rule::KEYWORD_STRUCT);
+        $start = $lexer->buffer->getStart();
+        $lexer->skipSpace();
+
+        $structNameNode = $this->parseStructName($lexer);
+        $propertyDeclarationNodes = $this->parsePropertyDeclarations($lexer);
+        $end = $lexer->buffer->getEnd();
 
         return new StructDeclarationNode(
-            rangeInSource: Range::from(
-                $structKeywordToken->boundaries->start,
-                $closingBracketToken->boundaries->end
-            ),
+            rangeInSource: Range::from($start, $end),
             name: $structNameNode,
             properties: $propertyDeclarationNodes
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return Token
-     */
-    public function extractStructKeywordToken(\Iterator &$tokens): Token
+    private function parseStructName(Lexer $lexer): StructNameNode
     {
-        Scanner::assertType($tokens, TokenType::KEYWORD_STRUCT);
-
-        $structKeywordToken = $tokens->current();
-
-        Scanner::skipOne($tokens);
-        Scanner::skipSpace($tokens);
-
-        return $structKeywordToken;
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return StructNameNode
-     */
-    public function parseStructName(\Iterator &$tokens): StructNameNode
-    {
-        Scanner::assertType($tokens, TokenType::STRING);
-
-        $structNameToken = $tokens->current();
-
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
-
-        return new StructNameNode(
-            rangeInSource: $structNameToken->boundaries,
-            value: StructName::from($structNameToken->value)
+        $lexer->read(Rule::WORD);
+        $structNameNode = new StructNameNode(
+            rangeInSource: $lexer->buffer->getRange(),
+            value: StructName::from($lexer->buffer->getContents())
         );
+
+        $lexer->skipSpaceAndComments();
+
+        return $structNameNode;
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return void
-     */
-    public function skipOpeningBracketToken(\Iterator &$tokens): void
-    {
-        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_OPEN);
-        Scanner::skipOne($tokens);
-        Scanner::skipSpaceAndComments($tokens);
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return PropertyDeclarationNodes
-     */
-    public function parsePropertyDeclarations(\Iterator &$tokens): PropertyDeclarationNodes
+    public function parsePropertyDeclarations(Lexer $lexer): PropertyDeclarationNodes
     {
         $this->propertyDeclarationParser ??= PropertyDeclarationParser::singleton();
 
+        $lexer->read(Rule::BRACKET_CURLY_OPEN);
+        $lexer->skipSpaceAndComments();
+
         $items = [];
-        while (Scanner::type($tokens) === TokenType::STRING) {
-            assert($this->propertyDeclarationParser !== null);
-            $items[] = $this->propertyDeclarationParser->parse($tokens);
-            Scanner::skipSpaceAndComments($tokens);
+        while (!$lexer->probe(Rule::BRACKET_CURLY_CLOSE)) {
+            $lexer->expect(Rule::WORD);
+            $items[] = $this->propertyDeclarationParser->parse($lexer);
+            $lexer->skipSpaceAndComments();
         }
 
         return new PropertyDeclarationNodes(...$items);
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return Token
-     */
-    public function extractClosingBracketToken(\Iterator &$tokens): Token
-    {
-        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
-
-        $closingBracketToken = $tokens->current();
-
-        Scanner::skipOne($tokens);
-
-        return $closingBracketToken;
     }
 }

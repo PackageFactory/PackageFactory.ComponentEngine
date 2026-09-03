@@ -33,6 +33,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\EnumDeclaration\EnumNameNod
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerFormat;
 use PackageFactory\ComponentEngine\Language\AST\Node\IntegerLiteral\IntegerLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\StringLiteral\StringLiteralNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Parser\EnumDeclaration\EnumDeclarationParser;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
@@ -44,7 +45,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
     public function parsesEnumDeclarationWithOneValuelessMember(): void
     {
         $enumDeclarationParser = EnumDeclarationParser::singleton();
-        $tokens = $this->createTokenIterator('enum Foo { BAR }');
+        $lexer = new Lexer('enum Foo { BAR }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
             rangeInSource: $this->range([0, 0], [0, 15]),
@@ -66,7 +67,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedEnumDeclarationNode,
-            $enumDeclarationParser->parse($tokens)
+            $enumDeclarationParser->parse($lexer)
         );
     }
 
@@ -76,7 +77,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
     public function parsesEnumDeclarationWithThreeValuelessMembers(): void
     {
         $enumDeclarationParser = EnumDeclarationParser::singleton();
-        $tokens = $this->createTokenIterator('enum Foo { BAR BAZ QUX }');
+        $lexer = new Lexer('enum Foo { BAR BAZ QUX }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
             rangeInSource: $this->range([0, 0], [0, 23]),
@@ -114,7 +115,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedEnumDeclarationNode,
-            $enumDeclarationParser->parse($tokens)
+            $enumDeclarationParser->parse($lexer)
         );
     }
 
@@ -124,7 +125,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
     public function parsesEnumDeclarationWithOneStringValueMember(): void
     {
         $enumDeclarationParser = EnumDeclarationParser::singleton();
-        $tokens = $this->createTokenIterator('enum Foo { BAR("BAR") }');
+        $lexer = new Lexer('enum Foo { BAR("BAR") }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
             rangeInSource: $this->range([0, 0], [0, 22]),
@@ -142,7 +143,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
                     value: new EnumMemberValueNode(
                         rangeInSource: $this->range([0, 14], [0, 20]),
                         value: new StringLiteralNode(
-                            rangeInSource: $this->range([0, 16], [0, 18]),
+                            rangeInSource: $this->range([0, 15], [0, 19]),
                             value: 'BAR'
                         )
                     )
@@ -152,7 +153,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedEnumDeclarationNode,
-            $enumDeclarationParser->parse($tokens)
+            $enumDeclarationParser->parse($lexer)
         );
     }
 
@@ -173,7 +174,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
             SUNDAY("sun")
         }
         AFX;
-        $tokens = $this->createTokenIterator($enumAsString);
+        $lexer = new Lexer($enumAsString);
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
             rangeInSource: $this->range([0, 0], [8, 0]),
@@ -191,7 +192,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
                     value: new EnumMemberValueNode(
                         rangeInSource: $this->range([1, 10], [1, 16]),
                         value: new StringLiteralNode(
-                            rangeInSource: $this->range([1, 12], [1, 14]),
+                            rangeInSource: $this->range([1, 11], [1, 15]),
                             value: 'mon'
                         )
                     )
@@ -205,7 +206,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
                     value: new EnumMemberValueNode(
                         rangeInSource: $this->range([2, 11], [2, 17]),
                         value: new StringLiteralNode(
-                            rangeInSource: $this->range([2, 13], [2, 15]),
+                            rangeInSource: $this->range([2, 12], [2, 16]),
                             value: 'tue'
                         )
                     )
@@ -219,7 +220,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
                     value: new EnumMemberValueNode(
                         rangeInSource: $this->range([3, 13], [3, 19]),
                         value: new StringLiteralNode(
-                            rangeInSource: $this->range([3, 15], [3, 17]),
+                            rangeInSource: $this->range([3, 14], [3, 18]),
                             value: 'wed'
                         )
                     )
@@ -233,7 +234,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
                     value: new EnumMemberValueNode(
                         rangeInSource: $this->range([4, 12], [4, 18]),
                         value: new StringLiteralNode(
-                            rangeInSource: $this->range([4, 14], [4, 16]),
+                            rangeInSource: $this->range([4, 13], [4, 17]),
                             value: 'thu'
                         )
                     )
@@ -247,7 +248,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
                     value: new EnumMemberValueNode(
                         rangeInSource: $this->range([5, 10], [5, 16]),
                         value: new StringLiteralNode(
-                            rangeInSource: $this->range([5, 12], [5, 14]),
+                            rangeInSource: $this->range([5, 11], [5, 15]),
                             value: 'fri'
                         )
                     )
@@ -261,7 +262,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
                     value: new EnumMemberValueNode(
                         rangeInSource: $this->range([6, 12], [6, 18]),
                         value: new StringLiteralNode(
-                            rangeInSource: $this->range([6, 14], [6, 16]),
+                            rangeInSource: $this->range([6, 13], [6, 17]),
                             value: 'sat'
                         )
                     )
@@ -275,7 +276,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
                     value: new EnumMemberValueNode(
                         rangeInSource: $this->range([7, 10], [7, 16]),
                         value: new StringLiteralNode(
-                            rangeInSource: $this->range([7, 12], [7, 14]),
+                            rangeInSource: $this->range([7, 11], [7, 15]),
                             value: 'sun'
                         )
                     )
@@ -285,7 +286,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedEnumDeclarationNode,
-            $enumDeclarationParser->parse($tokens)
+            $enumDeclarationParser->parse($lexer)
         );
     }
 
@@ -295,7 +296,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
     public function parsesEnumDeclarationWithOneBinaryIntegerValueMember(): void
     {
         $enumDeclarationParser = EnumDeclarationParser::singleton();
-        $tokens = $this->createTokenIterator('enum Foo { BAR(0b101) }');
+        $lexer = new Lexer('enum Foo { BAR(0b101) }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
             rangeInSource: $this->range([0, 0], [0, 22]),
@@ -324,7 +325,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedEnumDeclarationNode,
-            $enumDeclarationParser->parse($tokens)
+            $enumDeclarationParser->parse($lexer)
         );
     }
 
@@ -334,7 +335,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
     public function parsesEnumDeclarationWithOneOctalIntegerValueMember(): void
     {
         $enumDeclarationParser = EnumDeclarationParser::singleton();
-        $tokens = $this->createTokenIterator('enum Foo { BAR(0o644) }');
+        $lexer = new Lexer('enum Foo { BAR(0o644) }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
             rangeInSource: $this->range([0, 0], [0, 22]),
@@ -363,7 +364,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedEnumDeclarationNode,
-            $enumDeclarationParser->parse($tokens)
+            $enumDeclarationParser->parse($lexer)
         );
     }
 
@@ -373,7 +374,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
     public function parsesEnumDeclarationWithOneDecimalIntegerValueMember(): void
     {
         $enumDeclarationParser = EnumDeclarationParser::singleton();
-        $tokens = $this->createTokenIterator('enum Foo { BAR(42) }');
+        $lexer = new Lexer('enum Foo { BAR(42) }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
             rangeInSource: $this->range([0, 0], [0, 19]),
@@ -402,7 +403,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedEnumDeclarationNode,
-            $enumDeclarationParser->parse($tokens)
+            $enumDeclarationParser->parse($lexer)
         );
     }
 
@@ -412,7 +413,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
     public function parsesEnumDeclarationWithOneHexadecimalIntegerValueMember(): void
     {
         $enumDeclarationParser = EnumDeclarationParser::singleton();
-        $tokens = $this->createTokenIterator('enum Foo { BAR(0xABC) }');
+        $lexer = new Lexer('enum Foo { BAR(0xABC) }');
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
             rangeInSource: $this->range([0, 0], [0, 22]),
@@ -441,7 +442,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedEnumDeclarationNode,
-            $enumDeclarationParser->parse($tokens)
+            $enumDeclarationParser->parse($lexer)
         );
     }
 
@@ -467,7 +468,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
             DECEMBER(12)
         }
         AFX;
-        $tokens = $this->createTokenIterator($enumAsString);
+        $lexer = new Lexer($enumAsString);
 
         $expectedEnumDeclarationNode = new EnumDeclarationNode(
             rangeInSource: $this->range([0, 0], [13, 0]),
@@ -661,7 +662,7 @@ final class EnumDeclarationParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedEnumDeclarationNode,
-            $enumDeclarationParser->parse($tokens)
+            $enumDeclarationParser->parse($lexer)
         );
     }
 }

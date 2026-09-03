@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Language\Parser\Tag;
 
+use LogicException;
 use PackageFactory\ComponentEngine\Domain\AttributeName\AttributeName;
 use PackageFactory\ComponentEngine\Domain\TagName\TagName;
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
@@ -33,131 +34,94 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Tag\AttributeNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\ChildNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 use PackageFactory\ComponentEngine\Language\Parser\Expression\ExpressionParser;
 use PackageFactory\ComponentEngine\Language\Parser\StringLiteral\StringLiteralParser;
 use PackageFactory\ComponentEngine\Language\Parser\Text\TextParser;
 use PackageFactory\ComponentEngine\Parser\Source\Range;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenTypes;
 
 final class TagParser
 {
     use Singleton;
 
+    private const RULES_ATTRIBUTE_DELIMITERS = [
+        Rule::STRING_LITERAL_DELIMITER,
+        Rule::BRACKET_CURLY_OPEN
+    ];
+
     private ?StringLiteralParser $stringLiteralParser = null;
     private ?TextParser $textParser = null;
     private ?ExpressionParser $expressionParser = null;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return TagNode
-     */
-    public function parse(\Iterator &$tokens): TagNode
+    public function parse(Lexer $lexer): TagNode
     {
-        $tagStartOpeningToken = $this->extractTagStartOpeningToken($tokens);
-        $tagNameNode = $this->parseTagName($tokens);
-        $attributeNodes = $this->parseAttributes($tokens);
+        $lexer->read(Rule::BRACKET_ANGLE_OPEN);
+        $start = $lexer->buffer->getStart();
 
-        if ($tagSelfCloseToken = $this->extractTagSelfCloseToken($tokens)) {
+        $name = $this->parseName($lexer);
+        $attributes = $this->parseAttributes($lexer);
+
+        if ($lexer->probe(Rule::SYMBOL_SLASH_FORWARD)) {
+            $lexer->read(Rule::BRACKET_ANGLE_CLOSE);
+            $end = $lexer->buffer->getEnd();
+
             return new TagNode(
-                rangeInSource: Range::from(
-                    $tagStartOpeningToken->boundaries->start,
-                    $tagSelfCloseToken->boundaries->end
-                ),
-                name: $tagNameNode,
-                attributes: $attributeNodes,
+                rangeInSource: Range::from($start, $end),
+                name: $name,
+                attributes: $attributes,
                 children: new ChildNodes(),
                 isSelfClosing: true
             );
-        } else {
-            $this->skipTagEndToken($tokens);
-            $children = $this->parseChildren($tokens);
-            $this->skipTagStartClosingToken($tokens);
-            $this->assertAndSkipClosingTagName($tokens, $tagNameNode);
-            $closingTagEndToken = $this->extractTagEndToken($tokens);
-
-            return new TagNode(
-                rangeInSource: Range::from(
-                    $tagStartOpeningToken->boundaries->start,
-                    $closingTagEndToken->boundaries->end
-                ),
-                name: $tagNameNode,
-                attributes: $attributeNodes,
-                children: $children,
-                isSelfClosing: false
-            );
         }
-    }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return Token
-     */
-    private function extractTagStartOpeningToken(\Iterator &$tokens): Token
-    {
-        Scanner::assertType($tokens, TokenType::TAG_START_OPENING);
-        $tagStartOpeningToken = $tokens->current();
-        Scanner::skipOne($tokens);
+        $lexer->read(Rule::BRACKET_ANGLE_CLOSE);
+        $children = $this->parseChildren($lexer);
 
-        return $tagStartOpeningToken;
-    }
+        $this->readClosingTagName($lexer, $name->value);
+        $end = $lexer->buffer->getEnd();
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return TagNameNode
-     */
-    private function parseTagName(\Iterator &$tokens): TagNameNode
-    {
-        Scanner::assertType($tokens, TokenType::STRING);
-        $tagNameToken = $tokens->current();
-        Scanner::skipOne($tokens);
-
-        return new TagNameNode(
-            rangeInSource: $tagNameToken->boundaries,
-            value: TagName::from($tagNameToken->value)
+        return new TagNode(
+            rangeInSource: Range::from($start, $end),
+            name: $name,
+            attributes: $attributes,
+            children: $children,
+            isSelfClosing: false
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return AttributeNodes
-     */
-    private function parseAttributes(\Iterator &$tokens): AttributeNodes
+    private function parseName(Lexer $lexer): TagNameNode
+    {
+        $lexer->read(Rule::WORD);
+        $tagNameNode = new TagNameNode(
+            rangeInSource: Range::from(
+                $lexer->buffer->getStart(),
+                $lexer->buffer->getEnd()
+            ),
+            value: TagName::from($lexer->buffer->getContents())
+        );
+
+        $lexer->skipSpace();
+
+        return $tagNameNode;
+    }
+
+    private function parseAttributes(Lexer $lexer): AttributeNodes
     {
         $items = [];
-        while (!$this->isTagEnd($tokens)) {
-            Scanner::skipSpace($tokens);
-
-            $items[] = $this->parseAttribute($tokens);
-
-            Scanner::skipSpace($tokens);
+        while ($lexer->peek(Rule::WORD)) {
+            $items[] = $this->parseAttribute($lexer);
+            $lexer->skipSpace();
         }
 
         return new AttributeNodes(...$items);
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return boolean
-     */
-    private function isTagEnd(\Iterator $tokens): bool
+    private function parseAttribute(Lexer $lexer): AttributeNode
     {
-        return (
-            Scanner::type($tokens) === TokenType::TAG_END ||
-            Scanner::type($tokens) === TokenType::TAG_SELF_CLOSE
-        );
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return AttributeNode
-     */
-    private function parseAttribute(\Iterator &$tokens): AttributeNode
-    {
-        $attributeNameNode = $this->parseAttributeName($tokens);
-        $attributeValueNode = $this->parseAttributeValue($tokens);
+        $attributeNameNode = $this->parseAttributeName($lexer);
+        $attributeValueNode = $this->parseAttributeValue($lexer);
 
         return new AttributeNode(
             rangeInSource: Range::from(
@@ -170,187 +134,99 @@ final class TagParser
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return AttributeNameNode
-     */
-    private function parseAttributeName(\Iterator &$tokens): AttributeNameNode
+    private function parseAttributeName(Lexer $lexer): AttributeNameNode
     {
-        Scanner::assertType($tokens, TokenType::STRING);
-        $attributeNameToken = $tokens->current();
-        Scanner::skipOne($tokens);
+        $lexer->read(Rule::WORD);
 
         return new AttributeNameNode(
-            rangeInSource: $attributeNameToken->boundaries,
-            value: AttributeName::from($attributeNameToken->value)
+            rangeInSource: $lexer->buffer->getRange(),
+            value: AttributeName::from($lexer->buffer->getContents())
         );
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return null|StringLiteralNode|ExpressionNode
-     */
-    private function parseAttributeValue(\Iterator &$tokens): null|StringLiteralNode|ExpressionNode
+    private function parseAttributeValue(Lexer $lexer): null|StringLiteralNode|ExpressionNode
     {
-        if (Scanner::type($tokens) === TokenType::EQUALS) {
-            Scanner::skipOne($tokens);
-
-            return match (Scanner::type($tokens)) {
-                TokenType::STRING_QUOTED =>
-                    $this->parseString($tokens),
-                TokenType::BRACKET_CURLY_OPEN =>
-                    $this->parseExpression($tokens),
-                default => throw TagCouldNotBeParsed::becauseOfUnexpectedToken(
-                    expectedTokenTypes: TokenTypes::from(
-                        TokenType::STRING_QUOTED,
-                        TokenType::BRACKET_CURLY_OPEN
-                    ),
-                    actualToken: $tokens->current()
-                )
+        if ($lexer->probe(Rule::SYMBOL_EQUALS)) {
+            return match ($lexer->expect(...self::RULES_ATTRIBUTE_DELIMITERS)) {
+                Rule::STRING_LITERAL_DELIMITER =>
+                    $this->parseString($lexer),
+                Rule::BRACKET_CURLY_OPEN =>
+                    $this->parseExpression($lexer),
+                default => throw new LogicException()
             };
         }
 
         return null;
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return StringLiteralNode
-     */
-    private function parseString(\Iterator &$tokens): StringLiteralNode
+    private function parseString(Lexer $lexer): StringLiteralNode
     {
         $this->stringLiteralParser ??= StringLiteralParser::singleton();
-        return $this->stringLiteralParser->parse($tokens);
+        return $this->stringLiteralParser->parse($lexer);
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ExpressionNode
-     */
-    private function parseExpression(\Iterator &$tokens): ExpressionNode
+    private function parseExpression(Lexer $lexer): ExpressionNode
     {
-        $this->expressionParser ??= new ExpressionParser(
-            stopAt: TokenType::BRACKET_CURLY_CLOSE
-        );
+        $this->expressionParser ??= new ExpressionParser();
 
-        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_OPEN);
-        Scanner::skipOne($tokens);
+        $lexer->read(Rule::BRACKET_CURLY_OPEN);
 
-        $expressionNode =  $this->expressionParser->parse($tokens);
+        $expressionNode =  $this->expressionParser->parse($lexer);
 
-        Scanner::assertType($tokens, TokenType::BRACKET_CURLY_CLOSE);
-        Scanner::skipOne($tokens);
+        $lexer->read(Rule::BRACKET_CURLY_CLOSE);
 
         return $expressionNode;
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return null|Token
-     */
-    private function extractTagSelfCloseToken(\Iterator &$tokens): ?Token
-    {
-        if (Scanner::type($tokens) === TokenType::TAG_SELF_CLOSE) {
-            $tagSelfCloseToken = $tokens->current();
-            Scanner::skipOne($tokens);
-
-            return $tagSelfCloseToken;
-        }
-
-        return null;
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return void
-     */
-    private function skipTagEndToken(\Iterator &$tokens): void
-    {
-        Scanner::assertType($tokens, TokenType::TAG_END);
-        Scanner::skipOne($tokens);
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return ChildNodes
-     */
-    private function parseChildren(\Iterator &$tokens): ChildNodes
+    private function parseChildren(Lexer $lexer): ChildNodes
     {
         $items = [];
         $preserveLeadingSpace = false;
-        while (Scanner::type($tokens) !== TokenType::TAG_START_CLOSING) {
-            $this->textParser ??= TextParser::singleton();
-            if ($textNode = $this->textParser->parse($tokens, $preserveLeadingSpace)) {
+
+        while (!$lexer->peek(Rule::SYMBOL_CLOSE_TAG)) {
+            if ($lexer->peek(Rule::BRACKET_ANGLE_OPEN)) {
+                $items[] = $this->parse($lexer);
+                $preserveLeadingSpace = !$lexer->peek(Rule::END_OF_LINE);
+                continue;
+            }
+
+            if ($lexer->peek(Rule::BRACKET_CURLY_OPEN)) {
+                $items[] = $this->parseExpression($lexer);
+                $preserveLeadingSpace = !$lexer->peek(Rule::END_OF_LINE);
+                continue;
+            }
+
+            if ($textNode = $this->parseText($lexer, $preserveLeadingSpace)) {
                 $items[] = $textNode;
-            }
-
-            if (Scanner::type($tokens) === TokenType::TAG_START_OPENING) {
-                $items[] = $this->parse($tokens);
-                $preserveLeadingSpace = Scanner::type($tokens) !== TokenType::END_OF_LINE;
-                continue;
-            }
-
-            if (Scanner::type($tokens) === TokenType::BRACKET_CURLY_OPEN) {
-                $items[] = $this->parseExpression($tokens);
-                $preserveLeadingSpace = Scanner::type($tokens) !== TokenType::END_OF_LINE;
-                continue;
-            }
-
-            if (Scanner::type($tokens) !== TokenType::TAG_START_CLOSING) {
-                throw TagCouldNotBeParsed::becauseOfUnexpectedToken(
-                    expectedTokenTypes: TokenTypes::from(
-                        TokenType::TAG_START_OPENING,
-                        TokenType::TAG_START_CLOSING,
-                        TokenType::BRACKET_CURLY_OPEN
-                    ),
-                    actualToken: $tokens->current()
-                );
             }
         }
 
         return new ChildNodes(...$items);
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return void
-     */
-    private function skipTagStartClosingToken(\Iterator &$tokens): void
+    private function parseText(Lexer $lexer, bool $preserveLeadingSpace): ?TextNode
     {
-        Scanner::assertType($tokens, TokenType::TAG_START_CLOSING);
-        Scanner::skipOne($tokens);
+        $this->textParser ??= TextParser::singleton();
+        return $this->textParser->parse($lexer, $preserveLeadingSpace);
     }
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @param TagNameNode $openingTagNameNode
-     * @return void
-     */
-    private function assertAndSkipClosingTagName(\Iterator &$tokens, TagNameNode $openingTagNameNode): void
+    private function readClosingTagName(Lexer $lexer, TagName $expectedName): void
     {
-        Scanner::assertType($tokens, TokenType::STRING);
-        $tagNameToken = $tokens->current();
-        Scanner::skipOne($tokens);
+        $lexer->read(Rule::SYMBOL_CLOSE_TAG);
+        $start = $lexer->buffer->getStart();
 
-        if ($tagNameToken->value !== $openingTagNameNode->value->value) {
+        $lexer->read(Rule::WORD);
+        $closingName = $lexer->buffer->getContents();
+
+        $lexer->read(Rule::BRACKET_ANGLE_CLOSE);
+        $end = $lexer->buffer->getEnd();
+
+        if ($closingName !== $expectedName->value) {
             throw TagCouldNotBeParsed::becauseOfClosingTagNameMismatch(
-                expectedTagName: $openingTagNameNode->value,
-                actualTagName: $tagNameToken->value,
-                affectedRangeInSource: $tagNameToken->boundaries
+                expectedTagName: $expectedName,
+                actualTagName: $closingName,
+                affectedRangeInSource: Range::from($start, $end)
             );
         }
-    }
-
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return Token
-     */
-    private function extractTagEndToken(\Iterator &$tokens): Token
-    {
-        Scanner::assertType($tokens, TokenType::TAG_END);
-        $tagEndToken = $tokens->current();
-        Scanner::skipOne($tokens);
-
-        return $tagEndToken;
     }
 }

@@ -38,16 +38,34 @@ final class TemplateLiteralTranspiler
 
     public function transpile(TemplateLiteralNode $templateLiteralNode): string
     {
-        $segments = [];
+        $lines = [];
+        $emptyLines = 0;
+        $isFirstLine = true;
+        foreach ($templateLiteralNode->lines->items as $line) {
+            if (count($line->segments->items) === 0) {
+                $emptyLines++;
+                continue;
+            }
 
-        foreach ($templateLiteralNode->segments->items as $segmentNode) {
-            $segments[] = match ($segmentNode::class) {
-                TemplateLiteralStringSegmentNode::class => $this->transpileStringSegment($segmentNode),
-                TemplateLiteralExpressionSegmentNode::class => $this->transpileExpressionSegment($segmentNode)
-            };
+            $segments = [];
+            foreach ($line->segments->items as $segmentNode) {
+                $segments[] = match ($segmentNode::class) {
+                    TemplateLiteralStringSegmentNode::class => $this->transpileStringSegment($segmentNode),
+                    TemplateLiteralExpressionSegmentNode::class => $this->transpileExpressionSegment($segmentNode)
+                };
+            }
+
+            $next = str_repeat(' ', $line->indentation - $templateLiteralNode->indentation) . join(' . ', $segments);
+            if (!$isFirstLine) {
+                $next = ' . "' . str_repeat('\n', $emptyLines + 1) . '" . ' . $next;
+            }
+
+            $lines[] = $next;
+            $emptyLines = 0;
+            $isFirstLine = false;
         }
 
-        return join(' . ', $segments);
+        return join('', $lines);
     }
 
     private function transpileStringSegment(TemplateLiteralStringSegmentNode $segmentNode): string

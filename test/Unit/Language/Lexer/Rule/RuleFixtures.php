@@ -20,23 +20,25 @@
 
 declare(strict_types=1);
 
-namespace PackageFactory\ComponentEngine\Test\Unit\Parser\Tokenizer;
+namespace PackageFactory\ComponentEngine\Test\Unit\Language\Lexer\Rule;
 
-use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
+use PackageFactory\ComponentEngine\Language\Lexer\Matcher\MatcherInterface;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\RuleInterface;
 
-final class Fixtures
+final class RuleFixtures
 {
-    /**
-     * @param string $sourceAsString
-     * @return \Iterator<mixed,Token>
-     */
-    public static function tokens(string $sourceAsString): \Iterator
+    public static function withMatcher(MatcherInterface $matcher): RuleInterface
     {
-        $source = Source::fromString($sourceAsString);
-        $tokenizer = Tokenizer::fromSource($source);
+        return new class($matcher) implements RuleInterface
+        {
+            public function __construct(private readonly MatcherInterface $matcher)
+            {
+            }
 
-        return $tokenizer->getIterator();
+            public function getMatcher(): MatcherInterface
+            {
+                return $this->matcher;
+            }
+        };
     }
 }

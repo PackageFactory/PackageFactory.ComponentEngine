@@ -22,11 +22,11 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Integration;
 
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Parser\Module\ModuleParser;
 use PackageFactory\ComponentEngine\Module\Loader\ModuleFile\ModuleFileLoader;
 use PackageFactory\ComponentEngine\Parser\Source\Path;
 use PackageFactory\ComponentEngine\Parser\Source\Source;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Tokenizer;
 use PackageFactory\ComponentEngine\Target\Php\Transpiler\Module\ModuleTranspiler;
 use PackageFactory\ComponentEngine\Test\Unit\Target\Php\Transpiler\Module\ModuleTestStrategy;
 use PackageFactory\ComponentEngine\TypeSystem\Scope\GlobalScope\GlobalScope;
@@ -67,10 +67,9 @@ final class PhpTranspilerIntegrationTest extends TestCase
     {
         $sourcePath = Path::fromString(__DIR__ . '/Examples/' . $example . '/' . $example . '.afx');
         $source = Source::fromFile($sourcePath->value);
-        $tokenizer = Tokenizer::fromSource($source);
-        $tokens = $tokenizer->getIterator();
+        $lexer = new Lexer($source->contents);
 
-        $module = ModuleParser::singleton()->parse($tokens);
+        $module = ModuleParser::singleton()->parse($lexer);
 
         $expected = file_get_contents(__DIR__ . '/Examples/' . $example . '/' . $example . '.php');
 

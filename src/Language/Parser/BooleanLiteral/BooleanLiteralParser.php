@@ -24,30 +24,25 @@ namespace PackageFactory\ComponentEngine\Language\Parser\BooleanLiteral;
 
 use PackageFactory\ComponentEngine\Framework\PHP\Singleton\Singleton;
 use PackageFactory\ComponentEngine\Language\AST\Node\BooleanLiteral\BooleanLiteralNode;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Scanner;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\TokenType;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
+use PackageFactory\ComponentEngine\Language\Lexer\Rule\Rule;
 
 final class BooleanLiteralParser
 {
     use Singleton;
 
-    /**
-     * @param \Iterator<mixed,Token> $tokens
-     * @return BooleanLiteralNode
-     */
-    public function parse(\Iterator &$tokens): BooleanLiteralNode
+    private const RULES_BOOLEAN_KEYWORDS = [
+        Rule::KEYWORD_TRUE,
+        Rule::KEYWORD_FALSE
+    ];
+
+    public function parse(Lexer $lexer): BooleanLiteralNode
     {
-        Scanner::assertType($tokens, TokenType::KEYWORD_TRUE, TokenType::KEYWORD_FALSE);
-
-        $token = $tokens->current();
-        $value = $token->type === TokenType::KEYWORD_TRUE;
-
-        Scanner::skipOne($tokens);
+        $rule = $lexer->read(...self::RULES_BOOLEAN_KEYWORDS);
 
         return new BooleanLiteralNode(
-            rangeInSource: $token->boundaries,
-            value: $value
+            rangeInSource: $lexer->buffer->getRange(),
+            value: $rule === Rule::KEYWORD_TRUE
         );
     }
 }

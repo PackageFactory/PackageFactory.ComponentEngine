@@ -22,7 +22,6 @@ declare(strict_types=1);
 
 namespace PackageFactory\ComponentEngine\Test\Unit\Language\Parser\Expression;
 
-use ArrayIterator;
 use PackageFactory\ComponentEngine\Domain\AttributeName\AttributeName;
 use PackageFactory\ComponentEngine\Domain\PropertyName\PropertyName;
 use PackageFactory\ComponentEngine\Domain\TagName\TagName;
@@ -49,6 +48,8 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Tag\ChildNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNameNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Tag\TagNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralExpressionSegmentNode;
+use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralLine;
+use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralLines;
 use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralSegments;
 use PackageFactory\ComponentEngine\Language\AST\Node\TemplateLiteral\TemplateLiteralStringSegmentNode;
@@ -57,8 +58,8 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Text\TextNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperationNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\UnaryOperation\UnaryOperator;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Parser\Expression\ExpressionParser;
-use PackageFactory\ComponentEngine\Parser\Tokenizer\Token;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
 
 final class ExpressionParserTest extends ParserTestCase
@@ -69,7 +70,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesMandatoryAccessWithOneLevel(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('a.b');
+        $lexer = new Lexer('a.b');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 2]),
@@ -92,7 +93,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -102,7 +103,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesMandatoryAccessWithMultipleLevels(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('a.b.c.d.e');
+        $lexer = new Lexer('a.b.c.d.e');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 8]),
@@ -158,7 +159,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -168,7 +169,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesOptionalAccessWithOneLevel(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('a?.b');
+        $lexer = new Lexer('a?.b');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 3]),
@@ -191,7 +192,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -201,7 +202,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesOptionalAccessWithMultipleLevels(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('a?.b?.c?.d?.e');
+        $lexer = new Lexer('a?.b?.c?.d?.e');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 12]),
@@ -257,7 +258,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -267,7 +268,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesMixedAccessChainStartingWithMandatoryAccess(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('a.b?.c');
+        $lexer = new Lexer('a.b?.c');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 5]),
@@ -301,7 +302,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -311,7 +312,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesMixedAccessChainStartingWithOptionalAccess(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('a?.b.c');
+        $lexer = new Lexer('a?.b.c');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 5]),
@@ -345,7 +346,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -355,7 +356,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesMandatoryAccessWithBracketedEpxressionAsParent(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('(a ? b : c).d');
+        $lexer = new Lexer('(a ? b : c).d');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 12]),
@@ -397,7 +398,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -407,7 +408,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesOptionalAccessWithBracketedEpxressionAsParent(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('(a ? b : c)?.d');
+        $lexer = new Lexer('(a ? b : c)?.d');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 13]),
@@ -449,7 +450,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -459,7 +460,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesBinaryOperationAnd(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('a && b');
+        $lexer = new Lexer('a && b');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 5]),
@@ -485,7 +486,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -495,7 +496,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesBinaryOperationOr(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('a || b');
+        $lexer = new Lexer('a || b');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 5]),
@@ -521,7 +522,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -531,7 +532,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesBinaryOperationEquals(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('a === b');
+        $lexer = new Lexer('a === b');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 6]),
@@ -557,7 +558,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -567,7 +568,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesBinaryOperationNotEquals(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('a !== b');
+        $lexer = new Lexer('a !== b');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 6]),
@@ -593,7 +594,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -603,7 +604,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesBinaryOperationGreaterThan(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('a > b');
+        $lexer = new Lexer('a > b');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 4]),
@@ -629,7 +630,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -639,7 +640,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesBinaryOperationGreaterThanOrEqual(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('a >= b');
+        $lexer = new Lexer('a >= b');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 5]),
@@ -665,7 +666,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -675,7 +676,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesBinaryOperationLessThan(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('a < b');
+        $lexer = new Lexer('a < b');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 4]),
@@ -701,7 +702,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -711,7 +712,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesBinaryOperationLessThanOrEqual(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('a <= b');
+        $lexer = new Lexer('a <= b');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 5]),
@@ -737,7 +738,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -747,7 +748,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesBinaryOperationInBrackets(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('(a <= b)');
+        $lexer = new Lexer('(a <= b)');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 7]),
@@ -773,7 +774,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -783,7 +784,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesBinaryOperationInMultipleBrackets(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('((((a <= b))))');
+        $lexer = new Lexer('((((a <= b))))');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 13]),
@@ -809,7 +810,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -819,7 +820,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesBooleanLiteralTrue(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('true');
+        $lexer = new Lexer('true');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 3]),
@@ -831,7 +832,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -841,7 +842,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesBooleanLiteralFalse(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('false');
+        $lexer = new Lexer('false');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 4]),
@@ -853,7 +854,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -863,7 +864,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesBinaryIntegerLiteral(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('0b1001');
+        $lexer = new Lexer('0b1001');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 5]),
@@ -876,7 +877,30 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function parsesNegativeBinaryIntegerLiteral(): void
+    {
+        $expressionParser = new ExpressionParser();
+        $lexer = new Lexer('-0b1001');
+
+        $expectedExpressioNode = new ExpressionNode(
+            rangeInSource: $this->range([0, 0], [0, 6]),
+            root: new IntegerLiteralNode(
+                rangeInSource: $this->range([0, 0], [0, 6]),
+                format: IntegerFormat::BINARY,
+                value: '-0b1001'
+            )
+        );
+
+        $this->assertEquals(
+            $expectedExpressioNode,
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -886,7 +910,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesOctalIntegerLiteral(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('0o755');
+        $lexer = new Lexer('0o755');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 4]),
@@ -899,7 +923,30 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function parsesNegativeOctalIntegerLiteral(): void
+    {
+        $expressionParser = new ExpressionParser();
+        $lexer = new Lexer('-0o755');
+
+        $expectedExpressioNode = new ExpressionNode(
+            rangeInSource: $this->range([0, 0], [0, 5]),
+            root: new IntegerLiteralNode(
+                rangeInSource: $this->range([0, 0], [0, 5]),
+                format: IntegerFormat::OCTAL,
+                value: '-0o755'
+            )
+        );
+
+        $this->assertEquals(
+            $expectedExpressioNode,
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -909,7 +956,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesDecimalIntegerLiteral(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('42');
+        $lexer = new Lexer('42');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 1]),
@@ -922,7 +969,30 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function parsesNegativeDecimalIntegerLiteral(): void
+    {
+        $expressionParser = new ExpressionParser();
+        $lexer = new Lexer('-42');
+
+        $expectedExpressioNode = new ExpressionNode(
+            rangeInSource: $this->range([0, 0], [0, 2]),
+            root: new IntegerLiteralNode(
+                rangeInSource: $this->range([0, 0], [0, 2]),
+                format: IntegerFormat::DECIMAL,
+                value: '-42'
+            )
+        );
+
+        $this->assertEquals(
+            $expectedExpressioNode,
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -932,7 +1002,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesHexadecimalIntegerLiteral(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('0xABC');
+        $lexer = new Lexer('0xABC');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 4]),
@@ -945,7 +1015,30 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function parsesNegativeHexadecimalIntegerLiteral(): void
+    {
+        $expressionParser = new ExpressionParser();
+        $lexer = new Lexer('-0xABC');
+
+        $expectedExpressioNode = new ExpressionNode(
+            rangeInSource: $this->range([0, 0], [0, 5]),
+            root: new IntegerLiteralNode(
+                rangeInSource: $this->range([0, 0], [0, 5]),
+                format: IntegerFormat::HEXADECIMAL,
+                value: '-0xABC'
+            )
+        );
+
+        $this->assertEquals(
+            $expectedExpressioNode,
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -963,7 +1056,7 @@ final class ExpressionParserTest extends ParserTestCase
             default -> "N/A"
         }
         AFX;
-        $tokens = $this->createTokenIterator($matchAsString);
+        $lexer = new Lexer($matchAsString);
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [5, 0]),
@@ -1077,12 +1170,12 @@ final class ExpressionParserTest extends ParserTestCase
                         )
                     ),
                     new MatchArmNode(
-                        rangeInSource: $this->range([4, 4], [4, 18]),
+                        rangeInSource: $this->range([4, 4], [4, 19]),
                         left: null,
                         right: new ExpressionNode(
-                            rangeInSource: $this->range([4, 16], [4, 18]),
+                            rangeInSource: $this->range([4, 15], [4, 19]),
                             root: new StringLiteralNode(
-                                rangeInSource: $this->range([4, 16], [4, 18]),
+                                rangeInSource: $this->range([4, 15], [4, 19]),
                                 value: 'N/A'
                             )
                         )
@@ -1093,7 +1186,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -1103,7 +1196,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesNullLiteral(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('null');
+        $lexer = new Lexer('null');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 3]),
@@ -1114,7 +1207,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -1124,19 +1217,19 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesStringLiteral(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('"Hello World"');
+        $lexer = new Lexer('"Hello World"');
 
         $expectedExpressioNode = new ExpressionNode(
-            rangeInSource: $this->range([0, 1], [0, 11]),
+            rangeInSource: $this->range([0, 0], [0, 12]),
             root: new StringLiteralNode(
-                rangeInSource: $this->range([0, 1], [0, 11]),
+                rangeInSource: $this->range([0, 0], [0, 12]),
                 value: 'Hello World'
             )
         );
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -1146,7 +1239,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesTag(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('<a href="#foo">Bar!</a>');
+        $lexer = new Lexer('<a href="#foo">Bar!</a>');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 22]),
@@ -1158,13 +1251,13 @@ final class ExpressionParserTest extends ParserTestCase
                 ),
                 attributes: new AttributeNodes(
                     new AttributeNode(
-                        rangeInSource: $this->range([0, 3], [0, 12]),
+                        rangeInSource: $this->range([0, 3], [0, 13]),
                         name: new AttributeNameNode(
                             rangeInSource: $this->range([0, 3], [0, 6]),
                             value: AttributeName::from('href')
                         ),
                         value: new StringLiteralNode(
-                            rangeInSource: $this->range([0, 9], [0, 12]),
+                            rangeInSource: $this->range([0, 8], [0, 13]),
                             value: '#foo'
                         )
                     )
@@ -1181,7 +1274,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -1191,38 +1284,48 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesTemplateLiteral(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('`Hello ${friend}!`');
+        $lexer = new Lexer(<<<EOF
+        """
+        Hello {friend}!
+        """
+        EOF);
 
         $expectedExpressioNode = new ExpressionNode(
-            rangeInSource: $this->range([0, 0], [0, 17]),
+            rangeInSource: $this->range([0, 0], [2, 2]),
             root: new TemplateLiteralNode(
-                rangeInSource: $this->range([0, 0], [0, 17]),
-                segments: new TemplateLiteralSegments(
-                    new TemplateLiteralStringSegmentNode(
-                        rangeInSource: $this->range([0, 1], [0, 6]),
-                        value: 'Hello '
-                    ),
-                    new TemplateLiteralExpressionSegmentNode(
-                        rangeInSource: $this->range([0, 7], [0, 15]),
-                        expression: new ExpressionNode(
-                            rangeInSource: $this->range([0, 9], [0, 14]),
-                            root: new ValueReferenceNode(
-                                rangeInSource: $this->range([0, 9], [0, 14]),
-                                name: VariableName::from('friend')
-                            )
+                rangeInSource: $this->range([0, 0], [2, 2]),
+                indentation: 0,
+                lines: new TemplateLiteralLines(
+                    new TemplateLiteralLine(
+                        indentation: 0,
+                        segments: new TemplateLiteralSegments(
+                            new TemplateLiteralStringSegmentNode(
+                                rangeInSource: $this->range([1, 0], [1, 5]),
+                                value: 'Hello '
+                            ),
+                            new TemplateLiteralExpressionSegmentNode(
+                                rangeInSource: $this->range([1, 6], [1, 13]),
+                                expression: new ExpressionNode(
+                                    rangeInSource: $this->range([1, 7], [1, 12]),
+                                    root: new ValueReferenceNode(
+                                        rangeInSource: $this->range([1, 7], [1, 12]),
+                                        name: VariableName::from('friend')
+                                    )
+                                )
+                            ),
+                            new TemplateLiteralStringSegmentNode(
+                                rangeInSource: $this->range([1, 14], [1, 14]),
+                                value: '!'
+                            ),
                         )
-                    ),
-                    new TemplateLiteralStringSegmentNode(
-                        rangeInSource: $this->range([0, 16], [0, 16]),
-                        value: '!'
-                    ),
+                    )
                 )
             )
         );
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -1232,7 +1335,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesTernaryOperation(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('a ? b : c');
+        $lexer = new Lexer('a ? b : c');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 8]),
@@ -1263,7 +1366,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -1273,7 +1376,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesNestedBracketedTernaryOperation(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('(a ? b : c) ? (d ? e : f) : (g ? h : i)');
+        $lexer = new Lexer('(a ? b : c) ? (d ? e : f) : (g ? h : i)');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 38]),
@@ -1361,7 +1464,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -1371,7 +1474,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesNestedUnbracketedTernaryOperation(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('a < b ? "yes" : (foo ? "maybe" : "no")');
+        $lexer = new Lexer('a < b ? "yes" : (foo ? "maybe" : "no")');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 37]),
@@ -1398,9 +1501,9 @@ final class ExpressionParserTest extends ParserTestCase
                     )
                 ),
                 trueBranch: new ExpressionNode(
-                    rangeInSource: $this->range([0, 9], [0, 11]),
+                    rangeInSource: $this->range([0, 8], [0, 12]),
                     root: new StringLiteralNode(
-                        rangeInSource: $this->range([0, 9], [0, 11]),
+                        rangeInSource: $this->range([0, 8], [0, 12]),
                         value: 'yes'
                     )
                 ),
@@ -1415,16 +1518,16 @@ final class ExpressionParserTest extends ParserTestCase
                             ),
                         ),
                         trueBranch: new ExpressionNode(
-                            rangeInSource: $this->range([0, 24], [0, 28]),
+                            rangeInSource: $this->range([0, 23], [0, 29]),
                             root: new StringLiteralNode(
-                                rangeInSource: $this->range([0, 24], [0, 28]),
+                                rangeInSource: $this->range([0, 23], [0, 29]),
                                 value: 'maybe'
                             )
                         ),
                         falseBranch: new ExpressionNode(
-                            rangeInSource: $this->range([0, 34], [0, 35]),
+                            rangeInSource: $this->range([0, 33], [0, 36]),
                             root: new StringLiteralNode(
-                                rangeInSource: $this->range([0, 34], [0, 35]),
+                                rangeInSource: $this->range([0, 33], [0, 36]),
                                 value: 'no'
                             )
                         )
@@ -1435,7 +1538,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -1445,12 +1548,12 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesTernaryOperationWithComplexUnbracketedCondition(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator(
+        $lexer = new Lexer(
             '1 < 2 === a || 5 > b || c === true && false ? "a" : "foo"'
         );
 
         $expectedExpressioNode = new ExpressionNode(
-            rangeInSource: $this->range([0, 0], [0, 55]),
+            rangeInSource: $this->range([0, 0], [0, 56]),
             root: new TernaryOperationNode(
                 condition: new ExpressionNode(
                     rangeInSource: $this->range([0, 0], [0, 42]),
@@ -1561,16 +1664,16 @@ final class ExpressionParserTest extends ParserTestCase
                     )
                 ),
                 trueBranch: new ExpressionNode(
-                    rangeInSource: $this->range([0, 47], [0, 47]),
+                    rangeInSource: $this->range([0, 46], [0, 48]),
                     root: new StringLiteralNode(
-                        rangeInSource: $this->range([0, 47], [0, 47]),
+                        rangeInSource: $this->range([0, 46], [0, 48]),
                         value: 'a'
                     )
                 ),
                 falseBranch: new ExpressionNode(
-                    rangeInSource: $this->range([0, 53], [0, 55]),
+                    rangeInSource: $this->range([0, 52], [0, 56]),
                     root: new StringLiteralNode(
-                        rangeInSource: $this->range([0, 53], [0, 55]),
+                        rangeInSource: $this->range([0, 52], [0, 56]),
                         value: 'foo'
                     )
                 )
@@ -1579,7 +1682,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -1589,7 +1692,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesTernaryOperationWithComplexParentheses(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('(((foo)) === ((null))) ? 1 : (((0)))');
+        $lexer = new Lexer('(((foo)) === ((null))) ? 1 : (((0)))');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 35]),
@@ -1635,7 +1738,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -1645,7 +1748,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesUnaryOperation(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('!a');
+        $lexer = new Lexer('!a');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 1]),
@@ -1664,7 +1767,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -1674,7 +1777,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesDoubleUnaryOperation(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('!!a');
+        $lexer = new Lexer('!!a');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 2]),
@@ -1700,7 +1803,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -1710,7 +1813,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesTripleUnaryOperation(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('!!!a');
+        $lexer = new Lexer('!!!a');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 3]),
@@ -1743,7 +1846,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -1753,7 +1856,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesUnaryOperationWithBracketedExpressionAsOperand(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('!(a > b)');
+        $lexer = new Lexer('!(a > b)');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 7]),
@@ -1786,7 +1889,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -1796,7 +1899,7 @@ final class ExpressionParserTest extends ParserTestCase
     public function parsesValueReference(): void
     {
         $expressionParser = new ExpressionParser();
-        $tokens = $this->createTokenIterator('foo');
+        $lexer = new Lexer('foo');
 
         $expectedExpressioNode = new ExpressionNode(
             rangeInSource: $this->range([0, 0], [0, 2]),
@@ -1808,7 +1911,7 @@ final class ExpressionParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedExpressioNode,
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 
@@ -1819,7 +1922,7 @@ final class ExpressionParserTest extends ParserTestCase
     {
         $expressionParser = new ExpressionParser();
 
-        $tokens = $this->createTokenIterator('(foo)');
+        $lexer = new Lexer('(foo)');
         $this->assertEquals(
             new ExpressionNode(
                 rangeInSource: $this->range([0, 0], [0, 4]),
@@ -1828,10 +1931,10 @@ final class ExpressionParserTest extends ParserTestCase
                     name: VariableName::from('foo')
                 )
             ),
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
 
-        $tokens = $this->createTokenIterator('((foo))');
+        $lexer = new Lexer('((foo))');
         $this->assertEquals(
             new ExpressionNode(
                 rangeInSource: $this->range([0, 0], [0, 6]),
@@ -1840,10 +1943,10 @@ final class ExpressionParserTest extends ParserTestCase
                     name: VariableName::from('foo')
                 )
             ),
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
 
-        $tokens = $this->createTokenIterator('(((foo)))');
+        $lexer = new Lexer('(((foo)))');
         $this->assertEquals(
             new ExpressionNode(
                 rangeInSource: $this->range([0, 0], [0, 8]),
@@ -1852,7 +1955,7 @@ final class ExpressionParserTest extends ParserTestCase
                     name: VariableName::from('foo')
                 )
             ),
-            $expressionParser->parse($tokens)
+            $expressionParser->parse($lexer)
         );
     }
 }

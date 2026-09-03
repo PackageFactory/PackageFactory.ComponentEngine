@@ -30,6 +30,7 @@ use PackageFactory\ComponentEngine\Language\AST\Node\Match\MatchArmNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\Match\MatchArmNodes;
 use PackageFactory\ComponentEngine\Language\AST\Node\Match\MatchNode;
 use PackageFactory\ComponentEngine\Language\AST\Node\ValueReference\ValueReferenceNode;
+use PackageFactory\ComponentEngine\Language\Lexer\Lexer;
 use PackageFactory\ComponentEngine\Language\Parser\Match\MatchCouldNotBeParsed;
 use PackageFactory\ComponentEngine\Language\Parser\Match\MatchParser;
 use PackageFactory\ComponentEngine\Test\Unit\Language\Parser\ParserTestCase;
@@ -42,7 +43,7 @@ final class MatchParserTest extends ParserTestCase
     public function parsesMatchWithOneArm(): void
     {
         $matchParser = MatchParser::singleton();
-        $tokens = $this->createTokenIterator(
+        $lexer = new Lexer(
             'match (a) { b -> c }'
         );
 
@@ -80,7 +81,7 @@ final class MatchParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedMatchNode,
-            $matchParser->parse($tokens)
+            $matchParser->parse($lexer)
         );
     }
 
@@ -90,7 +91,7 @@ final class MatchParserTest extends ParserTestCase
     public function parsesMatchWithMultipleArms(): void
     {
         $matchParser = MatchParser::singleton();
-        $tokens = $this->createTokenIterator(
+        $lexer = new Lexer(
             'match (a) { b -> c d -> e f -> g }'
         );
 
@@ -166,7 +167,7 @@ final class MatchParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedMatchNode,
-            $matchParser->parse($tokens)
+            $matchParser->parse($lexer)
         );
     }
 
@@ -176,7 +177,7 @@ final class MatchParserTest extends ParserTestCase
     public function parsesMatchWithOneSummarizedArm(): void
     {
         $matchParser = MatchParser::singleton();
-        $tokens = $this->createTokenIterator(
+        $lexer = new Lexer(
             'match (a) { b, c, d -> e }'
         );
 
@@ -228,7 +229,7 @@ final class MatchParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedMatchNode,
-            $matchParser->parse($tokens)
+            $matchParser->parse($lexer)
         );
     }
 
@@ -238,7 +239,7 @@ final class MatchParserTest extends ParserTestCase
     public function parsesMatchWithMultipleSummarizedArms(): void
     {
         $matchParser = MatchParser::singleton();
-        $tokens = $this->createTokenIterator(
+        $lexer = new Lexer(
             'match (a) { b, c, d -> e f, g, h -> i j, k, l -> m }'
         );
 
@@ -356,7 +357,7 @@ final class MatchParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedMatchNode,
-            $matchParser->parse($tokens)
+            $matchParser->parse($lexer)
         );
     }
 
@@ -366,7 +367,7 @@ final class MatchParserTest extends ParserTestCase
     public function parsesMatchWithOnlyDefaultArm(): void
     {
         $matchParser = MatchParser::singleton();
-        $tokens = $this->createTokenIterator(
+        $lexer = new Lexer(
             'match (a) { default -> b }'
         );
 
@@ -396,7 +397,7 @@ final class MatchParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedMatchNode,
-            $matchParser->parse($tokens)
+            $matchParser->parse($lexer)
         );
     }
 
@@ -406,7 +407,7 @@ final class MatchParserTest extends ParserTestCase
     public function parsesMatchWithOneArmAndDefaultArm(): void
     {
         $matchParser = MatchParser::singleton();
-        $tokens = $this->createTokenIterator(
+        $lexer = new Lexer(
             'match (a) { b -> c default -> d }'
         );
 
@@ -455,7 +456,7 @@ final class MatchParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedMatchNode,
-            $matchParser->parse($tokens)
+            $matchParser->parse($lexer)
         );
     }
 
@@ -465,7 +466,7 @@ final class MatchParserTest extends ParserTestCase
     public function parsesMatchWithOneSummarizedArmAndDefaultArm(): void
     {
         $matchParser = MatchParser::singleton();
-        $tokens = $this->createTokenIterator(
+        $lexer = new Lexer(
             'match (a) { b, c, d -> e default -> f }'
         );
 
@@ -528,7 +529,7 @@ final class MatchParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedMatchNode,
-            $matchParser->parse($tokens)
+            $matchParser->parse($lexer)
         );
     }
 
@@ -547,7 +548,7 @@ final class MatchParserTest extends ParserTestCase
             l -> m
         }
         AFX;
-        $tokens = $this->createTokenIterator($matchAsString);
+        $lexer = new Lexer($matchAsString);
 
         $expectedMatchNode = new MatchNode(
             rangeInSource: $this->range([0, 0], [6, 0]),
@@ -672,7 +673,7 @@ final class MatchParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedMatchNode,
-            $matchParser->parse($tokens)
+            $matchParser->parse($lexer)
         );
     }
 
@@ -688,7 +689,7 @@ final class MatchParserTest extends ParserTestCase
             default -> g
         }
         AFX;
-        $tokens = $this->createTokenIterator($matchAsString);
+        $lexer = new Lexer($matchAsString);
 
         $expectedMatchNode = new MatchNode(
             rangeInSource: $this->range([0, 0], [3, 0]),
@@ -787,7 +788,7 @@ final class MatchParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedMatchNode,
-            $matchParser->parse($tokens)
+            $matchParser->parse($lexer)
         );
     }
 
@@ -805,7 +806,7 @@ final class MatchParserTest extends ParserTestCase
             default -> q
         }
         AFX;
-        $tokens = $this->createTokenIterator($matchAsString);
+        $lexer = new Lexer($matchAsString);
 
         $expectedMatchNode = new MatchNode(
             rangeInSource: $this->range([0, 0], [5, 0]),
@@ -995,7 +996,7 @@ final class MatchParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedMatchNode,
-            $matchParser->parse($tokens)
+            $matchParser->parse($lexer)
         );
     }
 
@@ -1011,7 +1012,7 @@ final class MatchParserTest extends ParserTestCase
             default -> h
         }
         AFX;
-        $tokens = $this->createTokenIterator($matchAsString);
+        $lexer = new Lexer($matchAsString);
 
         $expectedMatchNode = new MatchNode(
             rangeInSource: $this->range([0, 0], [3, 0]),
@@ -1103,7 +1104,7 @@ final class MatchParserTest extends ParserTestCase
 
         $this->assertEquals(
             $expectedMatchNode,
-            $matchParser->parse($tokens)
+            $matchParser->parse($lexer)
         );
     }
 
@@ -1115,13 +1116,13 @@ final class MatchParserTest extends ParserTestCase
         $this->assertThrowsParserException(
             function () {
                 $matchParser = MatchParser::singleton();
-                $tokens = $this->createTokenIterator('match (a) {}');
+                $lexer = new Lexer('match (a) {}');
 
-                $matchParser->parse($tokens);
+                $matchParser->parse($lexer);
             },
             MatchCouldNotBeParsed::becauseOfInvalidMatchArmNodes(
                 cause: InvalidMatchArmNodes::becauseTheyWereEmpty(),
-                affectedRangeInSource: $this->range([0, 0], [0, 4])
+                affectedRangeInSource: $this->range([0, 10], [0, 11])
             )
         );
     }
@@ -1143,9 +1144,9 @@ final class MatchParserTest extends ParserTestCase
                     j -> k
                 }
                 AFX;
-                $tokens = $this->createTokenIterator($matchAsString);
+                $lexer = new Lexer($matchAsString);
 
-                $matchParser->parse($tokens);
+                $matchParser->parse($lexer);
             },
             MatchCouldNotBeParsed::becauseOfInvalidMatchArmNodes(
                 cause: InvalidMatchArmNodes::becauseTheyContainMoreThanOneDefaultMatchArmNode(
